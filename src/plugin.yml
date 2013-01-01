@@ -1,0 +1,30 @@
+name: LegendQuest
+version: 0.0.1
+description: RPG plugin for MineCraft servers using the Bukkit API
+author: SableDnah
+website: http://dev.bukkit.org/server-mods/legendquest/
+
+main: me.sablednah.legendquest.Main
+softdepend: [ Vault ]
+
+commands:
+    legendquest:
+        description: Root command for all  LegendQuest Commands.
+        usage: /<command> [reload]
+        alias: lq
+
+permissions:
+    legendquest.*:
+        description: Gives access to all legendquest commands/functions.
+        children:
+            legendquest.command.*: true
+
+    legendquest.command.*:
+        description: Allows user to use legendquest commands.
+        default: op
+        children:
+            legendquest.command.reload: true
+
+    legendquest.command.reload:
+        description: Allows user to use legendquest reload command.
+        default: op
