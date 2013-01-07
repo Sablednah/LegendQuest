@@ -39,4 +39,18 @@ public class Config {
 			this.plugin.logger.severe("Could not save config to " + this.filename + " " + ex);
 		}
 	}
+	
+	public String getConfigItem(String name, String defaultConfig) {
+		System.out.print(name + " is :" + defaultConfig + " str");
+		return config.getString(name, defaultConfig);
+	}
+	public int getConfigItem(String name, int defaultConfig) {
+		System.out.print(name + " is :" + defaultConfig + " int");
+		return config.getInt(name, defaultConfig);
+	}
+	public boolean getConfigItem(String name, boolean defaultConfig) {
+		System.out.print(name + " is :" + defaultConfig + " boolean");
+		return config.getBoolean(name, defaultConfig);
+	}
+	
 }
