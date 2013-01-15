@@ -60,12 +60,12 @@ public class PCs {
 		PC pc = null;
 		pc = lq.datasync.getData(pName);
 		if (pc == null) {
-			pc = new PC();
+			pc = new PC(pName);
 		}
 		return pc;
 	}
 
 	public void savePlayer(String name) {
-		lq.datasync.addWrite(name, getPC(name));
+		lq.datasync.addWrite(getPC(name));
 	}
 }

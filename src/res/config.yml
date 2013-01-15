@@ -1,0 +1,11 @@
+# Default config.
+
+this: not-used
+
+debugMode: false
+useMySQL: false;
+sqlUsername: username
+sqlPassword: password
+sqlHostname: localhost
+sqlPort: 3306
+sqlDatabase: legendquest

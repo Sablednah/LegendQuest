@@ -14,4 +14,13 @@ public class PC {
 	public int health;
 	public int skillpoints;
 	
+	public PC (String pName) {
+		this.player = pName;
+		this.charname = pName;
+		this.mainClass = null;
+		this.subClass = null;
+		this.maxHP = 20;
+		this.health = 20;
+		this.skillpoints = 0;
+	}
 }

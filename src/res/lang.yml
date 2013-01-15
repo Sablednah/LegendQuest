@@ -1,0 +1,17 @@
+# default config
+
+startup: "The sky above the port was the color of television, tuned to a dead channel."
+shutdown: "=== END OF LINE ==="
+
+raceScan: "Scanning for race files in folder: "
+raceScanFound: "Found race: "
+raceScanEnd: "Scanning for race files completed."
+raceScanInvalid: "Invalid race file: "
+
+classScan: "Scanning for class files in folder: "
+classScanFound: "Found class: "
+classScanEnd: "Scanning for class files completed."
+classScanInvalid: "Invalid class file: "
+classScanRaceWarning: "Warning Found unknon Race: "
+classScanNoRaceOrGroup: "No Valid race or group found in: "
+classScanGroupWarning: "No Valid group found in: "

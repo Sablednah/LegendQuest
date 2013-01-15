@@ -25,7 +25,7 @@ public class Classes {
 		// Find the Classes folder
 		File classDir = new File(lq.getDataFolder() + File.separator + "classes");
 		// notify sanning begun
-		lq.logger.info(lq.configLang.classScan + ": " + classDir);
+		lq.log(lq.configLang.classScan + ": " + classDir);
 
 		// make it if not found
 		if (!classDir.exists()) {
@@ -39,7 +39,7 @@ public class Classes {
 			if (classfile.isFile() && classfile.getName().toLowerCase().endsWith(".yml")) {
 				// found a config file - load it in time
 
-				lq.logger.info(lq.configLang.classScanFound + classfile.getName());
+				lq.log(lq.configLang.classScanFound + classfile.getName());
 				ClassType c = new ClassType();
 				Boolean validConfig = true;
 				YamlConfiguration thisConfig = null;
@@ -73,18 +73,27 @@ public class Classes {
 					List<String> allowedGroups = (List<String>) thisConfig.getList("allowedGroups");
 					c.allowedGroups = allowedGroups;
 
+					c.defaultClass = thisConfig.getBoolean("default");
+					c.statStr = thisConfig.getInt("statmods.str");
+					c.statDex = thisConfig.getInt("statmods.dex");
+					c.statInt = thisConfig.getInt("statmods.int");
+					c.statWis = thisConfig.getInt("statmods.wis");
+					c.statCon = thisConfig.getInt("statmods.con");
+					c.statChr = thisConfig.getInt("statmods.chr");
+					c.healthPerLevel = thisConfig.getInt("healthperlevel");
+
 					// check race or group exists.
 					boolean hasRace = checkRaceList(allowedRaces);
 					boolean hasGroup = checkGroupList(allowedGroups);
 
 					if (!(hasRace || hasGroup)) {
 						validConfig = false;
-						lq.logger.severe(lq.configLang.classScanNoRaceOrGroup + classfile.getName());
+						lq.log(lq.configLang.classScanNoRaceOrGroup + classfile.getName());
 					}
 
 				} catch (Exception e) {
 					validConfig = false;
-					lq.logger.severe(lq.configLang.classScanInvalid + classfile.getName());
+					lq.logSevere(lq.configLang.classScanInvalid + classfile.getName());
 					e.printStackTrace();
 				}
 
@@ -97,16 +106,23 @@ public class Classes {
 		wpmClasses = new WeightedProbMap<String>(classprobability);
 
 		// notify sanning ended
-		lq.logger.info(lq.configLang.classScanEnd);
+		lq.log(lq.configLang.classScanEnd);
 	}
 
 	public boolean checkRaceList(List<String> allowedRaces) {
+		if (allowedRaces == null) {
+			return false;
+		}
+
 		int racecount = 0;
 		for (String r : allowedRaces) {
+			if (r.equalsIgnoreCase("all") || r.equalsIgnoreCase("any")) {
+				return true;
+			}
 			if (lq.races.raceExists(r)) {
 				racecount++;
 			} else {
-				lq.logger.warning(lq.configLang.classScanRaceWarning + r);
+				lq.logWarn(lq.configLang.classScanRaceWarning + r);
 			}
 		}
 		if (racecount > 0) {
@@ -117,12 +133,18 @@ public class Classes {
 	}
 
 	public boolean checkGroupList(List<String> allowedGroups) {
+		if (allowedGroups == null) {
+			return false;
+		}
 		int groupcount = 0;
 		for (String g : allowedGroups) {
+			if (g.equalsIgnoreCase("all") || g.equalsIgnoreCase("any")) {
+				return true;
+			}
 			if (lq.races.groupExists(g)) {
 				groupcount++;
 			} else {
-				lq.logger.warning(lq.configLang.classScanGroupWarning + g);
+				lq.logWarn(lq.configLang.classScanGroupWarning + g);
 			}
 		}
 		if (groupcount > 0) {
@@ -131,20 +153,20 @@ public class Classes {
 			return false;
 		}
 	}
-	
+
 	public List<String> getClasses(String raceName) {
 		List<String> groups = lq.races.races.get(raceName).groups;
 		List<String> result = new ArrayList<String>();
-		for (ClassType c : classTypes.values()){
-			if (c.allowedRaces.contains(raceName)) {
+		for (ClassType c : classTypes.values()) {
+			if (c.allowedRaces.contains(raceName) || c.allowedRaces.contains("ALL") || c.allowedRaces.contains("ANY")) {
 				result.add(c.name);
 			} else {
-				//check if groups and allowed groups have any common elements
-				if (!Collections.disjoint(groups, c.allowedGroups)) {
+				// check if groups and allowed groups have any common elements
+				if (!Collections.disjoint(groups, c.allowedGroups) || c.allowedGroups.contains("ALL") || c.allowedGroups.contains("ANY")) {
 					result.add(c.name);
 				}
 			}
 		}
 		return result;
-	}	
+	}
 }

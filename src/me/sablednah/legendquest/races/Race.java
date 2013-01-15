@@ -4,8 +4,19 @@ import java.util.List;
 
 public class Race {
 
-	public String name;
 	public String filename;
+	public String name;
+	public String plural;
+	public Double size;
+	public boolean defaultRace;
+	public int statStr;
+	public int statDex;
+	public int statInt;
+	public int statWis;
+	public int statCon;
+	public int statChr;
+	public int baseHealth;
+	
 	// frequency used for NPC chance.
 	public int frequency;
 

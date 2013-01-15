@@ -12,4 +12,13 @@ public class ClassType {
 	//Allowed races for this class
 	public List<String> allowedRaces;
 	public List<String>	allowedGroups;
+	
+	public boolean defaultClass;
+	public int statStr;
+	public int statDex;
+	public int statInt;
+	public int statWis;
+	public int statCon;
+	public int statChr;
+	public int healthPerLevel;
 }

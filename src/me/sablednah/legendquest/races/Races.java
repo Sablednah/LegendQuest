@@ -24,7 +24,7 @@ public class Races {
 		// Find the Races folder
 		File raceDir = new File(lq.getDataFolder() + File.separator + "races");
 		//notify sanning begun
-		lq.logger.info(lq.configLang.raceScan + ": " + raceDir);
+		lq.log(lq.configLang.raceScan + ": " + raceDir);
 
 		// make it if not found
 		if (!raceDir.exists()) {
@@ -38,7 +38,7 @@ public class Races {
 			if (race.isFile() && race.getName().toLowerCase().endsWith(".yml")) {
 				// found a config file - load it in time
 				
-				lq.logger.info(lq.configLang.raceScanFound + race.getName());
+				lq.log(lq.configLang.raceScanFound + race.getName());
 				Race r = new Race();
 				Boolean validConfig = true;
 				YamlConfiguration thisConfig = null;
@@ -51,13 +51,24 @@ public class Races {
 					r.name = thisConfig.getString("name");
 					r.frequency = thisConfig.getInt("frequency");
 					
+					r.plural = thisConfig.getString("plural");
+					r.size = thisConfig.getDouble("size");
+					r.defaultRace= thisConfig.getBoolean("default");
+					r.statStr = thisConfig.getInt("statmods.str");
+					r.statDex = thisConfig.getInt("statmods.dex");
+					r.statInt = thisConfig.getInt("statmods.int");
+					r.statWis = thisConfig.getInt("statmods.wis");
+					r.statCon = thisConfig.getInt("statmods.con");
+					r.statChr = thisConfig.getInt("statmods.chr");
+					r.baseHealth = thisConfig.getInt("basehealth");
+					
 					@SuppressWarnings("unchecked")
 					List<String> groups = (List<String>) thisConfig.getList("groups"); 
 					r.groups = groups;
 
 				} catch (Exception e) {
 					validConfig = false;
-					lq.logger.info(lq.configLang.raceScanInvalid + race.getName());
+					lq.log(lq.configLang.raceScanInvalid + race.getName());
 					e.printStackTrace();
 				}
 
@@ -70,12 +81,13 @@ public class Races {
 		wpmRaces = new WeightedProbMap<String>(raceprobability);
 		
 		//notify sanning ended
-		lq.logger.info(lq.configLang.raceScanEnd);
+		lq.log(lq.configLang.raceScanEnd);
 	}
 	
 	public boolean raceExists(String racename) {
 		return races.containsKey(racename); 
 	}
+
 	public boolean groupExists(String groupname) {
 		Collection<Race> groups = races.values();
 		for ( Race group  : groups) {
@@ -85,5 +97,4 @@ public class Races {
 	    } 
 		return false;
 	}
-	
 }

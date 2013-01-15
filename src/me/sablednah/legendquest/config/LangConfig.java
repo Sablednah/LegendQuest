@@ -17,7 +17,7 @@ public class LangConfig extends Config {
 	public String	classScanInvalid		= "Invalid class file: ";
 	public String	classScanRaceWarning	= "Warning Found unknon Race: ";
 	public String	classScanNoRaceOrGroup	= "No Valid race or group found in: ";
-	public String	classScanGroupWarning	= "No Valid race or group found in: ";
+	public String	classScanGroupWarning	= "No Valid group found in: ";
 
 	public LangConfig(Main p) {
 		super(p, "lang.yml");
@@ -37,6 +37,9 @@ public class LangConfig extends Config {
 		this.classScanRaceWarning = this.getConfigItem("classScanRaceWarning", this.classScanRaceWarning);
 		this.classScanNoRaceOrGroup = this.getConfigItem("classScanNoRaceOrGroup", this.classScanNoRaceOrGroup);
 		this.classScanGroupWarning = this.getConfigItem("classScanGroupWarning", this.classScanGroupWarning);
+
+//		this.config.options().copyDefaults(true);
+//		saveConfig();
 
 	}
 }
