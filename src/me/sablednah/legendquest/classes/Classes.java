@@ -18,6 +18,8 @@ public class Classes {
 	private ArrayList<Pair<Integer, String>>	classprobability	= new ArrayList<Pair<Integer, String>>();
 	public WeightedProbMap<String>				wpmClasses;
 
+	public ClassType							defaultClass;
+
 	@SuppressWarnings("unchecked")
 	public Classes(Main p) {
 		this.lq = p;
@@ -68,9 +70,15 @@ public class Classes {
 					c.frequency = thisConfig.getInt("frequency");
 
 					List<String> allowedRaces = (List<String>) thisConfig.getList("allowedRaces");
+					for (int i = 0; i < allowedRaces.size(); i++) {
+						allowedRaces.set(i, allowedRaces.get(i).toLowerCase());
+					}
 					c.allowedRaces = allowedRaces;
 
 					List<String> allowedGroups = (List<String>) thisConfig.getList("allowedGroups");
+					for (int i = 0; i < allowedGroups.size(); i++) {
+						allowedGroups.set(i, allowedGroups.get(i).toLowerCase());
+					}
 					c.allowedGroups = allowedGroups;
 
 					c.defaultClass = thisConfig.getBoolean("default");
@@ -99,7 +107,10 @@ public class Classes {
 
 				if (validConfig) {
 					classprobability.add(new Pair<Integer, String>(c.frequency, c.name));
-					classTypes.put(c.name, c);
+					classTypes.put(c.name.toLowerCase(), c);
+					if (c.defaultClass) {
+						defaultClass = c;
+					}
 				}
 			}
 		}
@@ -107,6 +118,11 @@ public class Classes {
 
 		// notify sanning ended
 		lq.log(lq.configLang.classScanEnd);
+		if (defaultClass == null) {
+			lq.log(lq.configLang.classNoDefault);
+			// set "default" to first found to stop breaking...
+			defaultClass = classTypes.entrySet().iterator().next().getValue();
+		}
 	}
 
 	public boolean checkRaceList(List<String> allowedRaces) {
@@ -158,11 +174,11 @@ public class Classes {
 		List<String> groups = lq.races.races.get(raceName).groups;
 		List<String> result = new ArrayList<String>();
 		for (ClassType c : classTypes.values()) {
-			if (c.allowedRaces.contains(raceName) || c.allowedRaces.contains("ALL") || c.allowedRaces.contains("ANY")) {
+			if (c.allowedRaces.contains(raceName.toLowerCase()) || c.allowedRaces.contains("all") || c.allowedRaces.contains("any")) {
 				result.add(c.name);
 			} else {
 				// check if groups and allowed groups have any common elements
-				if (!Collections.disjoint(groups, c.allowedGroups) || c.allowedGroups.contains("ALL") || c.allowedGroups.contains("ANY")) {
+				if (!Collections.disjoint(groups, c.allowedGroups) || c.allowedGroups.contains("all") || c.allowedGroups.contains("any")) {
 					result.add(c.name);
 				}
 			}

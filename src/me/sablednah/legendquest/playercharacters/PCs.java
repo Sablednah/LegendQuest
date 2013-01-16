@@ -15,7 +15,7 @@ public class PCs {
 	public PCs(Main p) {
 		this.lq = p;
 		for (Player player : lq.getServer().getOnlinePlayers()) {
-			String pName = player.getName().toLowerCase();
+			String pName = player.getName();
 			PC pc = getPC(player);
 			addPlayer(pName, pc);
 		}		
@@ -43,14 +43,14 @@ public class PCs {
 
 	public PC getPC(OfflinePlayer p) {
 		if (p != null) {
-			return getPC(p.getName().toLowerCase());
+			return getPC(p.getName());
 		}
 		return null;
 	}
 
 	public PC getPC(Player p) {
 		if (p != null) {
-			return getPC(p.getName().toLowerCase());
+			return getPC(p.getName());
 		}
 		return null;
 	}
@@ -60,7 +60,7 @@ public class PCs {
 		PC pc = null;
 		pc = lq.datasync.getData(pName);
 		if (pc == null) {
-			pc = new PC(pName);
+			pc = new PC(lq, pName);
 		}
 		return pc;
 	}

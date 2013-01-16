@@ -9,15 +9,22 @@ public class LangConfig extends Config {
 	public String	raceScan				= "Scanning for race files in folder: ";
 	public String	raceScanFound			= "Found race: ";
 	public String	raceScanEnd				= "Scanning for race files completed.";
-	public String	raceScanInvalid			= "Invalid race file: ";
+	public String	raceScanInvalid			= "Invalid race: ";
 
 	public String	classScan				= "Scanning for class files in folder: ";
 	public String	classScanFound			= "Found class: ";
 	public String	classScanEnd			= "Scanning for class files completed.";
-	public String	classScanInvalid		= "Invalid class file: ";
+	public String	classScanInvalid		= "Invalid class: ";
 	public String	classScanRaceWarning	= "Warning Found unknon Race: ";
 	public String	classScanNoRaceOrGroup	= "No Valid race or group found in: ";
 	public String	classScanGroupWarning	= "No Valid group found in: ";
+
+	public String	raceNoDefault			= "Sorry no default Race found - using first available.";
+	public String	classNoDefault			= "Sorry no default Class found - using first available.";
+	public String	youAreCurrently			= "You are currently ";
+	public String	raceChanged				= "Your race has been changed to ";
+	public String	raceChangeNotAllowed	= "Sorry you have already slected a race. ";
+	public String	raceList = "-------- Races --------";
 
 	public LangConfig(Main p) {
 		super(p, "lang.yml");
@@ -38,8 +45,16 @@ public class LangConfig extends Config {
 		this.classScanNoRaceOrGroup = this.getConfigItem("classScanNoRaceOrGroup", this.classScanNoRaceOrGroup);
 		this.classScanGroupWarning = this.getConfigItem("classScanGroupWarning", this.classScanGroupWarning);
 
-//		this.config.options().copyDefaults(true);
-//		saveConfig();
+		this.raceNoDefault = this.getConfigItem("raceNoDefault", this.raceNoDefault);
+		this.classNoDefault = this.getConfigItem("classNoDefault", this.classNoDefault);
+
+		this.youAreCurrently = this.getConfigItem("youAreCurrently", this.youAreCurrently);
+		this.raceChanged = this.getConfigItem("raceChanged", this.raceChanged);
+		this.raceChangeNotAllowed = this.getConfigItem("raceChangeNotAllowed", this.raceChangeNotAllowed);
+		this.raceList = this.getConfigItem("raceList", this.raceList);
+		
+		// this.config.options().copyDefaults(true);
+		// saveConfig();
 
 	}
 }

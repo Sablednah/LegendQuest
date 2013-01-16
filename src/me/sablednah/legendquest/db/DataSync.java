@@ -43,25 +43,34 @@ public class DataSync {
 	public synchronized PC getData(String pName) {
 		// TODO read PC record from database
 		String sql;
-		PC pc = new PC(pName);
-		sql = "SELECT * FROM pc WHERE player='"+pName+"';";
+		PC pc = new PC(lq, pName);
+		sql = "SELECT * FROM pcs WHERE player='" + pName + "';";
 		try {
 			ResultSet r = dbconn.query(sql);
-			if (r==null) { return null; }
+			if (r == null) {
+				return null;
+			}
 			while (r.next()) {
-				sql = sql + "player,charname,mainClass,subClass,maxHP,health,skillpoints";
-
 				pc.charname = r.getString("charname");
-				pc.maxHP = r.getInt("charname");
-				pc.health = r.getInt("charname");
-				pc.skillpoints = r.getInt("charname");
+				pc.maxHP = r.getInt("maxHP");
+				pc.health = r.getInt("health");
+				pc.skillpoints = r.getInt("skillpoints");
+				pc.race = lq.races.races.get(r.getString("race"));
+				pc.raceChanged = r.getBoolean("raceChanged");
 				
 				pc.mainClass = lq.classes.classTypes.get(r.getString("mainClass"));
 				pc.subClass = lq.classes.classTypes.get(r.getString("subClass"));
-				
+
+				pc.statStr = r.getInt("statStr");
+				pc.statDex = r.getInt("statDex");
+				pc.statInt = r.getInt("statInt");
+				pc.statWis = r.getInt("statWis");
+				pc.statCon = r.getInt("statCon");
+				pc.statChr = r.getInt("statChr");
+
 			}
 			r.close();
-			
+
 			return pc;
 		} catch (SQLException e) {
 			lq.logSevere("Error writing pc to database.");
@@ -74,30 +83,55 @@ public class DataSync {
 	private synchronized PC writeData(PC pc) {
 		// TODO write PC record from database
 		String sql;
-		sql = "REPLACE pc (";
-		sql = sql + "player,charname,mainClass,subClass,maxHP,health,skillpoints";
-		sql = sql + ") values(";
-		sql = sql + pc.player + ",";
-		sql = sql + pc.charname + ",";
-		sql = sql + pc.mainClass.name + ",";
-		sql = sql + pc.subClass.name + ",";
+		sql = "REPLACE INTO pcs (";
+		sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,statStr,statDex,statInt,statWis,statCon,statChr,skillpoints";
+		sql = sql + ") values(\"";
+		sql = sql + pc.player + "\",\"";
+		sql = sql + pc.charname + "\",\"";
+		sql = sql + pc.race.name + "\",";
+		if (pc.raceChanged) {
+			sql = sql + "1,\"";
+		} else {
+			sql = sql + "0,\"";
+		}
+		sql = sql + pc.mainClass.name + "\",\"";
+		if (pc.subClass != null) {
+			sql = sql + pc.subClass.name + "\",";
+		} else {
+			sql = sql + "\",";
+		}
 		sql = sql + pc.maxHP + ",";
 		sql = sql + pc.health + ",";
+
+		sql = sql + pc.statStr + ",";
+		sql = sql + pc.statDex + ",";
+		sql = sql + pc.statInt + ",";
+		sql = sql + pc.statWis + ",";
+		sql = sql + pc.statCon + ",";
+		sql = sql + pc.statChr + ",";
+
 		sql = sql + pc.skillpoints;
+
 		sql = sql + ");";
-		
+		lq.debug.fine(sql);
 		try {
 			ResultSet r = dbconn.query(sql);
 			r.close();
 		} catch (SQLException e) {
 			lq.logSevere("Error reading pc from database.");
 			e.printStackTrace();
-		}		
+		}
 		return null;
 	}
 
 	public void flushdb() {
-
+		PC pc;
+		while (!pendingWrites.isEmpty()) {
+			pc = pendingWrites.poll();
+			if (pc != null) {
+				writeData(pc);
+			}
+		}
 	}
 
 	public void shutdown() {
@@ -138,17 +172,26 @@ public class DataSync {
 		}
 		create += ", ";
 		create += "charname varchar(64) NOT NULL, ";
+		create += "race varchar(64), ";
+		create += "raceChanged INTEGER, ";
 		create += "mainClass varchar(64), ";
 		create += "subClass varchar(64), ";
 		create += "maxHP INTEGER, ";
 		create += "health INTEGER, ";
+		create += "statStr INTEGER, ";
+		create += "statDex INTEGER, ";
+		create += "statInt INTEGER, ";
+		create += "statWis INTEGER, ";
+		create += "statCon INTEGER, ";
+		create += "statChr INTEGER, ";
 		create += "skillpoints INTEGER";
+
 		if (lq.configMain.useMySQL) {
 			create += ", PRIMARY KEY (player)";
 		}
 		create += " );";
 		lq.debug.fine(create);
-		
+
 		ResultSet r;
 		try {
 			r = dbconn.query(create);
@@ -156,7 +199,7 @@ public class DataSync {
 			r.close();
 			if (!lq.configMain.useMySQL) {
 				create = "CREATE UNIQUE INDEX IF NOT EXISTS player_index ON pcs(player)";
-				r= dbconn.query(create);
+				r = dbconn.query(create);
 				r.close();
 			}
 		} catch (SQLException e) {

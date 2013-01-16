@@ -157,8 +157,6 @@ public class Utils {
 		}
 	}
 
-
-
 	public static void stomp(Location from, Entity stomper, int radius, int damage) {
 		Bukkit.broadcastMessage("Stomp!");
 		for (Entity bounced : stomper.getNearbyEntities(radius, radius, radius)) {
@@ -227,7 +225,6 @@ public class Utils {
 		}
 		blocks = null;
 	}
-
 
 	public static void setEquip(LivingEntity mob, ItemStack item, int slot) {
 		EntityEquipment eq = mob.getEquipment();
