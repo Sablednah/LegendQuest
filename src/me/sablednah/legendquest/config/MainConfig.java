@@ -18,6 +18,9 @@ public class MainConfig extends Config {
 	public String	invalidArgumentsCommand = "Invalid arguments.";
 	public String	characterNotFound = "Character not found for: ";
 
+	
+	
+	
 	public MainConfig(Main p) {
 		super(p, "config.yml");
 

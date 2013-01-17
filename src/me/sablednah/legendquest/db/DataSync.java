@@ -2,11 +2,9 @@ package me.sablednah.legendquest.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-//import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import me.sablednah.legendquest.Main;
-//Simport me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.playercharacters.PC;
 
 import lib.PatPeter.SQLibrary.*;
@@ -41,7 +39,6 @@ public class DataSync {
 	}
 
 	public synchronized PC getData(String pName) {
-		// TODO read PC record from database
 		String sql;
 		PC pc = new PC(lq, pName);
 		sql = "SELECT * FROM pcs WHERE player='" + pName + "';";
@@ -55,11 +52,11 @@ public class DataSync {
 				pc.maxHP = r.getInt("maxHP");
 				pc.health = r.getInt("health");
 				pc.skillpoints = r.getInt("skillpoints");
-				pc.race = lq.races.races.get(r.getString("race"));
+				pc.race = lq.races.getRace(r.getString("race"));
 				pc.raceChanged = r.getBoolean("raceChanged");
-				
-				pc.mainClass = lq.classes.classTypes.get(r.getString("mainClass"));
-				pc.subClass = lq.classes.classTypes.get(r.getString("subClass"));
+
+				pc.mainClass = lq.classes.getClass(r.getString("mainClass"));
+				pc.subClass = lq.classes.getClass(r.getString("subClass"));
 
 				pc.statStr = r.getInt("statStr");
 				pc.statDex = r.getInt("statDex");
@@ -70,6 +67,13 @@ public class DataSync {
 
 			}
 			r.close();
+			sql = "SELECT xp FROM xpEarnt WHERE player='" + pName + "' and class='" + pc.mainClass.name + "';";
+			r = dbconn.query(sql);
+			if (r != null) {
+				while (r.next()) {
+					pc.currentXP = r.getInt("xp");
+				}
+			}
 
 			return pc;
 		} catch (SQLException e) {
@@ -80,7 +84,7 @@ public class DataSync {
 		return null;
 	}
 
-	private synchronized PC writeData(PC pc) {
+	private synchronized void writeData(PC pc) {
 		// TODO write PC record from database
 		String sql;
 		sql = "REPLACE INTO pcs (";
@@ -102,26 +106,51 @@ public class DataSync {
 		}
 		sql = sql + pc.maxHP + ",";
 		sql = sql + pc.health + ",";
-
 		sql = sql + pc.statStr + ",";
 		sql = sql + pc.statDex + ",";
 		sql = sql + pc.statInt + ",";
 		sql = sql + pc.statWis + ",";
 		sql = sql + pc.statCon + ",";
 		sql = sql + pc.statChr + ",";
-
 		sql = sql + pc.skillpoints;
-
 		sql = sql + ");";
 		lq.debug.fine(sql);
+
+		String sql2;
+		sql2 = "REPLACE INTO xpEarnt (";
+		sql2 = sql2 + "player,class,xp";
+		sql2 = sql2 + ") values(\"";
+		sql2 = sql2 + pc.player + "\",\"";
+		sql2 = sql2 + pc.mainClass.name + "\",";
+		sql2 = sql2 + pc.currentXP;
+		sql2 = sql2 + ");";
+		lq.debug.fine(sql2);
+
+		String sql3 = "";
+		if (pc.subClass != null) {
+			sql3 = "REPLACE INTO xpEarnt (";
+			sql3 = sql3 + "player,class,xp";
+			sql3 = sql3 + ") values(\"";
+			sql3 = sql3 + pc.player + "\",\"";
+			sql3 = sql3 + pc.subClass.name + "\",";
+			sql3 = sql3 + pc.currentXP;
+			sql3 = sql3 + ");";
+			lq.debug.fine(sql3);
+		}
+
 		try {
 			ResultSet r = dbconn.query(sql);
 			r.close();
+			r = dbconn.query(sql2);
+			r.close();
+			if (!sql3.isEmpty()) {
+				r = dbconn.query(sql3);
+				r.close();
+			}
 		} catch (SQLException e) {
 			lq.logSevere("Error reading pc from database.");
 			e.printStackTrace();
 		}
-		return null;
 	}
 
 	public void flushdb() {
@@ -217,9 +246,7 @@ public class DataSync {
 		}
 		create += ", ";
 		create += "class varchar(64) NOT NULL, ";
-		create += "xp INTEGER, ";
-		create += "health INTEGER, ";
-		create += "skillpoints INTEGER";
+		create += "xp INTEGER";
 		if (lq.configMain.useMySQL) {
 			create += ", PRIMARY KEY (player)";
 		}

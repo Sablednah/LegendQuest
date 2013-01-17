@@ -3,6 +3,7 @@ package me.sablednah.legendquest.cmds;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,6 +55,15 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 			sender.sendMessage("CHR: "+pc.getStatChr());
 			sender.sendMessage("Race: "+pc.race.name);
 			sender.sendMessage("Class: "+pc.mainClass.name);
+			
+			Player p= Bukkit.getServer().getPlayer(targetName);
+			
+			if (p!=null) {
+				sender.sendMessage("Health: "+p.getHealth() + " / " + p.getMaxHealth());
+			} else {
+				sender.sendMessage("Health: "+pc.health + " / " + pc.maxHP);
+			}
+
 			return true;
 		} else {
 			sender.sendMessage(lq.configMain.characterNotFound + targetName);

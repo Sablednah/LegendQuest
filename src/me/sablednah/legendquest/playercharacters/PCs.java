@@ -3,6 +3,7 @@ package me.sablednah.legendquest.playercharacters;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -65,7 +66,29 @@ public class PCs {
 		return pc;
 	}
 
+	public void savePlayer(PC pc) {
+		lq.datasync.addWrite(pc);
+	}
+	
 	public void savePlayer(String name) {
-		lq.datasync.addWrite(getPC(name));
+		savePlayer(getPC(name));
+	}
+
+	public void scheduleUpdate(String pName) {
+		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedWrite(pName), 4L);
+		
+	}
+
+	public class DelayedWrite implements Runnable {
+		public String name;
+		
+		public DelayedWrite(String n) {
+			this.name = n;
+		}
+		
+		@Override
+		public void run() {
+			savePlayer(name);
+		}
 	}
 }

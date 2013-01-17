@@ -21,4 +21,6 @@ public class ClassType {
 	public int statCon;
 	public int statChr;
 	public int healthPerLevel;
+	
+	public String perm;
 }

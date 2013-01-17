@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.utils.Pair;
 import me.sablednah.legendquest.utils.WeightedProbMap;
 
 public class Classes {
 	public Main									lq;
-	public Map<String, ClassType>				classTypes			= new HashMap<String, ClassType>();
+	private Map<String, ClassType>				classTypes			= new HashMap<String, ClassType>();
 	private ArrayList<Pair<Integer, String>>	classprobability	= new ArrayList<Pair<Integer, String>>();
 	public WeightedProbMap<String>				wpmClasses;
 
@@ -76,8 +79,10 @@ public class Classes {
 					c.allowedRaces = allowedRaces;
 
 					List<String> allowedGroups = (List<String>) thisConfig.getList("allowedGroups");
-					for (int i = 0; i < allowedGroups.size(); i++) {
-						allowedGroups.set(i, allowedGroups.get(i).toLowerCase());
+					if (allowedGroups != null) {
+						for (int i = 0; i < allowedGroups.size(); i++) {
+							allowedGroups.set(i, allowedGroups.get(i).toLowerCase());
+						}
 					}
 					c.allowedGroups = allowedGroups;
 
@@ -89,6 +94,8 @@ public class Classes {
 					c.statCon = thisConfig.getInt("statmods.con");
 					c.statChr = thisConfig.getInt("statmods.chr");
 					c.healthPerLevel = thisConfig.getInt("healthperlevel");
+
+					c.perm = thisConfig.getString("perm");
 
 					// check race or group exists.
 					boolean hasRace = checkRaceList(allowedRaces);
@@ -170,19 +177,44 @@ public class Classes {
 		}
 	}
 
-	public List<String> getClasses(String raceName) {
-		List<String> groups = lq.races.races.get(raceName).groups;
-		List<String> result = new ArrayList<String>();
-		for (ClassType c : classTypes.values()) {
-			if (c.allowedRaces.contains(raceName.toLowerCase()) || c.allowedRaces.contains("all") || c.allowedRaces.contains("any")) {
-				result.add(c.name);
-			} else {
-				// check if groups and allowed groups have any common elements
-				if (!Collections.disjoint(groups, c.allowedGroups) || c.allowedGroups.contains("all") || c.allowedGroups.contains("any")) {
+	public List<String> getClasses(String raceName, Player player) {
+
+		Race race = lq.races.getRace(raceName);
+		if (race != null) {
+			List<String> groups = race.groups;
+			List<String> result = new ArrayList<String>();
+			for (ClassType c : classTypes.values()) {
+				if (player != null) {
+					if (!(c.perm == null || c.perm.equalsIgnoreCase("") || player.isPermissionSet(c.perm))) {
+						continue;
+					}
+				}
+				if (c.allowedRaces.contains(raceName.toLowerCase()) || c.allowedRaces.contains("all") || c.allowedRaces.contains("any")) {
 					result.add(c.name);
+				} else {
+					// check if groups and allowed groups have any common elements
+					if (groups != null && c.allowedGroups != null) {
+						if (!Collections.disjoint(groups, c.allowedGroups) || c.allowedGroups.contains("all") || c.allowedGroups.contains("any")) {
+							result.add(c.name);
+						}
+					}
 				}
 			}
+			return result;
+		} else {
+			return null;
 		}
-		return result;
+	}
+
+	public List<String> getClasses(String raceName) {
+		return getClasses(raceName, null);
+	}
+
+	public Map<String, ClassType> getClassTypes() {
+		return classTypes;
+	}
+
+	public ClassType getClass(String className) {
+		return classTypes.get(className.toLowerCase());
 	}
 }

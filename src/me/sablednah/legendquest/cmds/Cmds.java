@@ -2,8 +2,8 @@ package me.sablednah.legendquest.cmds;
 
 public enum Cmds {
 	// constant (console allowed,min arg length)
-	RACE(false, 0),
-	CLASS(false, 0),
+	RACE(true, 0),
+	CLASS(true, 0),
 	RELOAD(true, 0),
 	STATS(true, 0),
 	HELP(true, 0);

@@ -19,7 +19,6 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		// TODO Auto-generated method stub
 		// get the enum for this command
 		Cmds cmd = Cmds.valueOf("RACE");
 
@@ -27,9 +26,12 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 			return true;
 		}
 
-		// from her on is command specific code.
-		sender.sendMessage("Executing " + cmd.toString() + " command");
-
+		// send console the list list
+		if (!(sender instanceof Player)) {
+			sendRaceList(sender,null);
+			return true;
+		}
+		
 		Player p = (Player) sender;
 		PC pc = lq.players.getPC(p);
 
@@ -40,21 +42,10 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 		} else {
 			String raceName = args[0].toLowerCase();
 			if (raceName.equalsIgnoreCase("list")) {
-				sender.sendMessage(lq.configLang.raceList);
-				String strout;
-				for (Race rc : lq.races.races.values()) {
-					strout = " - " + rc.name;
-					if (rc.defaultRace) {
-						strout += " *";
-					}
-					if (pc.race.equals(rc)) {
-						strout += " <";
-					}
-					sender.sendMessage(strout);
-				}
+				sendRaceList(sender,pc);
 				return true;
 			} else {
-				Race r = lq.races.races.get(raceName);
+				Race r = lq.races.getRace(raceName);
 				if (r == null) {
 					sender.sendMessage(lq.configLang.raceScanInvalid + ": " + raceName);
 					return true;
@@ -73,5 +64,26 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 				}
 			}
 		}
+	}
+
+	private void sendRaceList(CommandSender sender, PC pc) {
+		sender.sendMessage(lq.configLang.raceList);
+		String strout;
+		for (Race rc : lq.races.getRaces().values()) {
+			if (pc!=null) {
+				if (!(rc.perm == null || rc.perm.equalsIgnoreCase("") || ((Player)sender).isPermissionSet(rc.perm) )) {
+					continue;	
+				}
+			}
+			strout = " - " + rc.name;
+			if (rc.defaultRace) {
+				strout += " *";
+			}
+			if (pc!=null && pc.race.equals(rc)) {
+				strout += " <";
+			}
+			sender.sendMessage(strout);
+		}
+		
 	}
 }

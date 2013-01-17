@@ -24,7 +24,11 @@ public class LangConfig extends Config {
 	public String	youAreCurrently			= "You are currently ";
 	public String	raceChanged				= "Your race has been changed to ";
 	public String	raceChangeNotAllowed	= "Sorry you have already slected a race. ";
-	public String	raceList = "-------- Races --------";
+	public String	raceList				= "-------- Races --------";
+
+	public String	classSelectRaceFirst	= "Please Select Race before class.";
+	public String	classChanged			= "You have changed your class to: ";
+	public String	classList				= "------- Classes -------";
 
 	public LangConfig(Main p) {
 		super(p, "lang.yml");
@@ -52,7 +56,11 @@ public class LangConfig extends Config {
 		this.raceChanged = this.getConfigItem("raceChanged", this.raceChanged);
 		this.raceChangeNotAllowed = this.getConfigItem("raceChangeNotAllowed", this.raceChangeNotAllowed);
 		this.raceList = this.getConfigItem("raceList", this.raceList);
-		
+
+		this.classSelectRaceFirst = this.getConfigItem("classSelectRaceFirst", this.classSelectRaceFirst);
+		this.classChanged = this.getConfigItem("classChanged", this.classChanged);
+		this.classList = this.getConfigItem("classList", this.classList);
+
 		// this.config.options().copyDefaults(true);
 		// saveConfig();
 

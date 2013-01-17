@@ -17,6 +17,8 @@ public class Race {
 	public int statChr;
 	public int baseHealth;
 	
+	public String perm;
+	
 	// frequency used for NPC chance.
 	public int frequency;
 

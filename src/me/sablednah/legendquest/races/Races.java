@@ -14,7 +14,7 @@ import me.sablednah.legendquest.utils.WeightedProbMap;
 
 public class Races {
 	public Main									lq;
-	public Map<String, Race>					races			= new HashMap<String, Race>();
+	private Map<String, Race>					races			= new HashMap<String, Race>();
 	private ArrayList<Pair<Integer, String>>	raceprobability	= new ArrayList<Pair<Integer, String>>();
 	public WeightedProbMap<String>				wpmRaces;
 
@@ -63,6 +63,8 @@ public class Races {
 					r.statCon = thisConfig.getInt("statmods.con");
 					r.statChr = thisConfig.getInt("statmods.chr");
 					r.baseHealth = thisConfig.getInt("basehealth");
+					
+					r.perm = thisConfig.getString("perm");
 
 					@SuppressWarnings("unchecked")
 					List<String> groups = (List<String>) thisConfig.getList("groups");
@@ -112,4 +114,13 @@ public class Races {
 		}
 		return false;
 	}
+
+	public Map<String, Race> getRaces() {
+		return races;
+	}
+	
+	public Race getRace(String raceName) {
+		return races.get(raceName.toLowerCase());
+	}
+	
 }

@@ -19,5 +19,6 @@ public class CommandTemplate {
 		}
 		return true;
 	}
+	 
 }
 

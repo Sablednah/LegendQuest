@@ -3,6 +3,9 @@ package me.sablednah.legendquest.playercharacters;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.races.Race;
@@ -19,8 +22,8 @@ public class PC {
 	public int						maxHP;
 	public int						health;
 	public int						skillpoints;
-	
-	public boolean raceChanged;
+
+	public boolean					raceChanged;
 
 	public int						statStr;
 	public int						statDex;
@@ -28,6 +31,8 @@ public class PC {
 	public int						statWis;
 	public int						statCon;
 	public int						statChr;
+
+	public int						currentXP;
 
 	public PC(Main plugin, String pName) {
 		this.lq = plugin;
@@ -41,6 +46,7 @@ public class PC {
 		this.maxHP = 20;
 		this.health = 20;
 		this.skillpoints = 0;
+		this.currentXP = 0;
 		if (!lq.configMain.randomStats) {
 			statStr = statDex = statInt = statWis = statCon = statChr = 12;
 		} else {
@@ -67,22 +73,24 @@ public class PC {
 	public int getStatStr() {
 		int stat;
 		stat = statStr;
-		if (race!=null) { stat += race.statStr; }	
-		if (mainClass!=null){
-			if (subClass!=null) {
-				int classboost =0;
-				if (mainClass.statStr > -1 && subClass.statStr > -1)  {
+		if (race != null) {
+			stat += race.statStr;
+		}
+		if (mainClass != null) {
+			if (subClass != null) {
+				int classboost = 0;
+				if (mainClass.statStr > -1 && subClass.statStr > -1) {
 					// both positive (ok 0+)
-					classboost = Math.max(mainClass.statStr , subClass.statStr);
-				} else if (mainClass.statStr < 1 && subClass.statStr < 1)  {
+					classboost = Math.max(mainClass.statStr, subClass.statStr);
+				} else if (mainClass.statStr < 1 && subClass.statStr < 1) {
 					// both negative (ok 0+)
-					classboost = Math.max(mainClass.statStr , subClass.statStr);
+					classboost = Math.max(mainClass.statStr, subClass.statStr);
 				} else {
 					classboost = mainClass.statStr + subClass.statStr;
 				}
-				stat += classboost; 
+				stat += classboost;
 			} else {
-				stat += mainClass.statStr; 
+				stat += mainClass.statStr;
 			}
 		}
 		return stat;
@@ -94,22 +102,24 @@ public class PC {
 	public int getStatDex() {
 		int stat;
 		stat = statDex;
-		if (race!=null) { stat += race.statDex; }	
-		if (mainClass!=null){
-			if (subClass!=null) {
-				int classboost =0;
-				if (mainClass.statDex > -1 && subClass.statDex > -1)  {
+		if (race != null) {
+			stat += race.statDex;
+		}
+		if (mainClass != null) {
+			if (subClass != null) {
+				int classboost = 0;
+				if (mainClass.statDex > -1 && subClass.statDex > -1) {
 					// both positive (ok 0+)
-					classboost = Math.max(mainClass.statDex , subClass.statDex);
-				} else if (mainClass.statDex < 1 && subClass.statDex < 1)  {
+					classboost = Math.max(mainClass.statDex, subClass.statDex);
+				} else if (mainClass.statDex < 1 && subClass.statDex < 1) {
 					// both negative (ok 0+)
-					classboost = Math.max(mainClass.statDex , subClass.statDex);
+					classboost = Math.max(mainClass.statDex, subClass.statDex);
 				} else {
 					classboost = mainClass.statDex + subClass.statDex;
 				}
-				stat += classboost; 
+				stat += classboost;
 			} else {
-				stat += mainClass.statDex; 
+				stat += mainClass.statDex;
 			}
 		}
 		return stat;
@@ -121,22 +131,24 @@ public class PC {
 	public int getStatInt() {
 		int stat;
 		stat = statInt;
-		if (race!=null) { stat += race.statInt; }	
-		if (mainClass!=null){
-			if (subClass!=null) {
-				int classboost =0;
-				if (mainClass.statInt > -1 && subClass.statInt > -1)  {
+		if (race != null) {
+			stat += race.statInt;
+		}
+		if (mainClass != null) {
+			if (subClass != null) {
+				int classboost = 0;
+				if (mainClass.statInt > -1 && subClass.statInt > -1) {
 					// both positive (ok 0+)
-					classboost = Math.max(mainClass.statInt , subClass.statInt);
-				} else if (mainClass.statInt < 1 && subClass.statInt < 1)  {
+					classboost = Math.max(mainClass.statInt, subClass.statInt);
+				} else if (mainClass.statInt < 1 && subClass.statInt < 1) {
 					// both negative (ok 0+)
-					classboost = Math.max(mainClass.statInt , subClass.statInt);
+					classboost = Math.max(mainClass.statInt, subClass.statInt);
 				} else {
 					classboost = mainClass.statInt + subClass.statInt;
 				}
-				stat += classboost; 
+				stat += classboost;
 			} else {
-				stat += mainClass.statInt; 
+				stat += mainClass.statInt;
 			}
 		}
 		return stat;
@@ -148,22 +160,24 @@ public class PC {
 	public int getStatWis() {
 		int stat;
 		stat = statStr;
-		if (race!=null) { stat += race.statWis; }	
-		if (mainClass!=null){
-			if (subClass!=null) {
-				int classboost =0;
-				if (mainClass.statWis > -1 && subClass.statWis > -1)  {
+		if (race != null) {
+			stat += race.statWis;
+		}
+		if (mainClass != null) {
+			if (subClass != null) {
+				int classboost = 0;
+				if (mainClass.statWis > -1 && subClass.statWis > -1) {
 					// both positive (ok 0+)
-					classboost = Math.max(mainClass.statWis , subClass.statWis);
-				} else if (mainClass.statWis < 1 && subClass.statWis < 1)  {
+					classboost = Math.max(mainClass.statWis, subClass.statWis);
+				} else if (mainClass.statWis < 1 && subClass.statWis < 1) {
 					// both negative (ok 0+)
-					classboost = Math.max(mainClass.statWis , subClass.statWis);
+					classboost = Math.max(mainClass.statWis, subClass.statWis);
 				} else {
 					classboost = mainClass.statWis + subClass.statWis;
 				}
-				stat += classboost; 
+				stat += classboost;
 			} else {
-				stat += mainClass.statWis; 
+				stat += mainClass.statWis;
 			}
 		}
 		return stat;
@@ -175,22 +189,24 @@ public class PC {
 	public int getStatCon() {
 		int stat;
 		stat = statStr;
-		if (race!=null) { stat += race.statCon; }	
-		if (mainClass!=null){
-			if (subClass!=null) {
-				int classboost =0;
-				if (mainClass.statCon > -1 && subClass.statCon > -1)  {
+		if (race != null) {
+			stat += race.statCon;
+		}
+		if (mainClass != null) {
+			if (subClass != null) {
+				int classboost = 0;
+				if (mainClass.statCon > -1 && subClass.statCon > -1) {
 					// both positive (ok 0+)
-					classboost = Math.max(mainClass.statCon , subClass.statCon);
-				} else if (mainClass.statCon < 1 && subClass.statCon < 1)  {
+					classboost = Math.max(mainClass.statCon, subClass.statCon);
+				} else if (mainClass.statCon < 1 && subClass.statCon < 1) {
 					// both negative (ok 0+)
-					classboost = Math.max(mainClass.statCon , subClass.statCon);
+					classboost = Math.max(mainClass.statCon, subClass.statCon);
 				} else {
 					classboost = mainClass.statCon + subClass.statCon;
 				}
-				stat += classboost; 
+				stat += classboost;
 			} else {
-				stat += mainClass.statCon; 
+				stat += mainClass.statCon;
 			}
 		}
 		return stat;
@@ -202,25 +218,71 @@ public class PC {
 	public int getStatChr() {
 		int stat;
 		stat = statStr;
-		if (race!=null) { stat += race.statChr; }	
-		if (mainClass!=null){
-			if (subClass!=null) {
-				int classboost =0;
-				if (mainClass.statChr > -1 && subClass.statChr > -1)  {
+		if (race != null) {
+			stat += race.statChr;
+		}
+		if (mainClass != null) {
+			if (subClass != null) {
+				int classboost = 0;
+				if (mainClass.statChr > -1 && subClass.statChr > -1) {
 					// both positive (ok 0+)statChr
-					classboost = Math.max(mainClass.statChr , subClass.statStr);
-				} else if (mainClass.statChr < 1 && subClass.statChr < 1)  {
+					classboost = Math.max(mainClass.statChr, subClass.statStr);
+				} else if (mainClass.statChr < 1 && subClass.statChr < 1) {
 					// both negative (ok 0+)
-					classboost = Math.max(mainClass.statChr , subClass.statChr);
+					classboost = Math.max(mainClass.statChr, subClass.statChr);
 				} else {
 					classboost = mainClass.statChr + subClass.statChr;
 				}
-				stat += classboost; 
+				stat += classboost;
 			} else {
-				stat += mainClass.statChr; 
+				stat += mainClass.statChr;
 			}
 		}
 		return stat;
 	}
 
+	public int getMaxHealth() {
+		Player p = Bukkit.getServer().getPlayer(this.player);
+		if (p != null) {
+			int hp, perlevel, level,result;
+			
+			hp = race.baseHealth;
+			level = p.getLevel();
+			if (subClass != null) {
+				perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
+			} else {
+				perlevel = mainClass.healthPerLevel;
+			}
+			result = hp + (level * perlevel);
+			this.maxHP = result;
+		}
+		return this.maxHP;
+	}
+	public void healthCheck() {
+		Player p = Bukkit.getServer().getPlayer(this.player);
+		if (p != null) {
+			getMaxHealth();
+			
+			this.health = p.getHealth();
+			if (this.health > this.maxHP) {
+				this.health=this.maxHP;
+			}
+			p.setMaxHealth(this.maxHP);
+			p.setHealth(this.health);
+			
+			lq.debug.fine("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP );
+			p.sendMessage("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP );
+		}
+	}
+
+	public void scheduleHealthCheck() {
+		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedCheck(), 2L);	
+	}
+
+	public class DelayedCheck implements Runnable {
+		@Override
+		public void run() {
+			healthCheck();
+		}
+	}
 }
