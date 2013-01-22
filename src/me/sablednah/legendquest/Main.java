@@ -30,7 +30,7 @@ public class Main extends JavaPlugin {
 	public PCs				players;
 	public DebugLog			debug;
 
-	public static final int	MAX_XP		= 52485;
+	public static final int	MAX_XP		= 58245;
 	public static final int	MAX_LEVEL	= 150;
 
 	public void onDisable() {

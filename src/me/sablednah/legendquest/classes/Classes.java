@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.utils.Pair;
 import me.sablednah.legendquest.utils.WeightedProbMap;
@@ -86,6 +87,22 @@ public class Classes {
 					}
 					c.allowedGroups = allowedGroups;
 
+					List<String> requiresOne = (List<String>) thisConfig.getList("requiresOne");
+					if (requiresOne != null) {
+						for (int i = 0; i < requiresOne.size(); i++) {
+							requiresOne.set(i, requiresOne.get(i).toLowerCase());
+						}
+					}
+					c.requiresOne = requiresOne;
+
+					List<String> requires = (List<String>) thisConfig.getList("requires");
+					if (requires != null) {
+						for (int i = 0; i < requires.size(); i++) {
+							requires.set(i, requires.get(i).toLowerCase());
+						}
+					}
+					c.requires = requires;
+
 					c.defaultClass = thisConfig.getBoolean("default");
 					c.statStr = thisConfig.getInt("statmods.str");
 					c.statDex = thisConfig.getInt("statmods.dex");
@@ -93,7 +110,7 @@ public class Classes {
 					c.statWis = thisConfig.getInt("statmods.wis");
 					c.statCon = thisConfig.getInt("statmods.con");
 					c.statChr = thisConfig.getInt("statmods.chr");
-					c.healthPerLevel = thisConfig.getInt("healthperlevel");
+					c.healthPerLevel = thisConfig.getDouble("healthperlevel");
 
 					c.perm = thisConfig.getString("perm");
 
@@ -183,22 +200,56 @@ public class Classes {
 		if (race != null) {
 			List<String> groups = race.groups;
 			List<String> result = new ArrayList<String>();
+			PC pc = lq.players.getPC(player);
 			for (ClassType c : classTypes.values()) {
 				if (player != null) {
 					if (!(c.perm == null || c.perm.equalsIgnoreCase("") || player.isPermissionSet(c.perm))) {
 						continue;
 					}
 				}
-				if (c.allowedRaces.contains(raceName.toLowerCase()) || c.allowedRaces.contains("all") || c.allowedRaces.contains("any")) {
-					result.add(c.name);
+				boolean raceCheck = false;
+				if ((c.allowedRaces.contains(raceName.toLowerCase()) || c.allowedRaces.contains("all") || c.allowedRaces.contains("any"))) {
+					raceCheck = true;
 				} else {
 					// check if groups and allowed groups have any common elements
 					if (groups != null && c.allowedGroups != null) {
 						if (!Collections.disjoint(groups, c.allowedGroups) || c.allowedGroups.contains("all") || c.allowedGroups.contains("any")) {
-							result.add(c.name);
+							raceCheck = true;
 						}
 					}
 				}
+				if (!raceCheck) {
+					continue;
+				}
+				if (c.requires != null) {
+					boolean allValid = true;
+					for (String required : c.requires) {
+						if (!pc.hasMastered(required)) {
+							allValid = false;
+						}
+						lq.logger.info("req: "+required  + " - " + pc.hasMastered(required));
+					}
+					// not mastered all required - skip me!!
+					if (!allValid) {
+						continue;
+					}
+				}
+				if (c.requiresOne != null) {
+					boolean oneValid = false;
+					for (String requested : c.requiresOne) {
+						if (pc.hasMastered(requested)) {
+							oneValid = true;
+						}
+						lq.logger.info("requested: "+requested  + " - " + pc.hasMastered(requested));
+					}
+
+					// if one is mastered allow
+					if (!oneValid) {
+						continue;
+					}
+				}
+				
+				result.add(c.name.toLowerCase());
 			}
 			return result;
 		} else {

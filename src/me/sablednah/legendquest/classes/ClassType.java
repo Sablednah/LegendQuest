@@ -12,6 +12,8 @@ public class ClassType {
 	//Allowed races for this class
 	public List<String> allowedRaces;
 	public List<String>	allowedGroups;
+	public List<String> requires;
+	public List<String>	requiresOne;
 	
 	public boolean defaultClass;
 	public int statStr;
@@ -20,7 +22,7 @@ public class ClassType {
 	public int statWis;
 	public int statCon;
 	public int statChr;
-	public int healthPerLevel;
+	public double healthPerLevel;
 	
 	public String perm;
 }

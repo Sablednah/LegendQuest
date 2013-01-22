@@ -1,7 +1,10 @@
 package me.sablednah.legendquest.cmds;
 
+import java.util.Map;
+
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
+import me.sablednah.legendquest.utils.SetExp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -25,8 +28,6 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 
 		if (!validateCmd(lq, cmd, sender, args)) { return true; }
 		
-		sender.sendMessage("Executing "+cmd.toString()+" command");
-
 		boolean isPlayer = (sender instanceof Player);
 		String targetName = null;
 		
@@ -36,7 +37,7 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 			if (args.length>0) {
 				targetName=args[0];
 			} else {
-				sender.sendMessage(cmd.toString() + ": " + lq.configMain.invalidArgumentsCommand);
+				sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidArgumentsCommand);
 				return true;
 			}
 		}
@@ -46,27 +47,32 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 			pc = lq.players.getPC(targetName);
 		}
 		if (pc!=null) {
-			sender.sendMessage(pc.charname + "("+targetName+")");
-			sender.sendMessage("STR: "+pc.getStatStr());
-			sender.sendMessage("DEX: "+pc.getStatDex());
-			sender.sendMessage("INT: "+pc.getStatInt());
-			sender.sendMessage("WIS: "+pc.getStatWis());
-			sender.sendMessage("CON: "+pc.getStatCon());
-			sender.sendMessage("CHR: "+pc.getStatChr());
-			sender.sendMessage("Race: "+pc.race.name);
-			sender.sendMessage("Class: "+pc.mainClass.name);
+			sender.sendMessage(lq.configLang.playerStats);
+			sender.sendMessage(lq.configLang.playerName +": " + pc.charname + "("+targetName+")");
+			sender.sendMessage(lq.configLang.statSTR +": "+pc.getStatStr());
+			sender.sendMessage(lq.configLang.statDEX +": "+pc.getStatDex());
+			sender.sendMessage(lq.configLang.statINT +": "+pc.getStatInt());
+			sender.sendMessage(lq.configLang.statWIS +": "+pc.getStatWis());
+			sender.sendMessage(lq.configLang.statCON +": "+pc.getStatCon());
+			sender.sendMessage(lq.configLang.statCHR +": "+pc.getStatChr());
+			sender.sendMessage(lq.configLang.statRace +": "+pc.race.name);
+			sender.sendMessage(lq.configLang.statClass +": "+pc.mainClass.name);
 			
 			Player p= Bukkit.getServer().getPlayer(targetName);
 			
 			if (p!=null) {
-				sender.sendMessage("Health: "+p.getHealth() + " / " + p.getMaxHealth());
+				sender.sendMessage(lq.configLang.statHealth + ": "+p.getHealth() + " / " + p.getMaxHealth());
 			} else {
-				sender.sendMessage("Health: "+pc.health + " / " + pc.maxHP);
+				sender.sendMessage(lq.configLang.statHealth + ": "+pc.health + " / " + pc.maxHP);
 			}
-
+			
+			for (Map.Entry<String, Integer> entry : pc.xpEarnt.entrySet()) {
+				sender.sendMessage("XP: " + entry.getKey().toLowerCase() + ": "+SetExp.getLevelOfXpAmount(entry.getValue())+" (" + entry.getValue() + ")" );
+			}
+			
 			return true;
 		} else {
-			sender.sendMessage(lq.configMain.characterNotFound + targetName);
+			sender.sendMessage(lq.configLang.characterNotFound + targetName);
 			return true;
 		}
 	}

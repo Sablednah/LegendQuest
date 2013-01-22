@@ -3,6 +3,7 @@ package me.sablednah.legendquest.listeners;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.LevelUpEvent;
 import me.sablednah.legendquest.playercharacters.PC;
+import me.sablednah.legendquest.utils.SetExp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -43,15 +44,21 @@ public class PlayerEvents implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onXPChange(PlayerExpChangeEvent event) {
+		int xpAmount = event.getAmount();
 		Player p = event.getPlayer();
 		String pName = p.getName();
 		PC pc = lq.players.getPC(pName);
-		pc.currentXP = (p.getTotalExperience() + event.getAmount());
-		pc.scheduleHealthCheck();
+		
+		// half xp gain for dual class
+		if (pc.subClass != null) {
+			xpAmount = xpAmount /2;
+		}
+		pc.setXP(SetExp.getTotalExperience(p) + xpAmount);
 		lq.players.addPlayer(pName, pc);
 		lq.players.savePlayer(pc);
 		
-		if(event.getAmount() >= p.getExpToLevel()) {
+		if(xpAmount >= p.getExpToLevel()) {
+			pc.scheduleHealthCheck();
 			LevelUpEvent e = new LevelUpEvent(p, p.getLevel()+1, pc);
 			Bukkit.getServer().getPluginManager().callEvent(e);
 		}

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.races.Race;
+import me.sablednah.legendquest.utils.SetExp;
 
 public class PC {
 	public Main						lq;
@@ -244,8 +245,9 @@ public class PC {
 	public int getMaxHealth() {
 		Player p = Bukkit.getServer().getPlayer(this.player);
 		if (p != null) {
-			int hp, perlevel, level,result;
-			
+			int hp, level;
+			double result, perlevel;
+
 			hp = race.baseHealth;
 			level = p.getLevel();
 			if (subClass != null) {
@@ -253,30 +255,31 @@ public class PC {
 			} else {
 				perlevel = mainClass.healthPerLevel;
 			}
-			result = hp + (level * perlevel);
-			this.maxHP = result;
+			result = (hp + (level * perlevel));
+			this.maxHP = (int) result;
 		}
 		return this.maxHP;
 	}
+
 	public void healthCheck() {
 		Player p = Bukkit.getServer().getPlayer(this.player);
 		if (p != null) {
 			getMaxHealth();
-			
+
 			this.health = p.getHealth();
 			if (this.health > this.maxHP) {
-				this.health=this.maxHP;
+				this.health = this.maxHP;
 			}
 			p.setMaxHealth(this.maxHP);
 			p.setHealth(this.health);
-			
-			lq.debug.fine("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP );
-			p.sendMessage("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP );
+
+			lq.debug.fine("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+			p.sendMessage("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
 		}
 	}
 
 	public void scheduleHealthCheck() {
-		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedCheck(), 2L);	
+		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedCheck(), 2L);
 	}
 
 	public class DelayedCheck implements Runnable {
@@ -284,5 +287,28 @@ public class PC {
 		public void run() {
 			healthCheck();
 		}
+	}
+
+	public void setXP(int newXP) {
+		xpEarnt.put(mainClass.name.toLowerCase(), newXP);
+		if (subClass != null) {
+			xpEarnt.put(subClass.name.toLowerCase(), newXP);
+		}
+		currentXP = newXP;
+		Player p = Bukkit.getServer().getPlayer(player);
+		if (p != null) {
+			SetExp.setTotalExperience(p, newXP);
+		}
+	}
+	
+	public boolean hasMastered(String className) {
+		lq.logger.info("className ("+className+")...");
+		if (xpEarnt.containsKey(className.toLowerCase())) {
+			lq.logger.info("className ("+className+"): "+xpEarnt.get(className.toLowerCase()));
+			if (xpEarnt.get(className.toLowerCase()) >= Main.MAX_XP) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

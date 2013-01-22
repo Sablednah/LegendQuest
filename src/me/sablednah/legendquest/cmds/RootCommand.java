@@ -3,6 +3,8 @@ package me.sablednah.legendquest.cmds;
 import java.util.Arrays;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.classes.Classes;
+import me.sablednah.legendquest.races.Races;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -53,7 +55,7 @@ public class RootCommand implements CommandExecutor {
 			// player check here
 			if (!isPlayer && !c.canConsole()) {
 				// player only command used from console - reject and end command
-				sender.sendMessage(cmd + ": " + lq.configMain.invalidPlayerCommand);
+				sender.sendMessage(cmd + ": " + lq.configLang.invalidPlayerCommand);
 				// we're sending our own "failed" message so say it worked ok to prevent default
 				return true;
 			}
@@ -63,10 +65,16 @@ public class RootCommand implements CommandExecutor {
 			switch (c) {
 				case HELP:
 					// TODO add proper help messages
-					sendMultilineMessage(sender, lq.configMain.helpCommand);
+					sendMultilineMessage(sender, lq.configLang.helpCommand);
 					return true;
 				case RELOAD:
-					// TODO implement reload
+					lq.configMain.reloadConfig();
+					lq.configLang.reloadConfig();
+					lq.classes = null;
+					lq.races = null;
+					lq.races = new Races(lq);
+					lq.classes = new Classes(lq);
+					sender.sendMessage(lq.configLang.commandReloaded);
 					return true;
 				case RACE:
 					newcmd = new CmdRace(lq);
@@ -86,7 +94,7 @@ public class RootCommand implements CommandExecutor {
 			}
 
 		} catch (IllegalArgumentException e) {
-			sender.sendMessage(lq.configMain.invalidCommand + cmd + " :(");
+			sender.sendMessage(lq.configLang.invalidCommand + cmd + " :(");
 			e.printStackTrace();
 			return false;
 		}

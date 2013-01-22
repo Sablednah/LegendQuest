@@ -54,6 +54,15 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 						sender.sendMessage(lq.configLang.raceChangeNotAllowed + ": " + pc.race.name);
 						return true;
 					} else {
+						lq.debug.fine("Perm.: " + r.perm);
+						if (r.perm != null) {
+							lq.debug.fine("has Perm.: " + p.hasPermission(r.perm));
+							if (!p.hasPermission(r.perm)) {
+								sender.sendMessage(lq.configLang.raceNotAllowed);
+								return true;
+							}
+						}
+
 						pc.race = r;
 						pc.raceChanged = true;
 						lq.players.addPlayer(p.getName(), pc);

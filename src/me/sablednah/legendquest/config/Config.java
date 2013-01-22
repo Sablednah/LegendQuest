@@ -66,6 +66,13 @@ public class Config {
 		boolean output = config.getBoolean(name, defaultConfig);
 		return output;
 	}
+	
+	public double getConfigItem(String name, double defaultConfig) {
+		lq.debug.fine(name + " is :" + defaultConfig + " |boolean");
+		config.addDefault(name, defaultConfig);
+		double output = config.getDouble(name, defaultConfig);
+		return output;
+	}
 
 	public void copyConfigFromJar() {
 		OutputStream outStream = null;

@@ -9,12 +9,12 @@ public class CommandTemplate {
 
 	public boolean validateCmd(Main lq, Cmds cmd, CommandSender sender, String[] args) {
 		if (args.length < cmd.minArgLength()) {
-			sender.sendMessage(cmd.toString() + ": " + lq.configMain.invalidArgumentsCommand);
+			sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidArgumentsCommand);
 			return false;
 		}
 
 		if (!(sender instanceof Player) && !cmd.canConsole()) {
-			sender.sendMessage(cmd.toString() + ": " + lq.configMain.invalidPlayerCommand);
+			sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidPlayerCommand);
 			return false;
 		}
 		return true;
