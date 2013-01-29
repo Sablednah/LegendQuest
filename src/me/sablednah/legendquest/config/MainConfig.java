@@ -14,6 +14,8 @@ public class MainConfig extends Config {
 	
 	public boolean	randomStats					= true;
 	public double	percentXpKeepClassChange	= 10.00D;
+	public double	percentXpLossRespawn		= 5.00D;
+	
 
 	public MainConfig(Main p) {
 		super(p, "config.yml");
@@ -29,6 +31,7 @@ public class MainConfig extends Config {
 		
 		this.randomStats = this.getConfigItem("randomStats", this.randomStats);
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
-
+		this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);
+		
 	}
 }
