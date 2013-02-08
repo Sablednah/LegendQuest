@@ -19,6 +19,15 @@ public class Race {
 	
 	public String perm;
 	
+	public List<Integer>	allowedTools;
+	public List<Integer>	allowedArmour;
+	public List<Integer>	allowedWeapons;
+
+	public List<Integer>	dissallowedTools;
+	public List<Integer>	dissallowedArmour;
+	public List<Integer>	dissallowedWeapons;
+
+	
 	// frequency used for NPC chance.
 	public int frequency;
 

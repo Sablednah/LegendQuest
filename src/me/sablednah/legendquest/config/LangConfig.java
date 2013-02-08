@@ -55,6 +55,10 @@ public class LangConfig extends Config {
 	public String	statClass				= "Class";
 	public String	playerName				= "Name";
 
+	public String	cantEquipArmour			= "Sory you can't wear that armour.";
+	public String	cantUseTool				= "Sory you can't use that tool.";
+	public String	cantUseWeapon			= "Sory you can't weild that weapon.";
+
 	public LangConfig(Main p) {
 		super(p, "lang.yml");
 
@@ -104,6 +108,10 @@ public class LangConfig extends Config {
 		this.invalidArgumentsCommand = this.getConfigItem("invalidArgumentsCommand", this.invalidArgumentsCommand);
 		this.characterNotFound = this.getConfigItem("characterNotFound", this.characterNotFound);
 		this.commandReloaded = this.getConfigItem("commandReloaded", this.commandReloaded);
+
+		this.cantEquipArmour = this.getConfigItem("cantEquipArmour", this.cantEquipArmour);
+		this.cantUseTool = this.getConfigItem("cantUseTool", this.cantUseTool);
+		this.cantUseWeapon = this.getConfigItem("cantUseWeapon", this.cantUseWeapon);
 
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
@@ -300,15 +301,148 @@ public class PC {
 			SetExp.setTotalExperience(p, newXP);
 		}
 	}
-	
+
 	public boolean hasMastered(String className) {
-		lq.logger.info("className ("+className+")...");
+		lq.logger.info("className (" + className + ")...");
 		if (xpEarnt.containsKey(className.toLowerCase())) {
-			lq.logger.info("className ("+className+"): "+xpEarnt.get(className.toLowerCase()));
+			lq.logger.info("className (" + className + "): " + xpEarnt.get(className.toLowerCase()));
 			if (xpEarnt.get(className.toLowerCase()) >= Main.MAX_XP) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public boolean allowedArmour(int id) {
+		Boolean valid = false;
+		if (id == 0 ){ 
+			valid = true;
+			lq.debug.fine("Naked is valid armour");
+		}
+		if (mainClass.allowedArmour.contains(id)) {
+			valid = true;
+			lq.debug.fine(id + " is valid armour for class: "+mainClass.name);
+		}
+		if (race.allowedArmour.contains(id)) {
+			valid = true;
+			lq.debug.fine(id + " is valid armour for race: "+race.name);
+		}
+		if (subClass != null && subClass.allowedArmour.contains(id)) {
+			valid=true;
+			lq.debug.fine(id + " is valid armour for sub-class: "+subClass.name);
+		}
+		if (mainClass.dissallowedArmour.contains(id)) {
+			valid = false;
+			lq.debug.fine(id + " is INvalid armour for class: "+mainClass.name);
+		}
+		if (race.dissallowedArmour.contains(id)) {
+			valid = false;
+			lq.debug.fine(id + " is INvalid armour for race: "+race.name);
+		}
+		if (subClass != null && subClass.dissallowedArmour.contains(id)) {
+			valid=false;
+			lq.debug.fine(id + " is INvalid armour for sub-class: "+subClass.name);
+		}
+		return valid;
+	}
+
+	public boolean allowedWeapon(int id) {
+		Boolean valid = false;
+		
+		if (id == 0 ){ 
+			valid = true;
+			lq.debug.fine("fist is valid weapon");
+		}
+		if (mainClass.allowedWeapons.contains(id)) {
+			valid = true;
+			lq.debug.fine(id + " is valid weapon for class: "+mainClass.name);
+		}
+		if (race.allowedWeapons.contains(id)) {
+			valid = true;
+			lq.debug.fine(id + " is valid weapon for race: "+race.name);
+		}
+		if (subClass != null && subClass.allowedWeapons.contains(id)) {
+			valid=true;
+			lq.debug.fine(id + " is valid weapon for sub-class: "+subClass.name);
+		}
+		if (mainClass.dissallowedWeapons.contains(id)) {
+			valid = false;
+			lq.debug.fine(id + " is INvalid weapon for class: "+mainClass.name);
+		}
+		if (race.dissallowedWeapons.contains(id)) {
+			valid = false;
+			lq.debug.fine(id + " is INvalid weapon for race: "+race.name);
+		}
+		if (subClass != null && subClass.dissallowedWeapons.contains(id)) {
+			valid=false;
+			lq.debug.fine(id + " is INvalid weapon for sub-class: "+subClass.name);
+		}
+		return valid;
+	}
+
+	public boolean allowedTool(int id) {
+		Boolean valid = false;
+	
+		if (id == 0 ){ 
+			valid = true;
+			lq.debug.fine("fist is valid tool");
+		}
+		if (mainClass.allowedTools.contains(id)) {
+			valid = true;
+			lq.debug.fine(id + " is valid tool for class: "+mainClass.name);
+		}
+		if (race.allowedTools.contains(id)) {
+			valid = true;
+			lq.debug.fine(id + " is valid tool for race: "+race.name);
+		}
+		if (subClass != null && subClass.allowedTools.contains(id)) {
+			valid=true;
+			lq.debug.fine(id + " is valid tool for sub-class: "+subClass.name);
+		}
+		if (mainClass.dissallowedTools.contains(id)) {
+			valid = false;
+			lq.debug.fine(id + " is INvalid tool for class: "+mainClass.name);
+		}
+		if (race.dissallowedTools.contains(id)) {
+			valid = false;
+			lq.debug.fine(id + " is INvalid tool for race: "+race.name);
+		}
+		if (subClass != null && subClass.dissallowedTools.contains(id)) {
+			valid=false;
+			lq.debug.fine(id + " is INvalid tool for sub-class: "+subClass.name);
+		}
+		return valid;
+	}
+
+	@SuppressWarnings("deprecation")
+	public void checkInv() {
+		Player p = lq.getServer().getPlayer(player);
+		PlayerInventory i = p.getInventory();
+
+		if (!(allowedArmour(i.getHelmet().getTypeId()))) {
+			p.sendMessage(lq.configLang.cantEquipArmour);
+			lq.debug.fine("Removed helmet " + (i.getHelmet().getTypeId()) + " from " + p.getName() + ".");
+			p.getWorld().dropItemNaturally(p.getLocation(), i.getHelmet());
+			i.setHelmet(null);
+		}
+		if (!(allowedArmour(i.getChestplate().getTypeId()))) {
+			p.sendMessage(lq.configLang.cantEquipArmour);
+			lq.debug.fine("Removed chestplate " + (i.getChestplate().getTypeId()) + " from " + p.getName() + ".");
+			p.getWorld().dropItemNaturally(p.getLocation(), i.getChestplate());
+			i.setChestplate(null);
+		}
+		if (!(allowedArmour(i.getLeggings().getTypeId()))) {
+			p.sendMessage(lq.configLang.cantEquipArmour);
+			lq.debug.fine("Removed leggings " + (i.getHelmet().getTypeId()) + " from " + p.getName() + ".");
+			p.getWorld().dropItemNaturally(p.getLocation(), i.getLeggings());
+			i.setLeggings(null);
+		}
+		if (!(allowedArmour(i.getBoots().getTypeId()))) {
+			p.sendMessage(lq.configLang.cantEquipArmour);
+			lq.debug.fine("Removed boots " + (i.getHelmet().getTypeId()) + " from " + p.getName() + ".");
+			p.getWorld().dropItemNaturally(p.getLocation(), i.getBoots());
+			i.setBoots(null);
+		}
+		p.updateInventory();
 	}
 }

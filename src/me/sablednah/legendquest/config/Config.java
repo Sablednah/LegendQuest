@@ -5,9 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import me.sablednah.legendquest.Main;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Config {
@@ -74,6 +76,18 @@ public class Config {
 		return output;
 	}
 
+	public List<?> getConfigItem(String name, List<?> defaultConfig) {
+		lq.debug.fine(name + " is :" + defaultConfig + " |list");
+		config.addDefault(name, defaultConfig);
+		List<?> output = config.getList(name, defaultConfig);
+		return output;
+	}
+	
+	public ConfigurationSection getConfigItem(String name) {
+		ConfigurationSection output = config.getConfigurationSection(name);
+		return output;
+	}
+	
 	public void copyConfigFromJar() {
 		OutputStream outStream = null;
 		try {

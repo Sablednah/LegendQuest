@@ -244,4 +244,14 @@ public class Utils {
 			eq.setHelmet(item);
 		}
 	}
+	
+	public static boolean isParsableToInt(String i) {
+		try {
+			Integer.parseInt(i);
+			return true;
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+	}
+	
 }
