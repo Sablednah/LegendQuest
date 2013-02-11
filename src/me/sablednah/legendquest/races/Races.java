@@ -66,6 +66,8 @@ public class Races {
 					r.statCon = thisConfig.getInt("statmods.con");
 					r.statChr = thisConfig.getInt("statmods.chr");
 					r.baseHealth = thisConfig.getInt("basehealth");
+					r.baseMana = thisConfig.getInt("baseMana");
+					r.manaPerSecond = thisConfig.getInt("manaPerSecond");
 					
 					r.perm = thisConfig.getString("perm");
 

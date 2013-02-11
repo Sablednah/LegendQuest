@@ -43,7 +43,6 @@ public class DataSync {
 		pendingWrites.add(pc);
 	}
 
-
 	public synchronized int getXP(String playerName, String className) {
 		String sql;
 		int xp = 0;
@@ -99,6 +98,7 @@ public class DataSync {
 				
 				pc.maxHP = r.getInt("maxHP");
 				pc.health = r.getInt("health");
+				pc.mana = r.getInt("mana");
 				pc.skillpoints = r.getInt("skillpoints");
 				pc.race = lq.races.getRace(r.getString("race"));
 				pc.raceChanged = r.getBoolean("raceChanged");
@@ -143,7 +143,7 @@ public class DataSync {
 	private synchronized void writeData(PC pc) {
 		String sql;
 		sql = "REPLACE INTO pcs (";
-		sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,statStr,statDex,statInt,statWis,statCon,statChr,skillpoints";
+		sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,statStr,statDex,statInt,statWis,statCon,statChr,skillpoints";
 		sql = sql + ") values(\"";
 		sql = sql + pc.player + "\",\"";
 		sql = sql + pc.charname + "\",\"";
@@ -161,6 +161,7 @@ public class DataSync {
 		}
 		sql = sql + pc.maxHP + ",";
 		sql = sql + pc.health + ",";
+		sql = sql + pc.mana + ",";
 		sql = sql + pc.statStr + ",";
 		sql = sql + pc.statDex + ",";
 		sql = sql + pc.statInt + ",";
@@ -247,6 +248,7 @@ public class DataSync {
 		create += "subClass varchar(64), ";
 		create += "maxHP INTEGER, ";
 		create += "health INTEGER, ";
+		create += "mana INTEGER, ";
 		create += "statStr INTEGER, ";
 		create += "statDex INTEGER, ";
 		create += "statInt INTEGER, ";

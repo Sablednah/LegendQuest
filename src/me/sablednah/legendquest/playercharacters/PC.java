@@ -1,6 +1,7 @@
 package me.sablednah.legendquest.playercharacters;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.PlayerInventory;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.races.Race;
+import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.utils.SetExp;
 
 public class PC {
@@ -23,6 +25,7 @@ public class PC {
 	public HashMap<String, Integer>	xpEarnt	= new HashMap<String, Integer>();
 	public int						maxHP;
 	public int						health;
+	public int						mana;
 	public int						skillpoints;
 
 	public boolean					raceChanged;
@@ -36,6 +39,8 @@ public class PC {
 
 	public int						currentXP;
 
+	public List<Skill>				skillsSelected;
+
 	public PC(Main plugin, String pName) {
 		this.lq = plugin;
 
@@ -47,6 +52,7 @@ public class PC {
 		this.subClass = null;
 		this.maxHP = 20;
 		this.health = 20;
+		this.mana = getMaxMana();
 		this.skillpoints = 0;
 		this.currentXP = 0;
 		if (!lq.configMain.randomStats) {
@@ -262,6 +268,58 @@ public class PC {
 		return this.maxHP;
 	}
 
+	// Couldn't resist...
+	public Double getMaxHeadroom() {
+		return race.size;
+	}
+
+	public int getMaxMana() {
+		Player p = Bukkit.getServer().getPlayer(this.player);
+		double result = 0;
+		if (p != null) {
+			int mana, level, bonus;
+			double perlevel;
+
+			mana = race.baseMana;
+
+			level = p.getLevel();
+			if (subClass != null) {
+				perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
+				bonus = Math.max(mainClass.manaBonus, subClass.manaBonus);
+			} else {
+				perlevel = mainClass.healthPerLevel;
+				bonus = mainClass.manaBonus;
+			}
+			result = (mana + bonus + (level * perlevel));
+		}
+		return (int) result;
+	}
+
+	public void manaGain(int gain) {
+		this.mana += gain;
+		if (this.mana > getMaxMana()) {
+			this.mana = getMaxMana();
+		}
+	}
+
+	public void manaLoss(int loss) {
+		this.mana -= loss;
+		if (this.mana < 0) {
+			this.mana = 0;
+		}
+	}
+	
+	public void manaGain() {
+		int gain;
+		gain = race.manaPerSecond;
+		if (subClass != null) {
+			gain += (Math.max(mainClass.manaPerSecond, subClass.manaPerSecond));
+		} else {
+			gain += mainClass.manaPerSecond;
+		}
+		manaGain(gain);
+	}
+
 	public void healthCheck() {
 		Player p = Bukkit.getServer().getPlayer(this.player);
 		if (p != null) {
@@ -315,101 +373,101 @@ public class PC {
 
 	public boolean allowedArmour(int id) {
 		Boolean valid = false;
-		if (id == 0 ){ 
+		if (id == 0) {
 			valid = true;
 			lq.debug.fine("Naked is valid armour");
 		}
 		if (mainClass.allowedArmour.contains(id)) {
 			valid = true;
-			lq.debug.fine(id + " is valid armour for class: "+mainClass.name);
+			lq.debug.fine(id + " is valid armour for class: " + mainClass.name);
 		}
 		if (race.allowedArmour.contains(id)) {
 			valid = true;
-			lq.debug.fine(id + " is valid armour for race: "+race.name);
+			lq.debug.fine(id + " is valid armour for race: " + race.name);
 		}
 		if (subClass != null && subClass.allowedArmour.contains(id)) {
-			valid=true;
-			lq.debug.fine(id + " is valid armour for sub-class: "+subClass.name);
+			valid = true;
+			lq.debug.fine(id + " is valid armour for sub-class: " + subClass.name);
 		}
 		if (mainClass.dissallowedArmour.contains(id)) {
 			valid = false;
-			lq.debug.fine(id + " is INvalid armour for class: "+mainClass.name);
+			lq.debug.fine(id + " is INvalid armour for class: " + mainClass.name);
 		}
 		if (race.dissallowedArmour.contains(id)) {
 			valid = false;
-			lq.debug.fine(id + " is INvalid armour for race: "+race.name);
+			lq.debug.fine(id + " is INvalid armour for race: " + race.name);
 		}
 		if (subClass != null && subClass.dissallowedArmour.contains(id)) {
-			valid=false;
-			lq.debug.fine(id + " is INvalid armour for sub-class: "+subClass.name);
+			valid = false;
+			lq.debug.fine(id + " is INvalid armour for sub-class: " + subClass.name);
 		}
 		return valid;
 	}
 
 	public boolean allowedWeapon(int id) {
 		Boolean valid = false;
-		
-		if (id == 0 ){ 
+
+		if (id == 0) {
 			valid = true;
 			lq.debug.fine("fist is valid weapon");
 		}
 		if (mainClass.allowedWeapons.contains(id)) {
 			valid = true;
-			lq.debug.fine(id + " is valid weapon for class: "+mainClass.name);
+			lq.debug.fine(id + " is valid weapon for class: " + mainClass.name);
 		}
 		if (race.allowedWeapons.contains(id)) {
 			valid = true;
-			lq.debug.fine(id + " is valid weapon for race: "+race.name);
+			lq.debug.fine(id + " is valid weapon for race: " + race.name);
 		}
 		if (subClass != null && subClass.allowedWeapons.contains(id)) {
-			valid=true;
-			lq.debug.fine(id + " is valid weapon for sub-class: "+subClass.name);
+			valid = true;
+			lq.debug.fine(id + " is valid weapon for sub-class: " + subClass.name);
 		}
 		if (mainClass.dissallowedWeapons.contains(id)) {
 			valid = false;
-			lq.debug.fine(id + " is INvalid weapon for class: "+mainClass.name);
+			lq.debug.fine(id + " is INvalid weapon for class: " + mainClass.name);
 		}
 		if (race.dissallowedWeapons.contains(id)) {
 			valid = false;
-			lq.debug.fine(id + " is INvalid weapon for race: "+race.name);
+			lq.debug.fine(id + " is INvalid weapon for race: " + race.name);
 		}
 		if (subClass != null && subClass.dissallowedWeapons.contains(id)) {
-			valid=false;
-			lq.debug.fine(id + " is INvalid weapon for sub-class: "+subClass.name);
+			valid = false;
+			lq.debug.fine(id + " is INvalid weapon for sub-class: " + subClass.name);
 		}
 		return valid;
 	}
 
 	public boolean allowedTool(int id) {
 		Boolean valid = false;
-	
-		if (id == 0 ){ 
+
+		if (id == 0) {
 			valid = true;
 			lq.debug.fine("fist is valid tool");
 		}
 		if (mainClass.allowedTools.contains(id)) {
 			valid = true;
-			lq.debug.fine(id + " is valid tool for class: "+mainClass.name);
+			lq.debug.fine(id + " is valid tool for class: " + mainClass.name);
 		}
 		if (race.allowedTools.contains(id)) {
 			valid = true;
-			lq.debug.fine(id + " is valid tool for race: "+race.name);
+			lq.debug.fine(id + " is valid tool for race: " + race.name);
 		}
 		if (subClass != null && subClass.allowedTools.contains(id)) {
-			valid=true;
-			lq.debug.fine(id + " is valid tool for sub-class: "+subClass.name);
+			valid = true;
+			lq.debug.fine(id + " is valid tool for sub-class: " + subClass.name);
 		}
 		if (mainClass.dissallowedTools.contains(id)) {
 			valid = false;
-			lq.debug.fine(id + " is INvalid tool for class: "+mainClass.name);
+			lq.debug.fine(id + " is INvalid tool for class: " + mainClass.name);
 		}
 		if (race.dissallowedTools.contains(id)) {
 			valid = false;
-			lq.debug.fine(id + " is INvalid tool for race: "+race.name);
+			lq.debug.fine(id + " is INvalid tool for race: " + race.name);
 		}
 		if (subClass != null && subClass.dissallowedTools.contains(id)) {
-			valid=false;
-			lq.debug.fine(id + " is INvalid tool for sub-class: "+subClass.name);
+			valid = false;
+			lq.debug.fine(id + " is INvalid tool for sub-class: " + subClass.name);
 		}
 		return valid;
 	}

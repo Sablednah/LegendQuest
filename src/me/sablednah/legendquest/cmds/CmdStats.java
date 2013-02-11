@@ -48,7 +48,7 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 		}
 		if (pc!=null) {
 			sender.sendMessage(lq.configLang.playerStats);
-			sender.sendMessage(lq.configLang.playerName +": " + pc.charname + "("+targetName+")");
+			sender.sendMessage(lq.configLang.playerName +": " + pc.charname + " ("+targetName+")");
 			sender.sendMessage(lq.configLang.statSTR +": "+pc.getStatStr());
 			sender.sendMessage(lq.configLang.statDEX +": "+pc.getStatDex());
 			sender.sendMessage(lq.configLang.statINT +": "+pc.getStatInt());
@@ -57,6 +57,8 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 			sender.sendMessage(lq.configLang.statCHR +": "+pc.getStatChr());
 			sender.sendMessage(lq.configLang.statRace +": "+pc.race.name);
 			sender.sendMessage(lq.configLang.statClass +": "+pc.mainClass.name);
+
+			sender.sendMessage("--------------------");
 			
 			Player p= Bukkit.getServer().getPlayer(targetName);
 			
@@ -65,11 +67,15 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 			} else {
 				sender.sendMessage(lq.configLang.statHealth + ": "+pc.health + " / " + pc.maxHP);
 			}
+
+			sender.sendMessage("--------------------");
 			
 			for (Map.Entry<String, Integer> entry : pc.xpEarnt.entrySet()) {
 				sender.sendMessage("XP: " + entry.getKey().toLowerCase() + ": "+SetExp.getLevelOfXpAmount(entry.getValue())+" (" + entry.getValue() + ")" );
 			}
-			
+
+			sender.sendMessage("--------------------");
+
 			return true;
 		} else {
 			sender.sendMessage(lq.configLang.characterNotFound + targetName);

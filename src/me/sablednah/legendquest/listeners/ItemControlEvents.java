@@ -132,7 +132,7 @@ public class ItemControlEvents implements Listener {
 		Action act = event.getAction();
 		if (itemUsed > 0) {
 			if (act == Action.RIGHT_CLICK_AIR || act == Action.RIGHT_CLICK_BLOCK) {
-				if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)   || lq.configData.dataSets.get("utilities").contains(itemUsed) ) {
+				if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)   || lq.configData.dataSets.get("utility").contains(itemUsed) ) {
 					if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
 						p.sendMessage(lq.configLang.cantUseTool);
 						event.setCancelled(true);
@@ -149,7 +149,7 @@ public class ItemControlEvents implements Listener {
 		PC pc = lq.players.getPC(p);
 		int itemUsed = p.getItemInHand().getTypeId();
 		if (itemUsed > 0) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)   || lq.configData.dataSets.get("utilities").contains(itemUsed) ) {
+			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)   || lq.configData.dataSets.get("utility").contains(itemUsed) ) {
 				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
 					p.sendMessage(lq.configLang.cantUseTool);
 					event.setCancelled(true);
@@ -173,7 +173,7 @@ public class ItemControlEvents implements Listener {
 		int itemUsed = p.getItemInHand().getTypeId();
 
 		if (itemUsed > 0) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)  || lq.configData.dataSets.get("utilities").contains(itemUsed) ) {
+			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)  || lq.configData.dataSets.get("utility").contains(itemUsed) ) {
 				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
 					p.sendMessage(lq.configLang.cantUseWeapon);
 					event.setCancelled(true);

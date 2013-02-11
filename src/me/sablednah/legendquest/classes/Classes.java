@@ -113,6 +113,11 @@ public class Classes {
 					c.statCon = thisConfig.getInt("statmods.con");
 					c.statChr = thisConfig.getInt("statmods.chr");
 					c.healthPerLevel = thisConfig.getDouble("healthperlevel");
+					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
+					c.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
+					c.skillPoints = thisConfig.getInt("skillPoints");
+					c.manaBonus = thisConfig.getInt("manaBonus");
+					c.manaPerSecond = thisConfig.getInt("manaPerSecond");
 
 					c.perm = thisConfig.getString("perm");
 

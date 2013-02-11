@@ -17,6 +17,7 @@ import me.sablednah.legendquest.listeners.PlayerEvents;
 import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
 import me.sablednah.legendquest.utils.DebugLog;
+import me.sablednah.legendquest.utils.ManaTicker;
 
 import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
@@ -96,6 +97,9 @@ public class Main extends JavaPlugin {
 		getCommand("class").setExecutor(new CmdClass(this));
 		getCommand("stats").setExecutor(new CmdStats(this));
 
+		// Mana ticker
+		this.getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), 20, 20);
+		
 	}
 
 	public void log(String msg) {

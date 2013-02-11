@@ -22,7 +22,6 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		// TODO Auto-generated method stub
 		// get the enum for this command
 		Cmds cmd = Cmds.valueOf("CLASS");
 		if (!validateCmd(lq, cmd, sender, args)) {
@@ -81,6 +80,7 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 						return true;
 					} else {
 						List<String> validClasses = lq.classes.getClasses(pc.race.name, p);
+						
 						if (!validClasses.contains(className)) {
 							sender.sendMessage(lq.configLang.classNotAllowed);
 							return true;
@@ -173,12 +173,10 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 						lq.players.savePlayer(pc);
 						pc.scheduleHealthCheck();
 						lq.players.scheduleUpdate(p.getName());
-
+						pc.checkInv();
 						sender.sendMessage(lq.configLang.classChanged + ": " + className);
 						lq.debug.fine(lq.configLang.classChanged + ": " + className + " - " + p.getName());
-
 						return true;
-
 					}
 				}
 			}

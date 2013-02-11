@@ -2,6 +2,8 @@ package me.sablednah.legendquest.classes;
 
 import java.util.List;
 
+import me.sablednah.legendquest.skills.Skill;
+
 public class ClassType {
 
 	public String			name;
@@ -23,6 +25,9 @@ public class ClassType {
 	public int				statCon;
 	public int				statChr;
 	public double			healthPerLevel;
+	public double			manaPerLevel;
+	public int				manaBonus;
+	public int				manaPerSecond;
 
 	public String			perm;
 
@@ -33,5 +38,9 @@ public class ClassType {
 	public List<Integer>	dissallowedTools;
 	public List<Integer>	dissallowedArmour;
 	public List<Integer>	dissallowedWeapons;
+
+	public int				skillPoints;
+	public double			skillPointsPerLevel;
+	public List<Skill>		skills;
 
 }
