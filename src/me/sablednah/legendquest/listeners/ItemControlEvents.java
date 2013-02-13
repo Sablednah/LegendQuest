@@ -31,11 +31,15 @@ public class ItemControlEvents implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onInvClose(InventoryCloseEvent event) {
 		// check if this is a real players inventory...
-		if (event.getPlayer() instanceof Player && event.getPlayer().getName() != null) {
+		if (!(event.getPlayer() instanceof Player)) {
+			return;
+		}
+		if (event.getPlayer().getName() == null) {
 			return;
 		}
 		Player p = (Player) event.getPlayer();
 		PC pc = lq.players.getPC(p);
+		//pc.scheduleCheckInv();
 		pc.checkInv();
 	}
 

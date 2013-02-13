@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.skills.LqSkill;
+import me.sablednah.legendquest.skills.PluginSkill;
+import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.utils.Pair;
 import me.sablednah.legendquest.utils.Utils;
 import me.sablednah.legendquest.utils.WeightedProbMap;
@@ -66,9 +70,13 @@ public class Races {
 					r.statCon = thisConfig.getInt("statmods.con");
 					r.statChr = thisConfig.getInt("statmods.chr");
 					r.baseHealth = thisConfig.getInt("basehealth");
+
 					r.baseMana = thisConfig.getInt("baseMana");
 					r.manaPerSecond = thisConfig.getInt("manaPerSecond");
-					
+
+					r.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
+					r.skillPoints = thisConfig.getInt("skillPoints");
+
 					r.perm = thisConfig.getString("perm");
 
 					List<String> groups = (List<String>) thisConfig.getList("groups");
@@ -76,10 +84,8 @@ public class Races {
 						groups.set(i, groups.get(i).toLowerCase());
 					}
 					r.groups = groups;
-					
-					
-					// allowed lists
 
+					// allowed lists
 					List<String> stringList;
 					List<Integer> intList;
 					String keyName;
@@ -223,8 +229,22 @@ public class Races {
 					}
 					r.dissallowedWeapons = intList;
 
-					
-					
+					// skills
+					r.availableSkills = new ArrayList<Skill>();
+					ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
+					if (inateSkills != null) {
+						for (String key : inateSkills.getKeys(false)) {
+							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
+							Skill s;
+							if (skillInfo.getString("command") != null && !skillInfo.getString("command").isEmpty()) {
+								s = new PluginSkill(skillInfo);
+							} else {
+								s = new LqSkill(skillInfo);
+							}
+							r.availableSkills.add(s);
+						}
+					}
+
 				} catch (Exception e) {
 					validConfig = false;
 					lq.log(lq.configLang.raceScanInvalid + race.getName());
@@ -270,9 +290,9 @@ public class Races {
 	public Map<String, Race> getRaces() {
 		return races;
 	}
-	
+
 	public Race getRace(String raceName) {
 		return races.get(raceName.toLowerCase());
 	}
-	
+
 }

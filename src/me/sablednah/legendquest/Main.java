@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import me.sablednah.legendquest.classes.Classes;
 import me.sablednah.legendquest.cmds.CmdClass;
 import me.sablednah.legendquest.cmds.CmdRace;
+import me.sablednah.legendquest.cmds.CmdSkill;
 import me.sablednah.legendquest.cmds.CmdStats;
 import me.sablednah.legendquest.cmds.RootCommand;
 import me.sablednah.legendquest.config.DataConfig;
@@ -96,6 +97,7 @@ public class Main extends JavaPlugin {
 		getCommand("race").setExecutor(new CmdRace(this));
 		getCommand("class").setExecutor(new CmdClass(this));
 		getCommand("stats").setExecutor(new CmdStats(this));
+		getCommand("skill").setExecutor(new CmdSkill(this));
 
 		// Mana ticker
 		this.getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), 20, 20);

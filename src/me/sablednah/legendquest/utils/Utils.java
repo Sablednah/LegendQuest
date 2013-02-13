@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -244,7 +245,7 @@ public class Utils {
 			eq.setHelmet(item);
 		}
 	}
-	
+
 	public static boolean isParsableToInt(String i) {
 		try {
 			Integer.parseInt(i);
@@ -253,5 +254,39 @@ public class Utils {
 			return false;
 		}
 	}
-	
+
+	public static String stringRepeat(String newString, int n) {
+		StringBuilder builder = new StringBuilder(n * newString.length());
+		for (int x = 0; x < n; x++) {
+			builder.append(newString);
+		}
+		return builder.toString();
+	}
+
+	public static String barGraph(int x, int y, int scale, String prefix, String suffix) {
+		int percent = (int) ((x / (float) y) * scale);
+		StringBuilder mesage = new StringBuilder(12 + scale + prefix.length() + suffix.length());
+		mesage.append(ChatColor.WHITE);
+		mesage.append(prefix).append(": [");
+		mesage.append(ChatColor.GREEN);
+		if (percent > 0) {
+			mesage.append(Utils.stringRepeat("|", percent));
+		}
+		mesage.append(ChatColor.RED);
+		if (percent < scale) {
+			mesage.append(Utils.stringRepeat("|", (scale - percent)));
+		}
+		mesage.append(ChatColor.WHITE);
+		mesage.append("]").append(suffix);
+		return mesage.toString();
+	}
+
+	public static String join(String r[], String d) {
+		StringBuilder sb = new StringBuilder();
+		int i;
+		for (i = 0; i < r.length - 1; i++)
+			sb.append(r[i] + d);
+		return sb.toString() + r[i];
+	}
+
 }

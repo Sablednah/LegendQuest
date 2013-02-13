@@ -34,7 +34,12 @@ commands:
         alias: [lqstats,lqueststats,legendqstats,legendqueststats]
         permission: legendquest.command.stats
         permission-message: You don't have <permission>
-        
+    skill:
+        description: View, choose, or change your Skills.
+        usage: Use "/<command> help" for more info
+        alias: [lqskill,lquestskill,legendqskill,legendquestskill,skills,lqskills,lquestskills,legendqskills,legendquestskills]
+        permission: legendquest.command.skills
+        permission-message: You don't have <permission>  
 permissions:
     legendquest.*:
         description: Gives access to all legendquest commands/functions.
@@ -47,6 +52,7 @@ permissions:
             legendquest.command.reload: true
             legendquest.command.race: true
             legendquest.command.class: true
+            legendquest.command.skill: true
             legendquest.command.stats: true
     legendquest.command.reload:
         description: Allows user to use legendquest reload command.
@@ -56,6 +62,9 @@ permissions:
         default: true
     legendquest.command.class:
         description: Allows user to use legendquest class command.
+        default: true
+    legendquest.command.skill:
+        description: Allows user to use legendquest skill command.
         default: true
     legendquest.command.stats:
         description: Allows user to use legendquest stats command.

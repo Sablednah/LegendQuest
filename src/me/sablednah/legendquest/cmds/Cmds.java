@@ -4,6 +4,7 @@ public enum Cmds {
 	// constant (console allowed,min arg length)
 	RACE(true, 0),
 	CLASS(true, 0),
+	SKILL(true, 0),
 	RELOAD(true, 0),
 	STATS(true, 0),
 	HELP(true, 0);

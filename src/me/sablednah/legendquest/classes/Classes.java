@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
+import me.sablednah.legendquest.skills.LqSkill;
+import me.sablednah.legendquest.skills.PluginSkill;
+import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.utils.Pair;
 import me.sablednah.legendquest.utils.Utils;
 import me.sablednah.legendquest.utils.WeightedProbMap;
@@ -113,11 +117,13 @@ public class Classes {
 					c.statCon = thisConfig.getInt("statmods.con");
 					c.statChr = thisConfig.getInt("statmods.chr");
 					c.healthPerLevel = thisConfig.getDouble("healthperlevel");
+
 					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
-					c.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
-					c.skillPoints = thisConfig.getInt("skillPoints");
 					c.manaBonus = thisConfig.getInt("manaBonus");
 					c.manaPerSecond = thisConfig.getInt("manaPerSecond");
+
+					c.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
+					c.skillPoints = thisConfig.getInt("skillPoints");
 
 					c.perm = thisConfig.getString("perm");
 
@@ -274,6 +280,24 @@ public class Classes {
 					}
 					c.dissallowedWeapons = intList;
 
+					
+					// skills
+					c.availableSkills = new ArrayList<Skill>();
+					ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
+					if (inateSkills != null) {
+						for (String key : inateSkills.getKeys(false)) {
+							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
+							Skill s;
+							if (skillInfo.getString("command") != null && !skillInfo.getString("command").isEmpty()) {
+								s = new PluginSkill(skillInfo);
+							} else {
+								s = new LqSkill(skillInfo);
+							}
+							c.availableSkills.add(s);
+						}
+					}
+					
+					
 					// check race or group exists.
 					boolean hasRace = checkRaceList(allowedRaces);
 					boolean hasGroup = checkGroupList(allowedGroups);

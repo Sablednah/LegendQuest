@@ -38,6 +38,8 @@ public class Race {
 	// Used by classes as allowes races - e.g. Paladin could be allowed to all good races.
 	public List<String>		groups;
 
-	public List<Skill>		skills;
+	public int				skillPoints;
+	public double			skillPointsPerLevel;
+	public List<Skill>		availableSkills;
 
 }

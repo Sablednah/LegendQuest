@@ -1,11 +1,15 @@
 package me.sablednah.legendquest.playercharacters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import me.sablednah.legendquest.Main;
@@ -22,11 +26,10 @@ public class PC {
 	public Race						race;
 	public ClassType				mainClass;
 	public ClassType				subClass;
-	public HashMap<String, Integer>	xpEarnt	= new HashMap<String, Integer>();
+	public HashMap<String, Integer>	xpEarnt			= new HashMap<String, Integer>();
 	public int						maxHP;
 	public int						health;
 	public int						mana;
-	public int						skillpoints;
 
 	public boolean					raceChanged;
 
@@ -40,6 +43,7 @@ public class PC {
 	public int						currentXP;
 
 	public List<Skill>				skillsSelected;
+	public HashMap<String, Integer>	skillsPurchased	= new HashMap<String, Integer>();
 
 	public PC(Main plugin, String pName) {
 		this.lq = plugin;
@@ -53,7 +57,6 @@ public class PC {
 		this.maxHP = 20;
 		this.health = 20;
 		this.mana = getMaxMana();
-		this.skillpoints = 0;
 		this.currentXP = 0;
 		if (!lq.configMain.randomStats) {
 			statStr = statDex = statInt = statWis = statCon = statChr = 12;
@@ -73,6 +76,70 @@ public class PC {
 			statCon = statline[4];
 			statChr = statline[5];
 		}
+		checkSkills();
+		scheduleCheckInv();
+		scheduleHealthCheck();
+
+	}
+
+	public void checkSkills() {
+		List<Skill> potentialSkills = getUniqueSkills();
+		List<Skill> activeSkills = new ArrayList<Skill>();
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		for (Skill s : potentialSkills) {
+			if (s.levelRequired <= level && s.skillPoints < 1) {
+				activeSkills.add(s);
+				continue;
+			}
+			// skill points now :/
+			if (skillsPurchased.containsValue(s.name)) {
+				activeSkills.add(s);
+				continue;
+			}
+		}
+		skillsSelected = activeSkills;
+	}
+
+	public List<Skill> getUniqueSkills() {
+		Set<Skill> set = new HashSet<Skill>();
+		set.addAll(race.availableSkills);
+		set.addAll(mainClass.availableSkills);
+		if (subClass != null) {
+			set.addAll(subClass.availableSkills);
+		}
+		List<Skill> uniques = new ArrayList<Skill>();
+		uniques.addAll(set);
+		return uniques;
+	}
+
+	public int getSkillPointsLeft() {
+		return getMaxSkillPointsLeft() - getSkillPointsSpent();
+	}
+
+	public int getMaxSkillPointsLeft() {
+		int sp, level;
+		double result, perlevel;
+
+		sp = race.skillPoints;
+		sp += mainClass.skillPoints;
+		level = SetExp.getExpAtLevel(currentXP);
+		if (subClass != null) {
+			perlevel = Math.max(mainClass.skillPointsPerLevel, subClass.skillPointsPerLevel);
+		} else {
+			perlevel = mainClass.healthPerLevel;
+		}
+		result = (sp + (level * (perlevel + race.skillPointsPerLevel)));
+
+		return (int) result;
+	}
+
+	public int getSkillPointsSpent() {
+		int result = 0;
+		for (int cost : skillsPurchased.values()) {
+			result += cost;
+		}
+		return result;
 	}
 
 	/**
@@ -250,21 +317,19 @@ public class PC {
 	}
 
 	public int getMaxHealth() {
-		Player p = Bukkit.getServer().getPlayer(this.player);
-		if (p != null) {
-			int hp, level;
-			double result, perlevel;
+		int hp, level;
+		double result, perlevel;
 
-			hp = race.baseHealth;
-			level = p.getLevel();
-			if (subClass != null) {
-				perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
-			} else {
-				perlevel = mainClass.healthPerLevel;
-			}
-			result = (hp + (level * perlevel));
-			this.maxHP = (int) result;
+		hp = race.baseHealth;
+		level = SetExp.getLevelOfXpAmount(currentXP);
+		if (subClass != null) {
+			perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
+		} else {
+			perlevel = mainClass.healthPerLevel;
 		}
+		result = (hp + (level * perlevel));
+		this.maxHP = (int) result;
+
 		return this.maxHP;
 	}
 
@@ -274,32 +339,32 @@ public class PC {
 	}
 
 	public int getMaxMana() {
-		Player p = Bukkit.getServer().getPlayer(this.player);
 		double result = 0;
-		if (p != null) {
-			int mana, level, bonus;
-			double perlevel;
+		int mana, level, bonus;
+		double perlevel;
 
-			mana = race.baseMana;
+		mana = race.baseMana;
 
-			level = p.getLevel();
-			if (subClass != null) {
-				perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
-				bonus = Math.max(mainClass.manaBonus, subClass.manaBonus);
-			} else {
-				perlevel = mainClass.healthPerLevel;
-				bonus = mainClass.manaBonus;
-			}
-			result = (mana + bonus + (level * perlevel));
+		level = SetExp.getLevelOfXpAmount(currentXP);
+		if (subClass != null) {
+			perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
+			bonus = Math.max(mainClass.manaBonus, subClass.manaBonus);
+		} else {
+			perlevel = mainClass.healthPerLevel;
+			bonus = mainClass.manaBonus;
 		}
+		result = (mana + bonus + (level * perlevel));
+
 		return (int) result;
 	}
 
-	public void manaGain(int gain) {
+	public boolean manaGain(int gain) {
+		int manaNow = this.mana;
 		this.mana += gain;
 		if (this.mana > getMaxMana()) {
 			this.mana = getMaxMana();
 		}
+		return (manaNow != this.mana);
 	}
 
 	public void manaLoss(int loss) {
@@ -308,8 +373,8 @@ public class PC {
 			this.mana = 0;
 		}
 	}
-	
-	public void manaGain() {
+
+	public boolean manaGain() {
 		int gain;
 		gain = race.manaPerSecond;
 		if (subClass != null) {
@@ -317,7 +382,7 @@ public class PC {
 		} else {
 			gain += mainClass.manaPerSecond;
 		}
-		manaGain(gain);
+		return manaGain(gain);
 	}
 
 	public void healthCheck() {
@@ -353,7 +418,13 @@ public class PC {
 		if (subClass != null) {
 			xpEarnt.put(subClass.name.toLowerCase(), newXP);
 		}
+		
+//		lq.debug.fine("newXP:"+newXP);
+		
 		currentXP = newXP;
+		
+//		lq.debug.fine("currentXP:"+currentXP);
+		
 		Player p = Bukkit.getServer().getPlayer(player);
 		if (p != null) {
 			SetExp.setTotalExperience(p, newXP);
@@ -475,32 +546,51 @@ public class PC {
 	@SuppressWarnings("deprecation")
 	public void checkInv() {
 		Player p = lq.getServer().getPlayer(player);
-		PlayerInventory i = p.getInventory();
+		if (p.isOnline()) {
+			PlayerInventory i = p.getInventory();
 
-		if (!(allowedArmour(i.getHelmet().getTypeId()))) {
-			p.sendMessage(lq.configLang.cantEquipArmour);
-			lq.debug.fine("Removed helmet " + (i.getHelmet().getTypeId()) + " from " + p.getName() + ".");
-			p.getWorld().dropItemNaturally(p.getLocation(), i.getHelmet());
-			i.setHelmet(null);
+			ItemStack helm = i.getHelmet();
+			ItemStack chest = i.getChestplate();
+			ItemStack legs = i.getLeggings();
+			ItemStack boots = i.getBoots();
+
+			if (helm != null && !(allowedArmour(helm.getTypeId()))) {
+				p.sendMessage(lq.configLang.cantEquipArmour);
+				lq.debug.fine("Removed helmet " + (helm.getTypeId()) + " from " + p.getName() + ".");
+				p.getWorld().dropItemNaturally(p.getLocation(), helm);
+				i.setHelmet(null);
+			}
+			if (chest != null && !(allowedArmour(chest.getTypeId()))) {
+				p.sendMessage(lq.configLang.cantEquipArmour);
+				lq.debug.fine("Removed chestplate " + (chest.getTypeId()) + " from " + p.getName() + ".");
+				p.getWorld().dropItemNaturally(p.getLocation(), chest);
+				i.setChestplate(null);
+			}
+			if (legs != null && !(allowedArmour(legs.getTypeId()))) {
+				p.sendMessage(lq.configLang.cantEquipArmour);
+				lq.debug.fine("Removed leggings " + (legs.getTypeId()) + " from " + p.getName() + ".");
+				p.getWorld().dropItemNaturally(p.getLocation(), legs);
+				i.setLeggings(null);
+			}
+			if (boots != null && !(allowedArmour(boots.getTypeId()))) {
+				p.sendMessage(lq.configLang.cantEquipArmour);
+				lq.debug.fine("Removed boots " + (boots.getTypeId()) + " from " + p.getName() + ".");
+				p.getWorld().dropItemNaturally(p.getLocation(), boots);
+				i.setBoots(null);
+			}
+			p.updateInventory();
 		}
-		if (!(allowedArmour(i.getChestplate().getTypeId()))) {
-			p.sendMessage(lq.configLang.cantEquipArmour);
-			lq.debug.fine("Removed chestplate " + (i.getChestplate().getTypeId()) + " from " + p.getName() + ".");
-			p.getWorld().dropItemNaturally(p.getLocation(), i.getChestplate());
-			i.setChestplate(null);
-		}
-		if (!(allowedArmour(i.getLeggings().getTypeId()))) {
-			p.sendMessage(lq.configLang.cantEquipArmour);
-			lq.debug.fine("Removed leggings " + (i.getHelmet().getTypeId()) + " from " + p.getName() + ".");
-			p.getWorld().dropItemNaturally(p.getLocation(), i.getLeggings());
-			i.setLeggings(null);
-		}
-		if (!(allowedArmour(i.getBoots().getTypeId()))) {
-			p.sendMessage(lq.configLang.cantEquipArmour);
-			lq.debug.fine("Removed boots " + (i.getHelmet().getTypeId()) + " from " + p.getName() + ".");
-			p.getWorld().dropItemNaturally(p.getLocation(), i.getBoots());
-			i.setBoots(null);
-		}
-		p.updateInventory();
 	}
+
+	public void scheduleCheckInv() {
+		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedInvCheck(), 2L);
+	}
+
+	public class DelayedInvCheck implements Runnable {
+		@Override
+		public void run() {
+			checkInv();
+		}
+	}
+
 }

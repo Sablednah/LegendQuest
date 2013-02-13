@@ -17,9 +17,9 @@ public class DataSync {
 	public Main							lq;
 	public ConcurrentLinkedQueue<PC>	pendingWrites	= new ConcurrentLinkedQueue<PC>();
 	public Database						dbconn;
-	private BukkitTask						aSyncTaskKeeper;
-	private BukkitTask						aSyncTaskQueue;
-	
+	private BukkitTask					aSyncTaskKeeper;
+	private BukkitTask					aSyncTaskQueue;
+
 	public DataSync(Main p) {
 		this.lq = p;
 
@@ -62,15 +62,15 @@ public class DataSync {
 		return xp;
 	}
 
-	public synchronized HashMap<String,Integer> getXPs(String playerName) {
+	public synchronized HashMap<String, Integer> getXPs(String playerName) {
 		String sql;
-		HashMap<String,Integer> result = new HashMap<String,Integer>();
+		HashMap<String, Integer> result = new HashMap<String, Integer>();
 		try {
 			sql = "SELECT xp,class FROM xpEarnt WHERE player='" + playerName + "';";
 			ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
-					result.put(r.getString("class"),r.getInt("xp"));
+					result.put(r.getString("class"), r.getInt("xp"));
 				}
 			}
 		} catch (SQLException e) {
@@ -79,9 +79,9 @@ public class DataSync {
 		}
 		return result;
 	}
-	
+
 	public synchronized PC getData(String pName) {
-		lq.debug.fine("loading "+pName+" from db");
+		lq.debug.fine("loading " + pName + " from db");
 		String sql;
 		PC pc = new PC(lq, pName);
 		sql = "SELECT * FROM pcs WHERE player='" + pName + "';";
@@ -92,22 +92,21 @@ public class DataSync {
 				return null;
 			}
 			while (r.next()) {
-				
+
 				pc.charname = r.getString("charname");
-				lq.debug.fine("loading character "+pc.charname);
-				
+				lq.debug.fine("loading character " + pc.charname);
+
 				pc.maxHP = r.getInt("maxHP");
 				pc.health = r.getInt("health");
 				pc.mana = r.getInt("mana");
-				pc.skillpoints = r.getInt("skillpoints");
 				pc.race = lq.races.getRace(r.getString("race"));
 				pc.raceChanged = r.getBoolean("raceChanged");
 
 				pc.mainClass = lq.classes.getClass(r.getString("mainClass"));
 				pc.subClass = lq.classes.getClass(r.getString("subClass"));
 
-				lq.debug.fine("class is "+pc.mainClass.name);
-				
+				lq.debug.fine("class is " + pc.mainClass.name);
+
 				pc.statStr = r.getInt("statStr");
 				pc.statDex = r.getInt("statDex");
 				pc.statInt = r.getInt("statInt");
@@ -117,6 +116,7 @@ public class DataSync {
 
 			}
 			r.close();
+
 			sql = "SELECT xp, class FROM xpEarnt WHERE player='" + pName + "';";
 			lq.debug.fine(sql);
 			int thisXP;
@@ -124,14 +124,27 @@ public class DataSync {
 			if (r != null) {
 				while (r.next()) {
 					thisXP = r.getInt("xp");
-					lq.debug.fine("found "+thisXP+" xp for "+r.getString("class"));
-					if (pc.mainClass.name.toLowerCase() == r.getString("class")) {
+					lq.debug.fine("found " + thisXP + " xp for " + r.getString("class"));
+					if (pc.mainClass.name.toLowerCase().equals(r.getString("class"))) {
 						pc.currentXP = thisXP;
 						lq.debug.fine(r.getString("class") + " is current class - setting main XP");
 					}
 					pc.xpEarnt.put(r.getString("class").toLowerCase(), thisXP);
 				}
 			}
+
+			sql = "SELECT skillName FROM skillsBought WHERE player='" + pName + "';";
+			lq.debug.fine(sql);
+			int skillCost;
+			r = dbconn.query(sql);
+			if (r != null) {
+				while (r.next()) {
+					skillCost = r.getInt("cost");
+					lq.debug.fine("found " + skillCost + " cost for " + r.getString("skillName"));
+					pc.xpEarnt.put(r.getString("skillName").toLowerCase(), skillCost);
+				}
+			}
+
 			return pc;
 		} catch (SQLException e) {
 			lq.logSevere("Error reading XP from to database.");
@@ -143,7 +156,7 @@ public class DataSync {
 	private synchronized void writeData(PC pc) {
 		String sql;
 		sql = "REPLACE INTO pcs (";
-		sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,statStr,statDex,statInt,statWis,statCon,statChr,skillpoints";
+		sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,statStr,statDex,statInt,statWis,statCon,statChr";
 		sql = sql + ") values(\"";
 		sql = sql + pc.player + "\",\"";
 		sql = sql + pc.charname + "\",\"";
@@ -167,8 +180,7 @@ public class DataSync {
 		sql = sql + pc.statInt + ",";
 		sql = sql + pc.statWis + ",";
 		sql = sql + pc.statCon + ",";
-		sql = sql + pc.statChr + ",";
-		sql = sql + pc.skillpoints;
+		sql = sql + pc.statChr;
 		sql = sql + ");";
 		lq.debug.fine(sql);
 
@@ -188,8 +200,21 @@ public class DataSync {
 				r = dbconn.query(sql2);
 				r.close();
 			}
+
+			for (Map.Entry<String, Integer> entry : pc.skillsPurchased.entrySet()) {
+				sql2 = "REPLACE INTO skillsBought (";
+				sql2 = sql2 + "player,skillName,cost";
+				sql2 = sql2 + ") values(\"";
+				sql2 = sql2 + pc.player + "\",\"";
+				sql2 = sql2 + entry.getKey() + "\",";
+				sql2 = sql2 + entry.getValue();
+				lq.debug.fine(sql2);
+				r = dbconn.query(sql2);
+				r.close();
+			}
+
 		} catch (SQLException e) {
-			lq.logSevere("Error writing pc from database.");
+			lq.logSevere("Error writing pc to database.");
 			e.printStackTrace();
 		}
 	}
@@ -300,6 +325,31 @@ public class DataSync {
 			}
 		} catch (SQLException e) {
 			lq.logSevere("Error creating table 'xpEarnt'.");
+			e.printStackTrace();
+		}
+
+		create = "CREATE TABLE if not exists skillsBought (";
+		create += "player varchar(16) NOT NULL, ";
+		create += "skillName varchar(64) NOT NULL, ";
+		create += "cost INTEGER";
+		if (lq.configMain.useMySQL) {
+			create += ", CONSTRAINT pid PRIMARY KEY (player,skillName)";
+		} else {
+			create += ", UNIQUE(player, skillName) ON CONFLICT REPLACE";
+		}
+		create += " );";
+		lq.debug.fine(create);
+		try {
+			r = dbconn.query(create);
+			lq.debug.fine(r.toString());
+			r.close();
+			if (!lq.configMain.useMySQL) {
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS player_skill_index ON skillsBought(player,skillName)";
+				dbconn.query(create);
+				r.close();
+			}
+		} catch (SQLException e) {
+			lq.logSevere("Error creating table 'skillsBought'.");
 			e.printStackTrace();
 		}
 	}

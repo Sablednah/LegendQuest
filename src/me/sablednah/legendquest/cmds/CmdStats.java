@@ -5,6 +5,7 @@ import java.util.Map;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.SetExp;
+import me.sablednah.legendquest.utils.Utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -63,18 +64,19 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 			Player p= Bukkit.getServer().getPlayer(targetName);
 			
 			if (p!=null) {
-				sender.sendMessage(lq.configLang.statHealth + ": "+p.getHealth() + " / " + p.getMaxHealth());
+				sender.sendMessage(Utils.barGraph(p.getHealth(), pc.getMaxHealth(), 20, lq.configLang.statHealth, (" "+p.getHealth() + " / " + p.getMaxHealth())));
 			} else {
-				sender.sendMessage(lq.configLang.statHealth + ": "+pc.health + " / " + pc.maxHP);
+				sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" "+pc.health + " / " + pc.maxHP)));
 			}
-
+			
+			sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" "+pc.mana + " / " + pc.getMaxMana())));
 			sender.sendMessage("--------------------");
 			
 			for (Map.Entry<String, Integer> entry : pc.xpEarnt.entrySet()) {
-				sender.sendMessage("XP: " + entry.getKey().toLowerCase() + ": "+SetExp.getLevelOfXpAmount(entry.getValue())+" (" + entry.getValue() + ")" );
+				sender.sendMessage("XP: " + entry.getKey().toLowerCase() + ": " + lq.configLang.statLevelShort+" "+SetExp.getLevelOfXpAmount(entry.getValue())+" (" + entry.getValue() + ")" );
 			}
 
-			sender.sendMessage("--------------------");
+			//sender.sendMessage("--------------------");
 
 			return true;
 		} else {

@@ -50,7 +50,13 @@ public class LangConfig extends Config {
 	public String	statWIS					= "WIS";
 	public String	statCON					= "CON";
 	public String	statCHR					= "CHR";
-	public String	statHealth				= "Health";
+	public String	statHealth				= "HP";
+	public String	statMana				= "MP";
+
+	public String	statLevel				= "Level";
+	public String	statLevelShort			= "Lvl";
+	public String	statSkillPoints			= "Skill Points";
+	public String	statSp					= "SP";
 	public String	statRace				= "Race";
 	public String	statClass				= "Class";
 	public String	playerName				= "Name";
@@ -58,6 +64,13 @@ public class LangConfig extends Config {
 	public String	cantEquipArmour			= "Sory you can't wear that armour.";
 	public String	cantUseTool				= "Sory you can't use that tool.";
 	public String	cantUseWeapon			= "Sory you can't weild that weapon.";
+
+	public String	noSkills				= "You have no skills to use.";
+	public String	hasSkills				= "You have the following usable skills:";
+	public String	skillPoints				= "Skill Points: ";
+	public String	skillList				= "You have the following skills available.";
+	public String	skillListHeader			= "-- Skill Name --,-- Level --,--Cost--";
+	public String	skillsList				= "------- Skills --------";
 
 	public LangConfig(Main p) {
 		super(p, "lang.yml");
@@ -73,6 +86,7 @@ public class LangConfig extends Config {
 		this.statCON = this.getConfigItem("statCON", this.statCON);
 		this.statCHR = this.getConfigItem("statCHR", this.statCHR);
 		this.statHealth = this.getConfigItem("statHealth", this.statHealth);
+		this.statMana = this.getConfigItem("statMana", this.statMana);
 		this.statRace = this.getConfigItem("statRace", this.statRace);
 		this.statClass = this.getConfigItem("statClass", this.statClass);
 

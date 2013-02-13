@@ -1,5 +1,6 @@
 package me.sablednah.legendquest.classes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.sablednah.legendquest.skills.Skill;
@@ -42,5 +43,6 @@ public class ClassType {
 	public int				skillPoints;
 	public double			skillPointsPerLevel;
 	public List<Skill>		skills;
+	public ArrayList<Skill>	availableSkills;
 
 }
