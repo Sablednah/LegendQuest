@@ -7,9 +7,10 @@ package lib.PatPeter.SQLibrary.Builders;
  * @author Nicholas Solin, a.k.a. PatPeter
  */
 public class BuilderException extends RuntimeException {
-	private static final long serialVersionUID = -5189696278473157463L;
 
-	public BuilderException(String message) {
-		super(message);
-	}
+    private static final long serialVersionUID = -5189696278473157463L;
+
+    public BuilderException(final String message) {
+        super(message);
+    }
 }

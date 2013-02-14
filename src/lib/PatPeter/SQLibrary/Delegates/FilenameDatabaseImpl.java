@@ -11,18 +11,20 @@ import lib.PatPeter.SQLibrary.DatabaseException;
  * @author Nicholas Solin, a.k.a. PatPeter
  */
 public class FilenameDatabaseImpl implements FilenameDatabase {
-	private File file;
-	
-	@Override
-	public File getFile() {
-		return this.file;
-	}
 
-	@Override
-	public void setFile(File file) throws DatabaseException {
-		if (file == null)
-			throw new DatabaseException("File cannot be null.");
-		this.file = file;
-	}
+    private File file;
+
+    @Override
+    public File getFile() {
+        return this.file;
+    }
+
+    @Override
+    public void setFile(final File file) throws DatabaseException {
+        if (file == null) {
+            throw new DatabaseException("File cannot be null.");
+        }
+        this.file = file;
+    }
 
 }

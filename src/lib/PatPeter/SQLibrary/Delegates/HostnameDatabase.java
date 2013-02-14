@@ -7,23 +7,24 @@ package lib.PatPeter.SQLibrary.Delegates;
  * @author PatPeter
  */
 public interface HostnameDatabase {
-	String getHostname();
-	
-	void setHostname(String hostname);
-	
-	int getPort();
-	
-	void setPort(int port);
-	
-	String getUsername();
-	
-	void setUsername(String username);
-	
-	String getPassword();
-	
-	void setPassword(String password);
-	
-	String getDatabase();
-	
-	void setDatabase(String database);
+
+    String getDatabase();
+
+    String getHostname();
+
+    String getPassword();
+
+    int getPort();
+
+    String getUsername();
+
+    void setDatabase(String database);
+
+    void setHostname(String hostname);
+
+    void setPassword(String password);
+
+    void setPort(int port);
+
+    void setUsername(String username);
 }

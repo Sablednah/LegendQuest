@@ -7,20 +7,20 @@ package lib.PatPeter.SQLibrary;
  * @author Nicholas Solin, a.k.a. PatPeter
  */
 public enum DBMS {
-	Other, 
-	Firebird, 
-	FrontBase, 
-	DB2, 
-	H2, 
-	Informix, 
-	Ingres, 
-	MaxDB, 
-	MicrosoftSQL, 
-	Mongo, 
-	mSQL, 
-	MySQL, 
-	Oracle, 
-	Ovrimos,
-	PostgreSQL, 
-	SQLite;
+    Other,
+    Firebird,
+    FrontBase,
+    DB2,
+    H2,
+    Informix,
+    Ingres,
+    MaxDB,
+    MicrosoftSQL,
+    Mongo,
+    mSQL,
+    MySQL,
+    Oracle,
+    Ovrimos,
+    PostgreSQL,
+    SQLite;
 }

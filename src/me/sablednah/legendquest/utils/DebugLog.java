@@ -15,108 +15,110 @@ import java.util.logging.Logger;
 import me.sablednah.legendquest.Main;
 
 public class DebugLog {
-	public Main			lq;
-	private String		filename	= "LegendQuest.log";
-	private FileHandler	fh;
-	private LogFormat	lf;
-	public Logger		log;
 
-	public DebugLog(Main p) {
-		this.lq = p;
-		try {
-			// get the file name
-			String fn = p.getDataFolder() + File.separator + this.filename;
-			System.out.print(fn);
-			File f = new File(p.getDataFolder(), this.filename);			
-			
+    private class LogFormat extends Formatter {
 
-			// create file handler to link file to log - set format to sensible 1 line format
-			this.fh = new FileHandler(f.getPath(), true);
-			this.lf = new LogFormat();
-			this.fh.setFormatter(lf);
+        private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-			// build the logger
-			this.log = Logger.getLogger("LedgendQuest");
+        private LogFormat() {}
 
-			// clean off any handlers for performance
-			this.log.setUseParentHandlers(false);
-			for (Handler h : this.log.getHandlers()) {
-				this.log.removeHandler(h);
-			}
-			this.log.addHandler(fh);
+        @Override
+        public String format(final LogRecord record) {
+            final StringBuilder b = new StringBuilder();
+            final Throwable ex = record.getThrown();
 
-			this.log.setLevel(Level.ALL);
+            b.append(this.date.format(Long.valueOf(record.getMillis())));
+            b.append(" [");
+            b.append(record.getLevel().getLocalizedName().toUpperCase());
+            b.append("] ");
+            b.append(record.getMessage());
+            b.append('\n');
 
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+            if (ex != null) {
+                final StringWriter w = new StringWriter();
+                ex.printStackTrace(new PrintWriter(w));
+                b.append(w);
+            }
 
-	public void setDebugMode() {
-		this.log.setLevel(Level.ALL);
-	}
+            return b.toString();
+        }
+    }
 
-	public void log(Level level, String msg) {
-		this.log.log(level, msg);
-	}
+    public Main lq;
+    private final String filename = "LegendQuest.log";
+    private FileHandler fh;
+    private LogFormat lf;
 
-	public void fine(String msg) {
-		this.log.fine(msg);
-	}
+    public Logger log;
 
-	public void info(String msg) {
-		this.log.info(msg);
-	}
+    public DebugLog(final Main p) {
+        this.lq = p;
+        try {
+            // get the file name
+            final String fn = p.getDataFolder() + File.separator + this.filename;
+            System.out.print(fn);
+            final File f = new File(p.getDataFolder(), this.filename);
 
-	public void warning(String msg) {
-		this.log.warning(msg);
-	}
+            // create file handler to link file to log - set format to sensible 1 line format
+            this.fh = new FileHandler(f.getPath(), true);
+            this.lf = new LogFormat();
+            this.fh.setFormatter(lf);
 
-	public void severe(String msg) {
-		this.log.severe(msg);
-	}
+            // build the logger
+            this.log = Logger.getLogger("LedgendQuest");
 
-	public void error(String msg) {
-		severe(msg);
-	}
+            // clean off any handlers for performance
+            this.log.setUseParentHandlers(false);
+            for (final Handler h : this.log.getHandlers()) {
+                this.log.removeHandler(h);
+            }
+            this.log.addHandler(fh);
 
-	private class LogFormat extends Formatter {
-		private final SimpleDateFormat	date	= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.log.setLevel(Level.ALL);
 
-		private LogFormat() {
-		}
+        } catch (final SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-		public String format(LogRecord record) {
-			StringBuilder b = new StringBuilder();
-			Throwable ex = record.getThrown();
+    public void closeLog() {
+        this.fh.close();
+    }
 
-			b.append(this.date.format(Long.valueOf(record.getMillis())));
-			b.append(" [");
-			b.append(record.getLevel().getLocalizedName().toUpperCase());
-			b.append("] ");
-			b.append(record.getMessage());
-			b.append('\n');
+    public void error(final String msg) {
+        severe(msg);
+    }
 
-			if (ex != null) {
-				StringWriter w = new StringWriter();
-				ex.printStackTrace(new PrintWriter(w));
-				b.append(w);
-			}
+    public void fine(final String msg) {
+        this.log.fine(msg);
+    }
 
-			return b.toString();
-		}
-	}
+    public void info(final String msg) {
+        this.log.info(msg);
+    }
 
-	public void closeLog() {
-		this.fh.close();
-	}
-	
-	  public void thrown(String sourceClass, String sourceMethod, Throwable thrown) {
-		    this.log.throwing(sourceClass, sourceMethod, thrown);
-	  }
+    public void log(final Level level, final String msg) {
+        this.log.log(level, msg);
+    }
+
+    public void setDebugMode() {
+        this.log.setLevel(Level.ALL);
+    }
+
+    public void severe(final String msg) {
+        this.log.severe(msg);
+    }
+
+    public void thrown(final String sourceClass, final String sourceMethod, final Throwable thrown) {
+        this.log.throwing(sourceClass, sourceMethod, thrown);
+    }
+
+    public void warning(final String msg) {
+        this.log.warning(msg);
+    }
 
 }

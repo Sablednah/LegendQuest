@@ -21,168 +21,171 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class ItemControlEvents implements Listener {
 
-	public Main	lq;
+    public Main lq;
 
-	public ItemControlEvents(Main p) {
-		this.lq = p;
-	}
+    public ItemControlEvents(final Main p) {
+        this.lq = p;
+    }
 
-	// check for armour validity when inventory is closed
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onInvClose(InventoryCloseEvent event) {
-		// check if this is a real players inventory...
-		if (!(event.getPlayer() instanceof Player)) {
-			return;
-		}
-		if (event.getPlayer().getName() == null) {
-			return;
-		}
-		Player p = (Player) event.getPlayer();
-		PC pc = lq.players.getPC(p);
-		//pc.scheduleCheckInv();
-		pc.checkInv();
-	}
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onAttack(final EntityDamageEvent event) {
+        if (!(event instanceof EntityDamageByEntityEvent)) {
+            return;
+        }
+        final EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
+        if (!(e.getDamager() instanceof Player)) {
+            return;
+        }
 
-	@SuppressWarnings("deprecation")
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onInvClick(InventoryClickEvent event) {
-		Player p = (Player) event.getWhoClicked();
-		PC pc = lq.players.getPC(p);
-		// detect auto armour equip...
-		if (event.isShiftClick()) {
-			lq.debug.fine("Shift Click used in admin armour by " + p.getDisplayName());
-		}
-		if (event.getCursor() != null) {
-			// player has item on the cursor
-			int itemID = event.getCursor().getTypeId();
-			switch (event.getSlotType()) {
-				case ARMOR: // and is trying to equip it
-					if (!pc.allowedArmour(itemID)) {
-						p.sendMessage(lq.configLang.cantEquipArmour);
-						event.setCancelled(true);
-						p.updateInventory();
-					}
-					break;
-			}
-		}
-	}
+        final Player p = (Player) e.getDamager();
+        final PC pc = lq.players.getPC(p);
+        final int itemUsed = p.getItemInHand().getTypeId();
 
-	// Stop Bow Fire
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onBowFire(EntityShootBowEvent event) {
-		// we only want to control players here...
-		if (!(event.getEntity() instanceof Player)) {
-			return;
-		}
-		Player p = (Player) event.getEntity();
-		PC pc = lq.players.getPC(p);
+        if (itemUsed > 0) {
+            if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)
+                    || lq.configData.dataSets.get("utility").contains(itemUsed)) {
+                if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
+                    p.sendMessage(lq.configLang.cantUseWeapon);
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
 
-		if (!pc.allowedWeapon(lq.bowID)) {
-			p.sendMessage(lq.configLang.cantUseWeapon);
-			event.setCancelled(true);
-		}
-	}
+    // prevent tool use
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent event) {
+        final Player p = event.getPlayer();
+        final PC pc = lq.players.getPC(p);
+        final int itemUsed = p.getItemInHand().getTypeId();
+        if (itemUsed > 0) {
+            if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)
+                    || lq.configData.dataSets.get("utility").contains(itemUsed)) {
+                if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
+                    p.sendMessage(lq.configLang.cantUseTool);
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
 
-	// Stop Egg 'Fire'
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onEggFire(PlayerEggThrowEvent event) {
-		Player p = event.getPlayer();
-		PC pc = lq.players.getPC(p);
+    // Stop Bow Fire
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onBowFire(final EntityShootBowEvent event) {
+        // we only want to control players here...
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        final Player p = (Player) event.getEntity();
+        final PC pc = lq.players.getPC(p);
 
-		if (!pc.allowedWeapon(lq.eggID)) {
-			p.sendMessage(lq.configLang.cantUseWeapon);
-			event.getEgg().remove();
-		}
-	}
+        if (!pc.allowedWeapon(lq.bowID)) {
+            p.sendMessage(lq.configLang.cantUseWeapon);
+            event.setCancelled(true);
+        }
+    }
 
-	// Stop Projectile 'Fire'
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onProjectile(ProjectileLaunchEvent event) {
-		Projectile bullit = event.getEntity();
-		if (!(bullit.getShooter() instanceof Player)) {
-			return;
-		}
-		Player p = (Player) bullit.getShooter();
-		PC pc = lq.players.getPC(p);
+    // Stop Egg 'Fire'
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEggFire(final PlayerEggThrowEvent event) {
+        final Player p = event.getPlayer();
+        final PC pc = lq.players.getPC(p);
 
-		switch (bullit.getType()) {
-			case ARROW:
-				if (!pc.allowedWeapon(lq.bowID)) {
-					p.sendMessage(lq.configLang.cantUseWeapon);
-					event.setCancelled(true);
-				}
-				break;
-			case EGG:
-				if (!pc.allowedWeapon(lq.eggID)) {
-					p.sendMessage(lq.configLang.cantUseWeapon);
-					event.setCancelled(true);
-				}
-				break;
-			case SNOWBALL:
-				if (!pc.allowedWeapon(lq.snowballID)) {
-					p.sendMessage(lq.configLang.cantUseWeapon);
-					event.setCancelled(true);
-				}
-				break;
-		}
-	}
+        if (!pc.allowedWeapon(lq.eggID)) {
+            p.sendMessage(lq.configLang.cantUseWeapon);
+            event.getEgg().remove();
+        }
+    }
 
-	// prevent "use" actions
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onInteract(PlayerInteractEvent event) {
-		Player p = event.getPlayer();
-		PC pc = lq.players.getPC(p);
-		int itemUsed = p.getItemInHand().getTypeId();
-		Action act = event.getAction();
-		if (itemUsed > 0) {
-			if (act == Action.RIGHT_CLICK_AIR || act == Action.RIGHT_CLICK_BLOCK) {
-				if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)   || lq.configData.dataSets.get("utility").contains(itemUsed) ) {
-					if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
-						p.sendMessage(lq.configLang.cantUseTool);
-						event.setCancelled(true);
-					}
-				}
-			}
-		}
-	}
+    // prevent "use" actions
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onInteract(final PlayerInteractEvent event) {
+        final Player p = event.getPlayer();
+        final PC pc = lq.players.getPC(p);
+        final int itemUsed = p.getItemInHand().getTypeId();
+        final Action act = event.getAction();
+        if (itemUsed > 0) {
+            if (act == Action.RIGHT_CLICK_AIR || act == Action.RIGHT_CLICK_BLOCK) {
+                if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)
+                        || lq.configData.dataSets.get("utility").contains(itemUsed)) {
+                    if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
+                        p.sendMessage(lq.configLang.cantUseTool);
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
 
-	// prevent tool use
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onBlockBreak(BlockBreakEvent event) {
-		Player p = event.getPlayer();
-		PC pc = lq.players.getPC(p);
-		int itemUsed = p.getItemInHand().getTypeId();
-		if (itemUsed > 0) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)   || lq.configData.dataSets.get("utility").contains(itemUsed) ) {
-				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
-					p.sendMessage(lq.configLang.cantUseTool);
-					event.setCancelled(true);
-				}
-			}
-		}
-	}
+    @SuppressWarnings("deprecation")
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onInvClick(final InventoryClickEvent event) {
+        final Player p = (Player) event.getWhoClicked();
+        final PC pc = lq.players.getPC(p);
+        // detect auto armour equip...
+        if (event.isShiftClick()) {
+            lq.debug.fine("Shift Click used in admin armour by " + p.getDisplayName());
+        }
+        if (event.getCursor() != null) {
+            // player has item on the cursor
+            final int itemID = event.getCursor().getTypeId();
+            switch (event.getSlotType()) {
+            case ARMOR: // and is trying to equip it
+                if (!pc.allowedArmour(itemID)) {
+                    p.sendMessage(lq.configLang.cantEquipArmour);
+                    event.setCancelled(true);
+                    p.updateInventory();
+                }
+            break;
+            }
+        }
+    }
 
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onAttack(EntityDamageEvent event) {
-		if (!(event instanceof EntityDamageByEntityEvent)) {
-			return;
-		}
-		EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-		if (!(e.getDamager() instanceof Player)) {
-			return;
-		}
+    // check for armour validity when inventory is closed
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onInvClose(final InventoryCloseEvent event) {
+        // check if this is a real players inventory...
+        if (!(event.getPlayer() instanceof Player)) {
+            return;
+        }
+        if (event.getPlayer().getName() == null) {
+            return;
+        }
+        final Player p = (Player) event.getPlayer();
+        final PC pc = lq.players.getPC(p);
+        // pc.scheduleCheckInv();
+        pc.checkInv();
+    }
 
-		Player p = (Player) e.getDamager();
-		PC pc = lq.players.getPC(p);
-		int itemUsed = p.getItemInHand().getTypeId();
+    // Stop Projectile 'Fire'
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onProjectile(final ProjectileLaunchEvent event) {
+        final Projectile bullit = event.getEntity();
+        if (!(bullit.getShooter() instanceof Player)) {
+            return;
+        }
+        final Player p = (Player) bullit.getShooter();
+        final PC pc = lq.players.getPC(p);
 
-		if (itemUsed > 0) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)  || lq.configData.dataSets.get("utility").contains(itemUsed) ) {
-				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
-					p.sendMessage(lq.configLang.cantUseWeapon);
-					event.setCancelled(true);
-				}
-			}
-		}
-	}
+        switch (bullit.getType()) {
+        case ARROW:
+            if (!pc.allowedWeapon(lq.bowID)) {
+                p.sendMessage(lq.configLang.cantUseWeapon);
+                event.setCancelled(true);
+            }
+        break;
+        case EGG:
+            if (!pc.allowedWeapon(lq.eggID)) {
+                p.sendMessage(lq.configLang.cantUseWeapon);
+                event.setCancelled(true);
+            }
+        break;
+        case SNOWBALL:
+            if (!pc.allowedWeapon(lq.snowballID)) {
+                p.sendMessage(lq.configLang.cantUseWeapon);
+                event.setCancelled(true);
+            }
+        break;
+        }
+    }
 }

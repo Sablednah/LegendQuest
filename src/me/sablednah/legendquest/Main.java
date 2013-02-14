@@ -26,97 +26,99 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
-	public Logger			logger;
-	public MainConfig		configMain;
-	public LangConfig		configLang;
-	public DataConfig		configData;
-	public Races			races;
-	public Classes			classes;
-	public DataSync			datasync;
-	public PCs				players;
-	public DebugLog			debug;
+    public Logger logger;
+    public MainConfig configMain;
+    public LangConfig configLang;
+    public DataConfig configData;
+    public Races races;
+    public Classes classes;
+    public DataSync datasync;
+    public PCs players;
+    public DebugLog debug;
 
-	public static final int	MAX_XP		= 58245;
-	public static final int	MAX_LEVEL	= 150;
+    public static final int MAX_XP = 58245;
+    public static final int MAX_LEVEL = 150;
 
-	public int				bowID		= Material.BOW.getId();
-	public int				eggID		= Material.EGG.getId();
-	public int				snowballID	= Material.SNOW_BALL.getId();
+    public int bowID = Material.BOW.getId();
+    public int eggID = Material.EGG.getId();
+    public int snowballID = Material.SNOW_BALL.getId();
 
-	public void onDisable() {
-		debug.closeLog();
-		datasync.shutdown();
+    public void log(final String msg) {
+        logger.info(msg);
+        debug.info("[serverlog] " + msg);
+    }
 
-		log(configLang.shutdown);
-	}
+    public void logSevere(final String msg) {
+        logger.severe(msg);
+        debug.severe("[serverlog] " + msg);
+    }
 
-	public void onEnable() {
-		this.logger = getLogger();
-		getDataFolder().mkdirs();
+    public void logWarn(final String msg) {
+        logger.warning(msg);
+        debug.warning("[serverlog] " + msg);
+    }
 
-		// enable debugger.
-		debug = new DebugLog(this);
+    @Override
+    public void onDisable() {
+        debug.closeLog();
+        datasync.shutdown();
 
-		// TODO remove this in live setup.
-		debug.setDebugMode();
+        log(configLang.shutdown);
+    }
 
-		// load main core settings
-		configMain = new MainConfig(this);
+    @Override
+    public void onEnable() {
+        this.logger = getLogger();
+        getDataFolder().mkdirs();
 
-		if (configMain.debugMode) {
-			debug.setDebugMode();
-		}
+        // enable debugger.
+        debug = new DebugLog(this);
 
-		// Get localised text from config
-		configLang = new LangConfig(this);
+        // TODO remove this in live setup.
+        debug.setDebugMode();
 
-		// Grab the constants
-		configData = new DataConfig(this);
+        // load main core settings
+        configMain = new MainConfig(this);
 
-		// Notify loading has begun...
-		log(configLang.startup);
+        if (configMain.debugMode) {
+            debug.setDebugMode();
+        }
 
-		// Time to read the Race and class files.
-		races = new Races(this);
-		classes = new Classes(this);
+        // Get localised text from config
+        configLang = new LangConfig(this);
 
-		// start database data writing task
-		datasync = new DataSync(this);
+        // Grab the constants
+        configData = new DataConfig(this);
 
-		// now load players
-		players = new PCs(this);
+        // Notify loading has begun...
+        log(configLang.startup);
 
-		// Let listen for events shall we?
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new PlayerEvents(this), this);
-		pm.registerEvents(new DamageEvents(this), this);
-		pm.registerEvents(new ItemControlEvents(this), this);
+        // Time to read the Race and class files.
+        races = new Races(this);
+        classes = new Classes(this);
 
-		// setup commands
-		getCommand("lq").setExecutor(new RootCommand(this));
-		getCommand("race").setExecutor(new CmdRace(this));
-		getCommand("class").setExecutor(new CmdClass(this));
-		getCommand("stats").setExecutor(new CmdStats(this));
-		getCommand("skill").setExecutor(new CmdSkill(this));
+        // start database data writing task
+        datasync = new DataSync(this);
 
-		// Mana ticker
-		this.getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), 20, 20);
-		
-	}
+        // now load players
+        players = new PCs(this);
 
-	public void log(String msg) {
-		logger.info(msg);
-		debug.info("[serverlog] " + msg);
-	}
+        // Let listen for events shall we?
+        final PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerEvents(this), this);
+        pm.registerEvents(new DamageEvents(this), this);
+        pm.registerEvents(new ItemControlEvents(this), this);
 
-	public void logSevere(String msg) {
-		logger.severe(msg);
-		debug.severe("[serverlog] " + msg);
-	}
+        // setup commands
+        getCommand("lq").setExecutor(new RootCommand(this));
+        getCommand("race").setExecutor(new CmdRace(this));
+        getCommand("class").setExecutor(new CmdClass(this));
+        getCommand("stats").setExecutor(new CmdStats(this));
+        getCommand("skill").setExecutor(new CmdSkill(this));
 
-	public void logWarn(String msg) {
-		logger.warning(msg);
-		debug.warning("[serverlog] " + msg);
-	}
+        // Mana ticker
+        getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), 20, 20);
+
+    }
 
 }

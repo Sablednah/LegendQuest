@@ -13,102 +13,102 @@ import org.bukkit.entity.Player;
 
 public class RootCommand implements CommandExecutor {
 
-	public Main	lq;
+    public Main lq;
 
-	public RootCommand(Main p) {
-		this.lq = p;
-	}
+    public RootCommand(final Main p) {
+        this.lq = p;
+    }
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		String cmd;
+    @Override
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+        String cmd;
 
-		if (!(args.length > 0)) {
-			cmd = "help";
-		} else {
-			cmd = args[0];
-		}
-		
-		lq.debug.fine("cmd: " + cmd);
-		
-		String[] newArglist;
-		if (args.length > 1) {
-			newArglist = Arrays.copyOfRange(args, 1, args.length);
-		} else {
-			newArglist = new String[0];
-		}
+        if (!(args.length > 0)) {
+            cmd = "help";
+        } else {
+            cmd = args[0];
+        }
 
-		lq.debug.fine("args.length: " + args.length);
-		lq.debug.fine("newArglist.length: " + newArglist.length);
-		
-		boolean isPlayer = (sender instanceof Player);
-		
-		lq.debug.fine("isPlayer: " + isPlayer);
+        lq.debug.fine("cmd: " + cmd);
 
-		try {
-			Cmds c = Cmds.valueOf(cmd.toUpperCase());
-			
-			lq.debug.fine("Cmds: " + c);
-			lq.debug.fine("Cmds: " + c.toString());
-			lq.debug.fine("test: " + (c==Cmds.STATS));
+        String[] newArglist;
+        if (args.length > 1) {
+            newArglist = Arrays.copyOfRange(args, 1, args.length);
+        } else {
+            newArglist = new String[0];
+        }
 
-			// player check here
-			if (!isPlayer && !c.canConsole()) {
-				// player only command used from console - reject and end command
-				sender.sendMessage(cmd + ": " + lq.configLang.invalidPlayerCommand);
-				// we're sending our own "failed" message so say it worked ok to prevent default
-				return true;
-			}
+        lq.debug.fine("args.length: " + args.length);
+        lq.debug.fine("newArglist.length: " + newArglist.length);
 
-			CommandExecutor newcmd = null;
+        final boolean isPlayer = (sender instanceof Player);
 
-			switch (c) {
-				case HELP:
-					// TODO add proper help messages
-					sendMultilineMessage(sender, lq.configLang.helpCommand);
-					return true;
-				case RELOAD:
-					lq.configMain.reloadConfig();
-					lq.configLang.reloadConfig();
-					lq.classes = null;
-					lq.races = null;
-					lq.races = new Races(lq);
-					lq.classes = new Classes(lq);
-					sender.sendMessage(lq.configLang.commandReloaded);
-					return true;
-				case RACE:
-					newcmd = new CmdRace(lq);
-					break;
-				case CLASS:
-					newcmd = new CmdClass(lq);
-					break;
-				case STATS:
-					newcmd = new CmdStats(lq);
-					break;
-			}
+        lq.debug.fine("isPlayer: " + isPlayer);
 
-			lq.debug.fine("newcmd: " + newcmd);
+        try {
+            final Cmds c = Cmds.valueOf(cmd.toUpperCase());
 
-			if (newcmd != null) {
-				return newcmd.onCommand(sender, command, label, newArglist);
-			}
+            lq.debug.fine("Cmds: " + c);
+            lq.debug.fine("Cmds: " + c.toString());
+            lq.debug.fine("test: " + (c == Cmds.STATS));
 
-		} catch (IllegalArgumentException e) {
-			sender.sendMessage(lq.configLang.invalidCommand + cmd + " :(");
-			e.printStackTrace();
-			return false;
-		}
+            // player check here
+            if (!isPlayer && !c.canConsole()) {
+                // player only command used from console - reject and end command
+                sender.sendMessage(cmd + ": " + lq.configLang.invalidPlayerCommand);
+                // we're sending our own "failed" message so say it worked ok to prevent default
+                return true;
+            }
 
-		return false;
-	}
+            CommandExecutor newcmd = null;
 
-	public void sendMultilineMessage(CommandSender send, String message) {
-		if (send != null && message != null) {
-			String[] s = message.split("\n");
-			for (String m : s) {
-				send.sendMessage(m);
-			}
-		}
-	}
+            switch (c) {
+            case HELP:
+                // TODO add proper help messages
+                sendMultilineMessage(sender, lq.configLang.helpCommand);
+                return true;
+            case RELOAD:
+                lq.configMain.reloadConfig();
+                lq.configLang.reloadConfig();
+                lq.classes = null;
+                lq.races = null;
+                lq.races = new Races(lq);
+                lq.classes = new Classes(lq);
+                sender.sendMessage(lq.configLang.commandReloaded);
+                return true;
+            case RACE:
+                newcmd = new CmdRace(lq);
+            break;
+            case CLASS:
+                newcmd = new CmdClass(lq);
+            break;
+            case STATS:
+                newcmd = new CmdStats(lq);
+            break;
+            }
+
+            lq.debug.fine("newcmd: " + newcmd);
+
+            if (newcmd != null) {
+                return newcmd.onCommand(sender, command, label, newArglist);
+            }
+
+        } catch (final IllegalArgumentException e) {
+            sender.sendMessage(lq.configLang.invalidCommand + cmd + " :(");
+            e.printStackTrace();
+            return false;
+        }
+
+        return false;
+    }
+
+    public void sendMultilineMessage(final CommandSender send, final String message) {
+        if (send != null && message != null) {
+            final String[] s = message.split("\n");
+            for (final String m : s) {
+                send.sendMessage(m);
+            }
+        }
+    }
 
 }

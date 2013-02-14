@@ -14,130 +14,131 @@ import lib.PatPeter.SQLibrary.Delegates.HostnameDatabaseImpl;
  * @author Nicholas Solin, a.k.a. PatPeter
  */
 public class Ingres extends Database {
-	private HostnameDatabase delegate = new HostnameDatabaseImpl();
-	
-	protected enum Statements implements StatementEnum {}
-	
-	public Ingres(Logger log,
-				  String prefix,
-				  String database,
-				  String username,
-				  String password) {
-		super(log,prefix,"[Ingres] ");
-		setHostname("localhost");
-		setPort(21017);
-		setDatabase(database);
-		setUsername(username);
-		setPassword(password);
-		this.driver = DBMS.Ingres;
-	}
-	
-	public Ingres(Logger log,
-				  String prefix,
-				  String hostname,
-				  int port,
-				  String database,
-				  String username,
-				  String password) {
-		super(log,prefix,"[Ingres] ");
-		setHostname(hostname);
-		setPort(port);
-		setDatabase(database);
-		setUsername(username);
-		setPassword(password);
-		this.driver = DBMS.Ingres;
-	}
 
-	public String getHostname() {
-		return delegate.getHostname();
-	}
-	
-	private void setHostname(String hostname) {
-		delegate.setHostname(hostname);
-	}
-	
-	public int getPort() {
-		return delegate.getPort();
-	}
-	
-	private void setPort(int port) {
-		delegate.setPort(port);
-	}
-	
-	public String getUsername() {
-		return delegate.getUsername();
-	}
-	
-	private void setUsername(String username) {
-		delegate.setUsername(username);
-	}
-	
-	private String getPassword() {
-		return delegate.getPassword();
-	}
-	
-	private void setPassword(String password) {
-		delegate.setPassword(password);
-	}
-	
-	public String getDatabase() {
-		return delegate.getDatabase();
-	}
-	
-	private void setDatabase(String database) {
-		delegate.setDatabase(database);
-	}
+    protected enum Statements implements StatementEnum {}
 
-	@Override
-	public boolean initialize() {
-		try {
-			Class.forName("com.ingres.jdbc.IngresDriver");
-			return true;
-	    } catch (ClassNotFoundException e) {
-	    	this.writeError("Ingres driver class missing: " + e.getMessage() + ".", true);
-	    	return false;
-	    }
-	}
-	
-	@Override
-	public boolean open() {
-		if (initialize()) {
-			String url = "";
-			url = "jdbc:ingres://" + getHostname() + ":" + getPort() + "/" + getDatabase();
-			try {
-				this.connection = DriverManager.getConnection(url, getUsername(), getPassword());
-				this.connected = true;
-				return true;
-			} catch (SQLException e) {
-				this.writeError("Could not establish a Ingres connection, SQLException: " + e.getMessage(), true);
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	protected void queryValidation(StatementEnum statement) throws SQLException {}
+    private final HostnameDatabase delegate = new HostnameDatabaseImpl();
 
-	@Override
-	public Statements getStatement(String query) throws SQLException {
-		String[] statement = query.trim().split(" ", 2);
-		try {
-			Statements converted = Statements.valueOf(statement[0].toUpperCase());
-			return converted;
-		} catch (IllegalArgumentException e) {
-			throw new SQLException("Unknown statement: \"" + statement[0] + "\".");
-		}
-	}
-	
-	@Override
-	public boolean isTable(String table) {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public boolean truncate(String table) {
-		throw new UnsupportedOperationException();
-	}
+    public Ingres(final Logger log,
+            final String prefix,
+            final String hostname,
+            final int port,
+            final String database,
+            final String username,
+            final String password) {
+        super(log, prefix, "[Ingres] ");
+        setHostname(hostname);
+        setPort(port);
+        setDatabase(database);
+        setUsername(username);
+        setPassword(password);
+        this.driver = DBMS.Ingres;
+    }
+
+    public Ingres(final Logger log,
+            final String prefix,
+            final String database,
+            final String username,
+            final String password) {
+        super(log, prefix, "[Ingres] ");
+        setHostname("localhost");
+        setPort(21017);
+        setDatabase(database);
+        setUsername(username);
+        setPassword(password);
+        this.driver = DBMS.Ingres;
+    }
+
+    public String getDatabase() {
+        return delegate.getDatabase();
+    }
+
+    public String getHostname() {
+        return delegate.getHostname();
+    }
+
+    private String getPassword() {
+        return delegate.getPassword();
+    }
+
+    public int getPort() {
+        return delegate.getPort();
+    }
+
+    @Override
+    public Statements getStatement(final String query) throws SQLException {
+        final String[] statement = query.trim().split(" ", 2);
+        try {
+            final Statements converted = Statements.valueOf(statement[0].toUpperCase());
+            return converted;
+        } catch (final IllegalArgumentException e) {
+            throw new SQLException("Unknown statement: \"" + statement[0] + "\".");
+        }
+    }
+
+    public String getUsername() {
+        return delegate.getUsername();
+    }
+
+    @Override
+    public boolean initialize() {
+        try {
+            Class.forName("com.ingres.jdbc.IngresDriver");
+            return true;
+        } catch (final ClassNotFoundException e) {
+            writeError("Ingres driver class missing: " + e.getMessage() + ".", true);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isTable(final String table) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean open() {
+        if (initialize()) {
+            String url = "";
+            url = "jdbc:ingres://" + getHostname() + ":" + getPort() + "/" + getDatabase();
+            try {
+                this.connection = DriverManager.getConnection(url, getUsername(), getPassword());
+                this.connected = true;
+                return true;
+            } catch (final SQLException e) {
+                writeError("Could not establish a Ingres connection, SQLException: " + e.getMessage(), true);
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected void queryValidation(final StatementEnum statement) throws SQLException {}
+
+    private void setDatabase(final String database) {
+        delegate.setDatabase(database);
+    }
+
+    private void setHostname(final String hostname) {
+        delegate.setHostname(hostname);
+    }
+
+    private void setPassword(final String password) {
+        delegate.setPassword(password);
+    }
+
+    private void setPort(final int port) {
+        delegate.setPort(port);
+    }
+
+    private void setUsername(final String username) {
+        delegate.setUsername(username);
+    }
+
+    @Override
+    public boolean truncate(final String table) {
+        throw new UnsupportedOperationException();
+    }
 }

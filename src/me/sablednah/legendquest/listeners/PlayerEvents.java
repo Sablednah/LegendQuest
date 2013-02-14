@@ -18,93 +18,95 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class PlayerEvents implements Listener {
 
-	public Main	lq;
+    public class delayedSpawn implements Runnable {
 
-	public PlayerEvents(Main p) {
-		this.lq = p;
-	}
+        public int xp;
+        public Player player;
 
-	// set to monitor - we're not gonna change the login, only load our data
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onJoin(PlayerJoinEvent event) {
-		Player p = event.getPlayer();
-		String pName = p.getName();
-		PC pc = lq.players.getPC(pName);
-		lq.players.addPlayer(pName, pc);
-		p.setTotalExperience(pc.currentXP);
-		p.setMaxHealth(pc.maxHP);
-		p.setHealth(pc.health);
-		pc.healthCheck();
-	}
+        public delayedSpawn(final int xp, final Player player) {
+            this.xp = xp;
+            this.player = player;
+        }
 
-	// set to monitor - we can't change the quit - just want to clean our data up.
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onQuit(PlayerQuitEvent event) {
-		String pName = event.getPlayer().getName();
-		lq.players.removePlayer(pName);
-	}
+        @Override
+        public void run() {
+            final String pName = player.getName();
+            final PC pc = lq.players.getPC(pName);
+            pc.setXP(xp);
+            lq.players.savePlayer(pc);
+        }
+    }
 
-	// track EXP changes - and halve then if dual class
-	@EventHandler(priority = EventPriority.LOW)
-	public void onXPChange(PlayerExpChangeEvent event) {
-		int xpAmount = event.getAmount();
-		Player p = event.getPlayer();
-		String pName = p.getName();
-		PC pc = lq.players.getPC(pName);
+    public Main lq;
 
-		// half xp gain for dual class
-		if (pc.subClass != null) {
-			xpAmount = xpAmount / 2;
-		}
-		pc.setXP(SetExp.getTotalExperience(p) + xpAmount);
-		lq.players.addPlayer(pName, pc);
-		lq.players.savePlayer(pc);
+    public PlayerEvents(final Main p) {
+        this.lq = p;
+    }
 
-		if (xpAmount >= p.getExpToLevel()) {
-			pc.scheduleHealthCheck();
-			LevelUpEvent e = new LevelUpEvent(p, p.getLevel() + 1, pc);
-			Bukkit.getServer().getPluginManager().callEvent(e);
-		}
-	}
+    // preserve XP on death...
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDeath(final PlayerDeathEvent event) {
+        event.setDroppedExp(0);
+        event.setKeepLevel(true);
+    }
 
-	@EventHandler(priority = EventPriority.LOW)
-	public void onRespawn(PlayerRespawnEvent event) {
-		Player p = event.getPlayer();
-		String pName = p.getName();
-		PC pc = lq.players.getPC(pName);
-		lq.logWarn("currentXP: " + pc.currentXP);
-		int currentXP = SetExp.getTotalExperience(p);
-		lq.logWarn("totxp: " + currentXP);
-		int xpLoss = (int) (currentXP * (lq.configMain.percentXpLossRespawn / 100));
-		lq.logWarn("xpLoss: " + xpLoss);
-		int newXp = currentXP - xpLoss;
-		pc.setXP(newXp);
-		lq.players.savePlayer(pc);
-		lq.getServer().getScheduler().runTaskLater(lq, new delayedSpawn(newXp, p), 5);
-	}
+    // set to monitor - we're not gonna change the login, only load our data
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onJoin(final PlayerJoinEvent event) {
+        final Player p = event.getPlayer();
+        final String pName = p.getName();
+        final PC pc = lq.players.getPC(pName);
+        lq.players.addPlayer(pName, pc);
+        p.setTotalExperience(pc.currentXP);
+        p.setMaxHealth(pc.maxHP);
+        p.setHealth(pc.health);
+        pc.healthCheck();
+    }
 
-	public class delayedSpawn implements Runnable {
-		public int		xp;
-		public Player	player;
+    // set to monitor - we can't change the quit - just want to clean our data up.
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onQuit(final PlayerQuitEvent event) {
+        final String pName = event.getPlayer().getName();
+        lq.players.removePlayer(pName);
+    }
 
-		public delayedSpawn(int xp, Player player) {
-			this.xp = xp;
-			this.player = player;
-		}
+    @EventHandler(priority = EventPriority.LOW)
+    public void onRespawn(final PlayerRespawnEvent event) {
+        final Player p = event.getPlayer();
+        final String pName = p.getName();
+        final PC pc = lq.players.getPC(pName);
+        lq.logWarn("currentXP: " + pc.currentXP);
+        final int currentXP = SetExp.getTotalExperience(p);
+        lq.logWarn("totxp: " + currentXP);
+        final int xpLoss = (int) (currentXP * (lq.configMain.percentXpLossRespawn / 100));
+        lq.logWarn("xpLoss: " + xpLoss);
+        final int newXp = currentXP - xpLoss;
+        pc.setXP(newXp);
+        lq.players.savePlayer(pc);
+        lq.getServer().getScheduler().runTaskLater(lq, new delayedSpawn(newXp, p), 5);
+    }
 
-		public void run() {
-			String pName = player.getName();
-			PC pc = lq.players.getPC(pName);
-			pc.setXP(xp);
-			lq.players.savePlayer(pc);
-		}
-	}
+    // track EXP changes - and halve then if dual class
+    @EventHandler(priority = EventPriority.LOW)
+    public void onXPChange(final PlayerExpChangeEvent event) {
+        int xpAmount = event.getAmount();
+        final Player p = event.getPlayer();
+        final String pName = p.getName();
+        final PC pc = lq.players.getPC(pName);
 
-	// preserve XP on death...
-	@EventHandler(priority = EventPriority.LOW)
-	public void onDeath(PlayerDeathEvent event) {
-		event.setDroppedExp(0);
-		event.setKeepLevel(true);
-	}
-	
+        // half xp gain for dual class
+        if (pc.subClass != null) {
+            xpAmount = xpAmount / 2;
+        }
+        pc.setXP(SetExp.getTotalExperience(p) + xpAmount);
+        lq.players.addPlayer(pName, pc);
+        lq.players.savePlayer(pc);
+
+        if (xpAmount >= p.getExpToLevel()) {
+            pc.scheduleHealthCheck();
+            final LevelUpEvent e = new LevelUpEvent(p, p.getLevel() + 1, pc);
+            Bukkit.getServer().getPluginManager().callEvent(e);
+        }
+    }
+
 }

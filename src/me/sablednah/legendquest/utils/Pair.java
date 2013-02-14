@@ -1,11 +1,13 @@
 package me.sablednah.legendquest.utils;
 
 public class Pair<X, Y> {
-    public Pair(X x, Y y) {
+
+    X first;
+
+    Y second;
+
+    public Pair(final X x, final Y y) {
         first = x;
         second = y;
     }
-
-    X first;
-    Y second;
 }

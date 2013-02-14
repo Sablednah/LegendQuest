@@ -1,44 +1,44 @@
 package me.sablednah.legendquest.events;
 
-	import me.sablednah.legendquest.playercharacters.PC;
+import me.sablednah.legendquest.playercharacters.PC;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-	 
-	public class LevelUpEvent extends Event {
-	    private static final HandlerList handlers = new HandlerList();
-	    private Player player;
-	 private int newLevel;
-	 private PC pc;
-	    
-	    public LevelUpEvent(Player player, int newLevel, PC pc) {
-	        this.player = player;
-	        this.newLevel = newLevel;
-	        this.pc = pc;
-	    }
 
-	 
-	    public HandlerList getHandlers() {
-	        return handlers;
-	    }
-	 
-	    public static HandlerList getHandlerList() {
-	        return handlers;
-	    }
+public class LevelUpEvent extends Event {
 
+    private static final HandlerList handlers = new HandlerList();
 
-		public Player getPlayer() {
-			return player;
-		}
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
+    private final Player player;
+    private final int newLevel;
 
-		public int getNewLevel() {
-			return newLevel;
-		}
+    private final PC pc;
 
+    public LevelUpEvent(final Player player, final int newLevel, final PC pc) {
+        this.player = player;
+        this.newLevel = newLevel;
+        this.pc = pc;
+    }
 
-		public PC getPc() {
-			return pc;
-		}
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public int getNewLevel() {
+        return newLevel;
+    }
+
+    public PC getPc() {
+        return pc;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+}
