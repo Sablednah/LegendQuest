@@ -42,7 +42,7 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 		// only players left here
 		Player p = (Player) sender;
 		PC pc = lq.players.getPC(p);
-
+		pc.checkSkills();
 		if (args.length < 1) { // why am i worried about negative argument length ? le-sigh
 			// ok - just list the players skill names here.
 			String msg;
