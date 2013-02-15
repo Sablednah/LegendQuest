@@ -39,30 +39,31 @@ public class PC {
     public Main lq;
     public String charname;
     public String player;
+
     public Race race;
+    public boolean raceChanged;
     public ClassType mainClass;
     public ClassType subClass;
+    
     public HashMap<String, Integer> xpEarnt = new HashMap<String, Integer>();
     public int maxHP;
-
+    public int currentXP;
+    
     public int health;
-
     public int mana;
-    public boolean raceChanged;
+    
     public int statStr;
     public int statDex;
     public int statInt;
     public int statWis;
-
     public int statCon;
-
     public int statChr;
-    public int currentXP;
-
+    
     public List<Skill> skillsSelected;
-
     public HashMap<String, Integer> skillsPurchased = new HashMap<String, Integer>();
 
+    public int karma;
+    
     public PC(final Main plugin, final String pName) {
         this.lq = plugin;
 
@@ -597,4 +598,53 @@ public class PC {
         }
     }
 
+    public boolean canCraft() {
+        if (race.stopCrafting || mainClass.stopCrafting) {
+            return false;
+        }
+        if (subClass != null && subClass.stopCrafting) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canSmelt() {
+        if (race.stopSmelting || mainClass.stopSmelting) {
+            return false;
+        }
+        if (subClass != null && subClass.stopSmelting) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canBrew() {
+        if (race.stopBrewing || mainClass.stopBrewing) {
+            return false;
+        }
+        if (subClass != null && subClass.stopBrewing) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canEnchant() {
+        if (race.stopEnchating || mainClass.stopEnchating) {
+            return false;
+        }
+        if (subClass != null && subClass.stopEnchating) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canRepair() {
+        if (race.stopRepairing || mainClass.stopRepairing) {
+            return false;
+        }
+        if (subClass != null && subClass.stopRepairing) {
+            return false;
+        }
+        return true;
+    }
 }

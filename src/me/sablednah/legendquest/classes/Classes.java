@@ -115,6 +115,12 @@ public class Classes {
                     c.statChr = thisConfig.getInt("statmods.chr");
                     c.healthPerLevel = thisConfig.getDouble("healthperlevel");
 
+                    c.stopCrafting = thisConfig.getBoolean("stopCrafting");
+                    c.stopSmelting = thisConfig.getBoolean("stopSmelting");
+                    c.stopBrewing = thisConfig.getBoolean("stopBrewing");
+                    c.stopEnchating = thisConfig.getBoolean("stopEnchating");
+                    c.stopRepairing = thisConfig.getBoolean("stopRepairing");
+                    
                     c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
                     c.manaBonus = thisConfig.getInt("manaBonus");
                     c.manaPerSecond = thisConfig.getInt("manaPerSecond");

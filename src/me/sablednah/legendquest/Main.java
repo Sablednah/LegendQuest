@@ -12,8 +12,10 @@ import me.sablednah.legendquest.config.DataConfig;
 import me.sablednah.legendquest.config.LangConfig;
 import me.sablednah.legendquest.config.MainConfig;
 import me.sablednah.legendquest.db.DataSync;
+import me.sablednah.legendquest.listeners.AbilityControlEvents;
 import me.sablednah.legendquest.listeners.DamageEvents;
 import me.sablednah.legendquest.listeners.ItemControlEvents;
+import me.sablednah.legendquest.listeners.KarmaMonitorEvents;
 import me.sablednah.legendquest.listeners.PlayerEvents;
 import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
@@ -108,6 +110,8 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerEvents(this), this);
         pm.registerEvents(new DamageEvents(this), this);
         pm.registerEvents(new ItemControlEvents(this), this);
+        pm.registerEvents(new AbilityControlEvents(this), this);
+        pm.registerEvents(new KarmaMonitorEvents(this), this);
 
         // setup commands
         getCommand("lq").setExecutor(new RootCommand(this));

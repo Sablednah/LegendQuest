@@ -73,6 +73,12 @@ public class Races {
                     r.statChr = thisConfig.getInt("statmods.chr");
                     r.baseHealth = thisConfig.getInt("basehealth");
 
+                    r.stopCrafting = thisConfig.getBoolean("stopCrafting");
+                    r.stopSmelting = thisConfig.getBoolean("stopSmelting");
+                    r.stopBrewing = thisConfig.getBoolean("stopBrewing");
+                    r.stopEnchating = thisConfig.getBoolean("stopEnchating");
+                    r.stopRepairing = thisConfig.getBoolean("stopRepairing");
+                    
                     r.baseMana = thisConfig.getInt("baseMana");
                     r.manaPerSecond = thisConfig.getInt("manaPerSecond");
 

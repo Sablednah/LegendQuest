@@ -99,6 +99,7 @@ public class DataSync {
 
                 pc.maxHP = r.getInt("maxHP");
                 pc.health = r.getInt("health");
+                pc.karma = r.getInt("karma");
                 pc.mana = r.getInt("mana");
                 pc.race = lq.races.getRace(r.getString("race"));
                 pc.raceChanged = r.getBoolean("raceChanged");
@@ -114,6 +115,7 @@ public class DataSync {
                 pc.statWis = r.getInt("statWis");
                 pc.statCon = r.getInt("statCon");
                 pc.statChr = r.getInt("statChr");
+
 
             }
             r.close();
@@ -214,6 +216,7 @@ public class DataSync {
         create += "maxHP INTEGER, ";
         create += "health INTEGER, ";
         create += "mana INTEGER, ";
+        create += "karma INTEGER, ";
         create += "statStr INTEGER, ";
         create += "statDex INTEGER, ";
         create += "statInt INTEGER, ";
@@ -297,7 +300,7 @@ public class DataSync {
     private synchronized void writeData(final PC pc) {
         String sql;
         sql = "REPLACE INTO pcs (";
-        sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,statStr,statDex,statInt,statWis,statCon,statChr";
+        sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,karma,statStr,statDex,statInt,statWis,statCon,statChr";
         sql = sql + ") values(\"";
         sql = sql + pc.player + "\",\"";
         sql = sql + pc.charname + "\",\"";
@@ -316,6 +319,7 @@ public class DataSync {
         sql = sql + pc.maxHP + ",";
         sql = sql + pc.health + ",";
         sql = sql + pc.mana + ",";
+        sql = sql + pc.karma + ",";
         sql = sql + pc.statStr + ",";
         sql = sql + pc.statDex + ",";
         sql = sql + pc.statInt + ",";

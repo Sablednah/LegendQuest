@@ -65,13 +65,19 @@ public class LangConfig extends Config {
     public String cantEquipArmour = "Sory you can't wear that armour.";
     public String cantUseTool = "Sory you can't use that tool.";
     public String cantUseWeapon = "Sory you can't weild that weapon.";
-
+    public String cantCraft = "Sory you can't craft.";
+    public String cantSmelt = "Sory you can't smelt.";
+    public String cantEnchant = "Sory you can't enchat.";
+    public String cantRepair = "Sory you can't repair.";
+    public String cantBrew = "Sory you can't brew potions";
+    
     public String noSkills = "You have no skills to use.";
     public String hasSkills = "You have the following usable skills:";
     public String skillPoints = "Skill Points: ";
     public String skillList = "You have the following skills available.";
     public String skillListHeader = "-- Skill Name --,-- Level --,--Cost--";
     public String skillsList = "------- Skills --------";
+    
 
     public LangConfig(final Main p) {
         super(p, "lang.yml");
@@ -127,6 +133,11 @@ public class LangConfig extends Config {
         this.cantEquipArmour = this.getConfigItem("cantEquipArmour", this.cantEquipArmour);
         this.cantUseTool = this.getConfigItem("cantUseTool", this.cantUseTool);
         this.cantUseWeapon = this.getConfigItem("cantUseWeapon", this.cantUseWeapon);
+        this.cantCraft = this.getConfigItem("cantCraft", this.cantCraft);
+        this.cantSmelt = this.getConfigItem("cantSmelt", this.cantSmelt);
+        this.cantBrew = this.getConfigItem("cantBrew", this.cantBrew);
+        this.cantEnchant = this.getConfigItem("cantEnchant", this.cantEnchant);
+        this.cantRepair = this.getConfigItem("cantRepair", this.cantRepair);
 
         this.noSkills = this.getConfigItem("noSkills", this.noSkills);
         this.hasSkills = this.getConfigItem("hasSkills", this.hasSkills);

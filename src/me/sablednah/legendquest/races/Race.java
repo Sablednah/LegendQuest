@@ -31,6 +31,12 @@ public class Race {
     public List<Integer> dissallowedArmour;
     public List<Integer> dissallowedWeapons;
 
+    public boolean stopCrafting;
+    public boolean stopSmelting;
+    public boolean stopBrewing;
+    public boolean stopEnchating;
+    public boolean stopRepairing;
+    
     // frequency used for NPC chance.
     public int frequency;
 

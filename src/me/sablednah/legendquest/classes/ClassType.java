@@ -40,6 +40,12 @@ public class ClassType {
     public List<Integer> dissallowedArmour;
     public List<Integer> dissallowedWeapons;
 
+    public boolean stopCrafting;
+    public boolean stopSmelting;
+    public boolean stopBrewing;
+    public boolean stopEnchating;
+    public boolean stopRepairing;
+    
     public int skillPoints;
     public double skillPointsPerLevel;
     public List<Skill> skills;
