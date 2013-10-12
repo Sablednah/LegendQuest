@@ -32,6 +32,9 @@ import org.bukkit.util.Vector;
 
 public class Utils {
 
+    public static String barGraph(final double x, final double y, final int scale, final String prefix, final String suffix) {
+       return barGraph((int) x, (int) y, scale, prefix, suffix);
+    }
     public static String barGraph(final int x, final int y, final int scale, final String prefix, final String suffix) {
         final int percent = (int) ((x / (float) y) * scale);
         final StringBuilder mesage = new StringBuilder(12 + scale + prefix.length() + suffix.length());
@@ -115,7 +118,8 @@ public class Utils {
                 for (int x = -r; x <= r; x++) {
                     for (int y = -r; y <= r; y++) {
                         final Block a = c.getRelative(o[0], x).getRelative(o[1], y);
-                        if (a.getTypeId() == 0 && a.getRelative(BlockFace.UP).getTypeId() == 0) {
+                        Block ayup = a.getRelative(BlockFace.UP);
+                        if (!(a.getType().isSolid()) && !(ayup.getType().isSolid())) {
                             return a;
                         }
                     }
@@ -271,6 +275,7 @@ public class Utils {
 
         for (final BlockState bs : blocks) {
             final Material m = bs.getType();
+            @SuppressWarnings("deprecation")
             final byte d = bs.getData().getData();
             final int bsX = bs.getX();
             final int bsY = bs.getY();

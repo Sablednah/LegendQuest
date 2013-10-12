@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -11,9 +12,11 @@ import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.skills.Skill;
+import me.sablednah.legendquest.skills.SkillDefinition;
 import me.sablednah.legendquest.utils.SetExp;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -46,10 +49,10 @@ public class PC {
     public ClassType subClass;
     
     public HashMap<String, Integer> xpEarnt = new HashMap<String, Integer>();
-    public int maxHP;
+    public double maxHP;
     public int currentXP;
     
-    public int health;
+    public double health;
     public int mana;
     
     public int statStr;
@@ -59,9 +62,11 @@ public class PC {
     public int statCon;
     public int statChr;
     
-    public List<Skill> skillsSelected;
+    public Map<Skill, Boolean> skillsSelected;
     public HashMap<String, Integer> skillsPurchased = new HashMap<String, Integer>();
 
+    //private boolean skillsEnabled = true;
+    
     public int karma;
     
     public PC(final Main plugin, final String pName) {
@@ -101,103 +106,103 @@ public class PC {
 
     }
 
-    public boolean allowedArmour(final int id) {
+    public boolean allowedArmour(final Material id) {
         Boolean valid = false;
-        if (id == 0) {
+        if (id == null) {
             valid = true;
             lq.debug.fine("Naked is valid armour");
         }
         if (mainClass.allowedArmour.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid armour for class: " + mainClass.name);
+            lq.debug.fine(id.toString() + " is valid armour for class: " + mainClass.name);
         }
         if (race.allowedArmour.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid armour for race: " + race.name);
+            lq.debug.fine(id.toString() + " is valid armour for race: " + race.name);
         }
         if (subClass != null && subClass.allowedArmour.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid armour for sub-class: " + subClass.name);
+            lq.debug.fine(id.toString() + " is valid armour for sub-class: " + subClass.name);
         }
         if (mainClass.dissallowedArmour.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid armour for class: " + mainClass.name);
+            lq.debug.fine(id.toString() + " is Invalid armour for class: " + mainClass.name);
         }
         if (race.dissallowedArmour.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid armour for race: " + race.name);
+            lq.debug.fine(id.toString() + " is Invalid armour for race: " + race.name);
         }
         if (subClass != null && subClass.dissallowedArmour.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid armour for sub-class: " + subClass.name);
+            lq.debug.fine(id.toString() + " is Invalid armour for sub-class: " + subClass.name);
         }
         return valid;
     }
 
-    public boolean allowedTool(final int id) {
+    public boolean allowedTool(final Material id) {
         Boolean valid = false;
 
-        if (id == 0) {
+        if (id == null) {
             valid = true;
-            lq.debug.fine("fist is valid tool");
+            lq.debug.fine("Air/fist is valid tool");
         }
         if (mainClass.allowedTools.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid tool for class: " + mainClass.name);
+            lq.debug.fine(id.toString() + " is valid tool for class: " + mainClass.name);
         }
         if (race.allowedTools.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid tool for race: " + race.name);
+            lq.debug.fine(id.toString() + " is valid tool for race: " + race.name);
         }
         if (subClass != null && subClass.allowedTools.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid tool for sub-class: " + subClass.name);
+            lq.debug.fine(id.toString() + " is valid tool for sub-class: " + subClass.name);
         }
         if (mainClass.dissallowedTools.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid tool for class: " + mainClass.name);
+            lq.debug.fine(id.toString() + " is Invalid tool for class: " + mainClass.name);
         }
         if (race.dissallowedTools.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid tool for race: " + race.name);
+            lq.debug.fine(id.toString() + " is Invalid tool for race: " + race.name);
         }
         if (subClass != null && subClass.dissallowedTools.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid tool for sub-class: " + subClass.name);
+            lq.debug.fine(id.toString() + " is Invalid tool for sub-class: " + subClass.name);
         }
         return valid;
     }
 
-    public boolean allowedWeapon(final int id) {
+    public boolean allowedWeapon(final Material id) {
         Boolean valid = false;
 
-        if (id == 0) {
+        if (id == null) {
             valid = true;
-            lq.debug.fine("fist is valid weapon");
+            lq.debug.fine("Air/Fist is valid weapon");
         }
         if (mainClass.allowedWeapons.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid weapon for class: " + mainClass.name);
+            lq.debug.fine(id.toString() + " is valid weapon for class: " + mainClass.name);
         }
         if (race.allowedWeapons.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid weapon for race: " + race.name);
+            lq.debug.fine(id.toString() + " is valid weapon for race: " + race.name);
         }
         if (subClass != null && subClass.allowedWeapons.contains(id)) {
             valid = true;
-            lq.debug.fine(id + " is valid weapon for sub-class: " + subClass.name);
+            lq.debug.fine(id.toString() + " is valid weapon for sub-class: " + subClass.name);
         }
         if (mainClass.dissallowedWeapons.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid weapon for class: " + mainClass.name);
+            lq.debug.fine(id.toString() + " is Invalid weapon for class: " + mainClass.name);
         }
         if (race.dissallowedWeapons.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid weapon for race: " + race.name);
+            lq.debug.fine(id.toString() + " is Invalid weapon for race: " + race.name);
         }
         if (subClass != null && subClass.dissallowedWeapons.contains(id)) {
             valid = false;
-            lq.debug.fine(id + " is INvalid weapon for sub-class: " + subClass.name);
+            lq.debug.fine(id.toString() + " is Invalid weapon for sub-class: " + subClass.name);
         }
         return valid;
     }
@@ -213,27 +218,27 @@ public class PC {
             final ItemStack legs = i.getLeggings();
             final ItemStack boots = i.getBoots();
 
-            if (helm != null && !(allowedArmour(helm.getTypeId()))) {
+            if (helm != null && !(allowedArmour(helm.getType()))) {
                 p.sendMessage(lq.configLang.cantEquipArmour);
-                lq.debug.fine("Removed helmet " + (helm.getTypeId()) + " from " + p.getName() + ".");
+                lq.debug.fine("Removed helmet " + (helm.getType().toString()) + " from " + p.getName() + ".");
                 p.getWorld().dropItemNaturally(p.getLocation(), helm);
                 i.setHelmet(null);
             }
-            if (chest != null && !(allowedArmour(chest.getTypeId()))) {
+            if (chest != null && !(allowedArmour(chest.getType()))) {
                 p.sendMessage(lq.configLang.cantEquipArmour);
-                lq.debug.fine("Removed chestplate " + (chest.getTypeId()) + " from " + p.getName() + ".");
+                lq.debug.fine("Removed chestplate " + (chest.getType().toString()) + " from " + p.getName() + ".");
                 p.getWorld().dropItemNaturally(p.getLocation(), chest);
                 i.setChestplate(null);
             }
-            if (legs != null && !(allowedArmour(legs.getTypeId()))) {
+            if (legs != null && !(allowedArmour(legs.getType()))) {
                 p.sendMessage(lq.configLang.cantEquipArmour);
-                lq.debug.fine("Removed leggings " + (legs.getTypeId()) + " from " + p.getName() + ".");
+                lq.debug.fine("Removed leggings " + (legs.getType().toString()) + " from " + p.getName() + ".");
                 p.getWorld().dropItemNaturally(p.getLocation(), legs);
                 i.setLeggings(null);
             }
-            if (boots != null && !(allowedArmour(boots.getTypeId()))) {
+            if (boots != null && !(allowedArmour(boots.getType()))) {
                 p.sendMessage(lq.configLang.cantEquipArmour);
-                lq.debug.fine("Removed boots " + (boots.getTypeId()) + " from " + p.getName() + ".");
+                lq.debug.fine("Removed boots " + (boots.getType().toString()) + " from " + p.getName() + ".");
                 p.getWorld().dropItemNaturally(p.getLocation(), boots);
                 i.setBoots(null);
             }
@@ -242,18 +247,18 @@ public class PC {
     }
 
     public void checkSkills() {
-        final List<Skill> potentialSkills = getUniqueSkills();
-        final List<Skill> activeSkills = new ArrayList<Skill>();
+        final List<SkillDefinition> potentialSkills = getUniqueSkills();
+        final Map<Skill, Boolean> activeSkills = new HashMap<Skill,Boolean>();
         final int level = SetExp.getLevelOfXpAmount(currentXP);
 
-        for (final Skill s : potentialSkills) {
-            if (s.levelRequired <= level && s.skillPoints < 1) {
-                activeSkills.add(s);
+        for (final SkillDefinition s : potentialSkills) {
+            if (s.getSkillInfo().levelRequired <= level && s.getSkillInfo().skillPoints < 1) {
+                activeSkills.put(lq.skills.instantiateSkill(s),true);
                 continue;
             }
             // skill points now :/
-            if (skillsPurchased.containsValue(s.name)) {
-                activeSkills.add(s);
+            if (skillsPurchased.containsValue(s.getSkillInfo().name)) {
+                activeSkills.put(lq.skills.instantiateSkill(s),true);
                 continue;
             }
         }
@@ -265,7 +270,7 @@ public class PC {
         return race.size;
     }
 
-    public int getMaxHealth() {
+    public double getMaxHealth() {
         int hp, level;
         double result, perlevel;
 
@@ -505,14 +510,14 @@ public class PC {
         return stat;
     }
 
-    public List<Skill> getUniqueSkills() {
-        final Set<Skill> set = new HashSet<Skill>();
+    public List<SkillDefinition> getUniqueSkills() {
+        final Set<SkillDefinition> set = new HashSet<SkillDefinition>();
         set.addAll(race.availableSkills);
         set.addAll(mainClass.availableSkills);
         if (subClass != null) {
             set.addAll(subClass.availableSkills);
         }
-        final List<Skill> uniques = new ArrayList<Skill>();
+        final List<SkillDefinition> uniques = new ArrayList<SkillDefinition>();
         uniques.addAll(set);
         return uniques;
     }

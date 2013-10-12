@@ -1,0 +1,17 @@
+# Default LegendQuest config.
+
+debugMode: false
+
+useMySQL: false
+
+# MySQL database login details  - only needed if  useMySQL is true
+sqlUsername: username
+sqlPassword: password
+sqlHostname: localhost
+sqlPort: 3306
+sqlDatabase: legendquest
+
+# if true - each player name will have a random internal stat .
+# Uses player name as seed.  If false all stats have same base values. 
+randomStats: true
+

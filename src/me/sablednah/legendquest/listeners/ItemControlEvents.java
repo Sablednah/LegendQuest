@@ -3,6 +3,7 @@ package me.sablednah.legendquest.listeners;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -39,9 +40,9 @@ public class ItemControlEvents implements Listener {
 
         final Player p = (Player) e.getDamager();
         final PC pc = lq.players.getPC(p);
-        final int itemUsed = p.getItemInHand().getTypeId();
+        final Material itemUsed = p.getItemInHand().getType();
 
-        if (itemUsed > 0) {
+        if (itemUsed != null) {
             if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)
                     || lq.configData.dataSets.get("utility").contains(itemUsed)) {
                 if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
@@ -57,8 +58,8 @@ public class ItemControlEvents implements Listener {
     public void onBlockBreak(final BlockBreakEvent event) {
         final Player p = event.getPlayer();
         final PC pc = lq.players.getPC(p);
-        final int itemUsed = p.getItemInHand().getTypeId();
-        if (itemUsed > 0) {
+        final Material itemUsed = p.getItemInHand().getType();
+        if (itemUsed != null) {
             if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)
                     || lq.configData.dataSets.get("utility").contains(itemUsed)) {
                 if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
@@ -79,7 +80,7 @@ public class ItemControlEvents implements Listener {
         final Player p = (Player) event.getEntity();
         final PC pc = lq.players.getPC(p);
 
-        if (!pc.allowedWeapon(lq.bowID)) {
+        if (!pc.allowedWeapon(Material.BOW)) {
             p.sendMessage(lq.configLang.cantUseWeapon);
             event.setCancelled(true);
         }
@@ -91,7 +92,7 @@ public class ItemControlEvents implements Listener {
         final Player p = event.getPlayer();
         final PC pc = lq.players.getPC(p);
 
-        if (!pc.allowedWeapon(lq.eggID)) {
+        if (!pc.allowedWeapon(Material.EGG)) {
             p.sendMessage(lq.configLang.cantUseWeapon);
             event.getEgg().remove();
         }
@@ -102,9 +103,9 @@ public class ItemControlEvents implements Listener {
     public void onInteract(final PlayerInteractEvent event) {
         final Player p = event.getPlayer();
         final PC pc = lq.players.getPC(p);
-        final int itemUsed = p.getItemInHand().getTypeId();
+        final Material itemUsed = p.getItemInHand().getType();
         final Action act = event.getAction();
-        if (itemUsed > 0) {
+        if (itemUsed != null) {
             if (act == Action.RIGHT_CLICK_AIR || act == Action.RIGHT_CLICK_BLOCK) {
                 if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed)
                         || lq.configData.dataSets.get("utility").contains(itemUsed)) {
@@ -128,7 +129,7 @@ public class ItemControlEvents implements Listener {
         }
         if (event.getCursor() != null) {
             // player has item on the cursor
-            final int itemID = event.getCursor().getTypeId();
+            final Material itemID = event.getCursor().getType();
             switch (event.getSlotType()) {
             case ARMOR: // and is trying to equip it
                 if (!pc.allowedArmour(itemID)) {
@@ -169,19 +170,19 @@ public class ItemControlEvents implements Listener {
 
         switch (bullit.getType()) {
         case ARROW:
-            if (!pc.allowedWeapon(lq.bowID)) {
+            if (!pc.allowedWeapon(Material.BOW)) {
                 p.sendMessage(lq.configLang.cantUseWeapon);
                 event.setCancelled(true);
             }
         break;
         case EGG:
-            if (!pc.allowedWeapon(lq.eggID)) {
+            if (!pc.allowedWeapon(Material.EGG)) {
                 p.sendMessage(lq.configLang.cantUseWeapon);
                 event.setCancelled(true);
             }
         break;
         case SNOWBALL:
-            if (!pc.allowedWeapon(lq.snowballID)) {
+            if (!pc.allowedWeapon(Material.SNOW_BALL)) {
                 p.sendMessage(lq.configLang.cantUseWeapon);
                 event.setCancelled(true);
             }

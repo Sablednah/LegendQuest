@@ -1,0 +1,71 @@
+name: LegendQuest
+version: 0.0.1
+description: |
+    RPG plugin for MineCraft servers using the Bukkit API
+    Allows Race, Classes and Skills.
+author: SableDnah
+website: http://dev.bukkit.org/server-mods/legendquest/
+
+main: me.sablednah.legendquest.Main
+softdepend: [ Vault ]
+
+commands:
+    lq:
+        description: Control the  LegendQuest plugin.
+        usage: Use "/<command> help" for more info
+        alias: [legendquest,lquest,legendq]
+        permission: legendquest.command
+        permission-message: You don't have <permission>
+    race:
+        description: View or set your race.
+        usage: Use "/<command> help" for more info
+        alias: [lqrace,lquestrace,legendqrace,legendquestrace]
+        permission: legendquest.command.race
+        permission-message: You don't have <permission>
+    class:
+        description: View, choose, or change your class's.
+        usage: Use "/<command> help" for more info
+        alias: [lqclass,lquestclass,legendqclass,legendquestclass,clas]
+        permission: legendquest.command.class
+        permission-message: You don't have <permission>
+    stats:
+        description: Get your player stats
+        usage: Use "/<command> help" for more info
+        alias: [lqstats,lqueststats,legendqstats,legendqueststats]
+        permission: legendquest.command.stats
+        permission-message: You don't have <permission>
+    skill:
+        description: View, choose, or change your Skills.
+        usage: Use "/<command> help" for more info
+        alias: [lqskill,lquestskill,legendqskill,legendquestskill,skills,lqskills,lquestskills,legendqskills,legendquestskills]
+        permission: legendquest.command.skills
+        permission-message: You don't have <permission>  
+permissions:
+    legendquest.*:
+        description: Gives access to all legendquest commands/functions.
+        children:
+            legendquest.command.*: true
+    legendquest.command.*:
+        description: Allows user to use legendquest commands.
+        default: op
+        children:
+            legendquest.command.reload: true
+            legendquest.command.race: true
+            legendquest.command.class: true
+            legendquest.command.skill: true
+            legendquest.command.stats: true
+    legendquest.command.reload:
+        description: Allows user to use legendquest reload command.
+        default: false
+    legendquest.command.race:
+        description: Allows user to use legendquest race command.
+        default: true
+    legendquest.command.class:
+        description: Allows user to use legendquest class command.
+        default: true
+    legendquest.command.skill:
+        description: Allows user to use legendquest skill command.
+        default: true
+    legendquest.command.stats:
+        description: Allows user to use legendquest stats command.
+        default: true

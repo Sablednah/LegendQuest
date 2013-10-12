@@ -1,21 +1,42 @@
 package me.sablednah.legendquest.skills;
 
-import org.bukkit.configuration.ConfigurationSection;
+
 
 public class PluginSkill extends Skill {
-
+    
     public String command;
     public String commandPermission;
-
-    public PluginSkill(final ConfigurationSection skillInfo) {
+    
+/*
+     public PluginSkill(final ConfigurationSection skillInfo) {
+ 
         super(skillInfo);
-        command = skillInfo.getString("command");
-        commandPermission = skillInfo.getString("perm");
+        this.command = skillInfo.getString("command");
+        this.commandPermission = skillInfo.getString("perm");
+    }
+*/
+    
+    @Override
+    public boolean onEnable() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
+    @Override
+    public void loadOptions() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public CommandResult onCommand() {
+        // TODO Auto-generated method stub
+        return CommandResult.NOTAVAILABLE;
+    }
+    
 }
 
-/*cooldown: 1200
+/* cooldown: 1200
  * duration: 1200
  * delay:
  * regent: 288

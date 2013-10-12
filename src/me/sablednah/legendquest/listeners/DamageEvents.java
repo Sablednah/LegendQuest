@@ -22,8 +22,8 @@ public class DamageEvents implements Listener {
     public void onDamaged(final EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
             final Player p = (Player) event.getEntity();
-            final int dmg = event.getDamage();
-            final int newHealth = p.getHealth() - dmg;
+            final double dmg = event.getDamage();
+            final double newHealth = p.getHealth() - dmg;
 
             final PC pc = lq.players.getPC(p);
             if (pc != null) {

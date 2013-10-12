@@ -76,7 +76,7 @@ public class LangConfig extends Config {
     public String skillPoints = "Skill Points: ";
     public String skillList = "You have the following skills available.";
     public String skillListHeader = "-- Skill Name --,-- Level --,--Cost--";
-    public String skillsList = "------- Skills --------";
+    public String skillsList = "------- SkillPool --------";
     
 
     public LangConfig(final Main p) {

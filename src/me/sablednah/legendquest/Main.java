@@ -19,10 +19,10 @@ import me.sablednah.legendquest.listeners.KarmaMonitorEvents;
 import me.sablednah.legendquest.listeners.PlayerEvents;
 import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
+import me.sablednah.legendquest.skills.SkillPool;
 import me.sablednah.legendquest.utils.DebugLog;
 import me.sablednah.legendquest.utils.ManaTicker;
 
-import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,6 +32,7 @@ public class Main extends JavaPlugin {
     public MainConfig configMain;
     public LangConfig configLang;
     public DataConfig configData;
+    public SkillPool skills;
     public Races races;
     public Classes classes;
     public DataSync datasync;
@@ -40,10 +41,6 @@ public class Main extends JavaPlugin {
 
     public static final int MAX_XP = 58245;
     public static final int MAX_LEVEL = 150;
-
-    public int bowID = Material.BOW.getId();
-    public int eggID = Material.EGG.getId();
-    public int snowballID = Material.SNOW_BALL.getId();
 
     public void log(final String msg) {
         logger.info(msg);
@@ -95,6 +92,9 @@ public class Main extends JavaPlugin {
         // Notify loading has begun...
         log(configLang.startup);
 
+        // load skills
+        skills = new SkillPool(this);
+        
         // Time to read the Race and class files.
         races = new Races(this);
         classes = new Classes(this);

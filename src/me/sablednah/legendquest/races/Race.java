@@ -2,7 +2,9 @@ package me.sablednah.legendquest.races;
 
 import java.util.List;
 
-import me.sablednah.legendquest.skills.Skill;
+import org.bukkit.Material;
+
+import me.sablednah.legendquest.skills.SkillDefinition;
 
 public class Race {
 
@@ -23,13 +25,13 @@ public class Race {
 
     public String perm;
 
-    public List<Integer> allowedTools;
-    public List<Integer> allowedArmour;
-    public List<Integer> allowedWeapons;
+    public List<Material> allowedTools;
+    public List<Material> allowedArmour;
+    public List<Material> allowedWeapons;
 
-    public List<Integer> dissallowedTools;
-    public List<Integer> dissallowedArmour;
-    public List<Integer> dissallowedWeapons;
+    public List<Material> dissallowedTools;
+    public List<Material> dissallowedArmour;
+    public List<Material> dissallowedWeapons;
 
     public boolean stopCrafting;
     public boolean stopSmelting;
@@ -46,6 +48,6 @@ public class Race {
 
     public int skillPoints;
     public double skillPointsPerLevel;
-    public List<Skill> availableSkills;
+    public List<SkillDefinition> availableSkills;
 
 }

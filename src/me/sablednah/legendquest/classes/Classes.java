@@ -10,9 +10,8 @@ import java.util.Map;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
-import me.sablednah.legendquest.skills.LqSkill;
-import me.sablednah.legendquest.skills.PluginSkill;
-import me.sablednah.legendquest.skills.Skill;
+import me.sablednah.legendquest.skills.SkillDefinition;
+import me.sablednah.legendquest.skills.SkillInfo;
 import me.sablednah.legendquest.utils.Pair;
 import me.sablednah.legendquest.utils.Utils;
 import me.sablednah.legendquest.utils.WeightedProbMap;
@@ -31,7 +30,7 @@ public class Classes {
 
     public ClassType defaultClass;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     public Classes(final Main p) {
         this.lq = p;
 
@@ -133,10 +132,10 @@ public class Classes {
                     // allowed lists
 
                     List<String> stringList;
-                    List<Integer> intList;
+                    List<Material> materiallist;
                     String keyName;
                     stringList = (List<String>) thisConfig.getList("allowedTools");
-                    intList = new ArrayList<Integer>();
+                    materiallist = new ArrayList<Material>();
                     if (stringList != null) {
                         for (int i = 0; i < stringList.size(); i++) {
                             keyName = stringList.get(i).toLowerCase();
@@ -148,21 +147,21 @@ public class Classes {
                             }
                             if (!keyName.equalsIgnoreCase("none")) {
                                 if (lq.configData.dataSets.containsKey(keyName)) {
-                                    intList.addAll(lq.configData.dataSets.get(keyName));
+                                    materiallist.addAll(lq.configData.dataSets.get(keyName));
                                 } else if (Material.matchMaterial(keyName) != null) {
-                                    intList.add(Material.matchMaterial(keyName).getId());
+                                    materiallist.add(Material.matchMaterial(keyName));
                                 } else if (Utils.isParsableToInt(keyName)) {
-                                    intList.add(Integer.parseInt(keyName));
+                                    materiallist.add(Material.getMaterial(Integer.parseInt(keyName)));
                                 } else {
                                     lq.debug.error("Allowed tool '" + keyName + "' in " + c.filename + " not understood");
                                 }
                             }
                         }
                     }
-                    c.allowedTools = intList;
+                    c.allowedTools = materiallist;
 
                     stringList = (List<String>) thisConfig.getList("allowedArmour");
-                    intList = new ArrayList<Integer>();
+                    materiallist = new ArrayList<Material>();
                     if (stringList != null) {
                         for (int i = 0; i < stringList.size(); i++) {
                             keyName = stringList.get(i).toLowerCase();
@@ -174,21 +173,21 @@ public class Classes {
                             }
                             if (!keyName.equalsIgnoreCase("none")) {
                                 if (lq.configData.dataSets.containsKey(keyName)) {
-                                    intList.addAll(lq.configData.dataSets.get(keyName));
+                                    materiallist.addAll(lq.configData.dataSets.get(keyName));
                                 } else if (Material.matchMaterial(keyName) != null) {
-                                    intList.add(Material.matchMaterial(keyName).getId());
+                                    materiallist.add(Material.matchMaterial(keyName));
                                 } else if (Utils.isParsableToInt(keyName)) {
-                                    intList.add(Integer.parseInt(keyName));
+                                    materiallist.add(Material.getMaterial(Integer.parseInt(keyName)));
                                 } else {
                                     lq.debug.error("Allowed Armour '" + keyName + "' in " + c.filename + " not understood");
                                 }
                             }
                         }
                     }
-                    c.allowedArmour = intList;
+                    c.allowedArmour = materiallist;
 
                     stringList = (List<String>) thisConfig.getList("allowedWeapons");
-                    intList = new ArrayList<Integer>();
+                    materiallist = new ArrayList<Material>();
                     if (stringList != null) {
                         for (int i = 0; i < stringList.size(); i++) {
                             keyName = stringList.get(i).toLowerCase();
@@ -197,23 +196,23 @@ public class Classes {
                             }
                             if (!keyName.equalsIgnoreCase("none")) {
                                 if (lq.configData.dataSets.containsKey(keyName)) {
-                                    intList.addAll(lq.configData.dataSets.get(keyName));
+                                    materiallist.addAll(lq.configData.dataSets.get(keyName));
                                 } else if (Material.matchMaterial(keyName) != null) {
-                                    intList.add(Material.matchMaterial(keyName).getId());
+                                    materiallist.add(Material.matchMaterial(keyName));
                                 } else if (Utils.isParsableToInt(keyName)) {
-                                    intList.add(Integer.parseInt(keyName));
+                                    materiallist.add(Material.getMaterial(Integer.parseInt(keyName)));
                                 } else {
                                     lq.debug.error("Allowed Weapons '" + keyName + "' in " + c.filename + " not understood");
                                 }
                             }
                         }
                     }
-                    c.allowedWeapons = intList;
+                    c.allowedWeapons = materiallist;
 
                     // build disallowed lists
 
                     stringList = (List<String>) thisConfig.getList("dissallowedTools");
-                    intList = new ArrayList<Integer>();
+                    materiallist = new ArrayList<Material>();
                     if (stringList != null) {
                         for (int i = 0; i < stringList.size(); i++) {
                             keyName = stringList.get(i).toLowerCase();
@@ -225,21 +224,21 @@ public class Classes {
                             }
                             if (!keyName.equalsIgnoreCase("none")) {
                                 if (lq.configData.dataSets.containsKey(keyName)) {
-                                    intList.addAll(lq.configData.dataSets.get(keyName));
+                                    materiallist.addAll(lq.configData.dataSets.get(keyName));
                                 } else if (Material.matchMaterial(keyName) != null) {
-                                    intList.add(Material.matchMaterial(keyName).getId());
+                                    materiallist.add(Material.matchMaterial(keyName));
                                 } else if (Utils.isParsableToInt(keyName)) {
-                                    intList.add(Integer.parseInt(keyName));
+                                    materiallist.add(Material.getMaterial(Integer.parseInt(keyName)));
                                 } else {
                                     lq.debug.error("Dissallowed tool '" + keyName + "' in " + c.filename + " not understood");
                                 }
                             }
                         }
                     }
-                    c.dissallowedTools = intList;
+                    c.dissallowedTools = materiallist;
 
                     stringList = (List<String>) thisConfig.getList("dissallowedArmour");
-                    intList = new ArrayList<Integer>();
+                    materiallist = new ArrayList<Material>();
                     if (stringList != null) {
                         for (int i = 0; i < stringList.size(); i++) {
                             keyName = stringList.get(i).toLowerCase();
@@ -251,21 +250,21 @@ public class Classes {
                             }
                             if (!keyName.equalsIgnoreCase("none")) {
                                 if (lq.configData.dataSets.containsKey(keyName)) {
-                                    intList.addAll(lq.configData.dataSets.get(keyName));
+                                    materiallist.addAll(lq.configData.dataSets.get(keyName));
                                 } else if (Material.matchMaterial(keyName) != null) {
-                                    intList.add(Material.matchMaterial(keyName).getId());
+                                    materiallist.add(Material.matchMaterial(keyName));
                                 } else if (Utils.isParsableToInt(keyName)) {
-                                    intList.add(Integer.parseInt(keyName));
+                                    materiallist.add(Material.getMaterial(Integer.parseInt(keyName)));
                                 } else {
                                     lq.debug.error("Dissallowed Armour '" + keyName + "' in " + c.filename + " not understood");
                                 }
                             }
                         }
                     }
-                    c.dissallowedArmour = intList;
+                    c.dissallowedArmour = materiallist;
 
                     stringList = (List<String>) thisConfig.getList("dissallowedWeapons");
-                    intList = new ArrayList<Integer>();
+                    materiallist = new ArrayList<Material>();
                     if (stringList != null) {
                         for (int i = 0; i < stringList.size(); i++) {
                             keyName = stringList.get(i).toLowerCase();
@@ -274,32 +273,40 @@ public class Classes {
                             }
                             if (!keyName.equalsIgnoreCase("none")) {
                                 if (lq.configData.dataSets.containsKey(keyName)) {
-                                    intList.addAll(lq.configData.dataSets.get(keyName));
+                                    materiallist.addAll(lq.configData.dataSets.get(keyName));
                                 } else if (Material.matchMaterial(keyName) != null) {
-                                    intList.add(Material.matchMaterial(keyName).getId());
+                                    materiallist.add(Material.matchMaterial(keyName));
                                 } else if (Utils.isParsableToInt(keyName)) {
-                                    intList.add(Integer.parseInt(keyName));
+                                    materiallist.add(Material.getMaterial(Integer.parseInt(keyName)));
                                 } else {
                                     lq.debug.error("Dissallowed Weapons '" + keyName + "' in " + c.filename + " not understood");
                                 }
                             }
                         }
                     }
-                    c.dissallowedWeapons = intList;
+                    c.dissallowedWeapons = materiallist;
 
                     // skills
-                    c.availableSkills = new ArrayList<Skill>();
+                    c.availableSkills = new ArrayList<SkillDefinition>();
                     final ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
                     if (inateSkills != null) {
                         for (final String key : inateSkills.getKeys(false)) {
+                            if (lq.skills.skillList.containsKey(key.toLowerCase())) {
                             final ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
-                            Skill s;
-                            if (skillInfo.getString("command") != null && !skillInfo.getString("command").isEmpty()) {
-                                s = new PluginSkill(skillInfo);
+                            SkillDefinition s;
+/*                            if (skillInfo.getString("command") != null && !skillInfo.getString("command").isEmpty()) {
+                                s = new PluginSkill();  //skillInfo
                             } else {
-                                s = new LqSkill(skillInfo);
+                                s = new LqSkill();  //skillInfo
                             }
+*/
+                            System.out.print("Key: "+key);
+                            s = lq.skills.skillList.get(key.toLowerCase());
+                            SkillInfo si = s.getSkillInfo();
+                            si.readConfigInfo(skillInfo);
+                            s.setSkillInfo(si);
                             c.availableSkills.add(s);
+                            }
                         }
                     }
 
@@ -327,6 +334,7 @@ public class Classes {
                 }
             }
         }
+        
         wpmClasses = new WeightedProbMap<String>(classprobability);
 
         // notify sanning ended
