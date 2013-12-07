@@ -29,6 +29,7 @@ public class SkillPool {
         if (!sf.exists()) {
             sf.mkdirs();
         }
+        
         this.skills = new ArrayList(new SkillLoader(new File[] { sf }).list());
         /* for (SkillDefinition def : this.skills) {
          * instantiateSkill(def);

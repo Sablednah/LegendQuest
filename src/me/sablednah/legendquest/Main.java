@@ -105,7 +105,7 @@ public class Main extends JavaPlugin {
         // now load players
         players = new PCs(this);
 
-        // Let listen for events shall we?
+        // Lets listen for events shall we?
         final PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerEvents(this), this);
         pm.registerEvents(new DamageEvents(this), this);
