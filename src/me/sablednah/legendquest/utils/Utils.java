@@ -1,6 +1,8 @@
 package me.sablednah.legendquest.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -31,10 +33,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class Utils {
-
+    
     public static String barGraph(final double x, final double y, final int scale, final String prefix, final String suffix) {
-       return barGraph((int) x, (int) y, scale, prefix, suffix);
+        return barGraph((int) x, (int) y, scale, prefix, suffix);
     }
+    
     public static String barGraph(final int x, final int y, final int scale, final String prefix, final String suffix) {
         final int percent = (int) ((x / (float) y) * scale);
         final StringBuilder mesage = new StringBuilder(12 + scale + prefix.length() + suffix.length());
@@ -52,7 +55,7 @@ public class Utils {
         mesage.append("]").append(suffix);
         return mesage.toString();
     }
-
+    
     /**
      * Joins two arrays
      * 
@@ -67,7 +70,7 @@ public class Utils {
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
     }
-
+    
     /**
      * Converts InputStream to String
      * One-line 'hack' to convert InputStreams to strings.
@@ -79,7 +82,7 @@ public class Utils {
     public static String convertStreamToString(final InputStream is) {
         return new Scanner(is).useDelimiter("\\A").next();
     }
-
+    
     private static String getDirection(final double rot) {
         if (0 <= rot && rot < 22.5) {
             return "North";
@@ -103,7 +106,7 @@ public class Utils {
             return null;
         }
     }
-
+    
     public static Block getNearestEmptySpace(final Block b, final int maxradius) {
         final BlockFace[] faces = { BlockFace.UP, BlockFace.NORTH, BlockFace.EAST };
         final BlockFace[][] orth = { { BlockFace.NORTH, BlockFace.EAST }, { BlockFace.UP, BlockFace.EAST }, { BlockFace.NORTH, BlockFace.UP } };
@@ -128,16 +131,7 @@ public class Utils {
         }
         return null;// no empty space within a cube of (2*(maxradius+1))^3
     }
-
-    public static boolean isParsableToInt(final String i) {
-        try {
-            Integer.parseInt(i);
-            return true;
-        } catch (final NumberFormatException nfe) {
-            return false;
-        }
-    }
-
+    
     public static String join(final String r[], final String d) {
         final StringBuilder sb = new StringBuilder();
         int i;
@@ -146,16 +140,16 @@ public class Utils {
         }
         return sb.toString() + r[i];
     }
-
+    
     public static Location lookAt(Location loc, final Location lookat) {
         // Clone the loc to prevent applied changes to the input loc
         loc = loc.clone();
-
+        
         // Values of change in distance (make it relative)
         final double dx = lookat.getX() - loc.getX();
         final double dy = lookat.getY() - loc.getY();
         final double dz = lookat.getZ() - loc.getZ();
-
+        
         // Set yaw
         if (dx != 0) {
             // Set yaw start value based on dx
@@ -168,22 +162,22 @@ public class Utils {
         } else if (dz < 0) {
             loc.setYaw((float) Math.PI);
         }
-
+        
         // Get the distance from dx/dz
         final double dxz = Math.sqrt(Math.pow(dx, 2) + Math.pow(dz, 2));
-
+        
         // Set pitch
         loc.setPitch((float) -Math.atan(dy / dxz));
-
+        
         // Set values, convert to degrees (invert the yaw since Bukkit uses a
         // different yaw dimension format)
         loc.setYaw(-loc.getYaw() * 180f / (float) Math.PI);
         loc.setPitch(loc.getPitch() * 180f / (float) Math.PI);
-
+        
         return loc;
-
+        
     }
-
+    
     public static String ordinal(final Location l) {
         double rot = (l.getYaw() - 90) % 360;
         if (rot < 0) {
@@ -191,7 +185,7 @@ public class Utils {
         }
         return getDirection(rot);
     }
-
+    
     public static void setEquip(final LivingEntity mob, final ItemStack item, final int slot) {
         final EntityEquipment eq = mob.getEquipment();
         if (slot == 0) {
@@ -210,14 +204,14 @@ public class Utils {
             eq.setHelmet(item);
         }
     }
-
+    
     public static void setTempnvluln(final LivingEntity e, final int d) {
         if (e != null) {
             e.setNoDamageTicks(e.getMaximumNoDamageTicks());
             e.setLastDamage(d);
         }
     }
-
+    
     public static void stomp(final Location from, final Entity stomper, final int radius, final int damage) {
         Bukkit.broadcastMessage("Stomp!");
         for (final Entity bounced : stomper.getNearbyEntities(radius, radius, radius)) {
@@ -237,10 +231,10 @@ public class Utils {
                 }
             }
         }
-
+        
         // from.getWorld().strikeLightningEffect(from);
         final Block block = from.getBlock();
-
+        
         ArrayList<BlockState> blocks = new ArrayList<BlockState>();
         for (int x = (radius); x >= (0 - radius); x--) {
             for (int zed = (radius); zed >= (0 - radius); zed--) {
@@ -272,7 +266,7 @@ public class Utils {
                 }
             }
         }
-
+        
         for (final BlockState bs : blocks) {
             final Material m = bs.getType();
             @SuppressWarnings("deprecation")
@@ -288,7 +282,7 @@ public class Utils {
         }
         blocks = null;
     }
-
+    
     public static String stringRepeat(final String newString, final int n) {
         final StringBuilder builder = new StringBuilder(n * newString.length());
         for (int x = 0; x < n; x++) {
@@ -296,5 +290,48 @@ public class Utils {
         }
         return builder.toString();
     }
-
+    
+    public static boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        int length = str.length();
+        if (length == 0) {
+            return false;
+        }
+        int i = 0;
+        if (str.charAt(0) == '-') {
+            if (length == 1) {
+                return false;
+            }
+            i = 1;
+        }
+        for (; i < length; i++) {
+            char c = str.charAt(i);
+            if (c <= '/' || c >= ':') {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean isParsableToInt(final String i) {
+        /* try {
+         * Integer.parseInt(i);
+         * return true;
+         * } catch (final NumberFormatException nfe) {
+         * return false;
+         * } */
+        return isInteger(i);
+    }
+    
+    public static void extractFile(InputStream inStream, OutputStream outStream) throws IOException {
+        byte[] buf = new byte[1024];
+        int l;
+        while ((l = inStream.read(buf)) >= 0) {
+            outStream.write(buf, 0, l);
+        }
+        inStream.close();
+        outStream.close();
+    }
 }

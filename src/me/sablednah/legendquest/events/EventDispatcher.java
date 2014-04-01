@@ -3,7 +3,6 @@ package me.sablednah.legendquest.events;
 import java.util.ArrayList;
 import java.util.EventListener;
 
-import me.sablednah.legendquest.listeners.SkillListener;
 
 public class EventDispatcher {
     

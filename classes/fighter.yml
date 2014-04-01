@@ -1,0 +1,40 @@
+name: Fighter
+frequency: 1000
+default: false
+healthperlevel: 10
+statmods:
+  str: 2
+  dex: 1
+  int: 0
+  wis: 0
+  con: 1
+  chr: 0
+allowedRaces:
+  - ANY
+allowedGroups:
+  - ANY
+allowedArmour:
+  - leatherarmour
+  - ironarmour
+  - chainarmour
+  - diamondarmour
+allowedWeapons:
+  - ANY
+allowedTools:
+  - irontools
+  - woodtools
+  - stonetools
+manaBonus: 100
+manaPerLevel: 1
+manaPerSecond: 2
+skillPoints: 10
+skillPointsPerLevel: 0.1
+skills:
+    flameon:
+        level: 2
+        cost: 5
+        perm: flameon.use
+        command: flameon
+
+    
+    

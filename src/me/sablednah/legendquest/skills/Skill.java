@@ -248,4 +248,7 @@ public abstract class Skill implements EventListener, Listener {
         saveConfig();
     }
     
+    public boolean validSkillUser(Player p){
+        return getPC(p).validSkill(info.name); 
+    }
 }

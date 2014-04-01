@@ -1,6 +1,5 @@
 package me.sablednah.legendquest.events;
 
-import me.sablednah.legendquest.listeners.SkillListener;
 import me.sablednah.legendquest.skills.Skill;
 
 public class SkillDisableEvent extends SkillEvent {

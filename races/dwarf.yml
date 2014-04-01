@@ -1,0 +1,16 @@
+name: Dwarf
+plural: Dwarven
+size: 1.2
+frequency: 400
+default: false
+basehealth: 24
+statmods:
+  str: 1
+  dex: -1
+  int: 0
+  wis: 0
+  con: 2
+  chr: -1
+groups:
+  - Humanoid
+  - Dwarven

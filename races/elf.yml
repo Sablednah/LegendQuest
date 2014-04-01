@@ -1,0 +1,16 @@
+name: Elf 
+plural: Elven
+size: 1.4
+frequency: 300
+default: false
+basehealth: 16
+statmods:
+  str: -1
+  dex: 1
+  int: 0
+  wis: 0
+  con: -1
+  chr: 1
+groups:
+  - Humanoid
+  - Elvish

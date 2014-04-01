@@ -1,6 +1,5 @@
 package me.sablednah.legendquest.events;
 
-import me.sablednah.legendquest.listeners.SkillListener;
 import me.sablednah.legendquest.skills.Skill;
 
 public class SkillEnableEvent extends SkillEvent {
@@ -15,7 +14,7 @@ public class SkillEnableEvent extends SkillEvent {
         eventListener.onSkillEnable(this);
     }
     
-    public Skill getPower() {
+    public Skill getSkill() {
         return this.skill;
     }
 }

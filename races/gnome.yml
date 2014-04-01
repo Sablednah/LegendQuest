@@ -1,0 +1,16 @@
+name: Gnome
+plural: Gnomish
+size: 1.0
+frequency: 200
+default: false
+basehealth: 10
+statmods:
+  str: -2
+  dex: 1
+  int: 1
+  wis: 0
+  con: -1
+  chr: 0
+groups:
+  - Humanoid
+  - Gnomish

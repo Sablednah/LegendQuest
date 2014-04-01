@@ -1,0 +1,16 @@
+name: Ranger
+frequency: 600
+default: false
+healthperlevel: 6
+statmods:
+  str: 0
+  dex: 2
+  int: 0
+  wis: 1
+  con: 0
+  chr: 1
+allowedRaces:
+  - human
+  - hobbit
+allowedGroups:
+  - Elvish

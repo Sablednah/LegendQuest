@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 public class KarmaMonitorEvents implements Listener {
 
@@ -58,13 +59,14 @@ public class KarmaMonitorEvents implements Listener {
         Entity target = event.getEntity();
         EntityDamageEvent e = target.getLastDamageCause();
         
-        Entity attacker = null;
+        ProjectileSource attacker = null;
         
         if (e instanceof EntityDamageByEntityEvent) {
             EntityDamageByEntityEvent nEvent = (EntityDamageByEntityEvent) e;
             Entity damager = nEvent.getDamager();
             if (damager instanceof Projectile){
-                attacker = ((Projectile)damager).getShooter();
+                Projectile p = (Projectile) damager;
+                attacker = p.getShooter();                
             } else if (damager instanceof Player){
                 attacker = (Player)damager;
             } 

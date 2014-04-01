@@ -62,6 +62,8 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
             sender.sendMessage(lq.configLang.statClass + ": " + pc.mainClass.name);
 
             sender.sendMessage("--------------------");
+            sender.sendMessage(lq.configLang.statKarma + ": " + pc.karma);
+            sender.sendMessage("--------------------");
 
             final Player p = Bukkit.getServer().getPlayer(targetName);
 

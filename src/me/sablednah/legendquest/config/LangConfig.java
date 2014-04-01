@@ -8,12 +8,26 @@ public class LangConfig extends Config {
     public String shutdown = "=== END OF LINE ===";
 
     public String invalidCommand = "Sorry couldn't recognise command: ";
-    // TODO add REAL help info...
-    public String helpCommand = "indepth help here";
+    // TODO add more help info...
+    public String helpCommand = "/lq help : Displays this list\n" + 
+    		"/lq stats [player] : Display character stats\n" + 
+    		"/lq hp [player] : Display player health (and mana)\n" + 
+    		"/lq karma [player] : Display player Karma Level\n" + 
+    		"/lq roll [player] [str|dex|con|int|wis|chr] [integer|very_easy|easy|average|tough|challenging] : Roll the dice to perform a test for roleplay porposes.\n" + 
+    		"/lq race : Display your race\n" + 
+    		"/lq race [list|racename] : List the races you are allowed or select race [racename]\n" + 
+    		"/lq class : Display your class and (subclass if any)\n" + 
+    		"/lq class list : Display classes you are allowed.  Including classes unlocked by maatery of dependant class.\n" + 
+    		"/lq class {classname} : Select class name as your name class.  Will warn if you will loose XP.\n" + 
+    		"/lq class sub {classname} : Select class name as your sub class.  Will warn if you will loose XP.";
+    
     public String invalidPlayerCommand = "Command only valid from ingame player.";
     public String invalidArgumentsCommand = "Invalid arguments.";
     public String characterNotFound = "Character not found for: ";
-    public String commandReloaded = "Settings Reloaded";;
+    public String commandReloaded = "Settings Reloaded";
+
+    public String commandRollSucess = "Test Suceeded";
+    public String commandRollFail = "Test Failed";
 
     public String raceScan = "Scanning for race files in folder: ";
     public String raceScanFound = "Found race: ";
@@ -61,6 +75,7 @@ public class LangConfig extends Config {
     public String statRace = "Race";
     public String statClass = "Class";
     public String playerName = "Name";
+    public String statKarma = "Karma";
 
     public String cantEquipArmour = "Sory you can't wear that armour.";
     public String cantUseTool = "Sory you can't use that tool.";
@@ -96,6 +111,7 @@ public class LangConfig extends Config {
         this.statMana = this.getConfigItem("statMana", this.statMana);
         this.statRace = this.getConfigItem("statRace", this.statRace);
         this.statClass = this.getConfigItem("statClass", this.statClass);
+        this.statKarma = this.getConfigItem("statKarma", this.statKarma);
 
         this.raceScan = this.getConfigItem("raceScan", this.raceScan);
         this.raceScanFound = this.getConfigItem("raceScanFound", this.raceScanFound);
@@ -129,6 +145,8 @@ public class LangConfig extends Config {
         this.invalidArgumentsCommand = this.getConfigItem("invalidArgumentsCommand", this.invalidArgumentsCommand);
         this.characterNotFound = this.getConfigItem("characterNotFound", this.characterNotFound);
         this.commandReloaded = this.getConfigItem("commandReloaded", this.commandReloaded);
+        this.commandRollSucess = this.getConfigItem("commandRollSucess", this.commandRollSucess);
+        this.commandRollFail = this.getConfigItem("commandRollFail", this.commandRollFail);
 
         this.cantEquipArmour = this.getConfigItem("cantEquipArmour", this.cantEquipArmour);
         this.cantUseTool = this.getConfigItem("cantUseTool", this.cantUseTool);

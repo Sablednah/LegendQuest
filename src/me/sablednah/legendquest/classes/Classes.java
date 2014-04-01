@@ -1,11 +1,16 @@
 package me.sablednah.legendquest.classes;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
@@ -38,10 +43,34 @@ public class Classes {
         final File classDir = new File(lq.getDataFolder() + File.separator + "classes");
         // notify sanning begun
         lq.log(lq.configLang.classScan + ": " + classDir);
-
+        
         // make it if not found
         if (!classDir.exists()) {
+            lq.debug.info(classDir + " not found, installing defaults.");
             classDir.mkdir();
+            try {
+                if (lq.configMain.debugMode) { lq.debug.info("looking for classes zip"); }
+                    
+                lq.saveResource("classes.zip",true);
+                File zf = new File(lq.getDataFolder() + File.separator + "classes.zip");
+                ZipFile zip = new ZipFile(zf);
+                
+                Enumeration<? extends ZipEntry> entries = zip.entries();
+                
+                ZipEntry entry;
+                while(entries.hasMoreElements()){
+                    entry = entries.nextElement();
+                    if (lq.configMain.debugMode) { lq.debug.info("Extracting "+entry.getName()); }
+                    Utils.extractFile(zip.getInputStream(entry), new FileOutputStream(classDir.getPath() + File.separator + entry.getName()));
+                }
+                 zip.close();
+                 File nf = new File(lq.getDataFolder() + File.separator + "classes.zip");
+                 nf.delete();
+                 
+            } catch (IOException e) {
+                lq.debug.info("Could not extract defaults from classes.zip");
+                e.printStackTrace();
+            }
         }
 
         final File[] classfiles = classDir.listFiles();

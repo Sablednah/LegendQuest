@@ -39,7 +39,20 @@ commands:
         usage: Use "/<command> help" for more info
         alias: [lqskill,lquestskill,legendqskill,legendquestskill,skills,lqskills,lquestskills,legendqskills,legendquestskills]
         permission: legendquest.command.skills
-        permission-message: You don't have <permission>  
+        permission-message: You don't have <permission>
+    roll:
+        description: Test an attribute
+        usage: Use "/<command> help" for more info
+        alias: [lqroll,lquestroll,legendqroll,legendquestroll,test]
+        permission: legendquest.command.roll
+        permission-message: You don't have <permission>
+    hp:
+        description: Get your health
+        usage: Use "/<command> help" for more info
+        alias: [lqhp,lquesthp,legendqhp,legendquesthp,test]
+        permission: legendquest.command.hp
+        permission-message: You don't have <permission>
+        
 permissions:
     legendquest.*:
         description: Gives access to all legendquest commands/functions.
@@ -54,6 +67,8 @@ permissions:
             legendquest.command.class: true
             legendquest.command.skill: true
             legendquest.command.stats: true
+            legendquest.command.roll: true
+            legendquest.command.hp: true
     legendquest.command.reload:
         description: Allows user to use legendquest reload command.
         default: false
@@ -69,3 +84,10 @@ permissions:
     legendquest.command.stats:
         description: Allows user to use legendquest stats command.
         default: true
+    legendquest.command.roll:
+        description: Allows user to use legendquest roll command.
+        default: true
+    legendquest.command.hp:
+        description: Allows user to use legendquest hp command.
+        default: true
+        

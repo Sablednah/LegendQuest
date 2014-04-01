@@ -9,7 +9,6 @@ import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
-import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.skills.SkillDefinition;
 import me.sablednah.legendquest.utils.Utils;
 
@@ -51,9 +50,9 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
             String msg;
             if (pc.skillsSelected != null && !pc.skillsSelected.isEmpty()) {
                 final List<String> skillnames = new ArrayList<String>();
-                for (final Entry<Skill, Boolean> s : pc.skillsSelected.entrySet()) {
+                for (final Entry<String, Boolean> s : pc.skillsSelected.entrySet()) {
                     if (s.getValue()) {
-                        skillnames.add(s.getKey().getInfo().name);
+                        skillnames.add(s.getKey());
                     }
                 }
                 msg = lq.configLang.hasSkills + " " + Utils.join(skillnames.toArray(new String[0]), ",");
@@ -103,18 +102,18 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
         } else {
             pc.checkSkills();
             // get skills allowed for this player
-            final Map<Skill, Boolean> selected = pc.skillsSelected;
+            final Map<String, Boolean> selected = pc.skillsSelected;
             
             for (final SkillDefinition s : pc.race.availableSkills) {
                 strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
-                if (selected.containsKey(s)) {
+                if (selected.containsKey(s.getSkillInfo().name)) {
                     strout += " *";
                 }
                 sender.sendMessage(strout);
             }
             for (final SkillDefinition s : pc.mainClass.availableSkills) {
                 strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
-                if (selected.containsKey(s)) {
+                if (selected.containsKey(s.getSkillInfo().name)) {
                     strout += " *";
                 }
                 sender.sendMessage(strout);
@@ -122,7 +121,7 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
             if (pc.subClass != null) {
                 for (final SkillDefinition s : pc.subClass.availableSkills) {
                     strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
-                    if (selected.containsKey(s)) {
+                    if (selected.containsKey(s.getSkillInfo().name)) {
                         strout += " *";
                     }
                     sender.sendMessage(strout);

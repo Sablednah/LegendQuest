@@ -1,0 +1,15 @@
+name: Human
+plural: Humans
+size: 1.6
+frequency: 1000
+default: false
+basehealth: 20
+statmods:
+  str: 0
+  dex: 0
+  int: 0
+  wis: 0
+  con: 0
+  chr: 0
+groups:
+  - Humanoid

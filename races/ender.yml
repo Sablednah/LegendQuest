@@ -1,0 +1,17 @@
+name: Ender
+plural: Ender
+size: 1.8
+frequency: 10
+default: false
+perm: legendquest.race.ender
+basehealth: 30
+statmods:
+  str: 2
+  dex: 1
+  int: 1
+  wis: 2
+  con: -2
+  chr: -2
+groups:
+  - Humanoid
+  - Ender

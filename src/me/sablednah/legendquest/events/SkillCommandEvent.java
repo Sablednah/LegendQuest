@@ -1,6 +1,5 @@
 package me.sablednah.legendquest.events;
 
-import me.sablednah.legendquest.listeners.SkillListener;
 
 import org.bukkit.command.CommandSender;
 

@@ -1,0 +1,16 @@
+name: Orc 
+plural: Orcs
+size: 1.8
+frequency: 350
+default: false
+basehealth: 28
+statmods:
+  str: 2
+  dex: 0
+  int: -1
+  wis: -1
+  con: 1
+  chr: -2
+groups:
+  - Humanoid
+  - Orcoid

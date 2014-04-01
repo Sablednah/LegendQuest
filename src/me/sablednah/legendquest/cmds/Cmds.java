@@ -7,6 +7,9 @@ public enum Cmds {
     SKILL(true, 0),
     RELOAD(true, 0),
     STATS(true, 0),
+    KARMA(true, 0),
+    ROLL(true, 0),
+    HP(true, 0),
     HELP(true, 0);
 
     private Boolean canConsole;

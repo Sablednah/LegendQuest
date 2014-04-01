@@ -1,0 +1,15 @@
+name: Citizen
+frequency: 10000
+default: true
+healthperlevel: 1
+statmods:
+  str: -1
+  dex: -1
+  int: -1
+  wis: -1
+  con: -1
+  chr: -1
+allowedRaces:
+  - any
+allowedGroups:
+  - any

@@ -1,11 +1,17 @@
 package me.sablednah.legendquest.races;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.skills.SkillDefinition;
@@ -33,12 +39,36 @@ public class Races {
 
         // Find the Races folder
         final File raceDir = new File(lq.getDataFolder() + File.separator + "races");
-        // notify sanning begun
+        // notify scanning begun
         lq.log(lq.configLang.raceScan + ": " + raceDir);
 
         // make it if not found
         if (!raceDir.exists()) {
+            lq.debug.info(raceDir + " not found, installing defaults.");
             raceDir.mkdir();
+            try {
+                if (lq.configMain.debugMode) { lq.debug.info("looking for races zip"); }
+                    
+                lq.saveResource("races.zip",true);
+                File zf = new File(lq.getDataFolder() + File.separator + "races.zip");
+                ZipFile zip = new ZipFile(zf);
+                
+                Enumeration<? extends ZipEntry> entries = zip.entries();
+                
+                ZipEntry entry;
+                while(entries.hasMoreElements()){
+                    entry = entries.nextElement();
+                    if (lq.configMain.debugMode) { lq.debug.info("Extracting "+entry.getName()); }
+                    Utils.extractFile(zip.getInputStream(entry), new FileOutputStream(raceDir.getPath() + File.separator + entry.getName()));
+                }
+                 zip.close();
+                 File nf = new File(lq.getDataFolder() + File.separator + "races.zip");
+                 nf.delete();
+                 
+            } catch (IOException e) {
+                lq.debug.info("Could not extract defaults from races.zip");
+                e.printStackTrace();
+            }
         }
 
         final File[] racefiles = raceDir.listFiles();
@@ -309,5 +339,4 @@ public class Races {
     public boolean raceExists(final String racename) {
         return races.containsKey(racename.toLowerCase());
     }
-
 }

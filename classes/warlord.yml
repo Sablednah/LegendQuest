@@ -1,0 +1,19 @@
+name: Warlord
+frequency: 1000
+default: false
+healthperlevel: 10
+statmods:
+  str: 2
+  dex: 1
+  int: 0
+  wis: 0
+  con: 1
+  chr: 0
+allowedRaces:
+  - any
+allowedGroups:
+  - any
+requiresOne:
+  - fighter
+  - ranger
+  

@@ -11,9 +11,12 @@ import java.util.Set;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.races.Race;
-import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.skills.SkillDefinition;
+import me.sablednah.legendquest.skills.SkillInfo;
 import me.sablednah.legendquest.utils.SetExp;
+import me.sablednah.legendquest.mechanics.Difficulty;
+import me.sablednah.legendquest.mechanics.Mechanics;
+import me.sablednah.legendquest.mechanics.Attribute;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,27 +25,27 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class PC {
-
+    
     public class DelayedCheck implements Runnable {
-
+        
         @Override
         public void run() {
             healthCheck();
         }
     }
-
+    
     public class DelayedInvCheck implements Runnable {
-
+        
         @Override
         public void run() {
             checkInv();
         }
     }
-
+    
     public Main lq;
     public String charname;
     public String player;
-
+    
     public Race race;
     public boolean raceChanged;
     public ClassType mainClass;
@@ -62,16 +65,16 @@ public class PC {
     public int statCon;
     public int statChr;
     
-    public Map<Skill, Boolean> skillsSelected;
+    public Map<String, Boolean> skillsSelected;
     public HashMap<String, Integer> skillsPurchased = new HashMap<String, Integer>();
-
-    //private boolean skillsEnabled = true;
+    
+    // private boolean skillsEnabled = true;
     
     public int karma;
     
     public PC(final Main plugin, final String pName) {
         this.lq = plugin;
-
+        
         this.player = pName;
         this.charname = pName;
         this.mainClass = this.lq.classes.defaultClass;
@@ -103,9 +106,9 @@ public class PC {
         checkSkills();
         scheduleCheckInv();
         scheduleHealthCheck();
-
+        
     }
-
+    
     public boolean allowedArmour(final Material id) {
         Boolean valid = false;
         if (id == null) {
@@ -138,10 +141,10 @@ public class PC {
         }
         return valid;
     }
-
+    
     public boolean allowedTool(final Material id) {
         Boolean valid = false;
-
+        
         if (id == null) {
             valid = true;
             lq.debug.fine("Air/fist is valid tool");
@@ -172,10 +175,10 @@ public class PC {
         }
         return valid;
     }
-
+    
     public boolean allowedWeapon(final Material id) {
         Boolean valid = false;
-
+        
         if (id == null) {
             valid = true;
             lq.debug.fine("Air/Fist is valid weapon");
@@ -206,18 +209,18 @@ public class PC {
         }
         return valid;
     }
-
+    
     @SuppressWarnings("deprecation")
     public void checkInv() {
         final Player p = lq.getServer().getPlayer(player);
         if (p.isOnline()) {
             final PlayerInventory i = p.getInventory();
-
+            
             final ItemStack helm = i.getHelmet();
             final ItemStack chest = i.getChestplate();
             final ItemStack legs = i.getLeggings();
             final ItemStack boots = i.getBoots();
-
+            
             if (helm != null && !(allowedArmour(helm.getType()))) {
                 p.sendMessage(lq.configLang.cantEquipArmour);
                 lq.debug.fine("Removed helmet " + (helm.getType().toString()) + " from " + p.getName() + ".");
@@ -245,55 +248,62 @@ public class PC {
             p.updateInventory();
         }
     }
-
+    
     public void checkSkills() {
         final List<SkillDefinition> potentialSkills = getUniqueSkills();
-        final Map<Skill, Boolean> activeSkills = new HashMap<Skill,Boolean>();
+        final Map<String, Boolean> activeSkills = new HashMap<String, Boolean>();
         final int level = SetExp.getLevelOfXpAmount(currentXP);
-
+        
         for (final SkillDefinition s : potentialSkills) {
-            if (s.getSkillInfo().levelRequired <= level && s.getSkillInfo().skillPoints < 1) {
-                activeSkills.put(lq.skills.instantiateSkill(s),true);
+            SkillInfo skillInfo = s.getSkillInfo();
+            if (skillInfo.levelRequired <= level && skillInfo.skillPoints < 1) {
+//                activeSkills.put(lq.skills.instantiateSkill(s),true);
+                activeSkills.put(skillInfo.name, true);
                 continue;
             }
             // skill points now :/
             if (skillsPurchased.containsValue(s.getSkillInfo().name)) {
-                activeSkills.put(lq.skills.instantiateSkill(s),true);
+                activeSkills.put(skillInfo.name, true);
                 continue;
             }
         }
         skillsSelected = activeSkills;
     }
-
+    
     // Couldn't resist...
     public Double getMaxHeadroom() {
         return race.size;
     }
-
+    
     public double getMaxHealth() {
-        int hp, level;
+        int hp, level, con;
         double result, perlevel;
-
-        hp = race.baseHealth;
+        con = getAttributeModifier(Attribute.CON);
+        hp = race.baseHealth + con;
+        if (hp < 1) {
+            hp = 1;
+        }
         level = SetExp.getLevelOfXpAmount(currentXP);
         if (subClass != null) {
             perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
         } else {
             perlevel = mainClass.healthPerLevel;
         }
+        double conBonus = ((con * 10) + 100) / 100.00D;  // percent per level bonus of +/-50%
+        perlevel *= conBonus;
         result = (hp + (level * perlevel));
         this.maxHP = (int) result;
-
+        
         return this.maxHP;
     }
-
+    
     public int getMaxMana() {
         double result = 0;
         int mana, level, bonus;
         double perlevel;
-
+        
         mana = race.baseMana;
-
+        
         level = SetExp.getLevelOfXpAmount(currentXP);
         if (subClass != null) {
             perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
@@ -303,14 +313,14 @@ public class PC {
             bonus = mainClass.manaBonus;
         }
         result = (mana + bonus + (level * perlevel));
-
+        
         return (int) result;
     }
-
+    
     public int getMaxSkillPointsLeft() {
         int sp, level;
         double result, perlevel;
-
+        
         sp = race.skillPoints;
         sp += mainClass.skillPoints;
         level = SetExp.getExpAtLevel(currentXP);
@@ -320,14 +330,14 @@ public class PC {
             perlevel = mainClass.healthPerLevel;
         }
         result = (sp + (level * (perlevel + race.skillPointsPerLevel)));
-
+        
         return (int) result;
     }
-
+    
     public int getSkillPointsLeft() {
         return getMaxSkillPointsLeft() - getSkillPointsSpent();
     }
-
+    
     public int getSkillPointsSpent() {
         int result = 0;
         for (final int cost : skillsPurchased.values()) {
@@ -335,7 +345,7 @@ public class PC {
         }
         return result;
     }
-
+    
     /**
      * @return the statChr
      */
@@ -364,7 +374,7 @@ public class PC {
         }
         return stat;
     }
-
+    
     /**
      * @return the statCon
      */
@@ -393,7 +403,7 @@ public class PC {
         }
         return stat;
     }
-
+    
     /**
      * @return the statDex
      */
@@ -422,7 +432,7 @@ public class PC {
         }
         return stat;
     }
-
+    
     /**
      * @return the statInt
      */
@@ -451,7 +461,7 @@ public class PC {
         }
         return stat;
     }
-
+    
     /**
      * @return the statStr
      */
@@ -480,7 +490,7 @@ public class PC {
         }
         return stat;
     }
-
+    
     /**
      * @return the statWis
      */
@@ -509,7 +519,7 @@ public class PC {
         }
         return stat;
     }
-
+    
     public List<SkillDefinition> getUniqueSkills() {
         final Set<SkillDefinition> set = new HashSet<SkillDefinition>();
         set.addAll(race.availableSkills);
@@ -521,7 +531,7 @@ public class PC {
         uniques.addAll(set);
         return uniques;
     }
-
+    
     public boolean hasMastered(final String className) {
         lq.logger.info("className (" + className + ")...");
         if (xpEarnt.containsKey(className.toLowerCase())) {
@@ -532,24 +542,31 @@ public class PC {
         }
         return false;
     }
-
+    
     public void healthCheck() {
         final Player p = Bukkit.getServer().getPlayer(this.player);
         if (p != null) {
             getMaxHealth();
-
+            
             this.health = p.getHealth();
             if (this.health > this.maxHP) {
                 this.health = this.maxHP;
             }
             p.setMaxHealth(this.maxHP);
             p.setHealth(this.health);
-
-            lq.debug.fine("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
-            p.sendMessage("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+            double scale = this.maxHP;
+            if (scale>40) { scale=40.0D; }
+            p.setHealthScale(scale);
+            p.setHealthScaled(true);
+            if (lq.configMain.debugMode) {
+                lq.debug.fine("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+                if (p.getName().equalsIgnoreCase("sablednah")) {
+                    p.sendMessage("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+                }
+            }
         }
     }
-
+    
     public boolean manaGain() {
         int gain;
         gain = race.manaPerSecond;
@@ -560,7 +577,7 @@ public class PC {
         }
         return manaGain(gain);
     }
-
+    
     public boolean manaGain(final int gain) {
         final int manaNow = this.mana;
         this.mana += gain;
@@ -569,40 +586,40 @@ public class PC {
         }
         return (manaNow != this.mana);
     }
-
+    
     public void manaLoss(final int loss) {
         this.mana -= loss;
         if (this.mana < 0) {
             this.mana = 0;
         }
     }
-
+    
     public void scheduleCheckInv() {
         Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedInvCheck(), 2L);
     }
-
+    
     public void scheduleHealthCheck() {
         Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedCheck(), 2L);
     }
-
+    
     public void setXP(final int newXP) {
         xpEarnt.put(mainClass.name.toLowerCase(), newXP);
         if (subClass != null) {
             xpEarnt.put(subClass.name.toLowerCase(), newXP);
         }
-
-//		lq.debug.fine("newXP:"+newXP);
-
+        
+//	lq.debug.fine("newXP:"+newXP);
+        
         currentXP = newXP;
-
-//		lq.debug.fine("currentXP:"+currentXP);
-
+        
+//	lq.debug.fine("currentXP:"+currentXP);
+        
         final Player p = Bukkit.getServer().getPlayer(player);
         if (p != null) {
             SetExp.setTotalExperience(p, newXP);
         }
     }
-
+    
     public boolean canCraft() {
         if (race.stopCrafting || mainClass.stopCrafting) {
             return false;
@@ -612,7 +629,7 @@ public class PC {
         }
         return true;
     }
-
+    
     public boolean canSmelt() {
         if (race.stopSmelting || mainClass.stopSmelting) {
             return false;
@@ -622,7 +639,7 @@ public class PC {
         }
         return true;
     }
-
+    
     public boolean canBrew() {
         if (race.stopBrewing || mainClass.stopBrewing) {
             return false;
@@ -632,7 +649,7 @@ public class PC {
         }
         return true;
     }
-
+    
     public boolean canEnchant() {
         if (race.stopEnchating || mainClass.stopEnchating) {
             return false;
@@ -642,7 +659,7 @@ public class PC {
         }
         return true;
     }
-
+    
     public boolean canRepair() {
         if (race.stopRepairing || mainClass.stopRepairing) {
             return false;
@@ -652,4 +669,52 @@ public class PC {
         }
         return true;
     }
+    
+    public boolean validSkill(String name) {
+        checkSkills();
+        if (skillsSelected != null && name!=null && skillsSelected.get(name)) {
+            return true;
+        }
+        return false;
+    }
+    
+    public int getStat(Attribute attr) {
+        switch (attr) {
+            case STR:
+                return getStatStr();
+            case DEX:
+                return getStatDex();
+            case CON:
+                return getStatCon();
+            case WIS:
+                return getStatWis();
+            case INT:
+                return getStatInt();
+            case CHR:
+                return getStatChr();
+            default:
+                throw new IllegalStateException();
+        }
+    }
+    
+    public int getAttributeModifier(Attribute attr) {
+        return Mechanics.getPlayersAttributeModifier(this, attr);
+    }
+    
+    public int skillTest(int dif, Attribute attr) {
+        return Mechanics.skillTest(dif, attr, this);
+    }
+    
+    public int skillTest(Difficulty dif, Attribute attr, PC pc) {
+        return Mechanics.skillTest(dif, attr, this);
+    }
+    
+    public boolean skillTestB(int dif, Attribute attr, PC pc) {
+        return Mechanics.skillTestB(dif, attr, this);
+    }
+    
+    public boolean skillTestB(Difficulty dif, Attribute attr, PC pc) {
+        return Mechanics.skillTestB(dif, attr, this);
+    }
+    
 }

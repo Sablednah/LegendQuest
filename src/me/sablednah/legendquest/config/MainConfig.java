@@ -17,6 +17,8 @@ public class MainConfig extends Config {
     public double percentXpKeepClassChange = 10.00D;
     public double percentXpLossRespawn = 10.00D;
 
+    public boolean useSkillTestForCombat = true;
+
     public MainConfig(final Main p) {
         super(p, "config.yml");
 
@@ -33,5 +35,7 @@ public class MainConfig extends Config {
         this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
         this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);
 
+        this.useSkillTestForCombat = this.getConfigItem("useSkillTestForCombat", this.useSkillTestForCombat);
+        
     }
 }

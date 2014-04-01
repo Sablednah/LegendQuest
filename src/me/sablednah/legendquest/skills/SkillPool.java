@@ -39,6 +39,7 @@ public class SkillPool {
             String name = def.getSkillInfo().name;
             System.out.print("Pooling skill: "+name);
             skillList.put(name.toLowerCase(), def);
+            instantiateSkill(def);
         }
     }
     

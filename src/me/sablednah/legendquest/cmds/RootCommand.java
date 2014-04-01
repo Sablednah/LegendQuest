@@ -12,46 +12,46 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class RootCommand implements CommandExecutor {
-
+    
     public Main lq;
-
+    
     public RootCommand(final Main p) {
         this.lq = p;
     }
-
+    
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         String cmd;
-
+        
         if (!(args.length > 0)) {
             cmd = "help";
         } else {
             cmd = args[0];
         }
-
+        
         lq.debug.fine("cmd: " + cmd);
-
+        
         String[] newArglist;
         if (args.length > 1) {
             newArglist = Arrays.copyOfRange(args, 1, args.length);
         } else {
             newArglist = new String[0];
         }
-
+        
         lq.debug.fine("args.length: " + args.length);
         lq.debug.fine("newArglist.length: " + newArglist.length);
-
+        
         final boolean isPlayer = (sender instanceof Player);
-
+        
         lq.debug.fine("isPlayer: " + isPlayer);
-
+        
         try {
             final Cmds c = Cmds.valueOf(cmd.toUpperCase());
-
+            
             lq.debug.fine("Cmds: " + c);
             lq.debug.fine("Cmds: " + c.toString());
             lq.debug.fine("test: " + (c == Cmds.STATS));
-
+            
             // player check here
             if (!isPlayer && !c.canConsole()) {
                 // player only command used from console - reject and end command
@@ -59,49 +59,60 @@ public class RootCommand implements CommandExecutor {
                 // we're sending our own "failed" message so say it worked ok to prevent default
                 return true;
             }
-
+            
             CommandExecutor newcmd = null;
-
+            
             switch (c) {
-            case HELP:
-                // TODO add proper help messages
-                sendMultilineMessage(sender, lq.configLang.helpCommand);
-                return true;
-            case RELOAD:
-                lq.configMain.reloadConfig();
-                lq.configLang.reloadConfig();
-                lq.classes = null;
-                lq.races = null;
-                lq.races = new Races(lq);
-                lq.classes = new Classes(lq);
-                sender.sendMessage(lq.configLang.commandReloaded);
-                return true;
-            case RACE:
-                newcmd = new CmdRace(lq);
-            break;
-            case CLASS:
-                newcmd = new CmdClass(lq);
-            break;
-            case STATS:
-                newcmd = new CmdStats(lq);
-            break;
+                case HELP:
+                    // TODO add proper help messages
+                    sendMultilineMessage(sender, lq.configLang.helpCommand);
+                    return true;
+                case RELOAD:
+                    lq.configMain.reloadConfig();
+                    lq.configLang.reloadConfig();
+                    lq.classes = null;
+                    lq.races = null;
+                    lq.races = new Races(lq);
+                    lq.classes = new Classes(lq);
+                    sender.sendMessage(lq.configLang.commandReloaded);
+                    return true;
+                case RACE:
+                    newcmd = new CmdRace(lq);
+                    break;
+                case CLASS:
+                    newcmd = new CmdClass(lq);
+                    break;
+                case STATS:
+                    newcmd = new CmdStats(lq);
+                    break;
+                case ROLL:
+                    newcmd = new CmdRoll(lq);
+                    break;
+                case KARMA:
+                    newcmd = new CmdKarma(lq);
+                    break;
+                case HP:
+                    newcmd = new CmdHP(lq);
+                    break;
             }
-
+            
             lq.debug.fine("newcmd: " + newcmd);
-
+            
             if (newcmd != null) {
                 return newcmd.onCommand(sender, command, label, newArglist);
             }
-
+            
         } catch (final IllegalArgumentException e) {
-            sender.sendMessage(lq.configLang.invalidCommand + cmd + " :(");
-            e.printStackTrace();
+            String error = lq.configLang.invalidCommand + cmd + " :(";
+            sender.sendMessage(error);
+            lq.debug.error(error);
+            // e.printStackTrace();
             return false;
         }
-
+        
         return false;
     }
-
+    
     public void sendMultilineMessage(final CommandSender send, final String message) {
         if (send != null && message != null) {
             final String[] s = message.split("\n");
@@ -110,5 +121,5 @@ public class RootCommand implements CommandExecutor {
             }
         }
     }
-
+    
 }
