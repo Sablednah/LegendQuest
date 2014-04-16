@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.SkillDisableEvent;
@@ -143,12 +144,12 @@ public abstract class Skill implements EventListener, Listener {
         return dir;
     }
     
-    public void setUser(String name) {
-       info.owner = name;
+    public void setUser(UUID uuid) {
+       info.owner = uuid;
     }
 
-    public void setUser(Player name) {
-        setUser(name.getName());
+    public void setUser(Player player) {
+        setUser(player.getUniqueId());
     }
     
     public PC getUser() {
@@ -159,8 +160,8 @@ public abstract class Skill implements EventListener, Listener {
         return Bukkit.getPlayer(info.owner);
     }
     
-    public PC getPC(String player) {
-        return lq.players.getPC(player);
+    public PC getPC(UUID uuid) {
+        return lq.players.getPC(uuid);
     }
     
     public PC getPC(Player player) {

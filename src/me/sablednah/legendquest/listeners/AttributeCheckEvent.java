@@ -1,5 +1,7 @@
 package me.sablednah.legendquest.listeners;
 
+import java.util.UUID;
+
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.EnchantSkill;
 import me.sablednah.legendquest.events.Haggle;
@@ -62,7 +64,6 @@ public class AttributeCheckEvent implements Listener {
             event = e.getEvent();
             wisdomMod = e.getWisdomMod();
             
-            // TODO use modifier in some way!
             int cost = event.getExpLevelCost();
             int currentLevel = p.getLevel();
             int newlevel = currentLevel-cost;
@@ -73,21 +74,21 @@ public class AttributeCheckEvent implements Listener {
             
             double bonusxp = (realXPdiference/100.0D) * wisdomMod;
             
-            lq.getServer().getScheduler().runTask(lq, new BonusExp(p.getName(),(int)bonusxp));
+            lq.getServer().getScheduler().runTask(lq, new BonusExp(p.getUniqueId(),(int)bonusxp));
             
         }
     }
     
     public class BonusExp implements Runnable {
-        private String p;
+        private UUID u;
         private int xp;
-        public BonusExp(String p, int xp) {
-            this.p=p;
+        public BonusExp(UUID u, int xp) {
+            this.u=u;
             this.xp=xp;
         }
         @Override
         public void run() {
-            Player pl = Bukkit.getPlayer(p);
+            Player pl = Bukkit.getPlayer(u);
             if (pl !=null) {
                int exp = SetExp.getTotalExperience(pl);
                exp += xp;

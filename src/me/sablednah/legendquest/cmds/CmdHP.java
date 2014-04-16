@@ -4,7 +4,6 @@ import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.Utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,9 +17,8 @@ public class CmdHP extends CommandTemplate implements CommandExecutor {
         this.lq = p;
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        // TODO Auto-generated method stub
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("HP");
 
@@ -44,15 +42,10 @@ public class CmdHP extends CommandTemplate implements CommandExecutor {
 
         PC pc = null;
         if (targetName != null) {
-            pc = lq.players.getPC(targetName);
+            pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
         }
         if (pc != null) {
-            final Player p = Bukkit.getServer().getPlayer(targetName);
-            if (p != null) {
-                sender.sendMessage(Utils.barGraph(p.getHealth(), pc.getMaxHealth(), 20, lq.configLang.statHealth, (" " + p.getHealth() + " / " + p.getMaxHealth())));
-            } else {
-                sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + pc.health + " / " + pc.maxHP)));
-            }
+            sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + pc.health + " / " + pc.maxHP)));
             sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + pc.mana + " / " + pc.getMaxMana())));
             return true;
         } else {

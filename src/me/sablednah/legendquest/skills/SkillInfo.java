@@ -1,5 +1,7 @@
 package me.sablednah.legendquest.skills;
 
+import java.util.UUID;
+
 import org.bukkit.configuration.ConfigurationSection;
 
 public class SkillInfo
@@ -13,7 +15,7 @@ public class SkillInfo
     public String concept;
     public String[] requiredPowers;
     
-    public String owner;
+    public UUID owner;
     
     public int delay;
     public int duration;

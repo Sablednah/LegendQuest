@@ -6,11 +6,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -277,7 +279,9 @@ public class Utils {
             final double depth = (block.getY() + radius) - bsY + 1;
             final double speed = .5 + ((1.00D / depth) * 2); // (1.00D/distance)
             final Location fbl = new Location(block.getWorld(), bsX, bsY, bsZ);
+            @SuppressWarnings("deprecation")
             final FallingBlock fb = fbl.getWorld().spawnFallingBlock(fbl, m, d);
+            
             fb.setVelocity(new Vector(0.00D, speed, 0.00D));
         }
         blocks = null;
@@ -333,5 +337,25 @@ public class Utils {
         }
         inStream.close();
         outStream.close();
+    }
+    
+    /* look for player by name - should only be used for commands for targeting offline players 
+     * returns null if player has never been on server
+     */
+    @Deprecated
+    public static UUID getPlayerUUID(String name) {
+        UUID uuid = null;
+        Player p = Bukkit.getPlayer(name);
+        if (p != null) {
+            uuid = p.getUniqueId();
+        } else {
+            OfflinePlayer[] offline = Bukkit.getOfflinePlayers();
+            for (OfflinePlayer oneoff : offline) {
+                if (oneoff.getName() != null && oneoff.getName().equals(name)) {
+                    uuid = oneoff.getUniqueId();
+                }
+            }
+        }
+        return uuid;
     }
 }

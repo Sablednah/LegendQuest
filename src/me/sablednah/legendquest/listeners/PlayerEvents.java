@@ -1,5 +1,7 @@
 package me.sablednah.legendquest.listeners;
 
+import java.util.UUID;
+
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.LevelUpEvent;
 import me.sablednah.legendquest.playercharacters.PC;
@@ -23,15 +25,15 @@ public class PlayerEvents implements Listener {
         public int xp;
         public Player player;
 
-        public delayedSpawn(final int xp, final Player player) {
+        public delayedSpawn(int xp, Player player) {
             this.xp = xp;
             this.player = player;
         }
 
         @Override
         public void run() {
-            final String pName = player.getName();
-            final PC pc = lq.players.getPC(pName);
+            UUID uuid = player.getUniqueId();
+            PC pc = lq.players.getPC(uuid);
             pc.setXP(xp);
             lq.players.savePlayer(pc);
         }
@@ -52,11 +54,11 @@ public class PlayerEvents implements Listener {
 
     // set to monitor - we're not gonna change the login, only load our data
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onJoin(final PlayerJoinEvent event) {
-        final Player p = event.getPlayer();
-        final String pName = p.getName();
-        final PC pc = lq.players.getPC(pName);
-        lq.players.addPlayer(pName, pc);
+    public void onJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        UUID uuid = p.getUniqueId();
+        PC pc = lq.players.getPC(p);
+        lq.players.addPlayer(uuid, pc);
         p.setTotalExperience(pc.currentXP);
         p.setMaxHealth(pc.maxHP);
         p.setHealth(pc.health);
@@ -65,22 +67,21 @@ public class PlayerEvents implements Listener {
 
     // set to monitor - we can't change the quit - just want to clean our data up.
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onQuit(final PlayerQuitEvent event) {
-        final String pName = event.getPlayer().getName();
-        lq.players.removePlayer(pName);
+    public void onQuit(PlayerQuitEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        lq.players.removePlayer(uuid);
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onRespawn(final PlayerRespawnEvent event) {
-        final Player p = event.getPlayer();
-        final String pName = p.getName();
-        final PC pc = lq.players.getPC(pName);
+    public void onRespawn(PlayerRespawnEvent event) {
+        Player p = event.getPlayer();
+        PC pc = lq.players.getPC(p);
         lq.logWarn("currentXP: " + pc.currentXP);
-        final int currentXP = SetExp.getTotalExperience(p);
+        int currentXP = SetExp.getTotalExperience(p);
         lq.logWarn("totxp: " + currentXP);
-        final int xpLoss = (int) (currentXP * (lq.configMain.percentXpLossRespawn / 100));
+        int xpLoss = (int) (currentXP * (lq.configMain.percentXpLossRespawn / 100));
         lq.logWarn("xpLoss: " + xpLoss);
-        final int newXp = currentXP - xpLoss;
+        int newXp = currentXP - xpLoss;
         pc.setXP(newXp);
         lq.players.savePlayer(pc);
         lq.getServer().getScheduler().runTaskLater(lq, new delayedSpawn(newXp, p), 5);
@@ -88,18 +89,18 @@ public class PlayerEvents implements Listener {
 
     // track EXP changes - and halve then if dual class
     @EventHandler(priority = EventPriority.LOW)
-    public void onXPChange(final PlayerExpChangeEvent event) {
+    public void onXPChange(PlayerExpChangeEvent event) {
         int xpAmount = event.getAmount();
-        final Player p = event.getPlayer();
-        final String pName = p.getName();
-        final PC pc = lq.players.getPC(pName);
+        Player p = event.getPlayer();
+        UUID uuid = p.getUniqueId();
+        PC pc = lq.players.getPC(uuid);
 
         // half xp gain for dual class
         if (pc.subClass != null) {
             xpAmount = xpAmount / 2;
         }
         pc.setXP(SetExp.getTotalExperience(p) + xpAmount);
-        lq.players.addPlayer(pName, pc);
+        lq.players.addPlayer(uuid, pc);
         lq.players.savePlayer(pc);
 
         if (xpAmount >= p.getExpToLevel()) {

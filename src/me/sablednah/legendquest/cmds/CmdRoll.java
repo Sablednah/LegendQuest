@@ -20,9 +20,9 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
         this.lq = p;
     }
     
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        // TODO Auto-generated method stub
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("ROLL");
         
@@ -135,7 +135,7 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
         
         PC pc = null;
         if (targetName != null) {
-            pc = lq.players.getPC(targetName);
+            pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
         }
         int result = 10;
         if (pc != null) {

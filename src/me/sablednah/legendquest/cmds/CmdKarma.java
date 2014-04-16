@@ -2,6 +2,8 @@ package me.sablednah.legendquest.cmds;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
+import me.sablednah.legendquest.utils.Utils;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,9 +17,9 @@ public class CmdKarma extends CommandTemplate implements CommandExecutor {
         this.lq = p;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        // TODO Auto-generated method stub
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("KARMA");
 
@@ -41,7 +43,7 @@ public class CmdKarma extends CommandTemplate implements CommandExecutor {
 
         PC pc = null;
         if (targetName != null) {
-            pc = lq.players.getPC(targetName);
+            pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
         }
         if (pc != null) {
             sender.sendMessage(lq.configLang.statKarma + ": " + pc.karma);

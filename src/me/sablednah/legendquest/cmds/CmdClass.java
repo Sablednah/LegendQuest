@@ -170,10 +170,10 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                             pc.setXP(newclassxp);
                         }
 
-                        lq.players.addPlayer(p.getName(), pc);
+                        lq.players.addPlayer(p.getUniqueId(), pc);
                         lq.players.savePlayer(pc);
                         pc.scheduleHealthCheck();
-                        lq.players.scheduleUpdate(p.getName());
+                        lq.players.scheduleUpdate(p.getUniqueId());
                         pc.checkInv();
                         sender.sendMessage(lq.configLang.classChanged + ": " + className);
                         lq.debug.fine(lq.configLang.classChanged + ": " + className + " - " + p.getName());

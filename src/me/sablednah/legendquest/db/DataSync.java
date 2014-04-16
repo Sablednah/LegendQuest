@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import lib.PatPeter.SQLibrary.Database;
@@ -82,10 +83,16 @@ public class DataSync {
     }
 
     public synchronized PC getData(final String pName) {
-        lq.debug.fine("loading " + pName + " from db");
+        @SuppressWarnings("deprecation")
+        UUID uuid = lq.getServer().getPlayer(pName).getUniqueId();
+        return (getData(uuid));
+    }
+    
+    public synchronized PC getData(UUID uuid) {    
+        lq.debug.fine("loading " + uuid.toString() + " from db");
         String sql;
-        final PC pc = new PC(lq, pName);
-        sql = "SELECT * FROM pcs WHERE player='" + pName + "';";
+        final PC pc = new PC(lq, uuid);
+        sql = "SELECT * FROM pcs WHERE uuid='" + uuid.toString() + "';";
         lq.debug.fine(sql);
         try {
             ResultSet r = dbconn.query(sql);
@@ -120,7 +127,7 @@ public class DataSync {
             }
             r.close();
 
-            sql = "SELECT xp, class FROM xpEarnt WHERE player='" + pName + "';";
+            sql = "SELECT xp, class FROM xpEarnt WHERE uuid='" + uuid.toString() + "';";
             lq.debug.fine(sql);
             int thisXP;
             r = dbconn.query(sql);
@@ -136,7 +143,7 @@ public class DataSync {
                 }
             }
 
-            sql = "SELECT skillName FROM skillsBought WHERE player='" + pName + "';";
+            sql = "SELECT skillName FROM skillsBought WHERE uuid='" + uuid.toString() + "';";
             lq.debug.fine(sql);
             int skillCost;
             r = dbconn.query(sql);
@@ -156,11 +163,11 @@ public class DataSync {
         return null;
     }
 
-    public synchronized int getXP(final String playerName, final String className) {
+    public synchronized int getXP(final UUID uuid, final String className) {
         String sql;
         int xp = 0;
         try {
-            sql = "SELECT xp FROM xpEarnt WHERE player='" + playerName + "' and class='" + className.toLowerCase() + "';";
+            sql = "SELECT xp FROM xpEarnt WHERE uuid='" + uuid.toString() + "' and class='" + className.toLowerCase() + "';";
             final ResultSet r = dbconn.query(sql);
             if (r != null) {
                 while (r.next()) {
@@ -175,11 +182,11 @@ public class DataSync {
         return xp;
     }
 
-    public synchronized HashMap<String, Integer> getXPs(final String playerName) {
+    public synchronized HashMap<String, Integer> getXPs(final UUID uuid) {
         String sql;
         final HashMap<String, Integer> result = new HashMap<String, Integer>();
         try {
-            sql = "SELECT xp,class FROM xpEarnt WHERE player='" + playerName + "';";
+            sql = "SELECT xp,class FROM xpEarnt WHERE uuid='" + uuid.toString() + "';";
             final ResultSet r = dbconn.query(sql);
             if (r != null) {
                 while (r.next()) {
@@ -203,11 +210,12 @@ public class DataSync {
     private void tableCheck() {
         String create;
         create = "CREATE TABLE if not exists pcs (";
-        create += "player varchar(16) NOT NULL";
+        create += "uuid varchar(32) NOT NULL";
         if (!lq.configMain.useMySQL) {
             create += " UNIQUE ON CONFLICT FAIL";
         }
         create += ", ";
+        create += "player varchar(16) NOT NULL";
         create += "charname varchar(64) NOT NULL, ";
         create += "race varchar(64), ";
         create += "raceChanged INTEGER, ";
@@ -226,7 +234,7 @@ public class DataSync {
         create += "skillpoints INTEGER";
 
         if (lq.configMain.useMySQL) {
-            create += ", PRIMARY KEY (player)";
+            create += ", PRIMARY KEY (uuid)";
         }
         create += " );";
         lq.debug.fine(create);
@@ -237,7 +245,7 @@ public class DataSync {
             lq.debug.fine(r.toString());
             r.close();
             if (!lq.configMain.useMySQL) {
-                create = "CREATE UNIQUE INDEX IF NOT EXISTS player_index ON pcs(player)";
+                create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_index ON pcs(uuid)";
                 r = dbconn.query(create);
                 r.close();
             }
@@ -247,13 +255,14 @@ public class DataSync {
         }
 
         create = "CREATE TABLE if not exists xpEarnt (";
+        create += "uuid varchar(32) NOT NULL, ";
         create += "player varchar(16) NOT NULL, ";
         create += "class varchar(64) NOT NULL, ";
         create += "xp INTEGER";
         if (lq.configMain.useMySQL) {
-            create += ", CONSTRAINT pid PRIMARY KEY (player,class)";
+            create += ", CONSTRAINT uid PRIMARY KEY (uuid,class)";
         } else {
-            create += ", UNIQUE(player, class) ON CONFLICT REPLACE";
+            create += ", UNIQUE(uuid, class) ON CONFLICT REPLACE";
         }
         create += " );";
         lq.debug.fine(create);
@@ -262,7 +271,7 @@ public class DataSync {
             lq.debug.fine(r.toString());
             r.close();
             if (!lq.configMain.useMySQL) {
-                create = "CREATE UNIQUE INDEX IF NOT EXISTS player_class_index ON xpEarnt(player,class)";
+                create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_class_index ON xpEarnt(uuid,class)";
                 dbconn.query(create);
                 r.close();
             }
@@ -272,13 +281,14 @@ public class DataSync {
         }
 
         create = "CREATE TABLE if not exists skillsBought (";
+        create += "uuid varchar(32) NOT NULL, ";
         create += "player varchar(16) NOT NULL, ";
         create += "skillName varchar(64) NOT NULL, ";
         create += "cost INTEGER";
         if (lq.configMain.useMySQL) {
-            create += ", CONSTRAINT pid PRIMARY KEY (player,skillName)";
+            create += ", CONSTRAINT pid PRIMARY KEY (uuid,skillName)";
         } else {
-            create += ", UNIQUE(player, skillName) ON CONFLICT REPLACE";
+            create += ", UNIQUE(uuid, skillName) ON CONFLICT REPLACE";
         }
         create += " );";
         lq.debug.fine(create);
@@ -287,7 +297,7 @@ public class DataSync {
             lq.debug.fine(r.toString());
             r.close();
             if (!lq.configMain.useMySQL) {
-                create = "CREATE UNIQUE INDEX IF NOT EXISTS player_skill_index ON skillsBought(player,skillName)";
+                create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_skill_index ON skillsBought(uuid,skillName)";
                 dbconn.query(create);
                 r.close();
             }
@@ -300,8 +310,9 @@ public class DataSync {
     private synchronized void writeData(final PC pc) {
         String sql;
         sql = "REPLACE INTO pcs (";
-        sql = sql + "player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,karma,statStr,statDex,statInt,statWis,statCon,statChr";
+        sql = sql + "uuid,player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,karma,statStr,statDex,statInt,statWis,statCon,statChr";
         sql = sql + ") values(\"";
+        sql = sql + pc.uuid.toString() + "\",\"";
         sql = sql + pc.player + "\",\"";
         sql = sql + pc.charname + "\",\"";
         sql = sql + pc.race.name + "\",";
@@ -335,8 +346,9 @@ public class DataSync {
             String sql2;
             for (final Map.Entry<String, Integer> entry : pc.xpEarnt.entrySet()) {
                 sql2 = "REPLACE INTO xpEarnt (";
-                sql2 = sql2 + "player,class,xp";
+                sql2 = sql2 + "uuid,player,class,xp";
                 sql2 = sql2 + ") values(\"";
+                sql2 = sql2 + pc.uuid.toString() + "\",\"";
                 sql2 = sql2 + pc.player + "\",\"";
                 sql2 = sql2 + entry.getKey().toLowerCase() + "\",";
                 sql2 = sql2 + entry.getValue();
@@ -348,8 +360,9 @@ public class DataSync {
 
             for (final Map.Entry<String, Integer> entry : pc.skillsPurchased.entrySet()) {
                 sql2 = "REPLACE INTO skillsBought (";
-                sql2 = sql2 + "player,skillName,cost";
+                sql2 = sql2 + "uuid, player,skillName,cost";
                 sql2 = sql2 + ") values(\"";
+                sql2 = sql2 + pc.uuid + "\",\"";
                 sql2 = sql2 + pc.player + "\",\"";
                 sql2 = sql2 + entry.getKey() + "\",";
                 sql2 = sql2 + entry.getValue();

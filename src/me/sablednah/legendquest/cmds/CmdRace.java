@@ -65,8 +65,8 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 
                         pc.race = r;
                         pc.raceChanged = true;
-                        lq.players.addPlayer(p.getName(), pc);
-                        lq.players.savePlayer(p.getName());
+                        lq.players.addPlayer(p.getUniqueId(), pc);
+                        lq.players.savePlayer(p.getUniqueId());
                         sender.sendMessage(lq.configLang.raceChanged + ": " + raceName);
                         return true;
                     }

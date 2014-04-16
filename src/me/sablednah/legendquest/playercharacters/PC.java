@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
@@ -41,7 +42,8 @@ public class PC {
             checkInv();
         }
     }
-    
+
+    public UUID uuid;
     public Main lq;
     public String charname;
     public String player;
@@ -57,6 +59,7 @@ public class PC {
     
     public double health;
     public int mana;
+    public int karma;
     
     public int statStr;
     public int statDex;
@@ -70,11 +73,26 @@ public class PC {
     
     // private boolean skillsEnabled = true;
     
-    public int karma;
     
+    /**
+     * Create PC by name
+     *
+     * @deprecated use {@link PC(Main, UUID)} instead.  
+     */
+
+    @Deprecated
     public PC(final Main plugin, final String pName) {
+        this(plugin, plugin.getServer().getPlayer(pName).getUniqueId());
+    }
+
+    /**
+     * Create PC by UUID
+     **/
+    public PC(final Main plugin, final UUID uuid) {
+        String pName;
+        pName = plugin.getServer().getPlayer(uuid).getName();
         this.lq = plugin;
-        
+        this.uuid = uuid;
         this.player = pName;
         this.charname = pName;
         this.mainClass = this.lq.classes.defaultClass;
@@ -212,7 +230,7 @@ public class PC {
     
     @SuppressWarnings("deprecation")
     public void checkInv() {
-        final Player p = lq.getServer().getPlayer(player);
+        final Player p = lq.getServer().getPlayer(uuid);
         if (p.isOnline()) {
             final PlayerInventory i = p.getInventory();
             
@@ -544,7 +562,7 @@ public class PC {
     }
     
     public void healthCheck() {
-        final Player p = Bukkit.getServer().getPlayer(this.player);
+        final Player p = Bukkit.getServer().getPlayer(uuid);
         if (p != null) {
             getMaxHealth();
             
@@ -614,7 +632,7 @@ public class PC {
         
 //	lq.debug.fine("currentXP:"+currentXP);
         
-        final Player p = Bukkit.getServer().getPlayer(player);
+        final Player p = Bukkit.getServer().getPlayer(uuid);
         if (p != null) {
             SetExp.setTotalExperience(p, newXP);
         }

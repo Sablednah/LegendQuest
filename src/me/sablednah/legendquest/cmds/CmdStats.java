@@ -21,6 +21,7 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
         this.lq = p;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         // TODO Auto-generated method stub
@@ -47,7 +48,7 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 
         PC pc = null;
         if (targetName != null) {
-            pc = lq.players.getPC(targetName);
+            pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
         }
         if (pc != null) {
             sender.sendMessage(lq.configLang.playerStats);

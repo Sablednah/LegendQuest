@@ -37,13 +37,14 @@ public class DamageEvents implements Listener {
             final PC pc = lq.players.getPC(p);
             if (pc != null) {
                 pc.health = newHealth;
-                //TODO cleanup 
-                lq.debug.fine("HP: " + p.getHealth() + " | D: " + dmg + " | nHP: " + newHealth + " | p.max: " + p.getMaxHealth() + " | pc.max: " + pc.maxHP);
-                p.sendMessage("HP: " + p.getHealth() + " | D: " + dmg + " | hHP: " + newHealth + " | p.max: " + p.getMaxHealth() + " | pc.max: " + pc.maxHP);
+                if (lq.configMain.debugMode) {
+                    lq.debug.fine("HP: " + p.getHealth() + " | D: " + dmg + " | nHP: " + newHealth + " | p.max: " + p.getMaxHealth() + " | pc.max: " + pc.maxHP);
+                    p.sendMessage("HP: " + p.getHealth() + " | D: " + dmg + " | hHP: " + newHealth + " | p.max: " + p.getMaxHealth() + " | pc.max: " + pc.maxHP);
+                }
             }
-            lq.players.addPlayer(p.getName(), pc);
+            lq.players.addPlayer(p.getUniqueId(), pc);
             pc.scheduleHealthCheck();
-            lq.players.scheduleUpdate(p.getName());
+            lq.players.scheduleUpdate(p.getUniqueId());
         }
     }
     
