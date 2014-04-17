@@ -215,7 +215,7 @@ public class DataSync {
             create += " UNIQUE ON CONFLICT FAIL";
         }
         create += ", ";
-        create += "player varchar(16) NOT NULL";
+        create += "player varchar(16) NOT NULL, ";
         create += "charname varchar(64) NOT NULL, ";
         create += "race varchar(64), ";
         create += "raceChanged INTEGER, ";
