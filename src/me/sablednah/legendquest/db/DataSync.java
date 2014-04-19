@@ -16,10 +16,9 @@ import me.sablednah.legendquest.playercharacters.PC;
 import org.bukkit.scheduler.BukkitTask;
 
 public class DataSync {
-
+    
     public class dbKeepAlive implements Runnable {
-
-        @Override
+        
         public void run() {
             try {
                 dbconn.query("SELECT 1");
@@ -29,10 +28,9 @@ public class DataSync {
             }
         }
     }
-
+    
     public class dbProcessCache implements Runnable {
-
-        @Override
+        
         public void run() {
             final PC pc = pendingWrites.poll();
             if (pc != null) {
@@ -40,38 +38,38 @@ public class DataSync {
             }
         }
     }
-
+    
     public Main lq;
     public ConcurrentLinkedQueue<PC> pendingWrites = new ConcurrentLinkedQueue<PC>();
     public Database dbconn;
-
+    
     private final BukkitTask aSyncTaskKeeper;
-
+    
     private final BukkitTask aSyncTaskQueue;
-
+    
     public DataSync(final Main p) {
         this.lq = p;
-
+        
         if (lq.configMain.useMySQL) {
             dbconn = new MySQL(lq.logger, "LQ_", lq.configMain.sqlHostname, lq.configMain.sqlPort, lq.configMain.sqlDatabase, lq.configMain.sqlUsername, lq.configMain.sqlPassword);
         } else {
             dbconn = new SQLite(lq.logger, "LQ_", p.getDataFolder().getPath(), "LegendQuest");
         }
-
+        
         lq.log("opening db...");
         dbconn.open();
-
+        
         tableCheck();
-
+        
         this.aSyncTaskKeeper = lq.getServer().getScheduler().runTaskTimerAsynchronously(lq, new dbKeepAlive(), 1200L, 1200L);
         this.aSyncTaskQueue = lq.getServer().getScheduler().runTaskTimerAsynchronously(lq, new dbProcessCache(), 10L, 10L);
-
+        
     }
-
+    
     public synchronized void addWrite(final PC pc) {
         pendingWrites.add(pc);
     }
-
+    
     public void flushdb() {
         PC pc;
         while (!pendingWrites.isEmpty()) {
@@ -81,14 +79,14 @@ public class DataSync {
             }
         }
     }
-
+    
     public synchronized PC getData(final String pName) {
         @SuppressWarnings("deprecation")
         UUID uuid = lq.getServer().getPlayer(pName).getUniqueId();
         return (getData(uuid));
     }
     
-    public synchronized PC getData(UUID uuid) {    
+    public synchronized PC getData(UUID uuid) {
         lq.debug.fine("loading " + uuid.toString() + " from db");
         String sql;
         final PC pc = new PC(lq, uuid);
@@ -100,33 +98,32 @@ public class DataSync {
                 return null;
             }
             while (r.next()) {
-
+                
                 pc.charname = r.getString("charname");
                 lq.debug.fine("loading character " + pc.charname);
-
+                
                 pc.maxHP = r.getInt("maxHP");
                 pc.health = r.getInt("health");
                 pc.karma = r.getInt("karma");
                 pc.mana = r.getInt("mana");
                 pc.race = lq.races.getRace(r.getString("race"));
                 pc.raceChanged = r.getBoolean("raceChanged");
-
+                
                 pc.mainClass = lq.classes.getClass(r.getString("mainClass"));
                 pc.subClass = lq.classes.getClass(r.getString("subClass"));
-
+                
                 lq.debug.fine("class is " + pc.mainClass.name);
-
+                
                 pc.statStr = r.getInt("statStr");
                 pc.statDex = r.getInt("statDex");
                 pc.statInt = r.getInt("statInt");
                 pc.statWis = r.getInt("statWis");
                 pc.statCon = r.getInt("statCon");
                 pc.statChr = r.getInt("statChr");
-
-
+                
             }
             r.close();
-
+            
             sql = "SELECT xp, class FROM xpEarnt WHERE uuid='" + uuid.toString() + "';";
             lq.debug.fine(sql);
             int thisXP;
@@ -142,7 +139,7 @@ public class DataSync {
                     pc.xpEarnt.put(r.getString("class").toLowerCase(), thisXP);
                 }
             }
-
+            
             sql = "SELECT skillName FROM skillsBought WHERE uuid='" + uuid.toString() + "';";
             lq.debug.fine(sql);
             int skillCost;
@@ -154,7 +151,7 @@ public class DataSync {
                     pc.xpEarnt.put(r.getString("skillName").toLowerCase(), skillCost);
                 }
             }
-
+            
             return pc;
         } catch (final SQLException e) {
             lq.logSevere("Error reading XP from to database.");
@@ -162,7 +159,7 @@ public class DataSync {
         }
         return null;
     }
-
+    
     public synchronized int getXP(final UUID uuid, final String className) {
         String sql;
         int xp = 0;
@@ -181,7 +178,7 @@ public class DataSync {
         }
         return xp;
     }
-
+    
     public synchronized HashMap<String, Integer> getXPs(final UUID uuid) {
         String sql;
         final HashMap<String, Integer> result = new HashMap<String, Integer>();
@@ -199,14 +196,14 @@ public class DataSync {
         }
         return result;
     }
-
+    
     public void shutdown() {
         aSyncTaskQueue.cancel();
         aSyncTaskKeeper.cancel();
         flushdb();
         dbconn.close();
     }
-
+    
     private void tableCheck() {
         String create;
         create = "CREATE TABLE if not exists pcs (";
@@ -232,13 +229,13 @@ public class DataSync {
         create += "statCon INTEGER, ";
         create += "statChr INTEGER, ";
         create += "skillpoints INTEGER";
-
+        
         if (lq.configMain.useMySQL) {
             create += ", PRIMARY KEY (uuid)";
         }
         create += " );";
         lq.debug.fine(create);
-
+        
         ResultSet r;
         try {
             r = dbconn.query(create);
@@ -253,7 +250,7 @@ public class DataSync {
             lq.logSevere("Error creating table 'pcs'.");
             e.printStackTrace();
         }
-
+        
         create = "CREATE TABLE if not exists xpEarnt (";
         create += "uuid varchar(32) NOT NULL, ";
         create += "player varchar(16) NOT NULL, ";
@@ -279,7 +276,7 @@ public class DataSync {
             lq.logSevere("Error creating table 'xpEarnt'.");
             e.printStackTrace();
         }
-
+        
         create = "CREATE TABLE if not exists skillsBought (";
         create += "uuid varchar(32) NOT NULL, ";
         create += "player varchar(16) NOT NULL, ";
@@ -306,7 +303,7 @@ public class DataSync {
             e.printStackTrace();
         }
     }
-
+    
     private synchronized void writeData(final PC pc) {
         String sql;
         sql = "REPLACE INTO pcs (";
@@ -339,7 +336,7 @@ public class DataSync {
         sql = sql + pc.statChr;
         sql = sql + ");";
         lq.debug.fine(sql);
-
+        
         try {
             ResultSet r = dbconn.query(sql);
             r.close();
@@ -357,7 +354,7 @@ public class DataSync {
                 r = dbconn.query(sql2);
                 r.close();
             }
-
+            
             for (final Map.Entry<String, Integer> entry : pc.skillsPurchased.entrySet()) {
                 sql2 = "REPLACE INTO skillsBought (";
                 sql2 = sql2 + "uuid, player,skillName,cost";
@@ -370,7 +367,7 @@ public class DataSync {
                 r = dbconn.query(sql2);
                 r.close();
             }
-
+            
         } catch (final SQLException e) {
             lq.logSevere("Error writing pc to database.");
             e.printStackTrace();

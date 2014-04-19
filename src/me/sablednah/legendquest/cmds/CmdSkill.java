@@ -25,7 +25,6 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
         this.lq = p;
     }
     
-    @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("SKILL");
@@ -89,13 +88,15 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
             // send a full list
             for (final ClassType cls : lq.classes.getClassTypes().values()) {
                 for (final SkillDefinition s : cls.availableSkills) {
-                    strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
+                    strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " "
+                            + s.getSkillInfo().skillPoints + "]";
                     sender.sendMessage(strout);
                 }
             }
             for (final Race cls : lq.races.getRaces().values()) {
                 for (final SkillDefinition s : cls.availableSkills) {
-                    strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
+                    strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " "
+                            + s.getSkillInfo().skillPoints + "]";
                     sender.sendMessage(strout);
                 }
             }
@@ -105,14 +106,16 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
             final Map<String, Boolean> selected = pc.skillsSelected;
             
             for (final SkillDefinition s : pc.race.availableSkills) {
-                strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
+                strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " "
+                        + s.getSkillInfo().skillPoints + "]";
                 if (selected.containsKey(s.getSkillInfo().name)) {
                     strout += " *";
                 }
                 sender.sendMessage(strout);
             }
             for (final SkillDefinition s : pc.mainClass.availableSkills) {
-                strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
+                strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " "
+                        + s.getSkillInfo().skillPoints + "]";
                 if (selected.containsKey(s.getSkillInfo().name)) {
                     strout += " *";
                 }
@@ -120,7 +123,8 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
             }
             if (pc.subClass != null) {
                 for (final SkillDefinition s : pc.subClass.availableSkills) {
-                    strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " " + s.getSkillInfo().skillPoints + "]";
+                    strout = " - " + s.getSkillInfo().name + " [" + lq.configLang.statLevelShort + " " + s.getSkillInfo().levelRequired + " | " + lq.configLang.statSp + " "
+                            + s.getSkillInfo().skillPoints + "]";
                     if (selected.containsKey(s.getSkillInfo().name)) {
                         strout += " *";
                     }

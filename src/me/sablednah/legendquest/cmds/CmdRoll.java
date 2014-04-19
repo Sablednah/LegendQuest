@@ -21,7 +21,6 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
     }
     
     @SuppressWarnings("deprecation")
-    @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("ROLL");
@@ -37,16 +36,16 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
         
         if (args.length > 2) {
             if (targetNum == null) {
-            try {
-                if (Utils.isInteger(args[2])) {
-                    targetNum = Integer.parseInt(args[2]);
+                try {
+                    if (Utils.isInteger(args[2])) {
+                        targetNum = Integer.parseInt(args[2]);
+                    }
+                    targetNum = Difficulty.valueOf(args[2].toUpperCase()).getDifficulty();
+                } catch (Exception e) {
+                    // do nothing
+                    // lq.debug.fine(e.getMessage());
+                    // lq.debug.thrown("CmdRoll", "onCommand", e);
                 }
-                targetNum = Difficulty.valueOf(args[2].toUpperCase()).getDifficulty();
-            } catch (Exception e) {
-                // do nothing
-                //lq.debug.fine(e.getMessage());
-                //lq.debug.thrown("CmdRoll", "onCommand", e);
-            }
             }
             if (targetName == null) {
                 if (lq.getServer().getPlayer(args[2]) != null) {
@@ -58,14 +57,14 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
                     attr = Attribute.valueOf(args[2].toUpperCase());
                 } catch (Exception e) {
                     // do nothing
-                    //lq.debug.fine(e.getMessage());
-                    //lq.debug.thrown("CmdRoll", "onCommand", e);
+                    // lq.debug.fine(e.getMessage());
+                    // lq.debug.thrown("CmdRoll", "onCommand", e);
                 }
             }
         }
         
-            if (args.length > 1) {
-                if (targetNum == null) {
+        if (args.length > 1) {
+            if (targetNum == null) {
                 try {
                     if (Utils.isInteger(args[1])) {
                         targetNum = Integer.parseInt(args[1]);
@@ -73,26 +72,26 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
                     targetNum = Difficulty.valueOf(args[1].toUpperCase()).getDifficulty();
                 } catch (Exception e) {
                     // do nothing
-                    //lq.debug.fine(e.getMessage());
-                    //lq.debug.thrown("CmdRoll", "onCommand", e);
+                    // lq.debug.fine(e.getMessage());
+                    // lq.debug.thrown("CmdRoll", "onCommand", e);
                 }
+            }
+            if (targetName == null) {
+                if (lq.getServer().getPlayer(args[1]) != null) {
+                    targetName = lq.getServer().getPlayer(args[1]).getName();
                 }
-                if (targetName == null) {
-                    if (lq.getServer().getPlayer(args[1]) != null) {
-                        targetName = lq.getServer().getPlayer(args[1]).getName();
-                    }
+            }
+            if (attr == null) {
+                try {
+                    attr = Attribute.valueOf(args[1].toUpperCase());
+                } catch (Exception e) {
+                    // do nothing
+                    // lq.debug.fine(e.getMessage());
+                    // lq.debug.thrown("CmdRoll", "onCommand", e);
                 }
-                if (attr == null) {
-                    try {
-                        attr = Attribute.valueOf(args[1].toUpperCase());
-                    } catch (Exception e) {
-                        // do nothing
-                        //lq.debug.fine(e.getMessage());
-                        //lq.debug.thrown("CmdRoll", "onCommand", e);
-                    }
-                }
-                } 
-            
+            }
+        }
+        
         if (args.length > 0) {
             if (targetNum == null) {
                 try {
@@ -102,8 +101,8 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
                     targetNum = Difficulty.valueOf(args[0].toUpperCase()).getDifficulty();
                 } catch (Exception e) {
                     // do nothing
-                    //lq.debug.fine(e.getMessage());
-                    //lq.debug.thrown("CmdRoll", "onCommand", e);
+                    // lq.debug.fine(e.getMessage());
+                    // lq.debug.thrown("CmdRoll", "onCommand", e);
                 }
             }
             if (targetName == null) {
@@ -116,13 +115,13 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
                     attr = Attribute.valueOf(args[0].toUpperCase());
                 } catch (Exception e) {
                     // do nothing
-                    //lq.debug.fine(e.getMessage());
-                    //lq.debug.thrown("CmdRoll", "onCommand", e);
+                    // lq.debug.fine(e.getMessage());
+                    // lq.debug.thrown("CmdRoll", "onCommand", e);
                 }
             }
         }
         
-        if (targetNum==null) {
+        if (targetNum == null) {
             targetNum = 10;
         }
         
@@ -143,14 +142,14 @@ public class CmdRoll extends CommandTemplate implements CommandExecutor {
         } else {
             result = Mechanics.diceRoll(targetNum);
         }
-        //lq.configLang.characterNotFound
+        // lq.configLang.characterNotFound
         
-        if (result>=0) {
-            sender.sendMessage(lq.configLang.commandRollSucess+" (" + result +")");
+        if (result >= 0) {
+            sender.sendMessage(lq.configLang.commandRollSucess + " (" + result + ")");
         } else {
-            sender.sendMessage(lq.configLang.commandRollFail+" (" + (0-result) +")");
+            sender.sendMessage(lq.configLang.commandRollFail + " (" + (0 - result) + ")");
         }
-        lq.debug.fine("Tested player '"+targetName+"' using "+attr+" and dificulty "+targetNum + " : result = "+result);
+        lq.debug.fine("Tested player '" + targetName + "' using " + attr + " and dificulty " + targetNum + " : result = " + result);
         return true;
     }
 }

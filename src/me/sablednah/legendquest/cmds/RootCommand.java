@@ -19,7 +19,6 @@ public class RootCommand implements CommandExecutor {
         this.lq = p;
     }
     
-    @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         String cmd;
         

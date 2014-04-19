@@ -12,25 +12,24 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class PCs {
-
+    
     public class DelayedWrite implements Runnable {
-
+        
         public UUID uuid;
-
+        
         public DelayedWrite(UUID u) {
             this.uuid = u;
         }
-
-        @Override
+        
         public void run() {
             savePlayer(uuid);
         }
     }
-
+    
     public Main lq;
-
+    
     public Map<UUID, PC> activePlayers = new HashMap<UUID, PC>();
-
+    
     public PCs(Main p) {
         this.lq = p;
         for (final Player player : lq.getServer().getOnlinePlayers()) {
@@ -39,18 +38,18 @@ public class PCs {
             addPlayer(uuid, pc);
         }
     }
-
-    public void addPlayer( UUID uuid,  PC pc) {
+    
+    public void addPlayer(UUID uuid, PC pc) {
         activePlayers.put(uuid, pc);
     }
-
+    
     public PC getPC(OfflinePlayer p) {
         if (p != null) {
             return getPC(p.getUniqueId());
         }
         return null;
     }
-
+    
     public PC getPC(Player p) {
         if (p != null) {
             return getPC(p.getUniqueId());
@@ -77,7 +76,7 @@ public class PCs {
         }
         return pc;
     }
-
+    
     private PC loadPlayer(UUID uuid) {
         // Load player from disk. if not found make new blank
         PC pc = null;
@@ -87,20 +86,20 @@ public class PCs {
         }
         return pc;
     }
-
+    
     public void removePlayer(UUID uuid) {
         savePlayer(uuid);
         activePlayers.remove(uuid);
     }
-
+    
     public void savePlayer(PC pc) {
         lq.datasync.addWrite(pc);
     }
-
+    
     public void savePlayer(UUID uuid) {
         savePlayer(getPC(uuid));
     }
-
+    
     public void scheduleUpdate(UUID uuid) {
         Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedWrite(uuid), 4L);
     }

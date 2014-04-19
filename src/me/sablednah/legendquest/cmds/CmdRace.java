@@ -10,31 +10,30 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdRace extends CommandTemplate implements CommandExecutor {
-
+    
     public Main lq;
-
+    
     public CmdRace(final Main p) {
         this.lq = p;
     }
-
-    @Override
+    
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("RACE");
-
+        
         if (!validateCmd(lq, cmd, sender, args)) {
             return true;
         }
-
+        
         // send console the list list
         if (!(sender instanceof Player)) {
             sendRaceList(sender, null);
             return true;
         }
-
+        
         final Player p = (Player) sender;
         final PC pc = lq.players.getPC(p);
-
+        
         if (args.length < 1) { // why am i worried about negative argument length ? le-sigh
             // ok - just list the players race name here.
             sender.sendMessage(lq.configLang.youAreCurrently + ": " + pc.race.name);
@@ -62,7 +61,7 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
                                 return true;
                             }
                         }
-
+                        
                         pc.race = r;
                         pc.raceChanged = true;
                         lq.players.addPlayer(p.getUniqueId(), pc);
@@ -74,7 +73,7 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
             }
         }
     }
-
+    
     private void sendRaceList(final CommandSender sender, final PC pc) {
         sender.sendMessage(lq.configLang.raceList);
         String strout;
@@ -93,6 +92,6 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
             }
             sender.sendMessage(strout);
         }
-
+        
     }
 }

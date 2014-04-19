@@ -38,17 +38,17 @@ public class KarmaMonitorEvents implements Listener {
 
                 Entity target = e.getEntity();
                 if (target instanceof Player) {
-                    pc.karma -= 5;
+                    pc.karma += lq.configMain.karmaDamagePlayer;
                 } else if (target instanceof NPC) {
-                    pc.karma -= 4;
+                    pc.karma += lq.configMain.karmaDamageVillager;
                 } else if (target instanceof Tameable) {
-                    pc.karma -= 3;
+                    pc.karma += lq.configMain.karmaDamagePet;
                 } else if (target instanceof Animals) {
-                    pc.karma -= 2;
+                    pc.karma += lq.configMain.karmaDamageAnimal;
                 } else if (target instanceof Monster) {
-                    pc.karma += 2;
+                    pc.karma += lq.configMain.karmaDamageMonster;
                 } else if (target instanceof Slime) {
-                    pc.karma += 1;
+                    pc.karma += lq.configMain.karmaDamageSlime;
                 }
             }
         }
@@ -78,17 +78,17 @@ public class KarmaMonitorEvents implements Listener {
             final PC pc = lq.players.getPC(p);
            
             if (target instanceof Player) {
-                pc.karma -= 50;
+                pc.karma += lq.configMain.karmaKillPlayer;
             } else if (target instanceof NPC) {
-                pc.karma -= 40;
+                pc.karma += lq.configMain.karmaKillVillager;
             } else if (target instanceof Tameable) {
-                pc.karma -= 30;
+                pc.karma += lq.configMain.karmaKillPet;
             } else if (target instanceof Animals) {
-                pc.karma -= 20;
+                pc.karma += lq.configMain.karmaKillAnimal;
             } else if (target instanceof Monster) {
-                pc.karma += 20;
+                pc.karma += lq.configMain.karmaKillMonster;
             } else if (target instanceof Slime) {
-                pc.karma += 10;
+                pc.karma += lq.configMain.karmaKillSlime;
             }
         }
     }

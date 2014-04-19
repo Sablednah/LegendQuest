@@ -10,26 +10,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdKarma extends CommandTemplate implements CommandExecutor {
-
+    
     public Main lq;
-
+    
     public CmdKarma(final Main p) {
         this.lq = p;
     }
-
+    
     @SuppressWarnings("deprecation")
-    @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("KARMA");
-
+        
         if (!validateCmd(lq, cmd, sender, args)) {
             return true;
         }
-
+        
         final boolean isPlayer = (sender instanceof Player);
         String targetName = null;
-
+        
         if (isPlayer) {
             targetName = sender.getName();
         } else {
@@ -40,7 +39,7 @@ public class CmdKarma extends CommandTemplate implements CommandExecutor {
                 return true;
             }
         }
-
+        
         PC pc = null;
         if (targetName != null) {
             pc = lq.players.getPC(Utils.getPlayerUUID(targetName));

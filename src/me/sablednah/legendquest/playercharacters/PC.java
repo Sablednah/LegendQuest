@@ -29,7 +29,6 @@ public class PC {
     
     public class DelayedCheck implements Runnable {
         
-        @Override
         public void run() {
             healthCheck();
         }
@@ -37,12 +36,11 @@ public class PC {
     
     public class DelayedInvCheck implements Runnable {
         
-        @Override
         public void run() {
             checkInv();
         }
     }
-
+    
     public UUID uuid;
     public Main lq;
     public String charname;
@@ -73,18 +71,17 @@ public class PC {
     
     // private boolean skillsEnabled = true;
     
-    
     /**
      * Create PC by name
-     *
-     * @deprecated use {@link PC(Main, UUID)} instead.  
+     * 
+     * @deprecated use {@link PC(Main, UUID)} instead.
      */
-
+    
     @Deprecated
     public PC(final Main plugin, final String pName) {
         this(plugin, plugin.getServer().getPlayer(pName).getUniqueId());
     }
-
+    
     /**
      * Create PC by UUID
      **/
@@ -573,7 +570,9 @@ public class PC {
             p.setMaxHealth(this.maxHP);
             p.setHealth(this.health);
             double scale = this.maxHP;
-            if (scale>40) { scale=40.0D; }
+            if (scale > 40) {
+                scale = 40.0D;
+            }
             p.setHealthScale(scale);
             p.setHealthScaled(true);
             if (lq.configMain.debugMode) {
@@ -691,7 +690,7 @@ public class PC {
     public boolean validSkill(String name) {
         checkSkills();
         Boolean hasSkill = skillsSelected.get(name);
-        if (skillsSelected!=null && name!=null && hasSkill!=null) {
+        if (skillsSelected != null && name != null && hasSkill != null) {
             return hasSkill;
         }
         return false;

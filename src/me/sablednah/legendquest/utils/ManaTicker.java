@@ -6,18 +6,17 @@ import me.sablednah.legendquest.playercharacters.PC;
 import org.bukkit.entity.Player;
 
 public class ManaTicker implements Runnable {
-
+    
     public Main lq;
     private final int noticeInterval;
     private int noticeIntervalCounter;
-
+    
     public ManaTicker(final Main p) {
         this.lq = p;
         noticeInterval = 10;
         noticeIntervalCounter = 0;
     }
-
-    @Override
+    
     public void run() {
         noticeIntervalCounter++;
         final Player[] players = lq.getServer().getOnlinePlayers();
@@ -31,7 +30,7 @@ public class ManaTicker implements Runnable {
                         p.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 30, lq.configLang.statMana, suffix.toString()));
                     }
                 }
-
+                
             }
         }
         if (noticeIntervalCounter == noticeInterval) {

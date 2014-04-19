@@ -13,33 +13,32 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CmdClass extends CommandTemplate implements CommandExecutor {
-
+    
     public Main lq;
-
+    
     public CmdClass(final Main p) {
         this.lq = p;
     }
-
-    @Override
+    
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("CLASS");
         if (!validateCmd(lq, cmd, sender, args)) {
             return true;
         }
-
+        
         // from here on is command specific code.
-
+        
         // send console the list list
         if (!(sender instanceof Player)) {
             sendClassList(sender, null);
             return true;
         }
-
+        
         // only players left here
         final Player p = (Player) sender;
         final PC pc = lq.players.getPC(p);
-
+        
         if (args.length < 1) { // why am i worried about negative argument length ? le-sigh
             // ok - just list the players class names here.
             if (pc.subClass == null) {
@@ -54,9 +53,9 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                 sendClassList(sender, pc);
                 return true;
             } else {
-
+                
                 boolean sub = false;
-
+                
                 if (className.equalsIgnoreCase("sub") || className.equalsIgnoreCase("subclass")) {
                     if (args.length < 2) {
                         sender.sendMessage(lq.configLang.invalidArgumentsCommand);
@@ -65,9 +64,9 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         sub = true;
                     }
                 }
-
+                
                 final boolean confirm = (args[args.length - 1].equalsIgnoreCase("confirm"));
-
+                
                 // check classname is valid
                 final ClassType cl = lq.classes.getClass(className);
                 if (cl == null) {
@@ -80,21 +79,21 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         return true;
                     } else {
                         final List<String> validClasses = lq.classes.getClasses(pc.race.name, p);
-
+                        
                         if (!validClasses.contains(className)) {
                             sender.sendMessage(lq.configLang.classNotAllowed);
                             return true;
                         }
-
+                        
                         final int xpNow = SetExp.getTotalExperience(p);
-
+                        
                         // check for confirmation
                         boolean valid = false;
-
+                        
                         if (xpNow > Main.MAX_XP) {
                             valid = true;
                         }
-
+                        
                         if (confirm) {
                             valid = true;
                         }
@@ -110,35 +109,35 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         if (!sub && pc.mainClass == lq.classes.defaultClass) {
                             valid = true;
                         }
-
+                        
                         if (!valid) {
                             sender.sendMessage(lq.configLang.classChangeWarnXpLoss);
                             sender.sendMessage(lq.configLang.classConfirm);
                             return true;
                         }
-
+                        
                         // only rest XP if they have some worth bothering AND they are changing class - not setting
                         // non-default
-
+                        
                         if (xpNow > Main.MAX_XP) {
                             valid = true;
                         }
-
+                        
                         int newxp = 0;
                         if (p.getLevel() > 1 && xpNow < Main.MAX_XP) {
                             lq.debug.fine("Level is: " + p.getLevel());
                             if ((!sub && pc.mainClass != lq.classes.defaultClass) || (sub && pc.subClass != null)) {
                                 lq.debug.fine("resetting " + p.getName() + " XP: " + p.getTotalExperience() + " - "
                                         + ((int) (p.getTotalExperience() * (lq.configMain.percentXpKeepClassChange / 100))));
-
+                                
                                 // reset XP
                                 newxp = (int) (xpNow * (lq.configMain.percentXpKeepClassChange / 100));
                                 pc.setXP(newxp);
                                 lq.players.savePlayer(pc);
-
+                                
                             }
                         }
-
+                        
                         String oldClassname;
                         if (sub) {
                             oldClassname = pc.subClass.name.toLowerCase();
@@ -155,11 +154,11 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         } else {
                             newclassxp = newxp;
                         }
-
+                        
                         // if mastered class - save this xp and check if target class is mastered.
                         if (xpNow > Main.MAX_XP) {
                             pc.xpEarnt.put(oldClassname, xpNow);
-
+                            
                             if (newclassxp > Main.MAX_XP) {
                                 pc.setXP(newclassxp);
                             } else {
@@ -169,7 +168,7 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                             // old class was not masteted - xp loss if any was done above.
                             pc.setXP(newclassxp);
                         }
-
+                        
                         lq.players.addPlayer(p.getUniqueId(), pc);
                         lq.players.savePlayer(pc);
                         pc.scheduleHealthCheck();
@@ -183,11 +182,11 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
             }
         }
     }
-
+    
     private void sendClassList(final CommandSender sender, final PC pc) {
         sender.sendMessage(lq.configLang.classList);
         String strout;
-
+        
         if (pc == null || !(sender instanceof Player)) {
             // send a full list
             for (final ClassType cls : lq.classes.getClassTypes().values()) {
@@ -209,13 +208,13 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                     } else {
                         strout = " - ";
                     }
-
+                    
                     strout += " - " + cls.substring(0, 1).toUpperCase() + cls.substring(1);
-
+                    
                     if (cls.equalsIgnoreCase(lq.classes.defaultClass.name)) {
                         strout += " *";
                     }
-
+                    
                     sender.sendMessage(strout);
                 }
             }
