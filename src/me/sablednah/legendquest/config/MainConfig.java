@@ -19,6 +19,8 @@ public class MainConfig extends Config {
 
     public boolean useSkillTestForCombat = true;
 
+    public boolean verboseCombat = true;
+
     public MainConfig(final Main p) {
         super(p, "config.yml");
 
@@ -36,6 +38,7 @@ public class MainConfig extends Config {
         this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);
 
         this.useSkillTestForCombat = this.getConfigItem("useSkillTestForCombat", this.useSkillTestForCombat);
+        this.verboseCombat = this.getConfigItem("verboseCombat", this.verboseCombat);
         
     }
 }

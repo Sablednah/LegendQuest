@@ -31,6 +31,8 @@ public class Main extends JavaPlugin {
     public PCs players;
     public DebugLog debug;
 
+    // TODO remove test flag
+    public static final Boolean debugMode = true;
     public static final int MAX_XP = 58245;
     public static final int MAX_LEVEL = 150;
 
@@ -64,9 +66,6 @@ public class Main extends JavaPlugin {
 
         // enable debugger.
         debug = new DebugLog(this);
-
-        // TODO remove this in live setup.
-        debug.setDebugMode();
 
         // load main core settings
         configMain = new MainConfig(this);

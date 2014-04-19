@@ -92,6 +92,11 @@ public class LangConfig extends Config {
     public String skillList = "You have the following skills available.";
     public String skillListHeader = "-- Skill Name --,-- Level --,--Cost--";
     public String skillsList = "------- SkillPool --------";
+
+    public String combatHit = "You hit your target.";
+    public String combatMissed = "Your target evaded your attack.";
+    public String combatDodged = "You evaded an attack.";
+    public String combatDodgefail = "You failed to evade.";
     
 
     public LangConfig(final Main p) {
@@ -164,5 +169,10 @@ public class LangConfig extends Config {
         this.skillListHeader = this.getConfigItem("skillListHeader", this.skillListHeader);
         this.skillsList = this.getConfigItem("skillsList", this.skillsList);
 
+        this.combatHit = this.getConfigItem("combatHit", this.combatHit);
+        this.combatMissed = this.getConfigItem("combatMissed", this.combatMissed);
+        this.combatDodged = this.getConfigItem("combatDodged", this.combatDodged);
+        this.combatDodgefail = this.getConfigItem("combatDodgefail", this.combatDodgefail);        
+        
     }
 }

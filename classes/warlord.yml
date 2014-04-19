@@ -1,7 +1,7 @@
 name: Warlord
 frequency: 1000
 default: false
-healthperlevel: 10
+healthperlevel: 0.5
 statmods:
   str: 2
   dex: 1

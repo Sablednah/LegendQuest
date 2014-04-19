@@ -1,7 +1,7 @@
 name: Ranger
 frequency: 600
 default: false
-healthperlevel: 6
+healthperlevel: 0.2
 statmods:
   str: 0
   dex: 2

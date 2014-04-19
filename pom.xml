@@ -33,6 +33,49 @@
   <build>
     <sourceDirectory>src</sourceDirectory>
     <finalName>${project.artifactId}</finalName>
+    <plugins>
+		<plugin>
+		    <artifactId>maven-assembly-plugin</artifactId>
+		    <executions>
+		        <execution>
+		            <id>make-class</id>
+		            <phase>compile</phase>
+		            <goals>
+		                <goal>single</goal>
+		            </goals>
+				    <configuration>
+  						<finalName>classes/classes</finalName>
+  						<appendAssemblyId>false</appendAssemblyId>
+  				        <descriptors>
+				            <descriptor>${basedir}\assembleclass.xml</descriptor>
+				        </descriptors>
+				    </configuration>
+		        </execution>
+		        <execution>
+		            <id>make-race</id>
+		            <phase>compile</phase>
+		            <goals>
+		                <goal>single</goal>
+		            </goals>
+				    <configuration>
+				      <finalName>classes/races</finalName>
+				      <appendAssemblyId>false</appendAssemblyId>
+				        <descriptors>
+				            <descriptor>${basedir}\assemblerace.xml</descriptor>
+				        </descriptors>
+				    </configuration>
+		        </execution>
+		    </executions>
+		</plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source/>
+          <target/>
+        </configuration>
+      </plugin>
+    </plugins>
     <resources>
       <resource>
         <directory>src</directory>
@@ -43,24 +86,49 @@
         <filtering>true</filtering>
       </resource>
       <resource>
-        <directory></directory>
+        <directory>/target/</directory>
         <includes>
           <include>*.zip</include>
         </includes>
         <filtering>false</filtering>
       </resource>
-      
     </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source/>
-          <target/>
-        </configuration>
-      </plugin>
-    </plugins>
+
+    <pluginManagement>
+    	<plugins>
+    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+    		<plugin>
+    			<groupId>org.eclipse.m2e</groupId>
+    			<artifactId>lifecycle-mapping</artifactId>
+    			<version>1.0.0</version>
+    			<configuration>
+    				<lifecycleMappingMetadata>
+    					<pluginExecutions>
+    						<pluginExecution>
+    							<pluginExecutionFilter>
+    								<groupId>
+    									org.apache.maven.plugins
+    								</groupId>
+    								<artifactId>
+    									maven-assembly-plugin
+    								</artifactId>
+    								<versionRange>
+    									[2.2-beta-5,)
+    								</versionRange>
+    								<goals>
+    									<goal>single</goal>
+    								</goals>
+    							</pluginExecutionFilter>
+    							<action>
+    								<ignore></ignore>
+    							</action>
+    						</pluginExecution>
+    					</pluginExecutions>
+    				</lifecycleMappingMetadata>
+    			</configuration>
+    		</plugin>
+    	</plugins>
+    </pluginManagement>
   </build>
   <ciManagement>
       <system>jenkins</system>

@@ -71,8 +71,25 @@ public class DamageEvents implements Listener {
         }
         
         boolean hitCheck = Mechanics.opposedTest(attackerPC, hitchance, Attribute.DEX, victimPC, dodgechance, Attribute.DEX);        
-        if (!hitCheck) {
+        if (!hitCheck) { 
             event.setCancelled(true);
+            if (lq.configMain.verboseCombat) {
+                if (event.getDamager() instanceof Player) {
+                    ((Player)(event.getDamager())).sendMessage(lq.configLang.combatMissed);
+                }
+                if (victim instanceof Player) {
+                    ((Player)(victim)).sendMessage(lq.configLang.combatDodged);                    
+                }
+            }
+        } else {
+            if (lq.configMain.verboseCombat) {
+                if (event.getDamager() instanceof Player) {
+                    ((Player)(event.getDamager())).sendMessage(lq.configLang.combatHit);
+                }
+                if (victim instanceof Player) {
+                    ((Player)(victim)).sendMessage(lq.configLang.combatDodgefail);                    
+                }
+            }            
         }
     }
     

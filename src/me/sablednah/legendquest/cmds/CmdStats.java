@@ -22,9 +22,7 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        // TODO Auto-generated method stub
         // get the enum for this command
         final Cmds cmd = Cmds.valueOf("STATS");
 

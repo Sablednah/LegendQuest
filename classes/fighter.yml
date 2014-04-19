@@ -1,7 +1,7 @@
 name: Fighter
 frequency: 1000
 default: false
-healthperlevel: 10
+healthperlevel: 0.3
 statmods:
   str: 2
   dex: 1

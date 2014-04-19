@@ -2,6 +2,7 @@ package me.sablednah.legendquest.mechanics;
 
 import java.util.Random;
 
+import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
 
@@ -27,7 +28,9 @@ public class Mechanics {
             stat = 10;
         }
         int result = (int) (stat/2)-5;
-        System.out.print("Attribute Mod ["+attr+"]: "+result);
+        if (Main.debugMode){
+            System.out.print("Attribute Mod ["+attr+"]: "+result);
+        }
         return result;
     }
     
@@ -44,7 +47,9 @@ public class Mechanics {
         } else {
             aname = "unknown";
         }
-        System.out.print("Test for '"+aname+"' [atr="+as+"]: D20 = "+roll+" + "+attrnum+" (mod) - "+dif+" (dif) := "+(roll + attrnum - dif));
+        if (Main.debugMode){
+            System.out.print("Test for '"+aname+"' [atr="+as+"]: D20 = "+roll+" + "+attrnum+" (mod) - "+dif+" (dif) := "+(roll + attrnum - dif));
+        }
         roll = roll+attrnum;
         return roll - dif;
     }

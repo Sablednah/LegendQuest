@@ -1,7 +1,7 @@
 name: Citizen
 frequency: 10000
 default: true
-healthperlevel: 1
+healthperlevel: 0.1
 statmods:
   str: -1
   dex: -1

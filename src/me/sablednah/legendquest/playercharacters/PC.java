@@ -310,7 +310,7 @@ public class PC {
         double conBonus = ((con * 10) + 100) / 100.00D;  // percent per level bonus of +/-50%
         perlevel *= conBonus;
         result = (hp + (level * perlevel));
-        this.maxHP = (int) result;
+        this.maxHP = result;
         
         return this.maxHP;
     }
@@ -690,8 +690,9 @@ public class PC {
     
     public boolean validSkill(String name) {
         checkSkills();
-        if (skillsSelected != null && name!=null && skillsSelected.get(name)) {
-            return true;
+        Boolean hasSkill = skillsSelected.get(name);
+        if (skillsSelected!=null && name!=null && hasSkill!=null) {
+            return hasSkill;
         }
         return false;
     }

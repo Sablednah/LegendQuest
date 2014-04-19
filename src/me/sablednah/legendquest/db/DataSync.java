@@ -221,8 +221,8 @@ public class DataSync {
         create += "raceChanged INTEGER, ";
         create += "mainClass varchar(64), ";
         create += "subClass varchar(64), ";
-        create += "maxHP INTEGER, ";
-        create += "health INTEGER, ";
+        create += "maxHP DOUBLE, ";
+        create += "health DOUBLE, ";
         create += "mana INTEGER, ";
         create += "karma INTEGER, ";
         create += "statStr INTEGER, ";
