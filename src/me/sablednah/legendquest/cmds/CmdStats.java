@@ -7,7 +7,6 @@ import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.SetExp;
 import me.sablednah.legendquest.utils.Utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -64,13 +63,7 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
             sender.sendMessage(lq.configLang.statKarma + ": " + pc.karma);
             sender.sendMessage("--------------------");
 
-            final Player p = Bukkit.getServer().getPlayer(targetName);
-
-            if (p != null) {
-                sender.sendMessage(Utils.barGraph(p.getHealth(), pc.getMaxHealth(), 20, lq.configLang.statHealth, (" " + p.getHealth() + " / " + p.getMaxHealth())));
-            } else {
-                sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + pc.health + " / " + pc.maxHP)));
-            }
+            sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + pc.health + " / " + pc.maxHP)));
 
             sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + pc.mana + " / " + pc.getMaxMana())));
             sender.sendMessage("--------------------");

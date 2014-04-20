@@ -102,8 +102,8 @@ public class DataSync {
                 pc.charname = r.getString("charname");
                 lq.debug.fine("loading character " + pc.charname);
                 
-                pc.maxHP = r.getInt("maxHP");
-                pc.health = r.getInt("health");
+                pc.maxHP = r.getDouble("maxHP");
+                pc.health = r.getDouble("health");
                 pc.karma = r.getInt("karma");
                 pc.mana = r.getInt("mana");
                 pc.race = lq.races.getRace(r.getString("race"));

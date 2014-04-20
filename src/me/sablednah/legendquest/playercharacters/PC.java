@@ -87,7 +87,7 @@ public class PC {
      **/
     public PC(final Main plugin, final UUID uuid) {
         String pName;
-        pName = plugin.getServer().getPlayer(uuid).getName();
+        pName = plugin.getServer().getOfflinePlayer(uuid).getName();
         this.lq = plugin;
         this.uuid = uuid;
         this.player = pName;
@@ -228,7 +228,7 @@ public class PC {
     @SuppressWarnings("deprecation")
     public void checkInv() {
         final Player p = lq.getServer().getPlayer(uuid);
-        if (p.isOnline()) {
+        if (p!=null && p.isOnline()) {
             final PlayerInventory i = p.getInventory();
             
             final ItemStack helm = i.getHelmet();
@@ -570,7 +570,7 @@ public class PC {
             p.setMaxHealth(this.maxHP);
             p.setHealth(this.health);
             double scale = this.maxHP;
-            if (scale > 40) {
+            if (scale > 40.0D) {
                 scale = 40.0D;
             }
             p.setHealthScale(scale);
