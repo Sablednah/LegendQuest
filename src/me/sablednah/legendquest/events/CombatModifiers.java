@@ -1,10 +1,10 @@
 package me.sablednah.legendquest.events;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+
 
 public class CombatModifiers extends Event implements Cancellable {
 
@@ -15,23 +15,24 @@ public class CombatModifiers extends Event implements Cancellable {
         return handlers;
     }
 
-    private EntityDamageEvent event;
     private int power;
     private int dodge;
+	private Entity	damager;
+	private Entity	victim;
+	private boolean ranged;
+
     
-    public CombatModifiers(EntityDamageEvent event2, int power, int dodge) {
-        this.event = event2;
+    public CombatModifiers( int power, int dodge, Entity damager, Entity victim, boolean ranged) {
         this.power = power;
         this.dodge = dodge;
+        this.damager = damager;
+        this.victim = victim;
+        this.ranged = ranged;
     }
 
     @Override
     public HandlerList getHandlers() {
         return handlers;
-    }
-
-    public EntityDamageEvent getEvent() {
-        return event;
     }
 
     public int getPower() {
@@ -42,9 +43,6 @@ public class CombatModifiers extends Event implements Cancellable {
         return dodge;
     }
 
-    public void setEvent(EntityDamageByEntityEvent event) {
-        this.event = event;
-    }
     public void setPower(int power) {
         this.power = power;
     }
@@ -60,4 +58,42 @@ public class CombatModifiers extends Event implements Cancellable {
     public void setCancelled(boolean bln) {
         this.cancelled = bln;
     }
+    
+
+	/**
+	 * @return the damager
+	 */
+	public Entity getDamager() {
+		return damager;
+	}
+
+	/**
+	 * @param damager the damager to set
+	 */
+	public void setDamager(Entity damager) {
+		this.damager = damager;
+	}
+
+	/**
+	 * @return the victim
+	 */
+	public Entity getVictim() {
+		return victim;
+	}
+
+	/**
+	 * @param victim the victim to set
+	 */
+	public void setVictim(Entity victim) {
+		this.victim = victim;
+	}
+	
+	public boolean isRanged() {
+		return ranged;
+	}
+
+	public void setRanged(boolean ranged) {
+		this.ranged = ranged;
+	}
+
 }

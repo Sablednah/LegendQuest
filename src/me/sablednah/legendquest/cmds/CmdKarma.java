@@ -34,6 +34,34 @@ public class CmdKarma extends CommandTemplate implements CommandExecutor {
         } else {
             if (args.length > 0) {
                 targetName = args[0];
+                if (targetName.equals("test")) {
+                    PC pc2 = lq.players.getPC(Utils.getPlayerUUID("sablednah"));
+                    sender.sendMessage("5 : "+pc2.karmaName(5));
+                    sender.sendMessage("50 : "+pc2.karmaName(50));
+                    sender.sendMessage("500 : "+pc2.karmaName(500));
+                    sender.sendMessage("5000 : "+pc2.karmaName(5000));
+                    sender.sendMessage("50000 : "+pc2.karmaName(50000));
+                    sender.sendMessage("500000 : "+pc2.karmaName(500000));
+                    sender.sendMessage("5000000 : "+pc2.karmaName(5000000));
+                    sender.sendMessage("50000000 : "+pc2.karmaName(50000000));
+                    sender.sendMessage("500000000 : "+pc2.karmaName(500000000));
+                    sender.sendMessage("5000000000 : "+pc2.karmaName(5000000000L));
+                    sender.sendMessage("50000000000 : "+pc2.karmaName(50000000000L));
+                    sender.sendMessage("500000000000 : "+pc2.karmaName(500000000000L));
+                    sender.sendMessage("-5 : "+pc2.karmaName(-5));
+                    sender.sendMessage("-50 : "+pc2.karmaName(-50));
+                    sender.sendMessage("-500 : "+pc2.karmaName(-500));
+                    sender.sendMessage("-5000 : "+pc2.karmaName(-5000));
+                    sender.sendMessage("-50000 : "+pc2.karmaName(-50000));
+                    sender.sendMessage("-500000 : "+pc2.karmaName(-500000));
+                    sender.sendMessage("-5000000 : "+pc2.karmaName(-5000000));
+                    sender.sendMessage("-50000000 : "+pc2.karmaName(-50000000));
+                    sender.sendMessage("-500000000 : "+pc2.karmaName(-500000000));
+                    sender.sendMessage("-5000000000 : "+pc2.karmaName(-5000000000L));
+                    sender.sendMessage("-50000000000 : "+pc2.karmaName(-50000000000L));
+                    sender.sendMessage("-500000000000 : "+pc2.karmaName(-500000000000L));
+                    return true;
+                }
             } else {
                 sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidArgumentsCommand);
                 return true;
@@ -45,7 +73,7 @@ public class CmdKarma extends CommandTemplate implements CommandExecutor {
             pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
         }
         if (pc != null) {
-            sender.sendMessage(lq.configLang.statKarma + ": " + pc.karma);
+            sender.sendMessage(lq.configLang.statKarma + ": " + pc.karmaName() + " ("  + pc.karma+")");
             return true;
         } else {
             sender.sendMessage(lq.configLang.characterNotFound + targetName);

@@ -1,0 +1,41 @@
+# All times are in ticks - 20 ticks = 1s.
+
+skills:
+    brawl:
+      buildup: 0
+      delay: 0
+      duration: 0
+      cooldown: 0
+      manaCost: 10
+      levelRequired: 10
+      skillPoints: 10
+      consumes:
+    dodge:
+      buildup: 0
+      delay: 0
+      duration: 0
+      cooldown: 0
+      manaCost: 10
+      levelRequired: 10
+      skillPoints: 10
+      consumes:
+    fireball:
+      buildup: 20
+      delay: 10
+      duration: 0
+      cooldown: 200
+      manaCost: 10
+      levelRequired: 2
+      skillPoints: 10
+      consumes: FIREBALL
+    sheild:
+      buildup: 0
+      delay: 20
+      duration: 200
+      cooldown: 100
+      manaCost: 10
+      levelRequired: 1
+      skillPoints: 10
+      consumes: DIRT
+
+    

@@ -1,7 +1,23 @@
 package me.sablednah.legendquest.skills;
 
-
-
+@SkillManifest(
+		name = "Brawler", 
+		type = SkillType.TRIGGERED, 
+		author = "sablednah", 
+		version = 1.0D, 
+		description = "Attacks while barehanded have a chance to deal extra damage.",  
+		buildup = 0, 
+		consumes = "", 
+		cooldown = 0, 
+		delay = 0, 
+		duration = 0, 
+		levelRequired = 0, 
+		manaCost = 0, 
+		skillPoints = 0,
+		dblvarnames = { "chance" }, dblvarvalues = { 75.5 }, 
+		intvarnames = { "dammage" }, intvarvalues = { 5 }, 
+		strvarnames = { "" }, strvarvalues = { "" }
+	)
 public class PluginSkill extends Skill {
     
     public String command;
@@ -22,17 +38,18 @@ public class PluginSkill extends Skill {
         return false;
     }
 
-    @Override
-    public void loadOptions() {
-        // TODO Auto-generated method stub
-        
-    }
 
     @Override
     public CommandResult onCommand() {
         // TODO Auto-generated method stub
         return CommandResult.NOTAVAILABLE;
     }
+
+	@Override
+	public void onDisable() {
+		// TODO Auto-generated method stub
+		
+	}
     
 }
 

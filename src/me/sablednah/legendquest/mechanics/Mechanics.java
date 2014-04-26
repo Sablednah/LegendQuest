@@ -73,17 +73,22 @@ public class Mechanics {
     public static boolean opposedTest(PC tester, int testDif, Attribute testAttr,PC oponent, int oppDif, Attribute oppAttr) {
         int testScore = skillTest(testDif,testAttr,tester);
         int oppScore = skillTest(oppDif,oppAttr,oponent);
-        
-        if (testScore>oppScore) {
-            return true;
-        } else {
+
+        if (testScore==oppScore) {
             int testMod = getPlayersAttributeModifier(tester,testAttr);
             int oppMod = getPlayersAttributeModifier(oponent,oppAttr);
             if (testMod>=oppMod) {
                 return true;
+            } else {
+            	return false;
             }
+        } else{
+        	if (testScore>oppScore) {
+        		return true;
+        	} else {
+        		return false;
+        	}
         }
-        return false;
     }
 }
 

@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-
 import me.sablednah.legendquest.Main;
-import me.sablednah.legendquest.skills.SkillDefinition;
+import me.sablednah.legendquest.skills.Skill;
+import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillInfo;
 import me.sablednah.legendquest.utils.Pair;
 import me.sablednah.legendquest.utils.Utils;
@@ -26,317 +26,337 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Races {
 
-    public Main lq;
-    private final Map<String, Race> races = new HashMap<String, Race>();
-    private final ArrayList<Pair<Integer, String>> raceprobability = new ArrayList<Pair<Integer, String>>();
-    public WeightedProbMap<String> wpmRaces;
+	public Main										lq;
+	private final Map<String, Race>					races			= new HashMap<String, Race>();
+	private final ArrayList<Pair<Integer, String>>	raceprobability	= new ArrayList<Pair<Integer, String>>();
+	public WeightedProbMap<String>					wpmRaces;
 
-    public Race defaultRace;
+	public Race										defaultRace;
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
-    public Races(final Main p) {
-        this.lq = p;
+	@SuppressWarnings({ "unchecked", "deprecation" })
+	public Races(final Main p) {
+		this.lq = p;
 
-        // Find the Races folder
-        final File raceDir = new File(lq.getDataFolder() + File.separator + "races");
-        // notify scanning begun
-        lq.log(lq.configLang.raceScan + ": " + raceDir);
+		// Find the Races folder
+		final File raceDir = new File(lq.getDataFolder() + File.separator + "races");
+		// notify scanning begun
+		lq.log(lq.configLang.raceScan + ": " + raceDir);
 
-        // make it if not found
-        if (!raceDir.exists()) {
-            lq.debug.info(raceDir + " not found, installing defaults.");
-            raceDir.mkdir();
-            try {
-                if (lq.configMain.debugMode) { lq.debug.info("looking for races zip"); }
-                    
-                lq.saveResource("races.zip",true);
-                File zf = new File(lq.getDataFolder() + File.separator + "races.zip");
-                ZipFile zip = new ZipFile(zf);
-                
-                Enumeration<? extends ZipEntry> entries = zip.entries();
-                
-                ZipEntry entry;
-                while(entries.hasMoreElements()){
-                    entry = entries.nextElement();
-                    if (lq.configMain.debugMode) { lq.debug.info("Extracting "+entry.getName()); }
-                    Utils.extractFile(zip.getInputStream(entry), new FileOutputStream(raceDir.getPath() + File.separator + entry.getName()));
-                }
-                 zip.close();
-                 File nf = new File(lq.getDataFolder() + File.separator + "races.zip");
-                 nf.delete();
-                 
-            } catch (IOException e) {
-                lq.debug.info("Could not extract defaults from races.zip");
-                e.printStackTrace();
-            }
-        }
+		// make it if not found
+		if (!raceDir.exists()) {
+			lq.debug.info(raceDir + " not found, installing defaults.");
+			raceDir.mkdir();
+			try {
+				if (lq.configMain.debugMode) {
+					lq.debug.info("looking for races zip");
+				}
 
-        final File[] racefiles = raceDir.listFiles();
+				lq.saveResource("races.zip", true);
+				File zf = new File(lq.getDataFolder() + File.separator + "races.zip");
+				ZipFile zip = new ZipFile(zf);
 
-        for (final File race : racefiles) {
-            // only want .yml configs here baby
-            if (race.isFile() && race.getName().toLowerCase().endsWith(".yml")) {
-                // found a config file - load it in time
+				Enumeration<? extends ZipEntry> entries = zip.entries();
 
-                lq.log(lq.configLang.raceScanFound + race.getName());
-                final Race r = new Race();
-                Boolean validConfig = true;
-                YamlConfiguration thisConfig = null;
+				ZipEntry entry;
+				while (entries.hasMoreElements()) {
+					entry = entries.nextElement();
+					if (lq.configMain.debugMode) {
+						lq.debug.info("Extracting " + entry.getName());
+					}
+					Utils.extractFile(zip.getInputStream(entry), new FileOutputStream(raceDir.getPath() + File.separator + entry.getName()));
+				}
+				zip.close();
+				File nf = new File(lq.getDataFolder() + File.separator + "races.zip");
+				nf.delete();
 
-                // begin parsing config file
-                try {
-                    thisConfig = YamlConfiguration.loadConfiguration(race);
+			} catch (IOException e) {
+				lq.debug.info("Could not extract defaults from races.zip");
+				e.printStackTrace();
+			}
+		}
 
-                    r.filename = race.getName();
-                    r.name = thisConfig.getString("name");
-                    r.frequency = thisConfig.getInt("frequency");
+		final File[] racefiles = raceDir.listFiles();
 
-                    r.plural = thisConfig.getString("plural");
-                    r.size = thisConfig.getDouble("size");
-                    r.defaultRace = thisConfig.getBoolean("default");
-                    r.statStr = thisConfig.getInt("statmods.str");
-                    r.statDex = thisConfig.getInt("statmods.dex");
-                    r.statInt = thisConfig.getInt("statmods.int");
-                    r.statWis = thisConfig.getInt("statmods.wis");
-                    r.statCon = thisConfig.getInt("statmods.con");
-                    r.statChr = thisConfig.getInt("statmods.chr");
-                    r.baseHealth = thisConfig.getInt("basehealth");
+		for (final File race : racefiles) {
+			// only want .yml configs here baby
+			if (race.isFile() && race.getName().toLowerCase().endsWith(".yml")) {
+				// found a config file - load it in time
 
-                    r.stopCrafting = thisConfig.getBoolean("stopCrafting");
-                    r.stopSmelting = thisConfig.getBoolean("stopSmelting");
-                    r.stopBrewing = thisConfig.getBoolean("stopBrewing");
-                    r.stopEnchating = thisConfig.getBoolean("stopEnchating");
-                    r.stopRepairing = thisConfig.getBoolean("stopRepairing");
-                    
-                    r.baseMana = thisConfig.getInt("baseMana");
-                    r.manaPerSecond = thisConfig.getInt("manaPerSecond");
+				lq.log(lq.configLang.raceScanFound + race.getName());
+				final Race r = new Race();
+				Boolean validConfig = true;
+				YamlConfiguration thisConfig = null;
 
-                    r.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
-                    r.skillPoints = thisConfig.getInt("skillPoints");
+				// begin parsing config file
+				try {
+					thisConfig = YamlConfiguration.loadConfiguration(race);
 
-                    r.perm = thisConfig.getString("perm");
+					r.filename = race.getName();
+					r.name = thisConfig.getString("name");
+					r.frequency = thisConfig.getInt("frequency");
 
-                    final List<String> groups = (List<String>) thisConfig.getList("groups");
-                    for (int i = 0; i < groups.size(); i++) {
-                        groups.set(i, groups.get(i).toLowerCase());
-                    }
-                    r.groups = groups;
+					r.plural = thisConfig.getString("plural");
+					r.size = thisConfig.getDouble("size");
+					r.defaultRace = thisConfig.getBoolean("default");
+					r.statStr = thisConfig.getInt("statmods.str");
+					r.statDex = thisConfig.getInt("statmods.dex");
+					r.statInt = thisConfig.getInt("statmods.int");
+					r.statWis = thisConfig.getInt("statmods.wis");
+					r.statCon = thisConfig.getInt("statmods.con");
+					r.statChr = thisConfig.getInt("statmods.chr");
+					r.baseHealth = thisConfig.getInt("basehealth");
 
-                    // allowed lists
-                    List<String> stringList;
-                    List<Material> materialList;
-                    String keyName;
-                    stringList = (List<String>) thisConfig.getList("allowedTools");
-                    materialList = new ArrayList<Material>();
-                    if (stringList != null) {
-                        for (int i = 0; i < stringList.size(); i++) {
-                            keyName = stringList.get(i).toLowerCase();
-                            if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
-                                keyName = "tools";
-                            }
-                            if (!keyName.equalsIgnoreCase("none")) {
-                                if (lq.configData.dataSets.containsKey(keyName)) {
-                                    materialList.addAll(lq.configData.dataSets.get(keyName));
-                                } else if (Material.matchMaterial(keyName) != null) {
-                                    materialList.add(Material.matchMaterial(keyName));
-                                } else if (Utils.isParsableToInt(keyName)) {
-                                    materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
-                                } else {
-                                    lq.debug.error("Allowed tool '" + keyName + "' in " + r.filename + " not understood");
-                                }
-                            }
-                        }
-                    }
-                    r.allowedTools = materialList;
+					r.stopCrafting = thisConfig.getBoolean("stopCrafting");
+					r.stopSmelting = thisConfig.getBoolean("stopSmelting");
+					r.stopBrewing = thisConfig.getBoolean("stopBrewing");
+					r.stopEnchating = thisConfig.getBoolean("stopEnchating");
+					r.stopRepairing = thisConfig.getBoolean("stopRepairing");
 
-                    stringList = (List<String>) thisConfig.getList("allowedArmour");
-                    materialList = new ArrayList<Material>();
-                    if (stringList != null) {
-                        for (int i = 0; i < stringList.size(); i++) {
-                            keyName = stringList.get(i).toLowerCase();
-                            if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
-                                keyName = "armour";
-                            }
-                            if (!keyName.equalsIgnoreCase("none")) {
-                                if (lq.configData.dataSets.containsKey(keyName)) {
-                                    materialList.addAll(lq.configData.dataSets.get(keyName));
-                                } else if (Material.matchMaterial(keyName) != null) {
-                                    materialList.add(Material.matchMaterial(keyName));
-                                } else if (Utils.isParsableToInt(keyName)) {
-                                    materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
-                                } else {
-                                    lq.debug.error("Allowed Armour '" + keyName + "' in " + r.filename + " not understood");
-                                }
-                            }
-                        }
-                    }
-                    r.allowedArmour = materialList;
+					r.baseMana = thisConfig.getInt("baseMana");
+					r.manaPerSecond = thisConfig.getInt("manaPerSecond");
 
-                    stringList = (List<String>) thisConfig.getList("allowedWeapons");
-                    materialList = new ArrayList<Material>();
-                    if (stringList != null) {
-                        for (int i = 0; i < stringList.size(); i++) {
-                            keyName = stringList.get(i).toLowerCase();
-                            if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
-                                keyName = "weapons";
-                            }
-                            if (!keyName.equalsIgnoreCase("none")) {
-                                if (lq.configData.dataSets.containsKey(keyName)) {
-                                    materialList.addAll(lq.configData.dataSets.get(keyName));
-                                } else if (Material.matchMaterial(keyName) != null) {
-                                    materialList.add(Material.matchMaterial(keyName));
-                                } else if (Utils.isParsableToInt(keyName)) {
-                                    materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
-                                } else {
-                                    lq.debug.error("Allowed Weapons '" + keyName + "' in " + r.filename + " not understood");
-                                }
-                            }
-                        }
-                    }
-                    r.allowedWeapons = materialList;
+					r.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
+					r.skillPoints = thisConfig.getInt("skillPoints");
 
-                    // build disallowed lists
+					r.perm = thisConfig.getString("perm");
 
-                    stringList = (List<String>) thisConfig.getList("dissallowedTools");
-                    materialList = new ArrayList<Material>();
-                    if (stringList != null) {
-                        for (int i = 0; i < stringList.size(); i++) {
-                            keyName = stringList.get(i).toLowerCase();
-                            if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
-                                keyName = "tools";
-                            }
-                            if (!keyName.equalsIgnoreCase("none")) {
-                                if (lq.configData.dataSets.containsKey(keyName)) {
-                                    materialList.addAll(lq.configData.dataSets.get(keyName));
-                                } else if (Material.matchMaterial(keyName) != null) {
-                                    materialList.add(Material.matchMaterial(keyName));
-                                } else if (Utils.isParsableToInt(keyName)) {
-                                    materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
-                                } else {
-                                    lq.debug.error("Dissallowed tool '" + keyName + "' in " + r.filename + " not understood");
-                                }
-                            }
-                        }
-                    }
-                    r.dissallowedTools = materialList;
+					final List<String> groups = (List<String>) thisConfig.getList("groups");
+					for (int i = 0; i < groups.size(); i++) {
+						groups.set(i, groups.get(i).toLowerCase());
+					}
+					r.groups = groups;
 
-                    stringList = (List<String>) thisConfig.getList("dissallowedArmour");
-                    materialList = new ArrayList<Material>();
-                    if (stringList != null) {
-                        for (int i = 0; i < stringList.size(); i++) {
-                            keyName = stringList.get(i).toLowerCase();
-                            if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
-                                keyName = "armour";
-                            }
-                            if (!keyName.equalsIgnoreCase("none")) {
-                                if (lq.configData.dataSets.containsKey(keyName)) {
-                                    materialList.addAll(lq.configData.dataSets.get(keyName));
-                                } else if (Material.matchMaterial(keyName) != null) {
-                                    materialList.add(Material.matchMaterial(keyName));
-                                } else if (Utils.isParsableToInt(keyName)) {
-                                    materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
-                                } else {
-                                    lq.debug.error("Dissallowed Armour '" + keyName + "' in " + r.filename + " not understood");
-                                }
-                            }
-                        }
-                    }
-                    r.dissallowedArmour = materialList;
+					// allowed lists
+					List<String> stringList;
+					List<Material> materialList;
+					String keyName;
+					stringList = (List<String>) thisConfig.getList("allowedTools");
+					materialList = new ArrayList<Material>();
+					if (stringList != null) {
+						for (int i = 0; i < stringList.size(); i++) {
+							keyName = stringList.get(i).toLowerCase();
+							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								keyName = "tools";
+							}
+							if (!keyName.equalsIgnoreCase("none")) {
+								if (lq.configData.dataSets.containsKey(keyName)) {
+									materialList.addAll(lq.configData.dataSets.get(keyName));
+								} else if (Material.matchMaterial(keyName) != null) {
+									materialList.add(Material.matchMaterial(keyName));
+								} else if (Utils.isParsableToInt(keyName)) {
+									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
+								} else {
+									lq.debug.error("Allowed tool '" + keyName + "' in " + r.filename + " not understood");
+								}
+							}
+						}
+					}
+					r.allowedTools = materialList;
 
-                    stringList = (List<String>) thisConfig.getList("dissallowedWeapons");
-                    materialList = new ArrayList<Material>();
-                    if (stringList != null) {
-                        for (int i = 0; i < stringList.size(); i++) {
-                            keyName = stringList.get(i).toLowerCase();
-                            if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
-                                keyName = "weapons";
-                            }
-                            if (!keyName.equalsIgnoreCase("none")) {
-                                if (lq.configData.dataSets.containsKey(keyName)) {
-                                    materialList.addAll(lq.configData.dataSets.get(keyName));
-                                } else if (Material.matchMaterial(keyName) != null) {
-                                    materialList.add(Material.matchMaterial(keyName));
-                                } else if (Utils.isParsableToInt(keyName)) {
-                                    materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
-                                } else {
-                                    lq.debug.error("Dissallowed Weapons '" + keyName + "' in " + r.filename + " not understood");
-                                }
-                            }
-                        }
-                    }
-                    r.dissallowedWeapons = materialList;
+					stringList = (List<String>) thisConfig.getList("allowedArmour");
+					materialList = new ArrayList<Material>();
+					if (stringList != null) {
+						for (int i = 0; i < stringList.size(); i++) {
+							keyName = stringList.get(i).toLowerCase();
+							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								keyName = "armour";
+							}
+							if (!keyName.equalsIgnoreCase("none")) {
+								if (lq.configData.dataSets.containsKey(keyName)) {
+									materialList.addAll(lq.configData.dataSets.get(keyName));
+								} else if (Material.matchMaterial(keyName) != null) {
+									materialList.add(Material.matchMaterial(keyName));
+								} else if (Utils.isParsableToInt(keyName)) {
+									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
+								} else {
+									lq.debug.error("Allowed Armour '" + keyName + "' in " + r.filename + " not understood");
+								}
+							}
+						}
+					}
+					r.allowedArmour = materialList;
 
-                    // skills
-                    r.availableSkills = new ArrayList<SkillDefinition>();
-                    final ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
-                    if (inateSkills != null) {
-                        for (final String key : inateSkills.getKeys(false)) {
-                            if (lq.skills.skillList.containsKey(key)) {
-                            final ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
-                            SkillDefinition s;
-/*                            if (skillInfo.getString("command") != null && !skillInfo.getString("command").isEmpty()) {
-                                s = new PluginSkill();  //skillInfo
-                            } else {
-                                s = new LqSkill();  //skillInfo
-                            }
-*/
-                            System.out.print("Key: "+key);
-                            s = lq.skills.skillList.get(key.toLowerCase());
-                            SkillInfo si = s.getSkillInfo();
-                            si.readConfigInfo(skillInfo);
-                            s.setSkillInfo(si);
-                            r.availableSkills.add(s);
-                            }
-                        }
-                    }
+					stringList = (List<String>) thisConfig.getList("allowedWeapons");
+					materialList = new ArrayList<Material>();
+					if (stringList != null) {
+						for (int i = 0; i < stringList.size(); i++) {
+							keyName = stringList.get(i).toLowerCase();
+							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								keyName = "weapons";
+							}
+							if (!keyName.equalsIgnoreCase("none")) {
+								if (lq.configData.dataSets.containsKey(keyName)) {
+									materialList.addAll(lq.configData.dataSets.get(keyName));
+								} else if (Material.matchMaterial(keyName) != null) {
+									materialList.add(Material.matchMaterial(keyName));
+								} else if (Utils.isParsableToInt(keyName)) {
+									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
+								} else {
+									lq.debug.error("Allowed Weapons '" + keyName + "' in " + r.filename + " not understood");
+								}
+							}
+						}
+					}
+					r.allowedWeapons = materialList;
 
-                } catch (final Exception e) {
-                    validConfig = false;
-                    lq.log(lq.configLang.raceScanInvalid + race.getName());
-                    e.printStackTrace();
-                }
+					// build disallowed lists
 
-                if (validConfig) {
-                    raceprobability.add(new Pair<Integer, String>(r.frequency, r.name));
-                    races.put(r.name.toLowerCase(), r);
-                    if (r.defaultRace) {
-                        defaultRace = r;
-                    }
-                }
-            }
-        }
+					stringList = (List<String>) thisConfig.getList("dissallowedTools");
+					materialList = new ArrayList<Material>();
+					if (stringList != null) {
+						for (int i = 0; i < stringList.size(); i++) {
+							keyName = stringList.get(i).toLowerCase();
+							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								keyName = "tools";
+							}
+							if (!keyName.equalsIgnoreCase("none")) {
+								if (lq.configData.dataSets.containsKey(keyName)) {
+									materialList.addAll(lq.configData.dataSets.get(keyName));
+								} else if (Material.matchMaterial(keyName) != null) {
+									materialList.add(Material.matchMaterial(keyName));
+								} else if (Utils.isParsableToInt(keyName)) {
+									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
+								} else {
+									lq.debug.error("Dissallowed tool '" + keyName + "' in " + r.filename + " not understood");
+								}
+							}
+						}
+					}
+					r.dissallowedTools = materialList;
 
-        wpmRaces = new WeightedProbMap<String>(raceprobability);
+					stringList = (List<String>) thisConfig.getList("dissallowedArmour");
+					materialList = new ArrayList<Material>();
+					if (stringList != null) {
+						for (int i = 0; i < stringList.size(); i++) {
+							keyName = stringList.get(i).toLowerCase();
+							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								keyName = "armour";
+							}
+							if (!keyName.equalsIgnoreCase("none")) {
+								if (lq.configData.dataSets.containsKey(keyName)) {
+									materialList.addAll(lq.configData.dataSets.get(keyName));
+								} else if (Material.matchMaterial(keyName) != null) {
+									materialList.add(Material.matchMaterial(keyName));
+								} else if (Utils.isParsableToInt(keyName)) {
+									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
+								} else {
+									lq.debug.error("Dissallowed Armour '" + keyName + "' in " + r.filename + " not understood");
+								}
+							}
+						}
+					}
+					r.dissallowedArmour = materialList;
 
-        // notify scanning ended
-        lq.log(lq.configLang.raceScanEnd);
+					stringList = (List<String>) thisConfig.getList("dissallowedWeapons");
+					materialList = new ArrayList<Material>();
+					if (stringList != null) {
+						for (int i = 0; i < stringList.size(); i++) {
+							keyName = stringList.get(i).toLowerCase();
+							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								keyName = "weapons";
+							}
+							if (!keyName.equalsIgnoreCase("none")) {
+								if (lq.configData.dataSets.containsKey(keyName)) {
+									materialList.addAll(lq.configData.dataSets.get(keyName));
+								} else if (Material.matchMaterial(keyName) != null) {
+									materialList.add(Material.matchMaterial(keyName));
+								} else if (Utils.isParsableToInt(keyName)) {
+									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
+								} else {
+									lq.debug.error("Dissallowed Weapons '" + keyName + "' in " + r.filename + " not understood");
+								}
+							}
+						}
+					}
+					r.dissallowedWeapons = materialList;
 
-        if (defaultRace == null) {
-            lq.log(lq.configLang.raceNoDefault);
-            // set "default" to first found to stop breaking...
-            defaultRace = races.entrySet().iterator().next().getValue();
-        }
-    }
+					// skills
+					r.availableSkills = new ArrayList<SkillDataStore>();
+					final ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
+					if (inateSkills != null) {
+						for (final String key : inateSkills.getKeys(false)) {
+							if (lq.skills.skillList.containsKey(key)) {
+								ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
+								System.out.print("Key: " + key);
+								Skill s = lq.skills.skillList.get(key.toLowerCase());
+								SkillInfo si = s.getDefaultOptions();
+								SkillDataStore skilldata = new SkillDataStore(si);
+								skilldata.readConfigInfo(skillInfo);
+								r.availableSkills.add(skilldata);
+							}
+						}
+					}
 
-    public Race getRace(final String raceName) {
-        return races.get(raceName.toLowerCase());
-    }
+					// outsourced skills - skills without skill class - using command/on/off and perm nodes to achieve
+					// effect.
+					r.outsourcedSkills = new ArrayList<SkillDataStore>();
+					final ConfigurationSection permSkills = thisConfig.getConfigurationSection("permskills");
+					if (permSkills != null) {
+						for (String key : permSkills.getKeys(false)) {
+							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
 
-    public Map<String, Race> getRaces() {
-        return races;
-    }
+							System.out.print("Key: " + key);
+							// author, name, description, type, version, buildup, delay, duration, cooldown, manaCost,
+							// consumes, levelRequired, skillPoints,
+							// dblnames, dblvalues, intnames, intvalues, strnames, strvalues
 
-    public boolean groupExists(final String groupname) {
-        final Collection<Race> racelist = races.values();
-        for (final Race race : racelist) {
-            if (race.groups.contains(groupname.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
-    }
+							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
+							si.name = key;
+							si.readConfigBasicInfo(skillInfo);
+							SkillDataStore skilldata = new SkillDataStore(si);
+							skilldata.readConfigInfo(skillInfo);
+							r.outsourcedSkills.add(skilldata);
 
-    public boolean raceExists(final String racename) {
-        return races.containsKey(racename.toLowerCase());
-    }
+						}
+					}
+
+				} catch (final Exception e) {
+					validConfig = false;
+					lq.log(lq.configLang.raceScanInvalid + race.getName());
+					e.printStackTrace();
+				}
+
+				if (validConfig) {
+					raceprobability.add(new Pair<Integer, String>(r.frequency, r.name));
+					races.put(r.name.toLowerCase(), r);
+					if (r.defaultRace) {
+						defaultRace = r;
+					}
+				}
+			}
+		}
+
+		wpmRaces = new WeightedProbMap<String>(raceprobability);
+
+		// notify scanning ended
+		lq.log(lq.configLang.raceScanEnd);
+
+		if (defaultRace == null) {
+			lq.log(lq.configLang.raceNoDefault);
+			// set "default" to first found to stop breaking...
+			defaultRace = races.entrySet().iterator().next().getValue();
+		}
+	}
+
+	public Race getRace(final String raceName) {
+		return races.get(raceName.toLowerCase());
+	}
+
+	public Map<String, Race> getRaces() {
+		return races;
+	}
+
+	public boolean groupExists(final String groupname) {
+		final Collection<Race> racelist = races.values();
+		for (final Race race : racelist) {
+			if (race.groups.contains(groupname.toLowerCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean raceExists(final String racename) {
+		return races.containsKey(racename.toLowerCase());
+	}
 }

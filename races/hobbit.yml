@@ -22,27 +22,6 @@ dissallowedArmour:
 skillPoints: 10
 skillPointsPerLevel: 0.1
 skills:
-    portabench:
-        level: 0
-        cost: 0
-        cooldown: 600
-        perm: essentials.workbench
-        command: workbench            
-    fly:
-        level: 10
-        cost: 0
-        cooldown: 1200
-        duration: 1200
-        regent: 288
-        perm: essentials.fly
-        command: fly on
-    blink:
-        level: 0
-        cost: 5
-        cooldown: 6000
-        delay: 60
-        perm: essentials.jump
-        command: jump
     dodge:
         level: 0
         cost: 0
@@ -50,6 +29,40 @@ skills:
         duration: 1200
     brawler:
         level: 1
-        cost: 5
+        cost: 0
         cooldown: 1200
         duration: 1200
+        vars:
+            damage: 5
+            chance: 75.5
+permskills:
+    stats:
+        level: 0
+        cost: 0
+        cooldown: 
+        duration: 600
+        perm: essentials.teleport.timer.bypass
+        type: PASSIVE
+    portabench:
+        level: 0
+        cost: 0
+        cooldown: 600
+        perm: essentials.workbench
+        command: workbench
+    fly:
+        level: 10
+        cost: 0
+        cooldown: 1200
+        duration: 1200
+        consumes: FEATHER
+        perm: essentials.fly
+        commandon: "fly on"
+        commandoff: "fly off"
+    blink:
+        level: 0
+        cost: 5
+        cooldown: 6000
+        delay: 60
+        perm: essentials.jump
+        command: jump
+ 

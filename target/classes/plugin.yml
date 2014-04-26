@@ -7,6 +7,7 @@ author: SableDnah
 website: http://dev.bukkit.org/server-mods/legendquest/
 
 main: me.sablednah.legendquest.Main
+depend: [SQLibrary]
 softdepend: [ Vault ]
 
 commands:
@@ -33,6 +34,12 @@ commands:
         usage: Use "/<command> help" for more info
         alias: [lqstats,lqueststats,legendqstats,legendqueststats]
         permission: legendquest.command.stats
+        permission-message: You don't have <permission>
+    karma:
+        description: Get your player karma
+        usage: Use "/<command> help" for more info
+        alias: [lqkarma,lquestkarma,legendqkarma,legendquestkarma]
+        permission: legendquest.command.karma
         permission-message: You don't have <permission>
     skill:
         description: View, choose, or change your Skills.

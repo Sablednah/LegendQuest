@@ -1,5 +1,7 @@
 package me.sablednah.legendquest.cmds;
 
+import java.text.DecimalFormat;
+
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.Utils;
@@ -45,8 +47,9 @@ public class CmdHP extends CommandTemplate implements CommandExecutor {
             pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
         }
         if (pc != null) {
-            sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + pc.health + " / " + pc.maxHP)));
-            sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + pc.mana + " / " + pc.getMaxMana())));
+            DecimalFormat df = new DecimalFormat("#.00");
+            sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + df.format(pc.health) + " / " + df.format(pc.maxHP))));
+            sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + df.format(pc.mana) + " / " + df.format(pc.getMaxMana()))));
             return true;
         } else {
             sender.sendMessage(lq.configLang.characterNotFound + targetName);

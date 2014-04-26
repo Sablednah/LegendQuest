@@ -104,7 +104,7 @@ public class DataSync {
                 
                 pc.maxHP = r.getDouble("maxHP");
                 pc.health = r.getDouble("health");
-                pc.karma = r.getInt("karma");
+                pc.karma = r.getLong("karma");
                 pc.mana = r.getInt("mana");
                 pc.race = lq.races.getRace(r.getString("race"));
                 pc.raceChanged = r.getBoolean("raceChanged");
@@ -151,6 +151,9 @@ public class DataSync {
                     pc.xpEarnt.put(r.getString("skillName").toLowerCase(), skillCost);
                 }
             }
+            
+            pc.skillSet=pc.getUniqueSkills(true);
+            //TODO load skill timings from db
             
             return pc;
         } catch (final SQLException e) {
@@ -221,7 +224,7 @@ public class DataSync {
         create += "maxHP DOUBLE, ";
         create += "health DOUBLE, ";
         create += "mana INTEGER, ";
-        create += "karma INTEGER, ";
+        create += "karma LONG, ";
         create += "statStr INTEGER, ";
         create += "statDex INTEGER, ";
         create += "statInt INTEGER, ";

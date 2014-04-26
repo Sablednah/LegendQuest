@@ -1,5 +1,6 @@
 package me.sablednah.legendquest.cmds;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import me.sablednah.legendquest.Main;
@@ -63,8 +64,8 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
             sender.sendMessage(lq.configLang.statKarma + ": " + pc.karma);
             sender.sendMessage("--------------------");
 
-            sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + pc.health + " / " + pc.maxHP)));
-
+            DecimalFormat df = new DecimalFormat("#.00");
+            sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + df.format(pc.health) + " / " + df.format(pc.maxHP))));
             sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + pc.mana + " / " + pc.getMaxMana())));
             sender.sendMessage("--------------------");
 

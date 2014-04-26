@@ -4,50 +4,51 @@ import java.util.List;
 
 import org.bukkit.Material;
 
-import me.sablednah.legendquest.skills.SkillDefinition;
+import me.sablednah.legendquest.skills.SkillDataStore;
 
 public class Race {
 
-    public String filename;
-    public String name;
-    public String plural;
-    public Double size;
-    public boolean defaultRace;
-    public int statStr;
-    public int statDex;
-    public int statInt;
-    public int statWis;
-    public int statCon;
-    public int statChr;
-    public int baseHealth;
-    public int baseMana;
-    public int manaPerSecond;
+	public String				filename;
+	public String				name;
+	public String				plural;
+	public Double				size;
+	public boolean				defaultRace;
+	public int					statStr;
+	public int					statDex;
+	public int					statInt;
+	public int					statWis;
+	public int					statCon;
+	public int					statChr;
+	public int					baseHealth;
+	public int					baseMana;
+	public int					manaPerSecond;
 
-    public String perm;
+	public String				perm;
 
-    public List<Material> allowedTools;
-    public List<Material> allowedArmour;
-    public List<Material> allowedWeapons;
+	public List<Material>		allowedTools;
+	public List<Material>		allowedArmour;
+	public List<Material>		allowedWeapons;
 
-    public List<Material> dissallowedTools;
-    public List<Material> dissallowedArmour;
-    public List<Material> dissallowedWeapons;
+	public List<Material>		dissallowedTools;
+	public List<Material>		dissallowedArmour;
+	public List<Material>		dissallowedWeapons;
 
-    public boolean stopCrafting;
-    public boolean stopSmelting;
-    public boolean stopBrewing;
-    public boolean stopEnchating;
-    public boolean stopRepairing;
-    
-    // frequency used for NPC chance.
-    public int frequency;
+	public boolean				stopCrafting;
+	public boolean				stopSmelting;
+	public boolean				stopBrewing;
+	public boolean				stopEnchating;
+	public boolean				stopRepairing;
 
-    // list of race "groups" such as good,evil,orcoid,humanoid.
-    // Used by classes as allowes races - e.g. Paladin could be allowed to all good races.
-    public List<String> groups;
+	// frequency used for NPC chance.
+	public int					frequency;
 
-    public int skillPoints;
-    public double skillPointsPerLevel;
-    public List<SkillDefinition> availableSkills;
+	// list of race "groups" such as good,evil,orcoid,humanoid.
+	// Used by classes as allowed races - e.g. Paladin could be allowed to all good races.
+	public List<String>			groups;
+
+	public int					skillPoints;
+	public double				skillPointsPerLevel;
+	public List<SkillDataStore>	availableSkills;
+	public List<SkillDataStore>	outsourcedSkills;
 
 }
