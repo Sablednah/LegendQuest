@@ -36,6 +36,7 @@ public class PlayerEvents implements Listener {
 			PC pc = lq.players.getPC(uuid);
 			pc.setXP(xp);
 			lq.players.savePlayer(pc);
+			pc.scheduleHealthCheck();
 		}
 	}
 

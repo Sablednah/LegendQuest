@@ -5,10 +5,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.playercharacters.PC;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachment;
 
 public class SkillDataStore {
 
@@ -18,33 +23,29 @@ public class SkillDataStore {
 	public String					author;
 	public double					version;
 
-	public int						buildup				= 0;
-	public int						delay				= 0;
-	public int						duration			= 0;
-	public int						cooldown			= 0;
+	public int						buildup			= 0;
+	public int						delay			= 0;
+	public int						duration		= 0;
+	public int						cooldown		= 0;
 
-	public int						manaCost			= 0;
-	public ItemStack				consumes			= null;
+	public int						manaCost		= 0;
+	public ItemStack				consumes		= null;
 
-	public int						levelRequired		= 0;
-	public int						skillPoints			= 0;
-	public HashMap<String, Object>	vars				= new HashMap<String, Object>();
+	public int						levelRequired	= 0;
+	public int						skillPoints		= 0;
+	public HashMap<String, Object>	vars			= new HashMap<String, Object>();
 
 	public String					permission;
 	public String					startCommand;
 	public String					endCommand;
-	
-	public Location					lastUseLoc			= null;
 
-	public long						lastUse				= 0;
-	public long						lastBuildupStart	= 0;
-	public long						lastDelayStart		= 0;
-	public long						lastDurationStart	= 0;
-	public long						lastCooldownStart	= 0;
-	
-	public boolean						isCanceled	= false;
-	public boolean						isActive	= false;
-	
+	private Location				lastUseLoc		= null;
+	private long					lastUse			= 0;
+	private boolean					isCanceled		= false;
+	private boolean					isActive		= false;
+
+	private SkillPhase				phase			= SkillPhase.READY;
+
 	public SkillDataStore(ConfigurationSection conf) {
 		readConfigInfo(conf);
 	}
@@ -72,11 +73,14 @@ public class SkillDataStore {
 			if (conf.contains("permission")) {
 				this.permission = conf.getString("permission");
 			}
-			if (conf.contains("startCommand")) {
-				this.startCommand = conf.getString("startCommand");
+			if (conf.contains("command")) {
+				this.startCommand = conf.getString("command");
 			}
-			if (conf.contains("endCommand")) {
-				this.endCommand = conf.getString("endCommand");
+			if (conf.contains("startcommand")) {
+				this.startCommand = conf.getString("startcommand");
+			}
+			if (conf.contains("endcommand")) {
+				this.endCommand = conf.getString("endcommand");
 			}
 			if (conf.contains("buildup")) {
 				this.buildup = conf.getInt("buildup");
@@ -121,7 +125,6 @@ public class SkillDataStore {
 		if (this.type == SkillType.PASSIVE) {
 			return SkillPhase.ACTIVE;
 		}
-
 		long time = System.currentTimeMillis();
 		long timeline = lastUse;
 
@@ -150,5 +153,88 @@ public class SkillDataStore {
 		}
 
 		return SkillPhase.READY;
+	}
+
+	public void startperms(Main lq, Player p) {
+		if (permission != null && (!permission.isEmpty())) {
+			System.out.print("[skill tick] datastore starting skill perm: " + permission);
+
+			if (lq.players.permissions.containsKey(p.getUniqueId().toString() + permission)) {
+				p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + permission));
+				lq.players.permissions.remove(p.getUniqueId().toString() + permission);
+			}
+			PermissionAttachment attachment = p.addAttachment(lq, permission, true, (int) lq.configMain.skillTickInterval + 1);
+			lq.players.permissions.put(p.getUniqueId().toString() + permission, attachment);
+		}
+	}
+
+	public boolean start(Main lq, PC activePlayer) {
+		Player p = activePlayer.getPlayer();
+		// pay the price...
+		if (manaCost > 0) {
+			if (activePlayer.mana < manaCost) {
+				p.sendMessage(lq.configLang.skillLackOfMana);
+				isCanceled = true;
+				lastUse = 0;
+				activePlayer.skillSet.put(name, this);
+				return false;
+			} else {
+				activePlayer.mana = activePlayer.mana - manaCost;
+			}
+		}
+		// TODO put ingrediant use check here.
+
+		// run the start command if any.
+		System.out.print("[skill tick] starting skill command: " + startCommand);
+		if (startCommand != null && (!startCommand.isEmpty())) {
+			System.out.print("[skill tick] datastore starting skill command: " + startCommand);
+			lq.getServer().dispatchCommand(p, startCommand);
+			Skill skillClass = lq.skills.skillList.get(name);
+			if (skillClass != null) {
+				// CommandResult result =
+				skillClass.onCommand();
+			}
+		}
+		return true;
+	}
+
+	public Location getLastUseLoc() {
+		return lastUseLoc;
+	}
+
+	public void setLastUseLoc(Location lastUseLoc) {
+		this.lastUseLoc = lastUseLoc;
+	}
+
+	public long getLastUse() {
+		return lastUse;
+	}
+
+	public void setLastUse(long lastUse) {
+		this.lastUse = lastUse;
+	}
+
+	public boolean isCanceled() {
+		return isCanceled;
+	}
+
+	public void setCanceled(boolean isCanceled) {
+		this.isCanceled = isCanceled;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public SkillPhase getPhase() {
+		return phase;
+	}
+
+	public void setPhase(SkillPhase phase) {
+		this.phase = phase;
 	}
 }

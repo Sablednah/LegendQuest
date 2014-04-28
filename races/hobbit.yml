@@ -40,20 +40,20 @@ permskills:
         level: 0
         cost: 0
         cooldown: 
-        duration: 600
+        duration: 6000
         perm: essentials.teleport.timer.bypass
         type: PASSIVE
     portabench:
         level: 0
         cost: 0
-        cooldown: 600
+        cooldown: 6000
         perm: essentials.workbench
         command: workbench
     fly:
         level: 10
         cost: 0
-        cooldown: 1200
-        duration: 1200
+        cooldown: 60000
+        duration: 60000
         consumes: FEATHER
         perm: essentials.fly
         commandon: "fly on"

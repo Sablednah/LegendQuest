@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
-import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.skills.SkillDataStore;
+import me.sablednah.legendquest.skills.SkillPhase;
 import me.sablednah.legendquest.skills.SkillType;
 import me.sablednah.legendquest.utils.Utils;
 
@@ -136,109 +136,159 @@ public class PCs {
 				Player p = lq.getServer().getPlayer(activePlayer.uuid);
 				if (p != null && p.isOnline()) {
 					for (SkillDataStore skill : activePlayer.skillSet.values()) {
-						if (skill.type == SkillType.PASSIVE) {
-							// passive skills are "always on"
-							skill.isActive = true;
-							activePlayer.skillSet.put(skill.name, skill);
-							continue;
-						}
 						boolean startskill = false;
 						boolean stopskill = false;
-						switch (skill.checkPhase()) {
+						SkillPhase phase = skill.checkPhase();
+						if (skill.type == SkillType.PASSIVE) {
+							// passive skills are "always on"
+							skill.setActive(true);
+						} else {
+if (skill.name.equalsIgnoreCase("blink")) {
+System.out.print("[skill tick] Player: "+activePlayer.player+" / skill: "+skill.name+" / phase: "+ phase + " / isactive: "+skill.isActive());
+}
+
+						SkillPhase lastPhase = skill.getPhase();
+						SkillPhase virtualPhase = phase;
+						
+						//ensure skills spend 1 tick at each state they have a value for >0
+						switch(lastPhase){
 							case READY:
-								if (skill.isActive == true) {
-									stopskill = true;
+								switch (phase) {
+									case DELAYED:
+										//skipped building
+										if (skill.buildup>0) {
+											//should have had a build up -
+											virtualPhase=SkillPhase.BUILDING;
+											break;
+										}
+									case ACTIVE:
+										//skipped  building and delay
+										if (skill.buildup>0) {
+											//should have had a build up -
+											virtualPhase=SkillPhase.BUILDING;
+											break;
+										}
+										if (skill.delay>0) {
+											//should have had a delay up -
+											virtualPhase=SkillPhase.DELAYED;
+											break;
+										}
+									case COOLDOWN:
+										//skipped  building, delay and active!
+										if (skill.buildup>0) {
+											//should have had a build up -
+											virtualPhase=SkillPhase.BUILDING;
+											break;
+										}
+										if (skill.delay>0) {
+											//should have had a delay -
+											virtualPhase=SkillPhase.DELAYED;
+											break;
+										}										
+										//should have had a active -
+										virtualPhase=SkillPhase.ACTIVE;
+										break;
 								}
-								skill.isActive = false;
-								activePlayer.skillSet.put(skill.name, skill);
 								break;
 							case BUILDING:
-								if (skill.isActive == true) {
+								switch (phase) {
+									case ACTIVE:
+										//skipped  delay
+										if (skill.delay>0) {
+											//should have had a delay up -
+											virtualPhase=SkillPhase.DELAYED;
+											break;
+										}
+									case COOLDOWN:
+										//skipped  delay and active!
+										if (skill.delay>0) {
+											//should have had a delay -
+											virtualPhase=SkillPhase.DELAYED;
+											break;
+										}										
+										//should have had a active -
+										virtualPhase=SkillPhase.ACTIVE;
+										break;
+								}
+								break;
+							case DELAYED:
+								switch (phase) {
+									case COOLDOWN:
+										//skipped active!
+										virtualPhase=SkillPhase.ACTIVE;
+										break;
+								}
+								break;
+						}
+						
+						switch (virtualPhase) {
+							case READY:
+								if (skill.isActive()) {
+									stopskill = true;
+								}
+								skill.setActive(false);
+								break;
+							case BUILDING:
+								if (skill.isActive()) {
 									stopskill = true;
 								}
 								Location pLoc = p.getLocation();
-								double distance = pLoc.distanceSquared(skill.lastUseLoc);
+								double distance = pLoc.distanceSquared(skill.getLastUseLoc());
 								double allowed = lq.configMain.skillBuildupMoveAllowed;
 								allowed = allowed * allowed;
 								if (distance > allowed) {
-									skill.isCanceled = true;
-									skill.lastUse = 0;
-									activePlayer.skillSet.put(skill.name, skill);
+									skill.setCanceled(true);
+									skill.setLastUse(0);
 									p.sendMessage(skill.name + " : " + lq.configLang.skillBuildupDisturbed);
 								}
 								break;
 							case DELAYED:
-								if (skill.isActive == true) {
+								if (skill.isActive()) {
 									stopskill = true;
 								}
-
-								skill.isActive = false;
-								activePlayer.skillSet.put(skill.name, skill);
+								skill.setActive(false);
 								break;
 							case ACTIVE:
-								if (skill.isActive == false) {
+								if (!skill.isActive()) {
 									startskill = true;
 								}
-
-								skill.isActive = true;
-								activePlayer.skillSet.put(skill.name, skill);
+								skill.setActive(true);
 								break;
 							case COOLDOWN:
-								if (skill.isActive == true) {
+								if (skill.isActive()) {
 									stopskill = true;
 								}
-								skill.isActive = false;
-								activePlayer.skillSet.put(skill.name, skill);
+								skill.setActive(false);
 								break;
 
 						}
-						if (skill.isActive) {
-							if (skill.permission != null && (!skill.permission.isEmpty())) {
-								if (permissions.containsKey(p.getUniqueId().toString() + skill.permission)) {
-									p.removeAttachment(permissions.get(p.getUniqueId().toString() + skill.permission));
-									permissions.remove(p.getUniqueId().toString() + skill.permission);
-								}
-								PermissionAttachment attachment = p.addAttachment(lq, skill.permission, true, (int) lq.configMain.skillTickInterval + 1);
-								permissions.put(p.getUniqueId().toString() + skill.permission, attachment);
-							}
+						}
+						if (skill.isActive()) {
+							skill.startperms(lq,p);
 							if (startskill) {
-								//pay the price...
-								if (skill.manaCost>0) {
-									if (activePlayer.mana<skill.manaCost) {
-										p.sendMessage(lq.configLang.skillLackOfMana);
-										skill.isCanceled = true;
-										skill.lastUse = 0;
-										activePlayer.skillSet.put(skill.name, skill);
-										continue;
-									}
-								}
-								//TODO put ingrediant use check here.
-								
-								// run the start command if any.
-								if (skill.startCommand != null && (!skill.startCommand.isEmpty())) {
-									lq.getServer().dispatchCommand(p, skill.startCommand);
-									Skill skillClass = lq.skills.skillList.get(skill.name);
-									if (skillClass != null) {
-										// CommandResult result =
-										skillClass.onCommand();
-									}
-
+								if(skill.delay>0 || skill.buildup>0) {
+System.out.print("[skill tick] PCs starting skill: "+skill.name);
+									skill.start(lq,activePlayer);
 								}
 							}
 						} else {
+//System.out.print("[skill tick] INACTIVE skill: "+skill.name);
 							if (stopskill) {
 								// run the stop command if any.
+System.out.print("[skill tick] PCs: stopping skill command: "+skill.startCommand);
 								if (skill.endCommand != null && (!skill.endCommand.isEmpty())) {
 									lq.getServer().dispatchCommand(p, skill.endCommand);
 								}
 							}
 							if (skill.permission != null && (!skill.permission.isEmpty())) {
+System.out.print("[skill tick] PCs: stopping skill perm: "+skill.permission);
 								if (permissions.containsKey(p.getUniqueId().toString() + skill.permission)) {
 									p.removeAttachment(permissions.get(p.getUniqueId().toString() + skill.permission));
 									permissions.remove(p.getUniqueId().toString() + skill.permission);
 								}
 							}
 						}
+						skill.setPhase(phase);
 					}
 				}
 			}

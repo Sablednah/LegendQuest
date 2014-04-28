@@ -520,14 +520,10 @@ public class PC {
 		HashMap<String, SkillDataStore> potentialSkills = getUniqueSkills();
 		Map<String, Boolean> activeSkills = new HashMap<String, Boolean>();
 		int level = SetExp.getLevelOfXpAmount(currentXP);
-System.out.print("Checking skills for level: "+level);
 		for (SkillDataStore s : potentialSkills.values()) {
-System.out.print("Checking skill: "+ s.name + " - "+ s.levelRequired);
-
 			if (s.levelRequired <= level && s.skillPoints < 1) {
 				// activeSkills.put(lq.skills.instantiateSkill(s),true);
 				activeSkills.put(s.name, true);
-System.out.print("adding skill: "+ s.name);
 				continue;
 			}
 			// skill points now :/
@@ -547,7 +543,6 @@ System.out.print("adding skill: "+ s.name);
 	public HashMap<String, SkillDataStore> getUniqueSkills(boolean rescan) {
 		// use cached set if present unless told otherwise
 		if (!rescan && this.skillSet != null && !skillSet.isEmpty()) {
-System.out.print("using cached skills");
 			return skillSet;
 		}
 
@@ -724,15 +719,23 @@ System.out.print("using cached skills");
 
 	public void useSkill(String name) {
 		if (validSkill(name)) {
-			if (getSkillPhase(name)==SkillPhase.READY) {
+			SkillPhase phase = getSkillPhase(name);
+System.out.print("using skill "+name+": phase:"+phase);			
+			if (phase==SkillPhase.READY) {
 				SkillDataStore skill = skillSet.get(name);
 				
-				skill.lastUse=System.currentTimeMillis();
+				skill.setLastUse(System.currentTimeMillis());
 				Player p = lq.getServer().getPlayer(uuid);
 				if (p != null && p.isOnline()) {
-					skill.lastUseLoc=p.getLocation().clone();
+					skill.setLastUseLoc(p.getLocation().clone());
 				}
-				skillSet.put(name,skill);
+//				skillSet.put(name,skill);
+				if(skill.delay<1 && skill.buildup<1) {
+System.out.print("[skill tick] quick starting skill: "+skill.name);
+					skill.start(lq,this);
+				} else {
+System.out.print("[skill tick] queued up skill: "+skill.name);					
+				}
 			}
 		}
 	}
@@ -810,5 +813,9 @@ System.out.print("using cached skills");
 		}
 
 		return karma;
+	}
+
+	public Player getPlayer() {
+		return lq.getServer().getPlayer(uuid);
 	}
 }

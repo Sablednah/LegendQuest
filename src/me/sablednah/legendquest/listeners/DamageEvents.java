@@ -116,9 +116,7 @@ public class DamageEvents implements Listener {
 				power = pc.getAttributeModifier(Attribute.STR);
 			}
 		}
-if (Main.debugMode) {
-	System.out.print("Doing CombatModifiers - power / dodge:" +power+" /"+dodge);
-}
+
 		CombatModifiers e = new CombatModifiers(power, dodge, damager, victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
 		power = e.getPower();
@@ -127,9 +125,7 @@ if (Main.debugMode) {
 			event.setCancelled(true);
 			return;
 		}
-if (Main.debugMode) {
-	System.out.print("done CombatModifiers - power / dodge:" +power+" /"+dodge);
-}
+
 		double dmg = event.getDamage();
 		dmg = dmg + power - dodge;
 		event.setDamage(dmg);
