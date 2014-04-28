@@ -104,6 +104,11 @@ public class LangConfig extends Config {
 
 	public String		skillBuildupDisturbed	= "cancelled due to movement! Stay still...";
 	public String		skillLackOfMana			= "Sorry not enough mana.";
+	public String		skillLackOfItem			= "Sorry you cant use that skill, you need ";
+	public String		skillCooldown			= "Skill cooling down.";
+	public String		skillLinkEmptyHand		= "Cannot link Skill to empty hand";
+	public String		skillLinked				= " skill linked to item ";
+	public String		skillLinkList			= "You have the following skill links: ";
 
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
@@ -187,6 +192,13 @@ public class LangConfig extends Config {
 		this.karmaNegativeItems = Arrays.asList(this.karmaNegative.split("\\s*,\\s*"));
 
 		this.skillBuildupDisturbed = this.getConfigItem("skillBuildupDisturbed", this.skillBuildupDisturbed);
+		this.skillCooldown = this.getConfigItem("skillCooldown", this.skillCooldown);
 		this.skillLackOfMana = this.getConfigItem("skillLackOfMana", this.skillLackOfMana);
+		this.skillLackOfItem = this.getConfigItem("skillLackOfItem", this.skillLackOfItem);
+		this.skillLinkEmptyHand = this.getConfigItem("skillLinkEmptyHand", this.skillLinkEmptyHand);
+		this.skillLinkList = this.getConfigItem("skillLinkList", this.skillLinkList);
+		
+		
+		
 	}
 }

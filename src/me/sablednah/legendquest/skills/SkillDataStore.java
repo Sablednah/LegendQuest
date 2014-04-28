@@ -172,18 +172,26 @@ public class SkillDataStore {
 		Player p = activePlayer.getPlayer();
 		// pay the price...
 		if (manaCost > 0) {
-			if (activePlayer.mana < manaCost) {
+			if (!activePlayer.payMana(manaCost)) {
 				p.sendMessage(lq.configLang.skillLackOfMana);
 				isCanceled = true;
 				lastUse = 0;
 				activePlayer.skillSet.put(name, this);
 				return false;
-			} else {
-				activePlayer.mana = activePlayer.mana - manaCost;
 			}
 		}
-		// TODO put ingrediant use check here.
 
+		//pay for stuff
+		if (consumes!=null) {
+			if (!activePlayer.payItem(consumes)) {
+				p.sendMessage(lq.configLang.skillLackOfItem);
+				isCanceled = true;
+				lastUse = 0;
+				activePlayer.skillSet.put(name, this);
+				return false;
+			}
+		}
+		
 		// run the start command if any.
 		System.out.print("[skill tick] starting skill command: " + startCommand);
 		if (startCommand != null && (!startCommand.isEmpty())) {

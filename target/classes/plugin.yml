@@ -47,6 +47,12 @@ commands:
         alias: [lqskill,lquestskill,legendqskill,legendquestskill,skills,lqskills,lquestskills,legendqskills,legendquestskills]
         permission: legendquest.command.skills
         permission-message: You don't have <permission>
+    link:
+        description: Link skill to item.
+        usage: Use "/<command> help" for more info
+        alias: [lqlink,lquestlink,legendqlink,legendquestlink,bind,lqbind,lquestbind,legendbind,legendquestbind]
+        permission: legendquest.command.link
+        permission-message: You don't have <permission>
     roll:
         description: Test an attribute
         usage: Use "/<command> help" for more info
@@ -76,6 +82,8 @@ permissions:
             legendquest.command.stats: true
             legendquest.command.roll: true
             legendquest.command.hp: true
+            legendquest.command.link: true
+            legendquest.command.karma: true
     legendquest.command.reload:
         description: Allows user to use legendquest reload command.
         default: false
@@ -96,5 +104,11 @@ permissions:
         default: true
     legendquest.command.hp:
         description: Allows user to use legendquest hp command.
+        default: true
+    legendquest.command.karma:
+        description: Allows user to use legendquest karma command.
+        default: true
+    legendquest.command.link:
+        description: Allows user to use legendquest link command.
         default: true
         

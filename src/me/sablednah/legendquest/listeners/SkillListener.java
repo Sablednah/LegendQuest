@@ -7,7 +7,7 @@ import me.sablednah.legendquest.events.SkillEnableEvent;
 import me.sablednah.legendquest.events.SkillDisableEvent;
 
 public abstract interface SkillListener extends EventListener {
-  public abstract void onSkillCommand(SkillCommandEvent paramPowerCommandEvent);
-  public abstract void onSkillEnable(SkillEnableEvent paramPowerEnableEvent);
-  public abstract void onSkillDisable(SkillDisableEvent paramPowerDisableEvent);
+  public abstract void onSkillCommand(SkillCommandEvent paramSkillCommandEvent);
+  public abstract void onSkillEnable(SkillEnableEvent paramSkillEnableEvent);
+  public abstract void onSkillDisable(SkillDisableEvent paramSkillDisableEvent);
 }

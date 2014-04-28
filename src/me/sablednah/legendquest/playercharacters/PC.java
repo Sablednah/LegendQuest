@@ -69,6 +69,7 @@ public class PC {
 	public HashMap<String, SkillDataStore>	skillSet		= null;
 	public Map<String, Boolean>				skillsSelected;
 	public HashMap<String, Integer>			skillsPurchased	= new HashMap<String, Integer>();
+	public HashMap<Material, String>		skillLinkings	= new HashMap<Material, String>();
 
 	// private boolean skillsEnabled = true;
 
@@ -535,7 +536,6 @@ public class PC {
 		skillsSelected = activeSkills;
 	}
 
-
 	public HashMap<String, SkillDataStore> getUniqueSkills() {
 		return getUniqueSkills(false);
 	}
@@ -720,22 +720,28 @@ public class PC {
 	public void useSkill(String name) {
 		if (validSkill(name)) {
 			SkillPhase phase = getSkillPhase(name);
-System.out.print("using skill "+name+": phase:"+phase);			
-			if (phase==SkillPhase.READY) {
+			System.out.print("using skill " + name + ": phase:" + phase);
+			if (phase == SkillPhase.READY) {
 				SkillDataStore skill = skillSet.get(name);
-				
+
 				skill.setLastUse(System.currentTimeMillis());
-				Player p = lq.getServer().getPlayer(uuid);
+				Player p = getPlayer();
 				if (p != null && p.isOnline()) {
 					skill.setLastUseLoc(p.getLocation().clone());
 				}
-//				skillSet.put(name,skill);
-				if(skill.delay<1 && skill.buildup<1) {
-System.out.print("[skill tick] quick starting skill: "+skill.name);
-					skill.start(lq,this);
+				// skillSet.put(name,skill);
+				if (skill.delay < 1 && skill.buildup < 1) {
+					System.out.print("[skill tick] quick starting skill: " + skill.name);
+					skill.start(lq, this);
 				} else {
-System.out.print("[skill tick] queued up skill: "+skill.name);					
+					System.out.print("[skill tick] queued up skill: " + skill.name);
 				}
+			} else if (phase == SkillPhase.COOLDOWN) {
+				Player p = getPlayer();
+				if (p != null && p.isOnline()) {
+					p.sendMessage(lq.configLang.skillCooldown);
+				}
+
 			}
 		}
 	}
@@ -818,4 +824,63 @@ System.out.print("[skill tick] queued up skill: "+skill.name);
 	public Player getPlayer() {
 		return lq.getServer().getPlayer(uuid);
 	}
+
+	public boolean payMana(int cost) {
+		if (mana < cost) {
+			return false;
+		} else {
+			mana = mana - cost;
+			return true;
+		}
+	}
+
+	public boolean payItem(ItemStack item) {
+		int amount = item.getAmount();
+		Player p = getPlayer();
+		if (p == null) {
+			return false;
+		}
+		if (!p.isOnline()) {
+			return false;
+		}
+		PlayerInventory inv = p.getInventory();
+		Material payment = item.getType();
+		if (!inv.contains(payment)) {
+			return false;
+		} else {
+			for (ItemStack i : inv.getContents()) {
+				if (i.getType().equals(payment)) {
+					if (i.getAmount() == amount) {
+						inv.remove(i);
+						return true;
+					} else if (i.getAmount() > amount) {
+						ItemStack replacement = new ItemStack(i.getType(), i.getAmount() - amount);
+						inv.setItem(inv.first(i), replacement);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+
+	}
+	
+	//skillLinkings
+	public boolean hasLink(Material m){
+		return (skillLinkings.containsKey(m));
+	}
+	
+	public String getLink(Material m){
+		return (skillLinkings.get(m));
+	}
+	
+	
+	public String addLink(Material m, String s){
+		return skillLinkings.put(m, s);
+	}
+	
+	public String RemoveLink(Material m){
+		return skillLinkings.remove(m);
+	}
+	
 }
