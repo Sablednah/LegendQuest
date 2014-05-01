@@ -23,11 +23,11 @@ public class Config {
         this.lq = p;
         this.filename = f;
         this.configFile = new File(p.getDataFolder(), this.filename);
-        this.config = YamlConfiguration.loadConfiguration(this.configFile);
         if (!configFile.exists()) {
             lq.logWarn("Config file not found, creating default.");
             copyConfigFromJar();
         }
+        this.config = YamlConfiguration.loadConfiguration(this.configFile);
     }
 
     public void copyConfigFromJar() {

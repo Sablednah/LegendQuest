@@ -74,8 +74,10 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
                         + entry.getValue() + ")");
             }
 
-            // sender.sendMessage("--------------------");
-
+            sender.sendMessage("--------------------");
+            sender.sendMessage(lq.configLang.skillPoints + ": " + pc.getSkillPointsLeft() + " (" + pc.getSkillPointsSpent() + "/" + pc.getMaxSkillPointsLeft() + ")");
+            
+            
             return true;
         } else {
             sender.sendMessage(lq.configLang.characterNotFound + targetName);

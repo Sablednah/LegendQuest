@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -13,6 +14,7 @@ import lib.PatPeter.SQLibrary.SQLite;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
+import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitTask;
 
 public class DataSync {
@@ -140,7 +142,7 @@ public class DataSync {
                 }
             }
             
-            sql = "SELECT skillName FROM skillsBought WHERE uuid='" + uuid.toString() + "';";
+            sql = "SELECT skillName, cost FROM skillsBought WHERE uuid='" + uuid.toString() + "';";
             lq.debug.fine(sql);
             int skillCost;
             r = dbconn.query(sql);
@@ -148,16 +150,27 @@ public class DataSync {
                 while (r.next()) {
                     skillCost = r.getInt("cost");
                     lq.debug.fine("found " + skillCost + " cost for " + r.getString("skillName"));
-                    pc.xpEarnt.put(r.getString("skillName").toLowerCase(), skillCost);
+                    pc.skillsPurchased.put(r.getString("skillName"), skillCost);
                 }
             }
-            
+
+            sql = "SELECT skillName, material FROM skillsLinked WHERE uuid='" + uuid.toString() + "';";
+            lq.debug.fine(sql);
+            r = dbconn.query(sql);
+            if (r != null) {
+                while (r.next()) {
+                    lq.debug.fine("found " + r.getString("material") + " linked to " + r.getString("skillName"));
+                    pc.addLink(Material.getMaterial(r.getString("material")), r.getString("skillName"));
+                }
+            }
+
             pc.skillSet=pc.getUniqueSkills(true);
+
             //TODO load skill timings from db
             
             return pc;
         } catch (final SQLException e) {
-            lq.logSevere("Error reading XP from to database.");
+            lq.logSevere("Error reading from database.");
             e.printStackTrace();
         }
         return null;
@@ -209,6 +222,8 @@ public class DataSync {
     
     private void tableCheck() {
         String create;
+        
+        //characters
         create = "CREATE TABLE if not exists pcs (";
         create += "uuid varchar(32) NOT NULL";
         if (!lq.configMain.useMySQL) {
@@ -254,6 +269,7 @@ public class DataSync {
             e.printStackTrace();
         }
         
+        // experience
         create = "CREATE TABLE if not exists xpEarnt (";
         create += "uuid varchar(32) NOT NULL, ";
         create += "player varchar(16) NOT NULL, ";
@@ -280,6 +296,7 @@ public class DataSync {
             e.printStackTrace();
         }
         
+        //purchased skills
         create = "CREATE TABLE if not exists skillsBought (";
         create += "uuid varchar(32) NOT NULL, ";
         create += "player varchar(16) NOT NULL, ";
@@ -305,6 +322,34 @@ public class DataSync {
             lq.logSevere("Error creating table 'skillsBought'.");
             e.printStackTrace();
         }
+        
+        //linked skills
+        create = "CREATE TABLE if not exists skillsLinked (";
+        create += "uuid varchar(32) NOT NULL, ";
+        create += "player varchar(16) NOT NULL, ";
+        create += "material varchar(64) NOT NULL, ";
+        create += "skillName varchar(64) NOT NULL, ";
+        if (lq.configMain.useMySQL) {
+            create += "CONSTRAINT pid PRIMARY KEY (uuid,material)";
+        } else {
+            create += "UNIQUE(uuid, material) ON CONFLICT REPLACE";
+        }
+        create += " );";
+        lq.debug.fine(create);
+        try {
+            r = dbconn.query(create);
+            lq.debug.fine(r.toString());
+            r.close();
+            if (!lq.configMain.useMySQL) {
+                create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_material_index ON skillsLinked(uuid,material)";
+                dbconn.query(create);
+                r.close();
+            }
+        } catch (final SQLException e) {
+            lq.logSevere("Error creating table 'skillsLinked'.");
+            e.printStackTrace();
+        }
+        
     }
     
     private synchronized void writeData(final PC pc) {
@@ -364,16 +409,32 @@ public class DataSync {
                 sql2 = sql2 + ") values(\"";
                 sql2 = sql2 + pc.uuid + "\",\"";
                 sql2 = sql2 + pc.player + "\",\"";
-                sql2 = sql2 + entry.getKey() + "\",";
+                sql2 = sql2 + entry.getKey()  + "\",\"";
                 sql2 = sql2 + entry.getValue();
+                sql2 = sql2 + "\");";
                 lq.debug.fine(sql2);
                 r = dbconn.query(sql2);
                 r.close();
             }
             
+            for (final Entry<Material, String> entry : pc.skillLinkings.entrySet()) {
+                sql2 = "REPLACE INTO skillsLinked (";
+                sql2 = sql2 + "uuid, player,material,skillName";
+                sql2 = sql2 + ") values(\"";
+                sql2 = sql2 + pc.uuid + "\",\"";
+                sql2 = sql2 + pc.player + "\",\"";
+                sql2 = sql2 + entry.getKey().toString() + "\",\"";
+                sql2 = sql2 + entry.getValue();
+                sql2 = sql2 + "\");";
+                lq.debug.fine(sql2);
+                r = dbconn.query(sql2);
+                r.close();
+            }
+
         } catch (final SQLException e) {
             lq.logSevere("Error writing pc to database.");
             e.printStackTrace();
         }
     }
 }
+

@@ -28,15 +28,17 @@ public class Mechanics {
             stat = 10;
         }
         int result = (int) (stat/2)-5;
-        if (Main.debugMode){
+  /*      if (Main.debugMode){
             System.out.print("Attribute Mod ["+attr+"]: "+result);
         }
+   */
         return result;
     }
     
     public static int skillTest(int dif, Attribute attr, PC pc) {
         int roll = diceRoll();
         int attrnum = getPlayersAttributeModifier(pc,attr);
+        /* 
         String as = "null";
         if (attr!=null) {
             as = attr.toString();
@@ -50,6 +52,8 @@ public class Mechanics {
         if (Main.debugMode){
             System.out.print("Test for '"+aname+"' [atr="+as+"]: D20 = "+roll+" + "+attrnum+" (mod) - "+dif+" (dif) := "+(roll + attrnum - dif));
         }
+        
+        */
         roll = roll+attrnum;
         return roll - dif;
     }

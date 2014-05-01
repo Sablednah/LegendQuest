@@ -138,157 +138,214 @@ public class PCs {
 					for (SkillDataStore skill : activePlayer.skillSet.values()) {
 						boolean startskill = false;
 						boolean stopskill = false;
+
 						SkillPhase phase = skill.checkPhase();
+						SkillPhase lastPhase = skill.getPhase();
+						SkillPhase virtualPhase = phase;
+						
 						if (skill.type == SkillType.PASSIVE) {
 							// passive skills are "always on"
 							skill.setActive(true);
 						} else {
-if (skill.name.equalsIgnoreCase("blink")) {
-System.out.print("[skill tick] Player: "+activePlayer.player+" / skill: "+skill.name+" / phase: "+ phase + " / isactive: "+skill.isActive());
+if (skill.name.toLowerCase().equals("blink")) {
+System.out.print("{skill tick} Checking  "+ skill.name + " Perm:" + skill.permission + " command:" + skill.startCommand);
+
+}
+							
+							
+
+if (skill.name.toLowerCase().equals("blink")) {
+System.out.print("{skill tick} "+ skill.name + "| lastPhase  "+ lastPhase + " phase:" + phase);
+
+}
+							
+							// ensure skills spend 1 tick at each state they have a value for >0
+							switch (lastPhase) {
+								case READY:
+									switch (phase) {
+										case DELAYED:
+											// skipped building
+											if (skill.buildup > 0) {
+												// should have had a build up -
+												virtualPhase = SkillPhase.BUILDING;
+												break;
+											}
+										case ACTIVE:
+											// skipped building and delay
+											if (skill.buildup > 0) {
+												// should have had a build up -
+												virtualPhase = SkillPhase.BUILDING;
+												break;
+											}
+											if (skill.delay > 0) {
+												// should have had a delay up -
+												virtualPhase = SkillPhase.DELAYED;
+												break;
+											}
+										case COOLDOWN:
+											// skipped building, delay and active!
+											if (skill.buildup > 0) {
+												// should have had a build up -
+												virtualPhase = SkillPhase.BUILDING;
+												break;
+											}
+											if (skill.delay > 0) {
+												// should have had a delay -
+												virtualPhase = SkillPhase.DELAYED;
+												break;
+											}
+											// should have had a active -
+											virtualPhase = SkillPhase.ACTIVE;
+											break;
+									}
+									break;
+								case BUILDING:
+									switch (phase) {
+										case ACTIVE:
+											// skipped delay
+											if (skill.delay > 0) {
+												// should have had a delay up -
+												virtualPhase = SkillPhase.DELAYED;
+												break;
+											}
+										case COOLDOWN:
+											// skipped delay and active!
+											if (skill.delay > 0) {
+												// should have had a delay -
+												virtualPhase = SkillPhase.DELAYED;
+												break;
+											}
+											// should have had a active -
+											virtualPhase = SkillPhase.ACTIVE;
+											break;
+										case READY:
+											// skipped delay, active!
+											if (skill.delay > 0) {
+												// should have had a delay -
+												virtualPhase = SkillPhase.DELAYED;
+												break;
+											}
+											// should have had a active -
+											virtualPhase = SkillPhase.ACTIVE;
+											break;
+											
+									}
+									break;
+								case DELAYED:
+									switch (phase) {
+										case COOLDOWN:
+											// skipped active!
+											virtualPhase = SkillPhase.ACTIVE;
+											break;
+										case READY:
+											virtualPhase = SkillPhase.ACTIVE;
+											break;
+											
+									}
+									break;
+
+							}
+
+
+if (skill.name.toLowerCase().equals("blink")) {
+	System.out.print("{skill tick} "+ skill.name + "| lastPhase  "+ lastPhase + " virtualPhase:" + virtualPhase);
 }
 
-						SkillPhase lastPhase = skill.getPhase();
-						SkillPhase virtualPhase = phase;
-						
-						//ensure skills spend 1 tick at each state they have a value for >0
-						switch(lastPhase){
-							case READY:
-								switch (phase) {
-									case DELAYED:
-										//skipped building
-										if (skill.buildup>0) {
-											//should have had a build up -
-											virtualPhase=SkillPhase.BUILDING;
-											break;
-										}
-									case ACTIVE:
-										//skipped  building and delay
-										if (skill.buildup>0) {
-											//should have had a build up -
-											virtualPhase=SkillPhase.BUILDING;
-											break;
-										}
-										if (skill.delay>0) {
-											//should have had a delay up -
-											virtualPhase=SkillPhase.DELAYED;
-											break;
-										}
-									case COOLDOWN:
-										//skipped  building, delay and active!
-										if (skill.buildup>0) {
-											//should have had a build up -
-											virtualPhase=SkillPhase.BUILDING;
-											break;
-										}
-										if (skill.delay>0) {
-											//should have had a delay -
-											virtualPhase=SkillPhase.DELAYED;
-											break;
-										}										
-										//should have had a active -
-										virtualPhase=SkillPhase.ACTIVE;
-										break;
-								}
-								break;
-							case BUILDING:
-								switch (phase) {
-									case ACTIVE:
-										//skipped  delay
-										if (skill.delay>0) {
-											//should have had a delay up -
-											virtualPhase=SkillPhase.DELAYED;
-											break;
-										}
-									case COOLDOWN:
-										//skipped  delay and active!
-										if (skill.delay>0) {
-											//should have had a delay -
-											virtualPhase=SkillPhase.DELAYED;
-											break;
-										}										
-										//should have had a active -
-										virtualPhase=SkillPhase.ACTIVE;
-										break;
-								}
-								break;
-							case DELAYED:
-								switch (phase) {
-									case COOLDOWN:
-										//skipped active!
-										virtualPhase=SkillPhase.ACTIVE;
-										break;
-								}
-								break;
-						}
-						
-						switch (virtualPhase) {
-							case READY:
-								if (skill.isActive()) {
-									stopskill = true;
-								}
-								skill.setActive(false);
-								break;
-							case BUILDING:
-								if (skill.isActive()) {
-									stopskill = true;
-								}
-								Location pLoc = p.getLocation();
-								double distance = pLoc.distanceSquared(skill.getLastUseLoc());
-								double allowed = lq.configMain.skillBuildupMoveAllowed;
-								allowed = allowed * allowed;
-								if (distance > allowed) {
-									skill.setCanceled(true);
-									skill.setLastUse(0);
-									p.sendMessage(skill.name + " : " + lq.configLang.skillBuildupDisturbed);
-								}
-								break;
-							case DELAYED:
-								if (skill.isActive()) {
-									stopskill = true;
-								}
-								skill.setActive(false);
-								break;
-							case ACTIVE:
-								if (!skill.isActive()) {
-									startskill = true;
-								}
-								skill.setActive(true);
-								break;
-							case COOLDOWN:
-								if (skill.isActive()) {
-									stopskill = true;
-								}
-								skill.setActive(false);
-								break;
+							
+							switch (virtualPhase) {
+								case READY:
+									if (skill.isActive()) {
+										stopskill = true;
+									}
+									skill.setActive(false);
+									break;
+								case BUILDING:
+									skill.setActive(false);
+									Location pLoc = p.getLocation();
+									double distance = pLoc.distanceSquared(skill.getLastUseLoc());
+									double allowed = lq.configMain.skillBuildupMoveAllowed;
+									allowed = allowed * allowed;
+if (skill.name.toLowerCase().equals("blink")) {
+	System.out.print("{skill tick} "+ skill.name + "| distance="+distance + " - allowed=" + allowed);
+}
+									if (distance > allowed) {
+if (skill.name.toLowerCase().equals("blink")) {
+	System.out.print("{skill tick} "+ skill.name + "| buildup disturbed");
+}
+										skill.setActive(false);
+										skill.setCanceled(true);
+										skill.setLastUse(0);
+										skill.setPhase(SkillPhase.READY);
+										virtualPhase=SkillPhase.READY;
+										p.sendMessage(skill.name + " : " + lq.configLang.skillBuildupDisturbed);
+									}
+									break;
+								case DELAYED:
+if (skill.name.toLowerCase().equals("blink")) {
+	System.out.print("{skill tick} "+ skill.name + "| delayed - marking inactive");
+}
 
-						}
+									skill.setActive(false);
+									break;
+								case ACTIVE:
+									if (!skill.isActive()) {
+										startskill = true;
+									}
+									skill.setActive(true);
+									break;
+								case COOLDOWN:
+									if (skill.isActive()) {
+										stopskill = true;
+									}
+									skill.setActive(false);
+									break;
+
+							}
 						}
 						if (skill.isActive()) {
-							skill.startperms(lq,p);
+
+
+if (skill.name.toLowerCase().equals("blink")) {
+System.out.print("{skill tick} isActive  - startperms startskill="+startskill);
+}
+							
+							skill.startperms(lq, p);
 							if (startskill) {
-								if(skill.delay>0 || skill.buildup>0) {
-System.out.print("[skill tick] PCs starting skill: "+skill.name);
-									skill.start(lq,activePlayer);
+
+if (skill.name.toLowerCase().equals("blink")) {
+System.out.print("{skill tick} startskill  - checking if not instant");
+}
+								if (skill.delay > 0 || skill.buildup > 0) {
+
+System.out.print("[skill tick] skill ticker is starting skill: " + skill.name);
+
+									skill.start(lq, activePlayer);
 								}
 							}
 						} else {
-//System.out.print("[skill tick] INACTIVE skill: "+skill.name);
+
+							// System.out.print("[skill tick] INACTIVE skill: "+skill.name);
+
 							if (stopskill) {
 								// run the stop command if any.
-System.out.print("[skill tick] PCs: stopping skill command: "+skill.startCommand);
+
+								System.out.print("[skill tick] PCs: stopping skill command: " + skill.startCommand);
+
 								if (skill.endCommand != null && (!skill.endCommand.isEmpty())) {
 									lq.getServer().dispatchCommand(p, skill.endCommand);
 								}
 							}
 							if (skill.permission != null && (!skill.permission.isEmpty())) {
-System.out.print("[skill tick] PCs: stopping skill perm: "+skill.permission);
+							
+								
 								if (permissions.containsKey(p.getUniqueId().toString() + skill.permission)) {
+									System.out.print("[skill tick] PCs: stopping skill perm: " + skill.permission);
 									p.removeAttachment(permissions.get(p.getUniqueId().toString() + skill.permission));
 									permissions.remove(p.getUniqueId().toString() + skill.permission);
 								}
 							}
 						}
-						skill.setPhase(phase);
+						skill.setPhase(virtualPhase);
 					}
 				}
 			}

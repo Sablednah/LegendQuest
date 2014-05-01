@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -296,9 +297,9 @@ public class PC {
 
 	public int getMaxMana() {
 		double result = 0;
-		int mana, level, bonus;
+		int mana, level, bonus, wis;
 		double perlevel;
-
+		wis = getAttributeModifier(Attribute.WIS);
 		mana = race.baseMana;
 
 		level = SetExp.getLevelOfXpAmount(currentXP);
@@ -309,15 +310,17 @@ public class PC {
 			perlevel = mainClass.healthPerLevel;
 			bonus = mainClass.manaBonus;
 		}
+		double wisBonus = ((wis * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
+		perlevel *= wisBonus;
 		result = (mana + bonus + (level * perlevel));
 
 		return (int) result;
 	}
 
 	public int getMaxSkillPointsLeft() {
-		int sp, level;
+		int sp, level, intel;
 		double result, perlevel;
-
+		intel = getAttributeModifier(Attribute.INT);
 		sp = race.skillPoints;
 		sp += mainClass.skillPoints;
 		level = SetExp.getExpAtLevel(currentXP);
@@ -326,6 +329,8 @@ public class PC {
 		} else {
 			perlevel = mainClass.healthPerLevel;
 		}
+		double intBonus = ((intel * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
+		perlevel *= intBonus;
 		result = (sp + (level * (perlevel + race.skillPointsPerLevel)));
 
 		return (int) result;
@@ -337,8 +342,11 @@ public class PC {
 
 	public int getSkillPointsSpent() {
 		int result = 0;
-		for (int cost : skillsPurchased.values()) {
-			result += cost;
+		for (Entry<String, Integer> cost : skillsPurchased.entrySet()) {
+			String lKey = cost.getKey().toLowerCase();
+			if (lKey.startsWith(mainClass.name) || lKey.startsWith(race.name)  || (subClass != null && lKey.startsWith(subClass.name)) ) {
+				result += cost.getValue();
+			}
 		}
 		return result;
 	}
@@ -528,7 +536,7 @@ public class PC {
 				continue;
 			}
 			// skill points now :/
-			if (skillsPurchased.containsValue(s.name)) {
+			if (skillsPurchased.containsKey(mainClass.name + "|" + s.name) || skillsPurchased.containsKey(race.name + "|" + s.name) || (subClass != null && skillsPurchased.containsKey(subClass.name + "|" + s.name))) {
 				activeSkills.put(s.name, true);
 				continue;
 			}
@@ -568,6 +576,47 @@ public class PC {
 		return out;
 	}
 
+	public String getSkillsource(String skillName) {
+		String source = null;
+
+		for (SkillDataStore s : race.availableSkills) {
+			if (s.name.equalsIgnoreCase(skillName)) {
+				return race.name;
+			}
+		}
+		for (SkillDataStore s : race.outsourcedSkills) {
+			if (s.name.equalsIgnoreCase(skillName)) {
+				return race.name;
+			}
+		}
+
+		for (SkillDataStore s : mainClass.availableSkills) {
+			if (s.name.equalsIgnoreCase(skillName)) {
+				return mainClass.name;
+			}
+		}
+		for (SkillDataStore s : mainClass.outsourcedSkills) {
+			if (s.name.equalsIgnoreCase(skillName)) {
+				return mainClass.name;
+			}
+		}
+
+		if (subClass != null) {
+			for (SkillDataStore s : subClass.availableSkills) {
+				if (s.name.equalsIgnoreCase(skillName)) {
+					return subClass.name;
+				}
+			}
+			for (SkillDataStore s : subClass.outsourcedSkills) {
+				if (s.name.equalsIgnoreCase(skillName)) {
+					return subClass.name;
+				}
+			}
+		}
+
+		return source;
+	}
+
 	public boolean hasMastered(String className) {
 		lq.logger.info("className (" + className + ")...");
 		if (xpEarnt.containsKey(className.toLowerCase())) {
@@ -597,9 +646,9 @@ public class PC {
 			p.setHealthScale(scale);
 			p.setHealthScaled(true);
 			if (lq.configMain.debugMode) {
-				lq.debug.fine("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+				lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
 				if (p.getName().equalsIgnoreCase("sablednah")) {
-					p.sendMessage("SHC ¦ HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+					p.sendMessage("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
 				}
 			}
 		}
@@ -720,28 +769,49 @@ public class PC {
 	public void useSkill(String name) {
 		if (validSkill(name)) {
 			SkillPhase phase = getSkillPhase(name);
+			
+			
 			System.out.print("using skill " + name + ": phase:" + phase);
+			
+			Player p = getPlayer();
 			if (phase == SkillPhase.READY) {
 				SkillDataStore skill = skillSet.get(name);
-
 				skill.setLastUse(System.currentTimeMillis());
-				Player p = getPlayer();
 				if (p != null && p.isOnline()) {
 					skill.setLastUseLoc(p.getLocation().clone());
 				}
 				// skillSet.put(name,skill);
 				if (skill.delay < 1 && skill.buildup < 1) {
-					System.out.print("[skill tick] quick starting skill: " + skill.name);
+
+					
+					System.out.print("[skill tick] Quick starting skill: " + skill.name);
+
+					
+					skill.startperms(lq,p);
 					skill.start(lq, this);
 				} else {
-					System.out.print("[skill tick] queued up skill: " + skill.name);
+
+					
+					System.out.print("[skill tick] Queued up skill: " + skill.name);
+
+				
 				}
 			} else if (phase == SkillPhase.COOLDOWN) {
-				Player p = getPlayer();
 				if (p != null && p.isOnline()) {
-					p.sendMessage(lq.configLang.skillCooldown);
+					p.sendMessage(name + " " + lq.configLang.skillCooldown);
 				}
-
+			} else if (phase == SkillPhase.DELAYED) {
+				if (p != null && p.isOnline()) {
+					p.sendMessage(name + " " + lq.configLang.skillDelayed);
+				}
+			} else if (phase == SkillPhase.BUILDING) {
+				if (p != null && p.isOnline()) {
+					p.sendMessage(name + " " + lq.configLang.skillBuilding);
+				}
+			} else if (phase == SkillPhase.ACTIVE) {
+				if (p != null && p.isOnline()) {
+					p.sendMessage(name + " " + lq.configLang.skillActive);
+				}
 			}
 		}
 	}
@@ -864,23 +934,41 @@ public class PC {
 		return false;
 
 	}
-	
-	//skillLinkings
-	public boolean hasLink(Material m){
+
+	// skillLinkings
+	public boolean hasLink(Material m) {
 		return (skillLinkings.containsKey(m));
 	}
-	
-	public String getLink(Material m){
+
+	public String getLink(Material m) {
 		return (skillLinkings.get(m));
 	}
-	
-	
-	public String addLink(Material m, String s){
+
+	public String addLink(Material m, String s) {
 		return skillLinkings.put(m, s);
 	}
-	
-	public String RemoveLink(Material m){
+
+	public String RemoveLink(Material m) {
 		return skillLinkings.remove(m);
 	}
-	
+
+	public boolean buySkill(String skillname) {
+		SkillDataStore skill = skillSet.get(skillname);
+		if (skill != null) {
+			getPlayer().sendMessage("Skill "+ skillname  +" found");
+			int cost = skill.skillPoints;
+			getPlayer().sendMessage("cost "+ cost  +"...");
+			if (getSkillPointsLeft() >= cost) {
+				getPlayer().sendMessage("cost "+ cost  +"...");				
+				String classname = this.getSkillsource(skillname);
+				skillsPurchased.put(classname + "|" + skillname, cost);
+				getPlayer().sendMessage("classname "+ classname  +"...");				
+				return true;
+			}
+		} else {
+			getPlayer().sendMessage("Skill "+ skillname  +" not found");
+		}
+		return false;
+	}
+
 }

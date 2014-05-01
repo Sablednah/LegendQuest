@@ -14,56 +14,62 @@ commands:
     lq:
         description: Control the  LegendQuest plugin.
         usage: Use "/<command> help" for more info
-        alias: [legendquest,lquest,legendq]
+        aliases: [legendquest,lquest,legendq]
         permission: legendquest.command
         permission-message: You don't have <permission>
     race:
         description: View or set your race.
         usage: Use "/<command> help" for more info
-        alias: [lqrace,lquestrace,legendqrace,legendquestrace]
+        aliases: [lqrace,lquestrace,legendqrace,legendquestrace]
         permission: legendquest.command.race
         permission-message: You don't have <permission>
     class:
         description: View, choose, or change your class's.
         usage: Use "/<command> help" for more info
-        alias: [lqclass,lquestclass,legendqclass,legendquestclass,clas]
+        aliases: [lqclass,lquestclass,legendqclass,legendquestclass,clas]
         permission: legendquest.command.class
         permission-message: You don't have <permission>
     stats:
         description: Get your player stats
         usage: Use "/<command> help" for more info
-        alias: [lqstats,lqueststats,legendqstats,legendqueststats]
+        aliases: [lqstats,lqueststats,legendqstats,legendqueststats]
         permission: legendquest.command.stats
         permission-message: You don't have <permission>
     karma:
         description: Get your player karma
         usage: Use "/<command> help" for more info
-        alias: [lqkarma,lquestkarma,legendqkarma,legendquestkarma]
+        aliases: [lqkarma,lquestkarma,legendqkarma,legendquestkarma]
         permission: legendquest.command.karma
         permission-message: You don't have <permission>
     skill:
         description: View, choose, or change your Skills.
         usage: Use "/<command> help" for more info
-        alias: [lqskill,lquestskill,legendqskill,legendquestskill,skills,lqskills,lquestskills,legendqskills,legendquestskills]
+        aliases: [lqskill,lquestskill,legendqskill,legendquestskill]
         permission: legendquest.command.skills
         permission-message: You don't have <permission>
     link:
         description: Link skill to item.
         usage: Use "/<command> help" for more info
-        alias: [lqlink,lquestlink,legendqlink,legendquestlink,bind,lqbind,lquestbind,legendbind,legendquestbind]
+        aliases: [lqlink,lquestlink,legendqlink,legendquestlink,bind,lqbind,lquestbind,legendbind,legendquestbind]
         permission: legendquest.command.link
         permission-message: You don't have <permission>
     roll:
         description: Test an attribute
         usage: Use "/<command> help" for more info
-        alias: [lqroll,lquestroll,legendqroll,legendquestroll,test]
+        aliases: [lqroll,lquestroll,legendqroll,legendquestroll,test]
         permission: legendquest.command.roll
         permission-message: You don't have <permission>
     hp:
         description: Get your health
         usage: Use "/<command> help" for more info
-        alias: [lqhp,lquesthp,legendqhp,legendquesthp,test]
+        aliases: [lqhp,lquesthp,legendqhp,legendquesthp,test]
         permission: legendquest.command.hp
+        permission-message: You don't have <permission>
+    plurals:
+        description: Plural list commands
+        usage: Use "/<command> help" for more info
+        aliases: [classes,races,skills,binds,links]
+        permission: legendquest.command.plurals
         permission-message: You don't have <permission>
         
 permissions:

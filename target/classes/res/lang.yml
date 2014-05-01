@@ -1,5 +1,16 @@
 # default config
 
+cmdHelp:
+    race: "USe 'list' to list races, and a race name to select your race."
+    class: "Use 'list' to list available classes and then a class name to select that class."
+    skill: "USe 'list' to list available skill or a  skill name to use that skil.\nUse buy skillname to purchase a skill with skill points."
+    link: "Links a skill to the item in your hand.  Rick click item to trigger skill once linked.  Use 'list' to link all current binds."
+    reload: "Reloads all data from server."
+    stats: "Show your stats, or give a player name to show that players stats."
+    karma: "Show your karma, or specify a player to see there karma."
+    roll: "Do a dice roll.  Optionally specify a player to perform the roll as, a difficulty and an attribute to test e.g. /roll sablednah STR easy"
+    hp: "Show your health (and mana) or another players health (and mana)."
+
 startup: "The sky above the port was the color of television, tuned to a dead channel."
 shutdown: "=== END OF LINE ==="
 
@@ -12,6 +23,6 @@ classScan: "Scanning for class files in folder: "
 classScanFound: "Found class: "
 classScanEnd: "Scanning for class files completed."
 classScanInvalid: "Invalid class file: "
-classScanRaceWarning: "Warning Found unknon Race: "
+classScanRaceWarning: "Warning Found unknown Race: "
 classScanNoRaceOrGroup: "No Valid race or group found in: "
 classScanGroupWarning: "No Valid group found in: "

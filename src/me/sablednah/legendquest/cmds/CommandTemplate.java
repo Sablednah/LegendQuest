@@ -8,6 +8,12 @@ import org.bukkit.entity.Player;
 public class CommandTemplate {
 
     public boolean validateCmd(final Main lq, final Cmds cmd, final CommandSender sender, final String[] args) {
+    	if (args.length >0 && args[0].equalsIgnoreCase("help")) {
+    		sender.sendMessage(lq.configLang.cmdHelp.get(cmd.toString().toLowerCase()));
+    		return false;
+    	}
+
+    	
         if (args.length < cmd.minArgLength()) {
             sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidArgumentsCommand);
             return false;

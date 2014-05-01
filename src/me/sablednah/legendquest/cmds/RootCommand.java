@@ -93,6 +93,13 @@ public class RootCommand implements CommandExecutor {
                 case HP:
                     newcmd = new CmdHP(lq);
                     break;
+                case LINK:
+                    newcmd = new CmdLink(lq);
+                    break;
+                case SKILL:
+                    newcmd = new CmdSkill(lq);
+                    break;
+                    
             }
             
             lq.debug.fine("newcmd: " + newcmd);

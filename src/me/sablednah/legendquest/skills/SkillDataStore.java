@@ -70,8 +70,8 @@ public class SkillDataStore {
 	public void readConfigInfo(final ConfigurationSection conf) {
 		if (conf != null) {
 			// bthis.name = skillInfo.getName();
-			if (conf.contains("permission")) {
-				this.permission = conf.getString("permission");
+			if (conf.contains("perm")) {
+				this.permission = conf.getString("perm");
 			}
 			if (conf.contains("command")) {
 				this.startCommand = conf.getString("command");

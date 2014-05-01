@@ -69,14 +69,18 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 				return true;
 			} else if (actionName.equalsIgnoreCase("buy")) {
 				if (args.length < 2) {
-					sender.sendMessage("buy what now?");
+					sender.sendMessage(lq.configLang.skillPointsNoSkill);
 				} else {
 					String skillToBuy = args[1].toLowerCase();
-					sender.sendMessage("Will try to buy " + skillToBuy);
+					if (pc.buySkill(skillToBuy)) {
+						sender.sendMessage(lq.configLang.skillPointsBought + "'"+skillToBuy+"'");
+					} else {
+			            sender.sendMessage(lq.configLang.skillPointsMissing + "'" + skillToBuy +"': "+ pc.getSkillPointsLeft() + " (" + pc.getSkillPointsSpent() + "/" + pc.getMaxSkillPointsLeft() + ")");
+					}
 				}
 				return true;
 			} else {
-				sender.sendMessage("Will try to use " + actionName);
+				sender.sendMessage(lq.configLang.skillCommandLineUse + actionName);
 				pc.useSkill(actionName);
 				return true;
 			}

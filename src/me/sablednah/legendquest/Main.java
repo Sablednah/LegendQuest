@@ -111,6 +111,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new AbilityControlEvents(this), this);
 		pm.registerEvents(new KarmaMonitorEvents(this), this);
 		pm.registerEvents(new AttributeCheckEvent(this), this);
+		pm.registerEvents(new SkillLinkEvents(this), this);
 
 		// setup commands
 		getCommand("lq").setExecutor(new RootCommand(this));
@@ -121,6 +122,16 @@ public class Main extends JavaPlugin {
 		getCommand("skill").setExecutor(new CmdSkill(this));
 		getCommand("roll").setExecutor(new CmdRoll(this));
 		getCommand("hp").setExecutor(new CmdHP(this));
+		getCommand("link").setExecutor(new CmdLink(this));
+		
+		getCommand("plurals").setExecutor(new CmdPlurals(this));
+
+//		getCommand("skills").setExecutor(new CmdPlurals(this));
+//		getCommand("classes").setExecutor(new CmdPlurals(this));
+//		getCommand("races").setExecutor(new CmdPlurals(this));
+//		getCommand("links").setExecutor(new CmdPlurals(this));
+//		getCommand("binds").setExecutor(new CmdPlurals(this));
+		
 
 		// Mana ticker
 		getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), 20, 20);
