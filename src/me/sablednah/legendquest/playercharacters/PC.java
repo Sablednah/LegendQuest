@@ -344,7 +344,7 @@ public class PC {
 		int result = 0;
 		for (Entry<String, Integer> cost : skillsPurchased.entrySet()) {
 			String lKey = cost.getKey().toLowerCase();
-			if (lKey.startsWith(mainClass.name) || lKey.startsWith(race.name)  || (subClass != null && lKey.startsWith(subClass.name)) ) {
+			if (lKey.startsWith(mainClass.name) || lKey.startsWith(race.name) || (subClass != null && lKey.startsWith(subClass.name))) {
 				result += cost.getValue();
 			}
 		}
@@ -708,60 +708,62 @@ public class PC {
 	}
 
 	public boolean canCraft() {
-		if (race.stopCrafting || mainClass.stopCrafting) {
-			return false;
+		if (race.allowCrafting || mainClass.allowCrafting) {
+			return true;
 		}
-		if (subClass != null && subClass.stopCrafting) {
-			return false;
+		if (subClass != null && subClass.allowCrafting) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public boolean canSmelt() {
-		if (race.stopSmelting || mainClass.stopSmelting) {
-			return false;
+		if (race.allowSmelting || mainClass.allowSmelting) {
+			return true;
 		}
-		if (subClass != null && subClass.stopSmelting) {
-			return false;
+		if (subClass != null && subClass.allowSmelting) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public boolean canBrew() {
-		if (race.stopBrewing || mainClass.stopBrewing) {
-			return false;
+		if (race.allowBrewing || mainClass.allowBrewing) {
+			return true;
 		}
-		if (subClass != null && subClass.stopBrewing) {
-			return false;
+		if (subClass != null && subClass.allowBrewing) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public boolean canEnchant() {
-		if (race.stopEnchating || mainClass.stopEnchating) {
-			return false;
+		if (race.allowEnchating || mainClass.allowEnchating) {
+			return true;
 		}
-		if (subClass != null && subClass.stopEnchating) {
-			return false;
+		if (subClass != null && subClass.allowEnchating) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public boolean canRepair() {
-		if (race.stopRepairing || mainClass.stopRepairing) {
-			return false;
+		if (race.allowRepairing || mainClass.allowRepairing) {
+			return true;
 		}
-		if (subClass != null && subClass.stopRepairing) {
-			return false;
+		if (subClass != null && subClass.allowRepairing) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public boolean validSkill(String name) {
 		checkSkills();
-		Boolean hasSkill = skillsSelected.get(name);
-		if (skillsSelected != null && name != null && hasSkill != null) {
-			return hasSkill;
+		if (skillsSelected != null && name != null) {
+			Boolean hasSkill = skillsSelected.get(name);
+			if (hasSkill != null) {
+				return hasSkill;
+			}
 		}
 		return false;
 	}
@@ -769,10 +771,6 @@ public class PC {
 	public void useSkill(String name) {
 		if (validSkill(name)) {
 			SkillPhase phase = getSkillPhase(name);
-			
-			
-			System.out.print("using skill " + name + ": phase:" + phase);
-			
 			Player p = getPlayer();
 			if (phase == SkillPhase.READY) {
 				SkillDataStore skill = skillSet.get(name);
@@ -782,19 +780,10 @@ public class PC {
 				}
 				// skillSet.put(name,skill);
 				if (skill.delay < 1 && skill.buildup < 1) {
-
-					
-					System.out.print("[skill tick] Quick starting skill: " + skill.name);
-
-					
-					skill.startperms(lq,p);
+					skill.startperms(lq, p);
 					skill.start(lq, this);
 				} else {
-
-					
-					System.out.print("[skill tick] Queued up skill: " + skill.name);
-
-				
+					// System.out.print("[skill tick] Queued up skill: " + skill.name);
 				}
 			} else if (phase == SkillPhase.COOLDOWN) {
 				if (p != null && p.isOnline()) {
@@ -813,6 +802,9 @@ public class PC {
 					p.sendMessage(name + " " + lq.configLang.skillActive);
 				}
 			}
+		} else {
+			Player p = getPlayer();
+			p.sendMessage(lq.configLang.skillInvalid + name);
 		}
 	}
 
@@ -932,7 +924,6 @@ public class PC {
 			}
 		}
 		return false;
-
 	}
 
 	// skillLinkings
@@ -953,22 +944,26 @@ public class PC {
 	}
 
 	public boolean buySkill(String skillname) {
-		SkillDataStore skill = skillSet.get(skillname);
+		SkillDataStore skill = getSkillData(skillname);
 		if (skill != null) {
-			getPlayer().sendMessage("Skill "+ skillname  +" found");
+			getPlayer().sendMessage("Skill " + skillname + " found");
 			int cost = skill.skillPoints;
-			getPlayer().sendMessage("cost "+ cost  +"...");
+			getPlayer().sendMessage("cost " + cost + "...");
 			if (getSkillPointsLeft() >= cost) {
-				getPlayer().sendMessage("cost "+ cost  +"...");				
+				getPlayer().sendMessage("cost " + cost + "...");
 				String classname = this.getSkillsource(skillname);
 				skillsPurchased.put(classname + "|" + skillname, cost);
-				getPlayer().sendMessage("classname "+ classname  +"...");				
+				getPlayer().sendMessage("classname " + classname + "...");
 				return true;
 			}
 		} else {
-			getPlayer().sendMessage("Skill "+ skillname  +" not found");
+			getPlayer().sendMessage("Skill " + skillname + " not found");
 		}
 		return false;
 	}
 
+	public SkillDataStore getSkillData(String name) {
+		SkillDataStore s = skillSet.get(name);
+		return s;
+	}
 }

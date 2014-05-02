@@ -106,11 +106,11 @@ public class Races {
 					r.statChr = thisConfig.getInt("statmods.chr");
 					r.baseHealth = thisConfig.getInt("basehealth");
 
-					r.stopCrafting = thisConfig.getBoolean("stopCrafting");
-					r.stopSmelting = thisConfig.getBoolean("stopSmelting");
-					r.stopBrewing = thisConfig.getBoolean("stopBrewing");
-					r.stopEnchating = thisConfig.getBoolean("stopEnchating");
-					r.stopRepairing = thisConfig.getBoolean("stopRepairing");
+					r.allowCrafting = thisConfig.getBoolean("allowCrafting");
+					r.allowSmelting = thisConfig.getBoolean("allowSmelting");
+					r.allowBrewing = thisConfig.getBoolean("allowBrewing");
+					r.allowEnchating = thisConfig.getBoolean("allowEnchating");
+					r.allowRepairing = thisConfig.getBoolean("allowRepairing");
 
 					r.baseMana = thisConfig.getInt("baseMana");
 					r.manaPerSecond = thisConfig.getInt("manaPerSecond");
@@ -275,9 +275,17 @@ public class Races {
 					final ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
 					if (inateSkills != null) {
 						for (final String key : inateSkills.getKeys(false)) {
-							if (lq.skills.skillList.containsKey(key)) {
-								ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
-								System.out.print("Key: " + key);
+							String skillName = key;
+							String realSkill = key;
+							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(skillName);
+							if (skillInfo.contains("skillname")) {
+								realSkill = skillInfo.getString("skillname");
+								//create a "copy" of the skill under new name
+								// this registers duplicate events with different this.name for fetching correct skill settings.
+								lq.skills.initSkill(realSkill,skillName);
+							}
+							if (lq.skills.skillList.containsKey(skillName)) {
+								lq.debug.info("skillName: " + skillName+ " as skill " + realSkill);
 								Skill s = lq.skills.skillList.get(key.toLowerCase());
 								SkillInfo si = s.getDefaultOptions();
 								SkillDataStore skilldata = new SkillDataStore(si);
@@ -294,11 +302,6 @@ public class Races {
 					if (permSkills != null) {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
-
-							System.out.print("Key: " + key);
-							// author, name, description, type, version, buildup, delay, duration, cooldown, manaCost,
-							// consumes, levelRequired, skillPoints,
-							// dblnames, dblvalues, intnames, intvalues, strnames, strvalues
 
 							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
 							si.name = key;
@@ -358,5 +361,9 @@ public class Races {
 
 	public boolean raceExists(final String racename) {
 		return races.containsKey(racename.toLowerCase());
+	}
+	
+	public String getRandomRace(){
+		return wpmRaces.nextElt();
 	}
 }

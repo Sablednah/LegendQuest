@@ -152,11 +152,11 @@ public class Classes {
 					c.statChr = thisConfig.getInt("statmods.chr");
 					c.healthPerLevel = thisConfig.getDouble("healthperlevel");
 
-					c.stopCrafting = thisConfig.getBoolean("stopCrafting");
-					c.stopSmelting = thisConfig.getBoolean("stopSmelting");
-					c.stopBrewing = thisConfig.getBoolean("stopBrewing");
-					c.stopEnchating = thisConfig.getBoolean("stopEnchating");
-					c.stopRepairing = thisConfig.getBoolean("stopRepairing");
+					c.allowCrafting = thisConfig.getBoolean("allowCrafting");
+					c.allowSmelting = thisConfig.getBoolean("allowSmelting");
+					c.allowBrewing = thisConfig.getBoolean("allowBrewing");
+					c.allowEnchating = thisConfig.getBoolean("allowEnchating");
+					c.allowRepairing = thisConfig.getBoolean("allowRepairing");
 
 					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
 					c.manaBonus = thisConfig.getInt("manaBonus");
@@ -325,10 +325,17 @@ public class Classes {
 					final ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
 					if (inateSkills != null) {
 						for (String key : inateSkills.getKeys(false)) {
-							if (lq.skills.skillList.containsKey(key.toLowerCase())) {
-								ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
-
-								System.out.print("Key: " + key);
+							String skillName = key;
+							String realSkill = key;
+							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(skillName);
+							if (skillInfo.contains("skillname")) {
+								realSkill = skillInfo.getString("skillname");
+								//create a "copy" of the skill under new name
+								// this registers duplicate events with different this.name for fetching correct skill settings.
+								lq.skills.initSkill(realSkill,skillName);
+							}
+							if (lq.skills.skillList.containsKey(skillName)) {
+								lq.debug.info("Loading skillName: " + skillName+ " as skill " + realSkill);
 								Skill s = lq.skills.skillList.get(key.toLowerCase());
 								SkillInfo si = s.getDefaultOptions();
 								SkillDataStore skilldata = new SkillDataStore(si);
@@ -345,12 +352,6 @@ public class Classes {
 					if (permSkills != null) {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
-
-							System.out.print("Key: " + key);
-							// author, name, description, type, version, buildup, delay, duration, cooldown, manaCost,
-							// consumes, levelRequired, skillPoints,
-							// dblnames, dblvalues, intnames, intvalues, strnames, strvalues
-
 							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
 							si.name = key;
 							si.readConfigBasicInfo(skillInfo);

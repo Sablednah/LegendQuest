@@ -2,7 +2,7 @@ package me.sablednah.legendquest.mechanics;
 
 import java.util.Random;
 
-import me.sablednah.legendquest.Main;
+//import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
 
@@ -10,7 +10,7 @@ public class Mechanics {
     public static int diceRoll() {
         Random rnd = new Random();
         int result =  rnd.nextInt(20)+1;
-        System.out.print("Dice roll: "+result);
+//        System.out.print("Dice roll: "+result);
         return result;
     }
     

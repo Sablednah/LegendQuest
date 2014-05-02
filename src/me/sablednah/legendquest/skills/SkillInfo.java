@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import me.sablednah.legendquest.Main;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +32,24 @@ public class SkillInfo {
 
 	public SkillInfo(ConfigurationSection conf) {
 		readConfigInfo(conf);
+	}
+
+	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int manaCost, ItemStack consumes, int levelRequired, int skillPoints) {
+		this.name = name;
+		this.version = version;
+		this.type = type;
+		this.author = author;
+		this.description = description;
+		this.buildup = buildup;
+		this.delay = delay;
+		this.duration = duration;
+		this.cooldown = cooldown;
+		this.manaCost = manaCost;
+		this.levelRequired = levelRequired;
+		this.skillPoints = skillPoints;
+		if (consumes != null) {
+			this.consumes = consumes;
+		}
 	}
 
 	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int manaCost, String consumes, int levelRequired, int skillPoints, String[] dblnames,
@@ -124,13 +144,16 @@ public class SkillInfo {
 				while (entries.hasNext()) {
 					Entry<String, Object> entry = entries.next();
 					ConfigurationSection data = (ConfigurationSection) entry.getValue();
-					System.out.print("Loading " + this.name + " Skill vars: " + entry.getKey() + " - " + data);
+					if (Main.debugMode) {
+						System.out.print("Loading " + this.name + " Skill vars: " + entry.getKey() + " - " + data);
+					}
 					vars.put(entry.getKey(), data);
 				}
 
 			}
 		}
-		System.out.print("skill defaults loaded: " + this.name + "|" + this.skillPoints + "|" + this.levelRequired + "|" + this.delay + "|" + this.duration + "|" + this.cooldown);
+		if (Main.debugMode) {
+			System.out.print("skill defaults loaded: " + this.name + "|" + this.skillPoints + "|" + this.levelRequired + "|" + this.delay + "|" + this.duration + "|" + this.cooldown);
+		}
 	}
-
 }

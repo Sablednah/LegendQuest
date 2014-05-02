@@ -123,27 +123,20 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 
 			HashMap<String, SkillDataStore> skillmap = new HashMap<String, SkillDataStore>();
 
-			System.out.print("checking: "+pc.mainClass.name);
-			System.out.print("checking: "+pc.mainClass.availableSkills);
 			for (SkillDataStore s : pc.mainClass.availableSkills) {
 				skillmap.put(s.levelRequired + " |" + s.name, s);
 			}
-			System.out.print("checking: "+pc.mainClass.outsourcedSkills);
 			for (SkillDataStore s : pc.mainClass.outsourcedSkills) {
 				skillmap.put(s.levelRequired + " |" + s.name, s);
 			}
-			System.out.print("checking: "+pc.race.name);
-			System.out.print("checking: "+pc.race.availableSkills);
 			for (SkillDataStore s : pc.race.availableSkills) {
 				skillmap.put(s.levelRequired + " |" + s.name, s);
 			}
-			System.out.print("checking: "+pc.race.outsourcedSkills);
 			for (SkillDataStore s : pc.race.outsourcedSkills) {
 				skillmap.put(s.levelRequired + " |" + s.name, s);
 			}
 
 			if (pc.subClass != null) {
-				System.out.print("checking: "+pc.subClass.name);
 				for (SkillDataStore s : pc.subClass.availableSkills) {
 					skillmap.put(s.levelRequired + " |" + s.name, s);
 				}

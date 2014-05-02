@@ -22,20 +22,21 @@ public abstract class Skill implements EventListener, Listener {
 
 	public Main					lq;
 	public ConfigurationSection	config;
-	public Skill				skill	= this;
+	public Skill				skill		= this;
 	public SkillInfo			defaultOptions;
 
 	public abstract boolean onEnable();
 
 	public abstract void onDisable();
 
-	public abstract CommandResult onCommand();
+	public abstract CommandResult onCommand(Player p);
 
 	public final String getSimpleName() {
 		return getClass().getSimpleName();
 	}
 
 	public final String getName() {
+		//if (aliasedname!=null) { return aliasedname; }
 		return defaultOptions.name;
 	}
 
@@ -70,7 +71,7 @@ public abstract class Skill implements EventListener, Listener {
 			disable();
 			return;
 		}
-		
+
 		lq.skills.dispatchEvent(new SkillEnableEvent(this));
 		if (Arrays.asList(getClass().getInterfaces()).contains(Listener.class)) {
 			Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -151,17 +152,19 @@ public abstract class Skill implements EventListener, Listener {
 	public void setDefaultOptions(SkillInfo defaultOptions) {
 		this.defaultOptions = defaultOptions;
 	}
+
 	public SkillDataStore getPlayerSkillData(Player p) {
-		SkillDataStore skillData=null;
-		if (p!=null){
-			skillData=getPC(p).skillSet.get(getName());
+		SkillDataStore skillData = null;
+		if (p != null) {
+			//skillData = getPC(p).skillSet.get(getName());
+			skillData = getPC(p).getSkillData(getName());
 		}
 		return skillData;
 	}
 
 	public void setPlayerSkillData(SkillDataStore skillData, Player p) {
-		if (p!=null){
-			skillData=getPC(p).skillSet.put(getName(),skillData);
+		if (p != null) {
+			skillData = getPC(p).skillSet.put(getName(), skillData);
 		}
 	}
 
@@ -172,5 +175,4 @@ public abstract class Skill implements EventListener, Listener {
 	public void setLq(Main lq) {
 		this.lq = lq;
 	}
-
 }

@@ -35,6 +35,22 @@ skills:
         vars:
             damage: 5
             chance: 75.5
+    summoncow:
+        skillname: summon
+        level: 10
+        mana: 10
+        cooldown: 1000
+        vars:
+            entity: cow
+            qty: 2
+    summonpiggy:
+        skillname: summon
+        level: 20
+        mana: 20
+        cooldown: 1000
+        vars:
+            entity: pig
+            qty: 2    3       
 permskills:
     stats:
         level: 0
@@ -62,7 +78,8 @@ permskills:
         level: 0
         cost: 5
         cooldown: 6000
-        delay: 60
+        delay: 1000
+        buildup: 1000
         perm: essentials.jump
         command: jump
  

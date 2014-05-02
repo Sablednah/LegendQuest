@@ -64,6 +64,17 @@ public class PlayerEvents implements Listener {
 		p.setMaxHealth(pc.maxHP);
 		p.setHealth(pc.health);
 		pc.healthCheck();
+
+		/*
+		 * Location l = p.getLocation(); Chunk c = l.getChunk();
+		 * 
+		 * int x = c.getX(); int z = c.getZ();
+		 * 
+		 * if (Main.debugMode) { for (int i = -10; i < 11; i++) { for (int j = -10; j < 11; j++) { Chunk chunk =
+		 * p.getWorld().getChunkAt(x + i, z + j); Entity[] ents = chunk.getEntities(); for (Entity e : ents) { if
+		 * (e.getType() == EntityType.IRON_GOLEM) { System.out.print("removing Golem from:" + i + " , " + j);
+		 * e.remove(); } } } } }
+		 */
 	}
 
 	// set to monitor - we can't change the quit - just want to clean our data up.

@@ -45,6 +45,7 @@ public class SkillDataStore {
 	private boolean					isActive		= false;
 
 	private SkillPhase				phase			= SkillPhase.READY;
+	public String					aliasedname		= null;
 
 	public SkillDataStore(ConfigurationSection conf) {
 		readConfigInfo(conf);
@@ -112,13 +113,11 @@ public class SkillDataStore {
 				while (entries.hasNext()) {
 					Entry<String, Object> entry = entries.next();
 					Object data = (Object) entry.getValue();
-					System.out.print("Loading " + this.name + " Skill vars: " + entry.getKey() + " - " + data);
 					vars.put(entry.getKey(), data);
 				}
 
 			}
 		}
-		System.out.print("skill dataset loaded: " + this.name + "|" + this.skillPoints + "|" + this.levelRequired + "|" + this.delay + "|" + this.duration + "|" + this.cooldown);
 	}
 
 	public SkillPhase checkPhase() {
@@ -157,8 +156,6 @@ public class SkillDataStore {
 
 	public void startperms(Main lq, Player p) {
 		if (permission != null && (!permission.isEmpty())) {
-			System.out.print("[skill tick] datastore starting skill perm: " + permission);
-
 			if (lq.players.permissions.containsKey(p.getUniqueId().toString() + permission)) {
 				p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + permission));
 				lq.players.permissions.remove(p.getUniqueId().toString() + permission);
@@ -181,8 +178,8 @@ public class SkillDataStore {
 			}
 		}
 
-		//pay for stuff
-		if (consumes!=null) {
+		// pay for stuff
+		if (consumes != null) {
 			if (!activePlayer.payItem(consumes)) {
 				p.sendMessage(lq.configLang.skillLackOfItem);
 				isCanceled = true;
@@ -191,18 +188,18 @@ public class SkillDataStore {
 				return false;
 			}
 		}
-		
+
 		// run the start command if any.
-		System.out.print("[skill tick] starting skill command: " + startCommand);
 		if (startCommand != null && (!startCommand.isEmpty())) {
-			System.out.print("[skill tick] datastore starting skill command: " + startCommand);
 			lq.getServer().dispatchCommand(p, startCommand);
-			Skill skillClass = lq.skills.skillList.get(name);
-			if (skillClass != null) {
-				// CommandResult result =
-				skillClass.onCommand();
-			}
 		}
+
+		Skill skillClass = lq.skills.skillList.get(name.toLowerCase());
+		if (skillClass != null) {
+			// CommandResult result =
+			skillClass.onCommand(p);
+		}
+
 		return true;
 	}
 
@@ -245,4 +242,13 @@ public class SkillDataStore {
 	public void setPhase(SkillPhase phase) {
 		this.phase = phase;
 	}
+
+	public String getAliasedname() {
+		return aliasedname;
+	}
+
+	public void setAliasedname(String aliasedname) {
+		this.aliasedname = aliasedname;
+	}
+
 }

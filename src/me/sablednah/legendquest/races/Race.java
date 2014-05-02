@@ -33,11 +33,11 @@ public class Race {
 	public List<Material>		dissallowedArmour;
 	public List<Material>		dissallowedWeapons;
 
-	public boolean				stopCrafting;
-	public boolean				stopSmelting;
-	public boolean				stopBrewing;
-	public boolean				stopEnchating;
-	public boolean				stopRepairing;
+	public boolean				allowCrafting;
+	public boolean				allowSmelting;
+	public boolean				allowBrewing;
+	public boolean				allowEnchating;
+	public boolean				allowRepairing;
 
 	// frequency used for NPC chance.
 	public int					frequency;

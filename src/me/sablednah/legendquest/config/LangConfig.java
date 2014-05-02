@@ -115,12 +115,12 @@ public class LangConfig extends Config {
 	public String					skillBuildupDisturbed	= "cancelled due to movement! Stay still...";
 	public String					skillLackOfMana			= "Sorry not enough mana.";
 	public String					skillLackOfItem			= "Sorry you cant use that skill, you need ";
-	
+
 	public String					skillCooldown			= "Skill cooling down.";
 	public String					skillDelayed			= "Skill Delayed.";
 	public String					skillBuilding			= "Skill Building...";
 	public String					skillActive				= "Skill Already Active.";
-	
+
 	public String					skillLinkEmptyHand		= "Cannot link Skill to empty hand";
 	public String					skillLinked				= " skill linked to item ";
 	public String					skillLinkList			= "You have the following skill links: ";
@@ -129,6 +129,7 @@ public class LangConfig extends Config {
 	public String					skillPointsNoSkill		= "Please specify a skill to buy";
 	public String					skillCommandLineUse		= "Using skill: ";
 	public String					skillLinkUse			= "Using Linked skill: ";
+	public String					skillInvalid			= "Sorry you cant use: ";
 
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
@@ -179,13 +180,8 @@ public class LangConfig extends Config {
 		this.helpCommand = this.getConfigItem("helpCommand", this.helpCommand);
 
 		ConfigurationSection commandHelpSection = this.getConfigItem("cmdHelp");
-		// System.out.print(commandHelpSection);
-
 		Map<String, Object> vals = commandHelpSection.getValues(false);
-		// System.out.print(vals);
-
 		Set<Entry<String, Object>> eset = vals.entrySet();
-		// System.out.print(eset);
 
 		final Iterator<Entry<String, Object>> entries = eset.iterator();
 		while (entries.hasNext()) {
@@ -234,7 +230,7 @@ public class LangConfig extends Config {
 		this.skillDelayed = this.getConfigItem("skillDelayed", this.skillDelayed);
 		this.skillBuilding = this.getConfigItem("skillBuilding", this.skillBuilding);
 		this.skillActive = this.getConfigItem("skillActive", this.skillActive);
-	
+
 		this.skillLackOfMana = this.getConfigItem("skillLackOfMana", this.skillLackOfMana);
 		this.skillLackOfItem = this.getConfigItem("skillLackOfItem", this.skillLackOfItem);
 		this.skillLinkEmptyHand = this.getConfigItem("skillLinkEmptyHand", this.skillLinkEmptyHand);
@@ -244,6 +240,6 @@ public class LangConfig extends Config {
 		this.skillPointsNoSkill = this.getConfigItem("skillPointsNoSkill", this.skillPointsNoSkill);
 		this.skillCommandLineUse = this.getConfigItem("skillCommandLineUse", this.skillCommandLineUse);
 		this.skillLinkUse = this.getConfigItem("skillLinkUse", this.skillLinkUse);
-
+		this.skillInvalid = this.getConfigItem("skillInvalid", this.skillInvalid);
 	}
 }

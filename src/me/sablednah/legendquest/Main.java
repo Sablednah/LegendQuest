@@ -33,7 +33,7 @@ public class Main extends JavaPlugin {
 	public DebugLog				debug;
 
 	// TODO switch test flag bor live
-	public static final Boolean	debugMode	= true;
+	public static final Boolean	debugMode	= false;
 	public static final int		MAX_XP		= 58245;
 	public static final int		MAX_LEVEL	= 150;
 

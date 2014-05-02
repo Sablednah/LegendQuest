@@ -1,5 +1,7 @@
 package me.sablednah.legendquest.skills;
 
+import org.bukkit.entity.Player;
+
 @SkillManifest(
 		name = "Brawler", 
 		type = SkillType.TRIGGERED, 
@@ -40,7 +42,7 @@ public class PluginSkill extends Skill {
 
 
     @Override
-    public CommandResult onCommand() {
+    public CommandResult onCommand(Player player) {
         // TODO Auto-generated method stub
         return CommandResult.NOTAVAILABLE;
     }
