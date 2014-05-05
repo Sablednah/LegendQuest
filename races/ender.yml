@@ -5,6 +5,10 @@ frequency: 10
 default: false
 perm: legendquest.race.ender
 basehealth: 30
+
+baseMana: 10
+manaPerSecond: 2
+
 statmods:
   str: 2
   dex: 1
@@ -12,6 +16,32 @@ statmods:
   wis: 2
   con: -2
   chr: -2
+
+allowCrafting: false
+allowSmelting: false
+allowBrewing: false
+allowEnchating: true
+allowRepairing: false
+
 groups:
   - Humanoid
   - Ender
+
+skillPoints: 10
+skillPointsPerLevel: 0.1
+
+permskills:
+    blinker:
+        level: 0
+        cost: 0
+        perm: essentials.teleport.timer.bypass
+        type: PASSIVE
+    blink:
+        level: 0
+        cost: 10
+        cooldown: 60000
+        delay: 1000
+        buildup: 1000
+        perm: essentials.jump
+        command: jump
+  

@@ -33,16 +33,20 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
         final boolean isPlayer = (sender instanceof Player);
         String targetName = null;
 
-        if (isPlayer) {
-            targetName = sender.getName();
-        } else {
-            if (args.length > 0) {
-                targetName = args[0];
-            } else {
-                sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidArgumentsCommand);
-                return true;
-            }
-        }
+		if (args.length > 0) {
+			targetName = args[0];
+		} else {
+			if (isPlayer) {
+		        if (!lq.validWorld(((Player)sender).getWorld().getName())) {
+		        	((Player)sender).sendMessage(lq.configLang.invalidWorld);
+		        	return true;
+		        }
+				targetName = sender.getName();
+			} else {
+				sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidArgumentsCommand);
+				return true;
+			}
+		}
 
         PC pc = null;
         if (targetName != null) {

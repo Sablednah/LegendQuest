@@ -16,61 +16,71 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class AbilityControlEvents implements Listener {
 
-    public Main lq;
+	public Main	lq;
 
-    public AbilityControlEvents(final Main p) {
-        this.lq = p;
-    }
+	public AbilityControlEvents(final Main p) {
+		this.lq = p;
+	}
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onCraft(CraftItemEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) {
-            return;
-        }
-        Player p = (Player) event.getWhoClicked();
-        PC pc = lq.players.getPC(p);
-        Result r = event.getResult();
-        // next line IF we do PER item blocking..
-        // int id = event.getRecipe().getResult().getTypeId();
-        if (r != null) {
-            if (!pc.canCraft()) {
-                event.setResult(Result.DENY);
-                p.sendMessage(lq.configLang.cantCraft);
-            }
-        }
-    }
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void onCraft(CraftItemEvent event) {
+		if (!(event.getWhoClicked() instanceof Player)) {
+			return;
+		}
+		Player p = (Player) event.getWhoClicked();
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void Control(PlayerInteractEvent event) {
-        Player p = event.getPlayer();
-        PC pc = lq.players.getPC(p);
-        Block tb = event.getClickedBlock();
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
 
-        if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) && (tb != null)) {
-            if (tb.getType() == Material.BREWING_STAND) {
-                if (!pc.canBrew()) {
-                    event.setCancelled(true);
-                    p.sendMessage(lq.configLang.cantBrew);
-                }
-            }
-            if (tb.getType() == Material.ENCHANTMENT_TABLE) {
-                if (!pc.canEnchant()) {
-                    event.setCancelled(true);
-                    p.sendMessage(lq.configLang.cantEnchant);
-                }
-            }
-            if (tb.getType() == Material.FURNACE) {
-                if (!pc.canSmelt()) {
-                    event.setCancelled(true);
-                    p.sendMessage(lq.configLang.cantSmelt);
-                }
-            }
-            if (tb.getType() == Material.ANVIL) {
-                if (!pc.canRepair()) {
-                    event.setCancelled(true);
-                    p.sendMessage(lq.configLang.cantRepair);
-                }
-            }
-        }
-    }
+		PC pc = lq.players.getPC(p);
+		Result r = event.getResult();
+		// next line IF we do PER item blocking..
+		// int id = event.getRecipe().getResult().getTypeId();
+		if (r != null) {
+			if (!pc.canCraft()) {
+				event.setResult(Result.DENY);
+				p.sendMessage(lq.configLang.cantCraft);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void Control(PlayerInteractEvent event) {
+		Player p = event.getPlayer();
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
+		PC pc = lq.players.getPC(p);
+		Block tb = event.getClickedBlock();
+
+		if ((event.getAction() == Action.RIGHT_CLICK_BLOCK) && (tb != null)) {
+			if (tb.getType() == Material.BREWING_STAND) {
+				if (!pc.canBrew()) {
+					event.setCancelled(true);
+					p.sendMessage(lq.configLang.cantBrew);
+				}
+			}
+			if (tb.getType() == Material.ENCHANTMENT_TABLE) {
+				if (!pc.canEnchant()) {
+					event.setCancelled(true);
+					p.sendMessage(lq.configLang.cantEnchant);
+				}
+			}
+			if (tb.getType() == Material.FURNACE) {
+				if (!pc.canSmelt()) {
+					event.setCancelled(true);
+					p.sendMessage(lq.configLang.cantSmelt);
+				}
+			}
+			if (tb.getType() == Material.ANVIL) {
+				if (!pc.canRepair()) {
+					event.setCancelled(true);
+					p.sendMessage(lq.configLang.cantRepair);
+				}
+			}
+		}
+	}
 }

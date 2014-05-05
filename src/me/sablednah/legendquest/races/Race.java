@@ -20,6 +20,7 @@ public class Race {
 	public int					statCon;
 	public int					statChr;
 	public int					baseHealth;
+	
 	public int					baseMana;
 	public int					manaPerSecond;
 

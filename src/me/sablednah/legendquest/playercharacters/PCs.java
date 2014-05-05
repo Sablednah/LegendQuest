@@ -14,14 +14,20 @@ import me.sablednah.legendquest.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.ComplexEntityPart;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Skeleton.SkeletonType;
+import org.bukkit.entity.Slime;
 import org.bukkit.permissions.PermissionAttachment;
 
 public class PCs {
 
 	public Main										lq;
-	public Map<UUID, PC>							activePlayers	= new HashMap<UUID, PC>();
-	public HashMap<String, PermissionAttachment>	permissions		= new HashMap<String, PermissionAttachment>();
+	public Map<UUID, PC>							activePlayers		= new HashMap<UUID, PC>();
+	public HashMap<String, PermissionAttachment>	permissions			= new HashMap<String, PermissionAttachment>();
 
 	public PCs(Main p) {
 		this.lq = p;
@@ -90,7 +96,8 @@ public class PCs {
 				String key = it.next();
 				PermissionAttachment val = lq.players.permissions.get(key);
 				if (key.startsWith(uuid.toString())) {
-					p.removeAttachment(val);
+					// p.removeAttachment(val);
+					val.remove();
 					it.remove();
 				}
 			}
@@ -306,4 +313,141 @@ public class PCs {
 			}
 		}
 	}
+
+	public double getSize(Entity entity) {
+		double size = 1.6D;
+
+		EntityType type = entity.getType();
+		if (type == EntityType.COMPLEX_PART) {
+			type = ((ComplexEntityPart) entity).getParent().getType();
+		}
+		switch (type) {
+			case PLAYER:
+				PC pc = getPC((Player) entity);
+				if (pc != null) {
+					size = pc.race.size;
+				} else {
+					size = 1.875D;
+				}
+				break;
+			case GIANT:
+				size = 12.0D;
+				break;
+			case GHAST:
+				size = 7.5D;
+				break;
+			case ENDER_DRAGON:
+				// height = 3.7 - using largest to allow for size in other dimensions
+				size = 7.0D;
+				break;
+			case ENDERMAN:
+				size = 2.9D;
+				break;
+			case WITHER:
+				size = 2.8D;
+				break;
+			case IRON_GOLEM:
+				size = 2.7D;
+				break;
+			case SKELETON:
+				if (((Skeleton) entity).getSkeletonType() == SkeletonType.WITHER) {
+					size = 2.4D;
+				} else {
+					size = 2.0D;
+				}
+				break;
+			case WITCH:
+			case PIG_ZOMBIE:
+			case ZOMBIE:
+			case VILLAGER:
+			case SQUID:
+				size = 2.0D;
+				break;
+			case SNOWMAN:
+				size = 1.9D;
+				break;
+			case MUSHROOM_COW:
+				size = 1.8D;
+				break;
+			case CREEPER:
+				size = 1.6D;
+				break;
+			case HORSE:
+				size = 1.6D;
+				break;
+			case COW:
+				size = 1.5D;
+				break;
+			case BLAZE:
+				size = 1.4D;
+				break;
+			case SHEEP:
+				size = 1.4D;
+				break;
+			case SPIDER:
+				size = 1.2D;
+			case PIG:
+			case WOLF:
+				size = 1.0D;
+				break;
+			case OCELOT:
+				size = 0.9D;
+				break;
+			case CHICKEN:
+			case CAVE_SPIDER:
+				size = 0.6D;
+				break;
+			case SILVERFISH:
+			case BAT:
+				size = 0.4D;
+				break;
+			case MAGMA_CUBE:
+			case SLIME:
+				Slime s = (Slime)entity;
+				size = s.getSize()*0.5D;
+				break;
+			/* non typical entities just in case */
+			case FALLING_BLOCK:
+			case PRIMED_TNT:
+			case MINECART:
+			case MINECART_COMMAND:
+			case MINECART_HOPPER:
+			case MINECART_MOB_SPAWNER:
+			case MINECART_CHEST:
+			case MINECART_TNT:
+			case MINECART_FURNACE:
+			case ITEM_FRAME:
+			case WITHER_SKULL:
+			case ENDER_CRYSTAL:
+			case BOAT:
+				size = 1.0D;
+				break;
+			/* tiny stuff */
+			case DROPPED_ITEM:
+			case EXPERIENCE_ORB:
+			case LEASH_HITCH:
+			case SNOWBALL:
+			case ARROW:
+			case FIREBALL:
+			case ENDER_PEARL:
+			case ENDER_SIGNAL:
+			case FIREWORK:
+			case THROWN_EXP_BOTTLE:
+			case SPLASH_POTION:
+			case EGG:
+			case FISHING_HOOK:
+				size = 0.3D;
+				break;
+			case PAINTING:
+				size = 2.0D;
+			case UNKNOWN:
+			default:
+				size = 1.875D;
+		}
+		return size;
+	}
+
 }
+/*
+ *         
+ */

@@ -621,7 +621,7 @@ public class PC {
 		lq.logger.info("className (" + className + ")...");
 		if (xpEarnt.containsKey(className.toLowerCase())) {
 			lq.logger.info("className (" + className + "): " + xpEarnt.get(className.toLowerCase()));
-			if (xpEarnt.get(className.toLowerCase()) >= Main.MAX_XP) {
+			if (xpEarnt.get(className.toLowerCase()) >= lq.configMain.max_xp) {
 				return true;
 			}
 		}

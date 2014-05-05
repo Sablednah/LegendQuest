@@ -23,7 +23,7 @@ public class CmdPlurals implements CommandExecutor {
         } else if (label.equalsIgnoreCase("classes")) {
             newcmd = new CmdClass(lq);
             return newcmd.onCommand(sender, command, label, newArglist);
-        } else if (label.equalsIgnoreCase("racess")) {
+        } else if (label.equalsIgnoreCase("races")) {
             newcmd = new CmdRace(lq);
             return newcmd.onCommand(sender, command, label, newArglist);
         } else if (label.equalsIgnoreCase("links")) {

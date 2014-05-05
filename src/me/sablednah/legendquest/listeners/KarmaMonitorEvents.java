@@ -34,6 +34,9 @@ public class KarmaMonitorEvents implements Listener {
 
             if ((e.getDamager() instanceof Player)) {
                 final Player p = (Player) e.getDamager();
+        		if (!lq.validWorld(p.getWorld().getName())) {
+        			return;
+        		}
                 final PC pc = lq.players.getPC(p);
 
                 Entity target = e.getEntity();
@@ -57,6 +60,11 @@ public class KarmaMonitorEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDeath(EntityDeathEvent event) {
         Entity target = event.getEntity();
+
+        if (!lq.validWorld(target.getWorld().getName())) {
+			return;
+		}
+
         EntityDamageEvent e = target.getLastDamageCause();
         
         ProjectileSource attacker = null;

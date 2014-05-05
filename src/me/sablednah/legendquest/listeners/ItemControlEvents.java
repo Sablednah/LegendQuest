@@ -39,6 +39,11 @@ public class ItemControlEvents implements Listener {
         }
 
         final Player p = (Player) e.getDamager();
+        
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+        
         final PC pc = lq.players.getPC(p);
         final Material itemUsed = p.getItemInHand().getType();
 
@@ -57,6 +62,11 @@ public class ItemControlEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event) {
         final Player p = event.getPlayer();
+
+        if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
         final PC pc = lq.players.getPC(p);
         final Material itemUsed = p.getItemInHand().getType();
         if (itemUsed != null) {
@@ -78,6 +88,11 @@ public class ItemControlEvents implements Listener {
             return;
         }
         final Player p = (Player) event.getEntity();
+
+        if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
         final PC pc = lq.players.getPC(p);
 
         if (!pc.allowedWeapon(Material.BOW)) {
@@ -90,6 +105,11 @@ public class ItemControlEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEggFire(final PlayerEggThrowEvent event) {
         final Player p = event.getPlayer();
+        
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
         final PC pc = lq.players.getPC(p);
 
         if (!pc.allowedWeapon(Material.EGG)) {
@@ -102,6 +122,11 @@ public class ItemControlEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract(final PlayerInteractEvent event) {
         final Player p = event.getPlayer();
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+		
         final PC pc = lq.players.getPC(p);
         final Material itemUsed = p.getItemInHand().getType();
         final Action act = event.getAction();
@@ -122,7 +147,12 @@ public class ItemControlEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInvClick(final InventoryClickEvent event) {
         final Player p = (Player) event.getWhoClicked();
-        final PC pc = lq.players.getPC(p);
+        
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
+		final PC pc = lq.players.getPC(p);
         // detect auto armour equip...
         if (event.isShiftClick()) {
             lq.debug.fine("Shift Click used in admin armour by " + p.getDisplayName());
@@ -153,6 +183,11 @@ public class ItemControlEvents implements Listener {
             return;
         }
         final Player p = (Player) event.getPlayer();
+		
+        if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+        
         final PC pc = lq.players.getPC(p);
         // pc.scheduleCheckInv();
         pc.checkInv();
@@ -166,6 +201,9 @@ public class ItemControlEvents implements Listener {
             return;
         }
         final Player p = (Player) bullit.getShooter();
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
         final PC pc = lq.players.getPC(p);
 
         switch (bullit.getType()) {

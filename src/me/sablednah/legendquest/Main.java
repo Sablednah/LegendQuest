@@ -1,5 +1,6 @@
 package me.sablednah.legendquest;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -32,10 +33,8 @@ public class Main extends JavaPlugin {
 	public PCs					players;
 	public DebugLog				debug;
 
-	// TODO switch test flag bor live
+	// TODO switch test flag for live
 	public static final Boolean	debugMode	= false;
-	public static final int		MAX_XP		= 58245;
-	public static final int		MAX_LEVEL	= 150;
 
 	public void log(final String msg) {
 		logger.info(msg);
@@ -123,19 +122,88 @@ public class Main extends JavaPlugin {
 		getCommand("roll").setExecutor(new CmdRoll(this));
 		getCommand("hp").setExecutor(new CmdHP(this));
 		getCommand("link").setExecutor(new CmdLink(this));
-		
+
 		getCommand("plurals").setExecutor(new CmdPlurals(this));
 
-//		getCommand("skills").setExecutor(new CmdPlurals(this));
-//		getCommand("classes").setExecutor(new CmdPlurals(this));
-//		getCommand("races").setExecutor(new CmdPlurals(this));
-//		getCommand("links").setExecutor(new CmdPlurals(this));
-//		getCommand("binds").setExecutor(new CmdPlurals(this));
-		
+		// getCommand("skills").setExecutor(new CmdPlurals(this));
+		// getCommand("classes").setExecutor(new CmdPlurals(this));
+		// getCommand("races").setExecutor(new CmdPlurals(this));
+		// getCommand("links").setExecutor(new CmdPlurals(this));
+		// getCommand("binds").setExecutor(new CmdPlurals(this));
 
 		// Mana ticker
 		getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), 20, 20);
 
 	}
 
+	public MainConfig getConfigMain() {
+		return configMain;
+	}
+
+	public void setConfigMain(MainConfig configMain) {
+		this.configMain = configMain;
+	}
+
+	public LangConfig getConfigLang() {
+		return configLang;
+	}
+
+	public void setConfigLang(LangConfig configLang) {
+		this.configLang = configLang;
+	}
+
+	public DataConfig getConfigData() {
+		return configData;
+	}
+
+	public void setConfigData(DataConfig configData) {
+		this.configData = configData;
+	}
+
+	public SkillConfig getConfigSkills() {
+		return configSkills;
+	}
+
+	public void setConfigSkills(SkillConfig configSkills) {
+		this.configSkills = configSkills;
+	}
+
+	public SkillPool getSkills() {
+		return skills;
+	}
+
+	public void setSkills(SkillPool skills) {
+		this.skills = skills;
+	}
+
+	public Races getRaces() {
+		return races;
+	}
+
+	public void setRaces(Races races) {
+		this.races = races;
+	}
+
+	public Classes getClasses() {
+		return classes;
+	}
+
+	public void setClasses(Classes classes) {
+		this.classes = classes;
+	}
+
+	public PCs getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(PCs players) {
+		this.players = players;
+	}
+
+	public boolean validWorld(String worldName) {
+		ArrayList<String> worldList = configMain.worlds; 
+		if (worldList == null) { return true; }
+		if (worldList.isEmpty()) { return true; }
+		return worldList.contains(worldName);
+	}
 }

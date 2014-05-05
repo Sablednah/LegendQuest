@@ -57,6 +57,7 @@ public class SetExp {
         return level;
     }
 
+
     public static int getTotalExperience(final Player player) {
         int exp = Math.round(getExpAtLevel(player) * player.getExp());
         int currentLevel = player.getLevel();

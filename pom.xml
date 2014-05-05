@@ -2,7 +2,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>LegendQuest</groupId>
   <artifactId>LegendQuest</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>LegendQuest</name>
   <description>RPG plugin for Bukkit/MineCraft</description>
   <url>dev.bukkit.org/bukkit-plugins/legendquest/</url>
@@ -145,4 +144,5 @@
       <system>jenkins</system>
       <url>http://sabletopia.co.uk:8080/jenkins/</url>
   </ciManagement>
+  <version>1.1.0</version>
 </project>

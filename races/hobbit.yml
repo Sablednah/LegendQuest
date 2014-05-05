@@ -4,8 +4,10 @@ size: 1.0
 frequency: 200
 default: false
 basehealth: 10
-baseMana: 100
-manaPerSecond: 2
+
+baseMana: 10
+manaPerSecond: 1
+
 statmods:
   str: -1
   dex: 1
@@ -13,14 +15,23 @@ statmods:
   wis: 0
   con: 0
   chr: 0
+
+allowCrafting: true
+allowSmelting: false
+allowBrewing: false
+allowEnchating: false
+allowRepairing: false
+
 groups:
   - Humanoid
 dissallowedWeapons:
   - NONE
 dissallowedArmour:
   - BOOTS
+  
 skillPoints: 10
 skillPointsPerLevel: 0.1
+
 skills:
     dodge:
         level: 0

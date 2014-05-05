@@ -4,6 +4,10 @@ size: 1.6
 frequency: 1000
 default: false
 basehealth: 20
+
+baseMana: 10
+manaPerSecond: 1
+
 statmods:
   str: 0
   dex: 0
@@ -11,5 +15,16 @@ statmods:
   wis: 0
   con: 0
   chr: 0
+
+allowCrafting: true
+allowSmelting: false
+allowBrewing: false
+allowEnchating: false
+allowRepairing: false
+
 groups:
   - Humanoid
+  
+skillPoints: 12
+skillPointsPerLevel: 0.2
+  

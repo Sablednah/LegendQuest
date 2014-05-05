@@ -44,6 +44,12 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 
 		// only players left here
 		Player p = (Player) sender;
+		
+        if (!lq.validWorld(p.getWorld().getName())) {
+        	p.sendMessage(lq.configLang.invalidWorld);
+        	return true;
+        }
+
 		PC pc = lq.players.getPC(p);
 		pc.checkSkills();
 		if (args.length < 1) { // why am i worried about negative argument length ? le-sigh

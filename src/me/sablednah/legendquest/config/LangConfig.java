@@ -130,6 +130,7 @@ public class LangConfig extends Config {
 	public String					skillCommandLineUse		= "Using skill: ";
 	public String					skillLinkUse			= "Using Linked skill: ";
 	public String					skillInvalid			= "Sorry you cant use: ";
+	public String					invalidWorld			= "Sorry you are not in a valid LegendQuest world";
 
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");

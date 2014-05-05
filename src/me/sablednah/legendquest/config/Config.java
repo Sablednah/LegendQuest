@@ -70,35 +70,35 @@ public class Config {
     }
 
     public boolean getConfigItem(final String name, final boolean defaultConfig) {
-        lq.debug.fine(name + " is :" + defaultConfig + " |boolean");
+        lq.debug.fine(name + " is :" + defaultConfig + " [boolean]");
         config.addDefault(name, defaultConfig);
         final boolean output = config.getBoolean(name, defaultConfig);
         return output;
     }
 
     public double getConfigItem(final String name, final double defaultConfig) {
-        lq.debug.fine(name + " is :" + defaultConfig + " |boolean");
+        lq.debug.fine(name + " is :" + defaultConfig + " [boolean]");
         config.addDefault(name, defaultConfig);
         final double output = config.getDouble(name, defaultConfig);
         return output;
     }
 
     public int getConfigItem(final String name, final int defaultConfig) {
-        lq.debug.fine(name + " is :" + defaultConfig + " |int");
+        lq.debug.fine(name + " is :" + defaultConfig + " [int]");
         config.addDefault(name, defaultConfig);
         final int output = config.getInt(name, defaultConfig);
         return output;
     }
 
     public List<?> getConfigItem(final String name, final List<?> defaultConfig) {
-        lq.debug.fine(name + " is :" + defaultConfig + " |list");
+        lq.debug.fine(name + " is :" + defaultConfig + " [list]");
         config.addDefault(name, defaultConfig);
         final List<?> output = config.getList(name, defaultConfig);
         return output;
     }
 
     public String getConfigItem(final String name, final String defaultConfig) {
-        lq.debug.fine(name + " is :" + defaultConfig + " |str");
+        lq.debug.fine(name + " is :" + defaultConfig + " [string]");
         config.addDefault(name, defaultConfig);
         final String output = config.getString(name, defaultConfig);
         return output;

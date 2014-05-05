@@ -2,6 +2,11 @@ name: Ranger
 frequency: 600
 default: false
 healthperlevel: 0.2
+
+manaBonus: 10
+manaPerSecond: 2
+manaPerLevel: 0.2
+
 statmods:
   str: 0
   dex: 2
@@ -9,8 +14,35 @@ statmods:
   wis: 1
   con: 0
   chr: 1
+
 allowedRaces:
   - human
   - hobbit
 allowedGroups:
   - Elvish
+
+allowedWeapons:
+  - bow
+  - WOOD_SWORD
+  - STONE_SWORD
+allowedTools:
+  - axes
+  - spades
+  - hoes
+  - woodtools
+  
+skills:
+    dodge:
+        level: 1
+        cost: 0
+        vars:
+            soakchance: 50.0
+            soak: 4
+            dodgemod: 5
+    brawler:
+        level: 0
+        cost: 10
+        vars:
+            damage: 3
+            chance: 75.5
+  

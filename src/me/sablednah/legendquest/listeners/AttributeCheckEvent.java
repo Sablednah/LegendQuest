@@ -34,6 +34,11 @@ public class AttributeCheckEvent implements Listener {
             int charismaMod = 0;
             
             final Player p = (Player) event.getPlayer();
+            
+    		if (!lq.validWorld(p.getWorld().getName())) {
+    			return;
+    		}
+
             final PC pc = lq.players.getPC(p);
             if (pc != null) {
                 charismaMod = pc.getAttributeModifier(Attribute.CHR);
@@ -53,6 +58,11 @@ public class AttributeCheckEvent implements Listener {
     public void onEnchant(EnchantItemEvent event) {
         
         final Player p = (Player) event.getEnchanter();
+
+        if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+        
         final PC pc = lq.players.getPC(p);
         
         if (pc != null) {

@@ -32,6 +32,12 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
         }
         
         final Player p = (Player) sender;
+        
+        if (!lq.validWorld(p.getWorld().getName())) {
+        	p.sendMessage(lq.configLang.invalidWorld);
+        	return true;
+        }
+
         final PC pc = lq.players.getPC(p);
         
         if (args.length < 1) { // why am i worried about negative argument length ? le-sigh

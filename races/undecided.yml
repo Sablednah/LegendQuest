@@ -4,6 +4,10 @@ size: 1.6
 frequency: 0
 default: true
 basehealth: 10
+
+baseMana: 1
+manaPerSecond: 0
+
 statmods:
   str: 0
   dex: 0
@@ -11,5 +15,10 @@ statmods:
   wis: 0
   con: 0
   chr: 0
+  
 groups:
   - None
+  
+skillPoints: 0
+skillPointsPerLevel: 0
+

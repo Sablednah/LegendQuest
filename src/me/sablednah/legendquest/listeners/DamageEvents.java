@@ -32,6 +32,10 @@ public class DamageEvents implements Listener {
 		if (event.getEntityType() == EntityType.PLAYER) {
 			Player p = (Player) event.getEntity();
 
+			if (!lq.validWorld(p.getWorld().getName())) {
+				return;
+			}
+
 			double dmg = event.getDamage();
 			double newHealth = p.getHealth() - dmg;
 
@@ -55,6 +59,11 @@ public class DamageEvents implements Listener {
 			return;
 		}
 		Entity victim = event.getEntity();
+		
+		if (!lq.validWorld(victim.getWorld().getName())) {
+			return;
+		}
+		
 		PC victimPC = null;
 		if (victim instanceof Player) {
 			victimPC = lq.players.getPC((Player) victim);
@@ -62,9 +71,25 @@ public class DamageEvents implements Listener {
 		PC attackerPC = getTwistedInstigator(event.getDamager());
 		int hitchance = Difficulty.AVERAGE.getDifficulty();
 		int dodgechance = Difficulty.AVERAGE.getDifficulty();
-		
+
+		if (lq.configMain.useSizeForCombat) {
+			double atackerSize = lq.players.getSize(this.getTwistedInstigatorEntity(event.getDamager()));
+			double defenderSize = lq.players.getSize(victim);
+
+			// 1 difficulty per 0.5D size diference
+			int dif = (int) Math.round((defenderSize - atackerSize) / 0.5D);
+
+			if (dif > 5) {
+				dif = 5;
+			} else if (dif < -5) {
+				dif = -5;
+			}
+			hitchance = hitchance + dif;
+			dodgechance = dodgechance + dif;
+		}
+
 		boolean ranged = (event.getDamager() instanceof Projectile);
-		
+
 		CombatHitCheck e = new CombatHitCheck(hitchance, dodgechance, this.getTwistedInstigatorPlayer(event.getDamager()), victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
 		hitchance = e.getHitChance();
@@ -99,6 +124,11 @@ public class DamageEvents implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void checkDammage(EntityDamageEvent event) {
 		Entity victim = event.getEntity();
+		
+		if (!lq.validWorld(victim.getWorld().getName())) {
+			return;
+		}
+		
 		Entity damager = null;
 		boolean ranged = false;
 		PC pc = null;
@@ -116,7 +146,10 @@ public class DamageEvents implements Listener {
 				power = pc.getAttributeModifier(Attribute.STR);
 			}
 		}
-
+		if (Main.debugMode) {
+			System.out.print("power before: " + power);
+			System.out.print("dodge before: " + dodge);
+		}
 		CombatModifiers e = new CombatModifiers(power, dodge, damager, victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
 		power = e.getPower();
@@ -125,7 +158,10 @@ public class DamageEvents implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
+		if (Main.debugMode) {
+			System.out.print("power after: " + power);
+			System.out.print("dodge after: " + dodge);
+		}
 		double dmg = event.getDamage();
 		dmg = dmg + power - dodge;
 		event.setDamage(dmg);
@@ -143,7 +179,7 @@ public class DamageEvents implements Listener {
 		}
 		return pc;
 	}
-	
+
 	public Player getTwistedInstigatorPlayer(Entity atacker) {
 		if (atacker instanceof Projectile) {
 			Projectile bullit = (Projectile) atacker;
@@ -156,12 +192,23 @@ public class DamageEvents implements Listener {
 		return null;
 	}
 
+	public Entity getTwistedInstigatorEntity(Entity atacker) {
+		if (atacker instanceof Projectile) {
+			Projectile bullit = (Projectile) atacker;
+			return (Entity) bullit.getShooter();
+		}
+		return atacker;
+	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void healthGain(EntityRegainHealthEvent  event) {
+	public void healthGain(EntityRegainHealthEvent event) {
+		if (!lq.validWorld(event.getEntity().getWorld().getName())) {
+			return;
+		}
+
 		if (event.getEntity() instanceof Player) {
 			PC pc = lq.players.getPC((Player) event.getEntity());
-			if (pc!=null) {
+			if (pc != null) {
 				pc.scheduleHealthCheck();
 				lq.players.scheduleUpdate(((Player) event.getEntity()).getUniqueId());
 			}

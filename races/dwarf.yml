@@ -4,6 +4,10 @@ size: 1.2
 frequency: 400
 default: false
 basehealth: 24
+
+baseMana: 5
+manaPerSecond: 1
+
 statmods:
   str: 1
   dex: -1
@@ -11,6 +15,24 @@ statmods:
   wis: 0
   con: 2
   chr: -1
+
+allowCrafting: false
+allowSmelting: true
+allowBrewing: false
+allowEnchating: true
+allowRepairing: true
+
 groups:
   - Humanoid
   - Dwarven
+  
+skillPoints: 10
+skillPointsPerLevel: 0.2
+
+skills:
+    weaponmaster:
+        vars:
+            skillname: AxeMaster
+            chance: 90.5
+            damag: 3
+            weapons: "WOOD_AXE,STONE_AXE,IRON_AXE,GOLD_AXE,DIAMOND_AXE"

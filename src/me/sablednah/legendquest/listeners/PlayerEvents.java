@@ -8,6 +8,10 @@ import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.SetExp;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,6 +22,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class PlayerEvents implements Listener {
 
@@ -57,6 +62,11 @@ public class PlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onJoin(PlayerJoinEvent event) {
 		Player p = event.getPlayer();
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
 		UUID uuid = p.getUniqueId();
 		PC pc = lq.players.getPC(p);
 		lq.players.addPlayer(uuid, pc);
@@ -65,18 +75,50 @@ public class PlayerEvents implements Listener {
 		p.setHealth(pc.health);
 		pc.healthCheck();
 
-		/*
-		 * Location l = p.getLocation(); Chunk c = l.getChunk();
-		 * 
-		 * int x = c.getX(); int z = c.getZ();
-		 * 
-		 * if (Main.debugMode) { for (int i = -10; i < 11; i++) { for (int j = -10; j < 11; j++) { Chunk chunk =
-		 * p.getWorld().getChunkAt(x + i, z + j); Entity[] ents = chunk.getEntities(); for (Entity e : ents) { if
-		 * (e.getType() == EntityType.IRON_GOLEM) { System.out.print("removing Golem from:" + i + " , " + j);
-		 * e.remove(); } } } } }
-		 */
-	}
+		Location l = p.getLocation();
+		Chunk c = l.getChunk();
 
+		int x = c.getX();
+		int z = c.getZ();
+
+		if (Main.debugMode) {
+			for (int i = -10; i < 11; i++) {
+				for (int j = -10; j < 11; j++) {
+					Chunk chunk = p.getWorld().getChunkAt(x + i, z + j);
+					Entity[] ents = chunk.getEntities();
+					for (Entity e : ents) {
+						if (e.getType() == EntityType.IRON_GOLEM) {
+							System.out.print("removing Golem from:" + i + " , " + j);
+							e.remove();
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// set to monitor - we're not gonna change the port, only load our data
+	// this loads PC data if players swich to/from a non LQ world 
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPort(PlayerTeleportEvent event) {
+		Player p = event.getPlayer();
+
+		if (!lq.validWorld(event.getTo().getWorld().getName())) {
+			return;
+		} else {
+			if (!lq.validWorld(p.getWorld().getName())) {
+				//from invalid word to valid world
+				UUID uuid = p.getUniqueId();
+				PC pc = lq.players.getPC(p);
+				lq.players.addPlayer(uuid, pc);
+				p.setTotalExperience(pc.currentXP);
+				p.setMaxHealth(pc.maxHP);
+				p.setHealth(pc.health);
+				pc.healthCheck();
+			}
+		}
+	}
+	
 	// set to monitor - we can't change the quit - just want to clean our data up.
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onQuit(PlayerQuitEvent event) {
@@ -94,6 +136,11 @@ public class PlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onRespawn(PlayerRespawnEvent event) {
 		Player p = event.getPlayer();
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+		
 		PC pc = lq.players.getPC(p);
 		lq.logWarn("currentXP: " + pc.currentXP);
 		int currentXP = SetExp.getTotalExperience(p);
@@ -109,8 +156,14 @@ public class PlayerEvents implements Listener {
 	// track EXP changes - and halve then if dual class
 	@EventHandler(priority = EventPriority.LOW)
 	public void onXPChange(PlayerExpChangeEvent event) {
-		int xpAmount = event.getAmount();
 		Player p = event.getPlayer();
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
+		int xpAmount = event.getAmount();
+
 		UUID uuid = p.getUniqueId();
 		PC pc = lq.players.getPC(uuid);
 
@@ -128,5 +181,4 @@ public class PlayerEvents implements Listener {
 			Bukkit.getServer().getPluginManager().callEvent(e);
 		}
 	}
-
 }

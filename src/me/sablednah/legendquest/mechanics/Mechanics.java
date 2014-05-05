@@ -3,6 +3,7 @@ package me.sablednah.legendquest.mechanics;
 import java.util.Random;
 
 //import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
 
@@ -28,10 +29,11 @@ public class Mechanics {
             stat = 10;
         }
         int result = (int) (stat/2)-5;
-  /*      if (Main.debugMode){
+
+        if (Main.debugMode){
             System.out.print("Attribute Mod ["+attr+"]: "+result);
-        }
-   */
+        } 
+
         return result;
     }
     
@@ -93,7 +95,7 @@ public class Mechanics {
         		return false;
         	}
         }
-    }
+    }    
 }
 
 /*

@@ -23,6 +23,11 @@ public class SkillLinkEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onInteract(final PlayerInteractEvent event) {
     	final Player p = event.getPlayer();
+
+    	if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
         final PC pc = lq.players.getPC(p);
         final Material itemUsed = p.getItemInHand().getType();
         final Action act = event.getAction();

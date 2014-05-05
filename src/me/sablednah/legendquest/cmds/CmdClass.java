@@ -37,6 +37,12 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
         
         // only players left here
         final Player p = (Player) sender;
+        
+        if (!lq.validWorld(p.getWorld().getName())) {
+        	p.sendMessage(lq.configLang.invalidWorld);
+        	return true;
+        }
+        
         final PC pc = lq.players.getPC(p);
         
         if (args.length < 1) { // why am i worried about negative argument length ? le-sigh
@@ -90,7 +96,7 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         // check for confirmation
                         boolean valid = false;
                         
-                        if (xpNow > Main.MAX_XP) {
+                        if (xpNow > lq.configMain.max_xp) {
                             valid = true;
                         }
                         
@@ -119,12 +125,12 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         // only rest XP if they have some worth bothering AND they are changing class - not setting
                         // non-default
                         
-                        if (xpNow > Main.MAX_XP) {
+                        if (xpNow > lq.configMain.max_xp) {
                             valid = true;
                         }
                         
                         int newxp = 0;
-                        if (p.getLevel() > 1 && xpNow < Main.MAX_XP) {
+                        if (p.getLevel() > 1 && xpNow < lq.configMain.max_xp) {
                             lq.debug.fine("Level is: " + p.getLevel());
                             if ((!sub && pc.mainClass != lq.classes.defaultClass) || (sub && pc.subClass != null)) {
                                 lq.debug.fine("resetting " + p.getName() + " XP: " + p.getTotalExperience() + " - "
@@ -156,10 +162,10 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         }
                         
                         // if mastered class - save this xp and check if target class is mastered.
-                        if (xpNow > Main.MAX_XP) {
+                        if (xpNow > lq.configMain.max_xp) {
                             pc.xpEarnt.put(oldClassname, xpNow);
                             
-                            if (newclassxp > Main.MAX_XP) {
+                            if (newclassxp > lq.configMain.max_xp) {
                                 pc.setXP(newclassxp);
                             } else {
                                 pc.setXP(0);

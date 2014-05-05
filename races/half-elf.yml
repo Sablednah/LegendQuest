@@ -4,13 +4,28 @@ size: 1.5
 frequency: 200
 default: false
 basehealth: 18
+
+baseMana: 12
+manaPerSecond: 2
+
 statmods:
   str: -1
   dex: 1
   int: 0
   wis: 0
   con: 0
-  chr: 0
+  chr: 0  
+
+allowCrafting: false
+allowSmelting: false
+allowBrewing: false
+allowEnchating: true
+allowRepairing: false
+  
 groups:
   - Humanoid
   - Elvish
+  
+skillPoints: 10
+skillPointsPerLevel: 0.1
+  

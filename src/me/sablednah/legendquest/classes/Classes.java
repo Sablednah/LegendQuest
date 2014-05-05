@@ -345,6 +345,9 @@ public class Classes {
 						}
 					}
 					
+					
+					
+					
 					// outsourced skills - skills without skill class - using command/on/off and perm nodes to achieve
 					// effect.
 					c.outsourcedSkills = new ArrayList<SkillDataStore>();
@@ -517,5 +520,10 @@ public class Classes {
 	public Map<String, ClassType> getClassTypes() {
 		return classTypes;
 	}
+	
+	public String getRandomClass(){
+		return wpmClasses.nextElt();
+	}
+
 
 }
