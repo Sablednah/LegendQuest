@@ -41,9 +41,11 @@ public class SkillLinkEvents implements Listener {
 						p.sendMessage(lq.configLang.skillStunned + linkedSkill);
 					} else {
 						p.sendMessage(lq.configLang.skillLinkUse + linkedSkill);
+/*
 						if (Main.debugMode) {
 							System.out.print(lq.configLang.skillLinkUse + linkedSkill);
 						}
+*/
 						pc.useSkill(linkedSkill);
 					}
 				}

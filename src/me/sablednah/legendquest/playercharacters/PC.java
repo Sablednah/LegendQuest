@@ -604,7 +604,7 @@ public class PC {
 	public HashMap<String, SkillDataStore> makeMap(List<SkillDataStore> in) {
 		HashMap<String, SkillDataStore> out = new HashMap<String, SkillDataStore>();
 		for (SkillDataStore item : in) {
-			System.out.print("skill map [ "+item.name+" | "+item.vars.toString()+" ]");
+			//System.out.print("skill map [ "+item.name+" | "+item.vars.toString()+" ]");
 			out.put(item.name, item);
 		}
 		return out;
