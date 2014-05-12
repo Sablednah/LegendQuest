@@ -5,9 +5,9 @@ import java.util.UUID;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.EnchantSkill;
 import me.sablednah.legendquest.events.Haggle;
+import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.mechanics.Attribute;
 import me.sablednah.legendquest.playercharacters.PC;
-import me.sablednah.legendquest.utils.SetExp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -47,7 +47,7 @@ public class AttributeCheckEvent implements Listener {
                 lq.getServer().getPluginManager().callEvent(e);
                 event = e.getEvent();
                 charismaMod = e.getCharismaMod();
-                
+
                 // TODO use modifier in some way!
             }
         }

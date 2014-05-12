@@ -3,6 +3,7 @@ package me.sablednah.legendquest.listeners;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.CombatHitCheck;
 import me.sablednah.legendquest.events.CombatModifiers;
+import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.mechanics.Attribute;
 import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
@@ -10,6 +11,7 @@ import me.sablednah.legendquest.playercharacters.PC;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -17,6 +19,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class DamageEvents implements Listener {
@@ -146,10 +149,12 @@ public class DamageEvents implements Listener {
 				power = pc.getAttributeModifier(Attribute.STR);
 			}
 		}
+/*
 		if (Main.debugMode) {
 			System.out.print("power before: " + power);
 			System.out.print("dodge before: " + dodge);
 		}
+*/
 		CombatModifiers e = new CombatModifiers(power, dodge, damager, victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
 		power = e.getPower();
@@ -158,10 +163,12 @@ public class DamageEvents implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+/*
 		if (Main.debugMode) {
 			System.out.print("power after: " + power);
 			System.out.print("dodge after: " + dodge);
 		}
+*/
 		double dmg = event.getDamage();
 		dmg = dmg + power - dodge;
 		event.setDamage(dmg);
@@ -205,7 +212,6 @@ public class DamageEvents implements Listener {
 		if (!lq.validWorld(event.getEntity().getWorld().getName())) {
 			return;
 		}
-
 		if (event.getEntity() instanceof Player) {
 			PC pc = lq.players.getPC((Player) event.getEntity());
 			if (pc != null) {
@@ -214,4 +220,27 @@ public class DamageEvents implements Listener {
 			}
 		}
 	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void onEntityDeath(EntityDeathEvent event) {
+		if (event.getEntity() instanceof LivingEntity) {
+			LivingEntity e = (LivingEntity)event.getEntity();
+//			EntityDamageEvent cause = e.getLastDamageCause();
+//			if (cause == EntityDamageEvent.) {
+			Player killer = e.getKiller();
+			if (killer!=null){
+				PC pc = lq.players.getPC(killer);
+				double mod = pc.getXPMod(ExperienceSource.KILL);
+				if (mod<=-100.0D) {
+					//no experience
+					event.setDroppedExp(0);
+				} else {
+					int xp = event.getDroppedExp();
+					xp = (int) (xp*((100.0D+mod)/100.0D));
+					event.setDroppedExp(xp);
+				}
+			}
+		}
+	}
+	
 }

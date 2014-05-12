@@ -51,21 +51,23 @@ public class SkillDataStore {
 		readConfigInfo(conf);
 	}
 
-	public SkillDataStore(SkillInfo defaults) {
-		this.name = defaults.name;
-		this.version = defaults.version;
-		this.type = defaults.type;
-		this.author = defaults.author;
-		this.description = defaults.description;
-		this.buildup = defaults.buildup;
-		this.delay = defaults.delay;
-		this.duration = defaults.duration;
-		this.cooldown = defaults.cooldown;
-		this.manaCost = defaults.manaCost;
-		this.levelRequired = defaults.levelRequired;
-		this.skillPoints = defaults.skillPoints;
-		this.consumes = defaults.consumes;
-		this.vars = defaults.vars;
+	public SkillDataStore(final SkillInfo defaults) {
+		this.name = defaults.getName();
+		this.version = defaults.getVersion();
+		this.type = defaults.getType();
+		this.author = defaults.getAuthor();
+		this.description = defaults.getDescription();
+		this.buildup = defaults.getBuildup();
+		this.delay = defaults.getDelay();
+		this.duration = defaults.getDuration();
+		this.cooldown = defaults.getCooldown();
+		this.manaCost = defaults.getManaCost();
+		this.levelRequired = defaults.getLevelRequired();
+		this.skillPoints = defaults.getSkillPoints();
+		this.consumes = defaults.getConsumes();
+		for (Entry<String, Object> var : defaults.getVars().entrySet()) {
+			this.vars.put(var.getKey(),var.getValue());
+		}
 	}
 
 	public void readConfigInfo(final ConfigurationSection conf) {
@@ -113,9 +115,20 @@ public class SkillDataStore {
 				while (entries.hasNext()) {
 					Entry<String, Object> entry = entries.next();
 					Object data = (Object) entry.getValue();
-					vars.put(entry.getKey(), data);
+					if (data instanceof Double) {
+						System.out.print("Var "+entry.getKey()+": "+data+" is double");
+						this.vars.put(entry.getKey(), (Double)data);
+					} else if (data instanceof Integer) {
+						System.out.print("Var "+entry.getKey()+": "+data+" is integer"); 
+						this.vars.put(entry.getKey(), (Integer)data);
+					} else if (data instanceof String) {
+						System.out.print("Var "+entry.getKey()+": "+data+" is string");
+						this.vars.put(entry.getKey(), (String)data);
+					} else {
+						System.out.print("Var "+entry.getKey()+": "+data+" is 'other'");
+						this.vars.put(entry.getKey(), data);
+					}
 				}
-
 			}
 		}
 	}

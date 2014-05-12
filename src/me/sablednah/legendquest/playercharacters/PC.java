@@ -12,10 +12,11 @@ import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
+import me.sablednah.legendquest.experience.ExperienceSource;
+import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillPhase;
-import me.sablednah.legendquest.utils.SetExp;
 import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.mechanics.Attribute;
@@ -336,6 +337,36 @@ public class PC {
 		return (int) result;
 	}
 
+	public double getXPMod(ExperienceSource es) {
+		double xp;
+		switch (es) {
+			case KILL:
+				if (subClass != null) {
+					xp = race.xpAdjustKill + mainClass.xpAdjustKill + subClass.xpAdjustKill;
+				} else {
+					xp = race.xpAdjustKill + mainClass.xpAdjustKill;
+				}
+				break;
+			case MINE:
+				if (subClass != null) {
+					xp = race.xpAdjustMine + mainClass.xpAdjustMine + subClass.xpAdjustMine;
+				} else {
+					xp = race.xpAdjustMine + mainClass.xpAdjustMine;
+				}
+				break;
+			case SMELT:
+				if (subClass != null) {
+					xp = race.xpAdjustSmelt + mainClass.xpAdjustSmelt + subClass.xpAdjustSmelt;
+				} else {
+					xp = race.xpAdjustSmelt + mainClass.xpAdjustSmelt;
+				}
+				break;
+			default:
+				xp = 0;
+		}
+		return xp;
+	}
+
 	public int getSkillPointsLeft() {
 		return getMaxSkillPointsLeft() - getSkillPointsSpent();
 	}
@@ -530,13 +561,15 @@ public class PC {
 		Map<String, Boolean> activeSkills = new HashMap<String, Boolean>();
 		int level = SetExp.getLevelOfXpAmount(currentXP);
 		for (SkillDataStore s : potentialSkills.values()) {
+//			System.out.print("Checking validity of skill "+s.name);
 			if (s.levelRequired <= level && s.skillPoints < 1) {
-				// activeSkills.put(lq.skills.instantiateSkill(s),true);
+//				System.out.print(s.name+" valid");
 				activeSkills.put(s.name, true);
 				continue;
 			}
 			// skill points now :/
 			if (skillsPurchased.containsKey(mainClass.name + "|" + s.name) || skillsPurchased.containsKey(race.name + "|" + s.name) || (subClass != null && skillsPurchased.containsKey(subClass.name + "|" + s.name))) {
+//				System.out.print(s.name+" valid purchase");
 				activeSkills.put(s.name, true);
 				continue;
 			}
@@ -571,6 +604,7 @@ public class PC {
 	public HashMap<String, SkillDataStore> makeMap(List<SkillDataStore> in) {
 		HashMap<String, SkillDataStore> out = new HashMap<String, SkillDataStore>();
 		for (SkillDataStore item : in) {
+			System.out.print("skill map [ "+item.name+" | "+item.vars.toString()+" ]");
 			out.put(item.name, item);
 		}
 		return out;

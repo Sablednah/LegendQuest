@@ -29,7 +29,11 @@ public class SkillDefinition {
 	}
 
 	public SkillInfo getSkillInfoClone() {
-		SkillInfo s = new SkillInfo(info.author, info.name, info.description, info.type, info.version, info.buildup, info.delay, info.duration, info.cooldown, info.manaCost, info.consumes, info.levelRequired, info.skillPoints);
+		SkillInfo s = new SkillInfo(info.getAuthor(), info.getName(), 
+				info.getDescription(), info.getType(), info.getVersion(), 
+				info.getBuildup(), info.getDelay(), info.getDuration(), info.getCooldown(), 
+				info.getManaCost(), info.getConsumes(), info.getLevelRequired(), info.getSkillPoints(),
+				info.getVars());
 		return s;
 	}
 

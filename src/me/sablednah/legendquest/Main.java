@@ -8,6 +8,7 @@ import me.sablednah.legendquest.classes.Classes;
 import me.sablednah.legendquest.cmds.*;
 import me.sablednah.legendquest.config.*;
 import me.sablednah.legendquest.db.DataSync;
+import me.sablednah.legendquest.effects.EffectManager;
 import me.sablednah.legendquest.listeners.*;
 import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
@@ -31,10 +32,11 @@ public class Main extends JavaPlugin {
 	public Classes				classes;
 	public DataSync				datasync;
 	public PCs					players;
+	public EffectManager		effectManager;
 	public DebugLog				debug;
 
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= false;
+	public static final Boolean	debugMode	= true;
 
 	public void log(final String msg) {
 		logger.info(msg);
@@ -102,6 +104,9 @@ public class Main extends JavaPlugin {
 		// now load players
 		players = new PCs(this);
 
+		//start effect manager
+		effectManager = new EffectManager(this);
+		
 		// Lets listen for events shall we?
 		final PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PlayerEvents(this), this);
@@ -201,9 +206,13 @@ public class Main extends JavaPlugin {
 	}
 
 	public boolean validWorld(String worldName) {
-		ArrayList<String> worldList = configMain.worlds; 
-		if (worldList == null) { return true; }
-		if (worldList.isEmpty()) { return true; }
+		ArrayList<String> worldList = configMain.worlds;
+		if (worldList == null) {
+			return true;
+		}
+		if (worldList.isEmpty()) {
+			return true;
+		}
 		return worldList.contains(worldName);
 	}
 }

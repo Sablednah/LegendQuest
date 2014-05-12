@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
+import me.sablednah.legendquest.effects.Effects;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.skills.SkillDataStore;
@@ -86,6 +87,12 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 				}
 				return true;
 			} else {
+				if (lq.effectManager.getPlayerEffects(p.getUniqueId()).contains(Effects.STUNNED)){
+					//stunned - no skills
+					sender.sendMessage(lq.configLang.skillStunned + actionName);
+					return true;
+				}
+				
 				sender.sendMessage(lq.configLang.skillCommandLineUse + actionName);
 				pc.useSkill(actionName);
 				return true;

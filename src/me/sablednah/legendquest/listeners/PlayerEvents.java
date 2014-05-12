@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.LevelUpEvent;
+import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.playercharacters.PC;
-import me.sablednah.legendquest.utils.SetExp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -54,7 +54,8 @@ public class PlayerEvents implements Listener {
 	// preserve XP on death...
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDeath(final PlayerDeathEvent event) {
-		event.setDroppedExp(0);
+		int xp = (int) (event.getDroppedExp() * (lq.configMain.percentXpLossRespawn /100.0D));
+		event.setDroppedExp(xp);
 		event.setKeepLevel(true);
 	}
 
@@ -154,10 +155,9 @@ public class PlayerEvents implements Listener {
 	}
 
 	// track EXP changes - and halve then if dual class
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onXPChange(PlayerExpChangeEvent event) {
 		Player p = event.getPlayer();
-
 		if (!lq.validWorld(p.getWorld().getName())) {
 			return;
 		}
@@ -179,6 +179,14 @@ public class PlayerEvents implements Listener {
 			pc.scheduleHealthCheck();
 			final LevelUpEvent e = new LevelUpEvent(p, p.getLevel() + 1, pc);
 			Bukkit.getServer().getPluginManager().callEvent(e);
+		}
+	}
+	
+	// track EXP changes - and halve then if dual class
+	@EventHandler(priority = EventPriority.MONITOR , ignoreCancelled = true)
+	public void onXPNotify(PlayerExpChangeEvent event) {
+		if (lq.configMain.XPnotify) {
+			event.getPlayer().sendMessage(lq.configLang.xpChange + event.getAmount());
 		}
 	}
 }

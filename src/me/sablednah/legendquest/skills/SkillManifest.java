@@ -3,9 +3,6 @@ package me.sablednah.legendquest.skills;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/*
- * vars = { "" }
- * */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SkillManifest {
 	public abstract String name();

@@ -1,4 +1,4 @@
-package me.sablednah.legendquest.utils;
+package me.sablednah.legendquest.experience;
 
 // SetExp functions from Essestials project.
 //  Additions by SableDnah

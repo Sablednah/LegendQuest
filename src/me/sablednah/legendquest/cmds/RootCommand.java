@@ -5,7 +5,10 @@ import java.util.Arrays;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.Classes;
 import me.sablednah.legendquest.races.Races;
+import me.sablednah.legendquest.utils.Utils;
 
+import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,6 +29,14 @@ public class RootCommand implements CommandExecutor {
             cmd = "help";
         } else {
             cmd = args[0];
+            if (cmd.equalsIgnoreCase("test")) {
+            	sender.sendMessage("effect test");
+            	Effect eff = Effect.valueOf(args[1]);
+            	@SuppressWarnings("deprecation")
+				Location l = ((Player)sender).getTargetBlock(null, 64).getLocation();
+            	Utils.playEffect(eff, l, Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+            	return true;
+            }
         }
         
         lq.debug.fine("cmd: " + cmd);

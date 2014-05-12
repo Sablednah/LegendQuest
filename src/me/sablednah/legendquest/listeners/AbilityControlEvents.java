@@ -1,6 +1,7 @@
 package me.sablednah.legendquest.listeners;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.playercharacters.PC;
 
 import org.bukkit.Material;
@@ -11,7 +12,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class AbilityControlEvents implements Listener {
@@ -83,4 +86,39 @@ public class AbilityControlEvents implements Listener {
 			}
 		}
 	}
+	
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void furnaceXP(FurnaceExtractEvent event) {
+		Player p = event.getPlayer();
+		if (p!=null) {
+			PC pc = lq.players.getPC(p);
+			double mod = pc.getXPMod(ExperienceSource.SMELT);
+			if (mod<=-100.0D) {
+				//no experience
+				event.setExpToDrop(0);
+			} else {
+				int xp = event.getExpToDrop();
+				xp = (int) (xp*((100.0D+mod)/100.0D));
+				event.setExpToDrop(xp);
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+	public void blockXP(BlockBreakEvent event) {
+		Player p = event.getPlayer();
+		if (p!=null) {
+			PC pc = lq.players.getPC(p);
+			double mod = pc.getXPMod(ExperienceSource.MINE);
+			if (mod<=-100.0D) {
+				//no experience
+				event.setExpToDrop(0);
+			} else {
+				int xp = event.getExpToDrop();
+				xp = (int) (xp*((100.0D+mod)/100.0D));
+				event.setExpToDrop(xp);
+			}
+		}
+	}
+	
 }

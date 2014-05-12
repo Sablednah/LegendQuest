@@ -4,8 +4,8 @@ import java.util.List;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
+import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.playercharacters.PC;
-import me.sablednah.legendquest.utils.SetExp;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

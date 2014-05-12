@@ -37,6 +37,8 @@ public class LangConfig extends Config {
 	public String					commandRollSucess		= "Test Suceeded";
 	public String					commandRollFail			= "Test Failed";
 
+	public String					invalidWorld			= "Sorry you are not in a valid LegendQuest world";
+
 	public String					raceScan				= "Scanning for race files in folder: ";
 	public String					raceScanFound			= "Found race: ";
 	public String					raceScanEnd				= "Scanning for race files completed.";
@@ -84,6 +86,7 @@ public class LangConfig extends Config {
 	public String					statClass				= "Class";
 	public String					playerName				= "Name";
 	public String					statKarma				= "Karma";
+	public String					statXP					= "Exp";
 
 	public String					cantEquipArmour			= "Sory you can't wear that armour.";
 	public String					cantUseTool				= "Sory you can't use that tool.";
@@ -130,7 +133,9 @@ public class LangConfig extends Config {
 	public String					skillCommandLineUse		= "Using skill: ";
 	public String					skillLinkUse			= "Using Linked skill: ";
 	public String					skillInvalid			= "Sorry you cant use: ";
-	public String					invalidWorld			= "Sorry you are not in a valid LegendQuest world";
+	public String					skillStunned			= "Sorry you're stuned, you cant use: ";
+
+	public String					xpChange				= "You gained Exp: ";
 
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
@@ -242,5 +247,8 @@ public class LangConfig extends Config {
 		this.skillCommandLineUse = this.getConfigItem("skillCommandLineUse", this.skillCommandLineUse);
 		this.skillLinkUse = this.getConfigItem("skillLinkUse", this.skillLinkUse);
 		this.skillInvalid = this.getConfigItem("skillInvalid", this.skillInvalid);
+		
+		this.xpChange = this.getConfigItem("xpChange", this.xpChange);
+		
 	}
 }

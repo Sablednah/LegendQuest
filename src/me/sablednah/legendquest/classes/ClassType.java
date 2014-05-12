@@ -53,4 +53,8 @@ public class ClassType {
 	public ArrayList<SkillDataStore>	availableSkills;
 	public ArrayList<SkillDataStore>	outsourcedSkills;
 
+	public double						xpAdjustKill	= 0.0D;
+	public double						xpAdjustSmelt	= 0.0D;
+	public double						xpAdjustMine	= 0.0D;
+
 }

@@ -4,8 +4,8 @@ import java.text.DecimalFormat;
 import java.util.Map;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.playercharacters.PC;
-import me.sablednah.legendquest.utils.SetExp;
 import me.sablednah.legendquest.utils.Utils;
 
 import org.bukkit.command.Command;

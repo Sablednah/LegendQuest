@@ -20,7 +20,7 @@ public class Race {
 	public int					statCon;
 	public int					statChr;
 	public int					baseHealth;
-	
+
 	public int					baseMana;
 	public int					manaPerSecond;
 
@@ -51,5 +51,9 @@ public class Race {
 	public double				skillPointsPerLevel;
 	public List<SkillDataStore>	availableSkills;
 	public List<SkillDataStore>	outsourcedSkills;
+
+	public double				xpAdjustKill	= 0.0D;
+	public double				xpAdjustSmelt	= 0.0D;
+	public double				xpAdjustMine	= 0.0D;
 
 }

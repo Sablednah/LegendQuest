@@ -15,7 +15,6 @@ import java.util.zip.ZipFile;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
-import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillInfo;
 import me.sablednah.legendquest.utils.Pair;
@@ -161,7 +160,11 @@ public class Classes {
 					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
 					c.manaBonus = thisConfig.getInt("manaBonus");
 					c.manaPerSecond = thisConfig.getInt("manaPerSecond");
-
+					
+					c.xpAdjustKill = thisConfig.getDouble("xpAdjustKill");
+					c.xpAdjustSmelt = thisConfig.getDouble("xpAdjustSmelt");
+					c.xpAdjustMine = thisConfig.getDouble("xpAdjustMine");
+					
 					c.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
 					c.skillPoints = thisConfig.getInt("skillPoints");
 
@@ -325,26 +328,33 @@ public class Classes {
 					final ConfigurationSection inateSkills = thisConfig.getConfigurationSection("skills");
 					if (inateSkills != null) {
 						for (String key : inateSkills.getKeys(false)) {
-							String skillName = key;
-							String realSkill = key;
-							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(skillName);
+							String skillName = key.toLowerCase();
+							String realSkill = key.toLowerCase();
+							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
 							if (skillInfo.contains("skillname")) {
-								realSkill = skillInfo.getString("skillname");
+								realSkill = skillInfo.getString("skillname").toLowerCase();
 								//create a "copy" of the skill under new name
 								// this registers duplicate events with different this.name for fetching correct skill settings.
 								lq.skills.initSkill(realSkill,skillName);
 							}
 							if (lq.skills.skillList.containsKey(skillName)) {
 								lq.debug.info("Loading skillName: " + skillName+ " as skill " + realSkill);
-								Skill s = lq.skills.skillList.get(key.toLowerCase());
-								SkillInfo si = s.getDefaultOptions();
+								SkillInfo si = 	lq.skills.skillDefs.get(realSkill).getSkillInfoClone();
 								SkillDataStore skilldata = new SkillDataStore(si);
+								skilldata.name=skillName;
 								skilldata.readConfigInfo(skillInfo);
+								skilldata.name=skillName;
 								c.availableSkills.add(skilldata);
 							}
 						}
 					}
 					
+					
+					for (SkillDataStore s :c.availableSkills) {
+						System.out.print("Vars ["+s.name+"] : "+s.vars.toString());
+						
+					}
+
 					
 					
 					
@@ -356,7 +366,7 @@ public class Classes {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
 							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
-							si.name = key;
+							si.setName(key);
 							si.readConfigBasicInfo(skillInfo);
 							SkillDataStore skilldata = new SkillDataStore(si);
 							skilldata.readConfigInfo(skillInfo);

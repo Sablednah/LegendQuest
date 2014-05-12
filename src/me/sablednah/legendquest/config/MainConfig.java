@@ -3,9 +3,10 @@ package me.sablednah.legendquest.config;
 import java.util.ArrayList;
 
 import me.sablednah.legendquest.Main;
-import me.sablednah.legendquest.utils.SetExp;
+import me.sablednah.legendquest.experience.SetExp;
 
 public class MainConfig extends Config {
+
 
 	public boolean				debugMode					= false;
 
@@ -23,6 +24,7 @@ public class MainConfig extends Config {
 
 	public int					max_level					= 150;
 	public int					max_xp						= 58245;
+	public boolean	XPnotify	= true;
 
 	public boolean				useSkillTestForCombat		= true;
 	public boolean				verboseCombat				= true;
@@ -68,8 +70,8 @@ public class MainConfig extends Config {
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
 		this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);
 		this.max_level = this.getConfigItem("max_level", this.max_level);
-
 		this.max_xp = SetExp.getExpToLevel(this.max_level);
+		this.XPnotify = this.getConfigItem("XPnotify", this.XPnotify);
 
 		this.useSkillTestForCombat = this.getConfigItem("useSkillTestForCombat", this.useSkillTestForCombat);
 		this.useSizeForCombat = this.getConfigItem("useSizeForCombat", this.useSizeForCombat);
