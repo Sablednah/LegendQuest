@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
+import me.sablednah.legendquest.db.HealthStore;
 import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.races.Race;
@@ -198,7 +199,7 @@ public class PC {
 
 	public boolean allowedWeapon(Material id) {
 		Boolean valid = false;
-
+		
 		if (id == null) {
 			valid = true;
 			lq.debug.fine("Air/Fist is valid weapon");
@@ -234,6 +235,10 @@ public class PC {
 	public void checkInv() {
 		Player p = lq.getServer().getPlayer(uuid);
 		if (p != null && p.isOnline()) {
+			if (!lq.validWorld(p.getWorld().getName())) {
+				return;
+			}
+			
 			PlayerInventory i = p.getInventory();
 
 			ItemStack helm = i.getHelmet();
@@ -665,6 +670,27 @@ public class PC {
 	public void healthCheck() {
 		Player p = Bukkit.getServer().getPlayer(uuid);
 		if (p != null) {
+			
+			if (!lq.validWorld(p.getWorld().getName())) {
+				if (lq.configMain.manageHealthNonLqWorlds) {
+					HealthStore hs = lq.datasync.getAltHealthStore(p.getUniqueId());
+					if (hs == null || hs.getMaxhealth() < 1) {
+						double hp = p.getHealth();
+						if (hp > 20.0D) {
+							hp = 20.0D;
+							p.setHealth(hp);
+							p.setMaxHealth(20.0D);
+							p.setHealthScale(20.0D);
+						}
+					} else {
+						p.setHealth(hs.getHealth());
+						p.setMaxHealth(hs.getMaxhealth());
+						p.setHealthScale(20.0D);
+					}
+				}
+				return;
+			}
+			
 			getMaxHealth();
 
 			this.health = p.getHealth();
@@ -681,9 +707,6 @@ public class PC {
 			p.setHealthScaled(true);
 			if (lq.configMain.debugMode) {
 				lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
-				if (p.getName().equalsIgnoreCase("sablednah")) {
-					p.sendMessage("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
-				}
 			}
 		}
 	}
@@ -792,6 +815,10 @@ public class PC {
 	}
 
 	public boolean validSkill(String name) {
+		if (!lq.validWorld(getPlayer().getWorld().getName())) {
+			return false;
+		}
+		
 		checkSkills();
 		if (skillsSelected != null && name != null) {
 			Boolean hasSkill = skillsSelected.get(name);

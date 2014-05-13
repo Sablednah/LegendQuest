@@ -1,4 +1,22 @@
-# default config
+# default language config
+
+startup: "The sky above the port was the color of television, tuned to a dead channel."
+shutdown: "=== END OF LINE ==="
+
+invalidCommand: "Sorry couldn't recognise command: "
+
+helpCommand: |
+    /lq help : Displays this list
+    /lq stats [player] : Display character stats
+    /lq hp [player] : Display player health (and mana)
+    /lq karma [player] : Display player Karma Level
+    /lq roll [player] [str|dex|con|int|wis|chr] [integer|very_easy|easy|average|tough|challenging] : Roll the dice to perform a test for roleplay purposes.
+    /lq race : Display your race
+    /lq race [list|racename] : List the races you are allowed or select race [racename]
+    /lq class : Display your class and (subclass if any)
+    /lq class list : Display classes you are allowed.  Including classes unlocked by mastery of dependent class.
+    /lq class {classname} : Select class name as your name class.  Will warn if you will loose XP.
+    /lq class sub {classname} : Select class name as your sub class.  Will warn if you will loose XP.
 
 cmdHelp:
     race: "USe 'list' to list races, and a race name to select your race."
@@ -11,8 +29,15 @@ cmdHelp:
     roll: "Do a dice roll.  Optionally specify a player to perform the roll as, a difficulty and an attribute to test e.g. /roll sablednah STR easy"
     hp: "Show your health (and mana) or another players health (and mana)."
 
-startup: "The sky above the port was the color of television, tuned to a dead channel."
-shutdown: "=== END OF LINE ==="
+invalidPlayerCommand: "Command only valid from in game player."
+invalidArgumentsCommand: "Invalid arguments."
+characterNotFound: "Character not found for: "
+commandReloaded: "Settings Reloaded"
+
+commandRollSucess: "Test Succeeded"
+commandRollFail: "Test Failed"
+
+invalidWorld: "Sorry you are not in a valid LegendQuest world"
 
 raceScan: "Scanning for race files in folder: "
 raceScanFound: "Found race: "
@@ -26,3 +51,85 @@ classScanInvalid: "Invalid class file: "
 classScanRaceWarning: "Warning Found unknown Race: "
 classScanNoRaceOrGroup: "No Valid race or group found in: "
 classScanGroupWarning: "No Valid group found in: "
+
+raceNoDefault: "Sorry no default Race found - using first available."
+classNoDefault: "Sorry no default Class found - using first available."
+
+youAreCurrently: "You are currently "
+raceChanged: "Your race has been changed to "
+raceChangeNotAllowed: "Sorry you have already selected a race. "
+raceList: "-------- Races --------"
+raceNotAllowed: "Sorry, you can't select that race."
+
+classSelectRaceFirst: "Please Select Race before class."
+classChanged: "You have changed your class to: "
+classList: "------- Classes -------"
+classChangeWarnXpLoss: "Warning: Changing class will lose your accumulated XP"
+classConfirm: "Repeat with confirm appended  e.g. /class mage confirm"
+classNotAllowed: "Sorry, you can't select that class."
+
+playerStats: "----- Player Info -----"
+statSTR: "STR"
+statDEX: "DEX"
+statINT: "INT"
+statWIS: "WIS"
+statCON: "CON"
+statCHR: "CHR"
+statHealth: "HP"
+statMana: "MP"
+
+statLevel: "Level"
+statLevelShort: "Lvl"
+statSkillPoints: "Skill Points"
+statSp: "SP"
+statRace: "Race"
+statClass: "Class"
+playerName: "Name"
+statKarma: "Karma"
+statXP: "Exp"
+
+cantEquipArmour: "Sorry you can't wear that armour."
+cantUseTool: "Sorry you can't use that tool."
+cantUseWeapon: "Sorry you can't wield that weapon."
+cantCraft: "Sorry you can't craft."
+cantSmelt: "Sorry you can't smelt."
+cantEnchant: "Sorry you can't enchant."
+cantRepair: "Sorry you can't repair."
+cantBrew: "Sorry you can't brew potions"
+
+noSkills: "You have no skills to use."
+hasSkills: "You have the following usable skills:"
+skillPoints: "Skill Points: "
+skillList: "You have the following skills available."
+skillListHeader: "-- Skill Name --,-- Level --,--Cost--"
+skillsList: "------- SkillPool --------"
+
+combatHit: "You hit your target."
+combatMissed: "Your target evaded your attack."
+combatDodged: "You evaded an attack."
+combatDodgefail: "You failed to evade."
+
+karmaPositive: "Neutral, Kind, Good, Samaritan, Saintly"
+karmaNegative: "Neutral, Rascal, Rogue, villainous, Diabolic"
+
+skillBuildupDisturbed: "cancelled due to movement! Stay still..."
+skillLackOfMana: "Sorry not enough mana."
+skillLackOfItem: "Sorry you can't use that skill, you need "
+
+skillCooldown: "Skill cooling down."
+skillDelayed: "Skill Delayed."
+skillBuilding: "Skill Building..."
+skillActive: "Skill Already Active."
+
+skillLinkEmptyHand: "Cannot link Skill to empty hand"
+skillLinked: " skill linked to item "
+skillLinkList: "You have the following skill links: "
+skillPointsBought: "You have learnt a skill: "
+skillPointsMissing: "Sorry you don't have enough skill points to buy "
+skillPointsNoSkill: "Please specify a skill to buy"
+skillCommandLineUse: "Using skill: "
+skillLinkUse: "Using Linked skill: "
+skillInvalid: "Sorry you can't use: "
+skillStunned: "Sorry you're stunned, you can't use: "
+
+xpChange: "You gained Exp: "

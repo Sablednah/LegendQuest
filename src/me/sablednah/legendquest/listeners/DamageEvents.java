@@ -1,6 +1,7 @@
 package me.sablednah.legendquest.listeners;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.db.HealthStore;
 import me.sablednah.legendquest.events.CombatHitCheck;
 import me.sablednah.legendquest.events.CombatModifiers;
 import me.sablednah.legendquest.experience.ExperienceSource;
@@ -35,12 +36,16 @@ public class DamageEvents implements Listener {
 		if (event.getEntityType() == EntityType.PLAYER) {
 			Player p = (Player) event.getEntity();
 
-			if (!lq.validWorld(p.getWorld().getName())) {
-				return;
-			}
-
 			double dmg = event.getDamage();
 			double newHealth = p.getHealth() - dmg;
+
+			if (!lq.validWorld(p.getWorld().getName())) {
+				if (lq.configMain.manageHealthNonLqWorlds) {
+					HealthStore hs = new HealthStore(p.getUniqueId(), p.getHealth(), p.getMaxHealth());
+					lq.datasync.addHPWrite(hs);
+				}
+				return;
+			}
 
 			PC pc = lq.players.getPC(p);
 			if (pc != null) {
@@ -209,14 +214,20 @@ public class DamageEvents implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void healthGain(EntityRegainHealthEvent event) {
-		if (!lq.validWorld(event.getEntity().getWorld().getName())) {
-			return;
-		}
 		if (event.getEntity() instanceof Player) {
-			PC pc = lq.players.getPC((Player) event.getEntity());
+			Player p = (Player) event.getEntity();
+			if (!lq.validWorld(p.getWorld().getName())) {
+				if (lq.configMain.manageHealthNonLqWorlds) {
+					HealthStore hs = new HealthStore(p.getUniqueId(), p.getHealth(), p.getMaxHealth());
+					lq.datasync.addHPWrite(hs);
+				}
+				return;
+			}
+
+			PC pc = lq.players.getPC(p);
 			if (pc != null) {
 				pc.scheduleHealthCheck();
-				lq.players.scheduleUpdate(((Player) event.getEntity()).getUniqueId());
+				lq.players.scheduleUpdate(p.getUniqueId());
 			}
 		}
 	}

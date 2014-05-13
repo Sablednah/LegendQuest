@@ -1,8 +1,8 @@
 name: LegendQuest
-version: 0.0.1
+version: 1.3.0
 description: |
     RPG plugin for MineCraft servers using the Bukkit API
-    Allows Race, Classes and Skills.
+    Allows Race, Classes, Skills and effects.
 author: SableDnah
 website: http://dev.bukkit.org/server-mods/legendquest/
 

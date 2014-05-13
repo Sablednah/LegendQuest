@@ -2,16 +2,82 @@
 
 debugMode: false
 
-useMySQL: false
+#-------------------
 
 # MySQL database login details  - only needed if  useMySQL is true
+useMySQL: false
 sqlUsername: username
 sqlPassword: password
 sqlHostname: localhost
 sqlPort: 3306
 sqlDatabase: legendquest
 
+#-------------------
+
 # if true - each player name will have a random internal stat .
-# Uses player name as seed.  If false all stats have same base values. 
+# Uses player uuid as seed.  If false all stats have same base values. 
 randomStats: true
 
+#-------------------
+
+## Per world settings
+# worlds: List of Worlds to allow LQ.  Leave blank to allow all.
+# manageHealthNonLqWorlds: should LQ track health on no-lq worlds to restore health when switching worlds.
+# if you have another plugin managing health on these worlds then you can switch this to false. (or if other worlds are creative). 
+
+worlds: []
+manageHealthNonLqWorlds: true
+
+#-------------------
+
+## Experience
+# max-level: level at which class is considered mastered.
+# XPnotify: report xp gain amount to player
+# percentXpKeepClassChange: amount of XP to keep if switching class before mastery.
+# percentXpLossRespawn: amount of XP to drop/loose on death/respawn
+
+max_level: 150
+XPnotify: true
+percentXpKeepClassChange: 10.00
+percentXpLossRespawn: 10.00
+
+#-------------------
+
+## Combat
+# useSkillTestForCombat: True to do opposing dexterity checks in combat.  Results in average opponents missing 50% of "hits", but lets skilled combatants hit more often compared to unskilled. and a greater RPG feel.
+# verboseCombat: Report all hits/misses in combat
+# useSizeForCombat: adjust skill test difficulties based on sizes making large targets easier and small harder.
+
+useSkillTestForCombat: true
+verboseCombat: true
+useSizeForCombat: true
+
+#-------------------
+
+## Karma
+# karmaScale:  base scale or each 'level' of karma = each level 1 = scale^1, level 2 = scale^2, level 3= scale^3 etc etc 
+# karmaDamage/karmaKill points are awarded for the appropriate action.
+karmaScale: 500
+
+karmaDamagePlayer: -10
+karmaDamageVillager: -5
+karmaDamagePet: -2
+karmaDamageAnimal: -1
+karmaDamageMonster: 2
+karmaDamageSlime: 1
+
+karmaKillPlayer: -1000
+karmaKillVillager: -500
+karmaKillPet: -200
+karmaKillAnimal: -50
+karmaKillMonster: 200
+karmaKillSlime: 100
+
+#-------------------
+
+## Skills
+# skillBuildupMoveAllowed:  distance allowed to make during buildup phase of skills
+# skillTickInterval: interval between processing skill timings.  increasing reduces server load - but makes skill duration/cooldown less accurate.
+
+skillBuildupMoveAllowed: 2.0
+skillTickInterval: 10

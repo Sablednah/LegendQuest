@@ -7,7 +7,6 @@ import me.sablednah.legendquest.experience.SetExp;
 
 public class MainConfig extends Config {
 
-
 	public boolean				debugMode					= false;
 
 	public boolean				useMySQL					= false;
@@ -24,7 +23,7 @@ public class MainConfig extends Config {
 
 	public int					max_level					= 150;
 	public int					max_xp						= 58245;
-	public boolean	XPnotify	= true;
+	public boolean				XPnotify					= true;
 
 	public boolean				useSkillTestForCombat		= true;
 	public boolean				verboseCombat				= true;
@@ -51,6 +50,8 @@ public class MainConfig extends Config {
 
 	public boolean				useSizeForCombat			= true;
 
+	public boolean				manageHealthNonLqWorlds		= true;
+
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
 		super(p, "config.yml");
@@ -64,7 +65,7 @@ public class MainConfig extends Config {
 		this.sqlPort = this.getConfigItem("sqlPort", this.sqlPort);
 		this.sqlDatabase = this.getConfigItem("sqlDatabase", this.sqlDatabase);
 
-		this.worlds = (ArrayList<String>) this.getConfigItem("worlds",this.worlds);
+		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
 
 		this.randomStats = this.getConfigItem("randomStats", this.randomStats);
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
@@ -95,5 +96,6 @@ public class MainConfig extends Config {
 
 		this.skillBuildupMoveAllowed = this.getConfigItem("skillBuildupMoveAllowed", this.skillBuildupMoveAllowed);
 		this.skillTickInterval = (long) this.getConfigItem("skillTickInterval", this.skillTickInterval);
+		
 	}
 }

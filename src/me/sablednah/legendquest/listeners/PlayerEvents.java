@@ -3,6 +3,7 @@ package me.sablednah.legendquest.listeners;
 import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.db.HealthStore;
 import me.sablednah.legendquest.events.LevelUpEvent;
 import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.playercharacters.PC;
@@ -54,7 +55,7 @@ public class PlayerEvents implements Listener {
 	// preserve XP on death...
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDeath(final PlayerDeathEvent event) {
-		int xp = (int) (event.getDroppedExp() * (lq.configMain.percentXpLossRespawn /100.0D));
+		int xp = (int) (event.getDroppedExp() * (lq.configMain.percentXpLossRespawn / 100.0D));
 		event.setDroppedExp(xp);
 		event.setKeepLevel(true);
 	}
@@ -63,18 +64,33 @@ public class PlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onJoin(PlayerJoinEvent event) {
 		Player p = event.getPlayer();
-
-		if (!lq.validWorld(p.getWorld().getName())) {
-			return;
-		}
-
 		UUID uuid = p.getUniqueId();
 		PC pc = lq.players.getPC(p);
 		lq.players.addPlayer(uuid, pc);
-		p.setTotalExperience(pc.currentXP);
-		p.setMaxHealth(pc.maxHP);
-		p.setHealth(pc.health);
-		pc.healthCheck();
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			if (lq.configMain.manageHealthNonLqWorlds) {
+				HealthStore hs = lq.datasync.getAltHealthStore(p.getUniqueId());
+				if (hs == null || hs.getMaxhealth() < 1) {
+					double hp = p.getHealth();
+					if (hp > 20.0D) {
+						hp = 20.0D;
+						p.setHealth(hp);
+						p.setMaxHealth(20.0D);
+						p.setHealthScale(20.0D);
+					}
+				} else {
+					p.setHealth(hs.getHealth());
+					p.setMaxHealth(hs.getMaxhealth());
+					p.setHealthScale(20.0D);
+				}
+			}
+		} else {
+			p.setTotalExperience(pc.currentXP);
+			p.setMaxHealth(pc.maxHP);
+			p.setHealth(pc.health);
+			pc.healthCheck();			
+		}
 
 		Location l = p.getLocation();
 		Chunk c = l.getChunk();
@@ -97,18 +113,39 @@ public class PlayerEvents implements Listener {
 			}
 		}
 	}
-	
+
 	// set to monitor - we're not gonna change the port, only load our data
-	// this loads PC data if players swich to/from a non LQ world 
+	// this loads PC data if players swich to/from a non LQ world
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPort(PlayerTeleportEvent event) {
 		Player p = event.getPlayer();
 
 		if (!lq.validWorld(event.getTo().getWorld().getName())) {
+			if (lq.configMain.manageHealthNonLqWorlds) {
+				HealthStore hs = lq.datasync.getAltHealthStore(p.getUniqueId());
+				if (hs == null || hs.getMaxhealth() < 1) {
+					double hp = p.getHealth();
+					if (hp > 20.0D) {
+						hp = 20.0D;
+						p.setHealth(hp);
+						p.setMaxHealth(20.0D);
+						p.setHealthScale(20.0D);
+					}
+				} else {
+					p.setHealth(hs.getHealth());
+					p.setMaxHealth(hs.getMaxhealth());
+					p.setHealthScale(20.0D);
+				}
+			}
 			return;
 		} else {
-			if (!lq.validWorld(p.getWorld().getName())) {
-				//from invalid word to valid world
+			if (!lq.validWorld(p.getWorld().getName())) {				
+				// from invalid word to valid world
+				//save current health
+				HealthStore hs = new HealthStore(p.getUniqueId(), p.getHealth(), p.getMaxHealth());
+				lq.datasync.addHPWrite(hs);
+				
+				//load character
 				UUID uuid = p.getUniqueId();
 				PC pc = lq.players.getPC(p);
 				lq.players.addPlayer(uuid, pc);
@@ -116,14 +153,23 @@ public class PlayerEvents implements Listener {
 				p.setMaxHealth(pc.maxHP);
 				p.setHealth(pc.health);
 				pc.healthCheck();
+				pc.scheduleHealthCheck();
+				pc.scheduleCheckInv();
+
 			}
 		}
 	}
-	
+
 	// set to monitor - we can't change the quit - just want to clean our data up.
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onQuit(PlayerQuitEvent event) {
 		UUID uuid = event.getPlayer().getUniqueId();
+		if (!lq.validWorld(event.getPlayer().getWorld().getName())) {
+			if (lq.configMain.manageHealthNonLqWorlds) {
+				HealthStore hs = new HealthStore(uuid, event.getPlayer().getHealth(), event.getPlayer().getMaxHealth());
+				lq.datasync.addHPWrite(hs);
+			}
+		}
 		lq.players.removePlayer(uuid);
 	}
 
@@ -131,6 +177,12 @@ public class PlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void okKick(PlayerKickEvent event) {
 		UUID uuid = event.getPlayer().getUniqueId();
+		if (!lq.validWorld(event.getPlayer().getWorld().getName())) {
+			if (lq.configMain.manageHealthNonLqWorlds) {
+				HealthStore hs = new HealthStore(uuid, event.getPlayer().getHealth(), event.getPlayer().getMaxHealth());
+				lq.datasync.addHPWrite(hs);
+			}
+		}
 		lq.players.removePlayer(uuid);
 	}
 
@@ -139,9 +191,23 @@ public class PlayerEvents implements Listener {
 		Player p = event.getPlayer();
 
 		if (!lq.validWorld(p.getWorld().getName())) {
+			if (lq.configMain.manageHealthNonLqWorlds) {
+				HealthStore hs = lq.datasync.getAltHealthStore(p.getUniqueId());
+				if (hs == null || hs.getMaxhealth() < 1) {
+					double hp = p.getHealth();
+					if (hp > 20.0D) {
+						hp = 20.0D;
+						p.setHealth(hp);
+						p.setMaxHealth(20.0D);
+					}
+				} else {
+					p.setHealth(hs.getHealth());
+					p.setMaxHealth(hs.getMaxhealth());
+				}
+			}
 			return;
 		}
-		
+
 		PC pc = lq.players.getPC(p);
 		lq.logWarn("currentXP: " + pc.currentXP);
 		int currentXP = SetExp.getTotalExperience(p);
@@ -181,12 +247,13 @@ public class PlayerEvents implements Listener {
 			Bukkit.getServer().getPluginManager().callEvent(e);
 		}
 	}
-	
+
 	// track EXP changes - and halve then if dual class
-	@EventHandler(priority = EventPriority.MONITOR , ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onXPNotify(PlayerExpChangeEvent event) {
 		if (lq.configMain.XPnotify) {
 			event.getPlayer().sendMessage(lq.configLang.xpChange + event.getAmount());
 		}
 	}
+
 }
