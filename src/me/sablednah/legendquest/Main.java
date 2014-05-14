@@ -1,5 +1,17 @@
 package me.sablednah.legendquest;
-
+/*
+     >>\.
+    /_  )`.
+   /  _)`^)`.   _.---. _
+  (_,' \  `^-)""      `.\
+        |              | \
+        \              / |
+       / \  /.___.'\  (\ (_
+      < ,"||     \ |`. \`-'
+       \\ ()      )|  )/
+       |_>|>     /_] //
+         /_]        /_]
+ */
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Logger;
