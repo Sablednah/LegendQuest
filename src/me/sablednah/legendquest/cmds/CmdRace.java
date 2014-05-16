@@ -52,7 +52,7 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
             } else {
                 final Race r = lq.races.getRace(raceName);
                 if (r == null) {
-                    sender.sendMessage(lq.configLang.raceScanInvalid + ": " + raceName);
+                    sender.sendMessage(lq.configLang.raceInvalid + ": " + raceName);
                     return true;
                 } else {
                     if (pc.raceChanged) {

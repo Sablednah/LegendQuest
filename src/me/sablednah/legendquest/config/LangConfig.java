@@ -42,12 +42,15 @@ public class LangConfig extends Config {
 	public String					raceScan				= "Scanning for race files in folder: ";
 	public String					raceScanFound			= "Found race: ";
 	public String					raceScanEnd				= "Scanning for race files completed.";
-	public String					raceScanInvalid			= "Invalid race: ";
+	public String					raceScanInvalid			= "Invalid race file: ";
+	public String					raceInvalid				= "Invalid race: ";
 
 	public String					classScan				= "Scanning for class files in folder: ";
 	public String					classScanFound			= "Found class: ";
 	public String					classScanEnd			= "Scanning for class files completed.";
-	public String					classScanInvalid		= "Invalid class: ";
+	public String					classScanInvalid		= "Invalid class file: ";
+	public String					classInvalid			= "Invalid class: ";
+	
 	public String					classScanRaceWarning	= "Warning Found unknown Race: ";
 	public String					classScanNoRaceOrGroup	= "No Valid race or group found in: ";
 	public String					classScanGroupWarning	= "No Valid group found in: ";

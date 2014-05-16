@@ -76,7 +76,7 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                 // check classname is valid
                 final ClassType cl = lq.classes.getClass(className);
                 if (cl == null) {
-                    sender.sendMessage(lq.configLang.classScanInvalid + ": " + className);
+                    sender.sendMessage(lq.configLang.classInvalid + ": " + className);
                     return true;
                 } else {
                     // make sure they have a race...
