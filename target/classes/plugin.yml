@@ -90,6 +90,7 @@ permissions:
             legendquest.command.hp: true
             legendquest.command.link: true
             legendquest.command.karma: true
+            legendquest.command.plurals: true
     legendquest.command.reload:
         description: Allows user to use legendquest reload command.
         default: false
@@ -116,5 +117,8 @@ permissions:
         default: true
     legendquest.command.link:
         description: Allows user to use legendquest link command.
+        default: true
+    legendquest.command.plurals:
+        description: Allows user to use legendquest command plurals.
         default: true
         
