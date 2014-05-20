@@ -45,11 +45,11 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 
 		// only players left here
 		Player p = (Player) sender;
-		
-        if (!lq.validWorld(p.getWorld().getName())) {
-        	p.sendMessage(lq.configLang.invalidWorld);
-        	return true;
-        }
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			p.sendMessage(lq.configLang.invalidWorld);
+			return true;
+		}
 
 		PC pc = lq.players.getPC(p);
 		pc.checkSkills();
@@ -80,19 +80,16 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 				} else {
 					String skillToBuy = args[1].toLowerCase();
 					if (pc.buySkill(skillToBuy)) {
-						sender.sendMessage(lq.configLang.skillPointsBought + "'"+skillToBuy+"'");
-					} else {
-			            sender.sendMessage(lq.configLang.skillPointsMissing + "'" + skillToBuy +"': "+ pc.getSkillPointsLeft() + " (" + pc.getSkillPointsSpent() + "/" + pc.getMaxSkillPointsLeft() + ")");
+						sender.sendMessage(lq.configLang.skillPointsBought + "'" + skillToBuy + "'");
 					}
 				}
 				return true;
 			} else {
-				if (lq.effectManager.getPlayerEffects(p.getUniqueId()).contains(Effects.STUNNED)){
-					//stunned - no skills
+				if (lq.effectManager.getPlayerEffects(p.getUniqueId()).contains(Effects.STUNNED)) {
+					// stunned - no skills
 					sender.sendMessage(lq.configLang.skillStunned + actionName);
 					return true;
 				}
-				
 				sender.sendMessage(lq.configLang.skillCommandLineUse + actionName);
 				pc.useSkill(actionName);
 				return true;
@@ -136,19 +133,12 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 
 			HashMap<String, SkillDataStore> skillmap = new HashMap<String, SkillDataStore>();
 
-			for (SkillDataStore s : pc.mainClass.availableSkills) {
-				skillmap.put(s.levelRequired + " |" + s.name, s);
-			}
-			for (SkillDataStore s : pc.mainClass.outsourcedSkills) {
-				skillmap.put(s.levelRequired + " |" + s.name, s);
-			}
 			for (SkillDataStore s : pc.race.availableSkills) {
 				skillmap.put(s.levelRequired + " |" + s.name, s);
 			}
 			for (SkillDataStore s : pc.race.outsourcedSkills) {
 				skillmap.put(s.levelRequired + " |" + s.name, s);
 			}
-
 			if (pc.subClass != null) {
 				for (SkillDataStore s : pc.subClass.availableSkills) {
 					skillmap.put(s.levelRequired + " |" + s.name, s);
@@ -157,17 +147,37 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 					skillmap.put(s.levelRequired + " |" + s.name, s);
 				}
 			}
+			for (SkillDataStore s : pc.mainClass.availableSkills) {
+				skillmap.put(s.levelRequired + " |" + s.name, s);
+			}
+			for (SkillDataStore s : pc.mainClass.outsourcedSkills) {
+				skillmap.put(s.levelRequired + " |" + s.name, s);
+			}
 
 			TreeMap<String, SkillDataStore> tm = new TreeMap<String, SkillDataStore>(skillmap);
+
 			for (Entry<String, SkillDataStore> entry : tm.entrySet()) {
 				SkillDataStore s = entry.getValue();
-				strout = " - " + s.name + " [" + lq.configLang.statLevelShort + " " + s.levelRequired + " | " + lq.configLang.statSp + " " + s.skillPoints + "]";
+				SkillDataStore x = pc.getSkillData(entry.getKey());
+				if (x != null) {
+					strout = " - " + s.name + " [" + lq.configLang.statLevelShort + " " + x.levelRequired + " | " + lq.configLang.statSp + " " + x.skillPoints + "]";
+				} else {
+					strout = " - " + s.name + " [" + lq.configLang.statLevelShort + " " + s.levelRequired + " | " + lq.configLang.statSp + " " + s.skillPoints + "]";
+				}
 				if (selected.containsKey(s.name)) {
 					strout += " *";
+				} else {
+					if (x != null) {
+						if (x.requires != null && !x.requires.isEmpty()) {
+							strout += " All-" + x.requires.toString();
+						}
+						if (x.requiresOne != null && !x.requiresOne.isEmpty()) {
+							strout += " One-" + x.requiresOne.toString();
+						}
+					}
 				}
 				sender.sendMessage(strout);
 			}
-
 		}
 	}
 }

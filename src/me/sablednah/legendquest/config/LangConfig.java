@@ -133,6 +133,8 @@ public class LangConfig extends Config {
 	public String					skillPointsBought		= "You have learnt a skill: ";
 	public String					skillPointsMissing		= "Sorry you don't have enough skill points to buy ";
 	public String					skillPointsNoSkill		= "Please specify a skill to buy";
+	public String					skillRequiresOne		= "Skill requires one of these skill: ";
+	public String					skillRequires			= "Skill requires all these skills: ";
 	public String					skillCommandLineUse		= "Using skill: ";
 	public String					skillLinkUse			= "Using Linked skill: ";
 	public String					skillInvalid			= "Sorry you can't use: ";
@@ -247,6 +249,9 @@ public class LangConfig extends Config {
 		this.skillPointsBought = this.getConfigItem("skillPointsBought", this.skillPointsBought);
 		this.skillPointsMissing = this.getConfigItem("skillPointsMissing", this.skillPointsMissing);
 		this.skillPointsNoSkill = this.getConfigItem("skillPointsNoSkill", this.skillPointsNoSkill);
+		this.skillRequiresOne = this.getConfigItem("skillRequiresOne", this.skillRequiresOne);
+		this.skillRequires = this.getConfigItem("skillRequires", this.skillRequires);
+
 		this.skillCommandLineUse = this.getConfigItem("skillCommandLineUse", this.skillCommandLineUse);
 		this.skillLinkUse = this.getConfigItem("skillLinkUse", this.skillLinkUse);
 		this.skillInvalid = this.getConfigItem("skillInvalid", this.skillInvalid);

@@ -1,7 +1,9 @@
 package me.sablednah.legendquest.skills;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,6 +35,9 @@ public class SkillDataStore {
 
 	public int						levelRequired	= 0;
 	public int						skillPoints		= 0;
+	public List<String>				requires		= new ArrayList<String>();
+	public List<String>				requiresOne		= new ArrayList<String>();
+
 	public HashMap<String, Object>	vars			= new HashMap<String, Object>();
 
 	public String					permission;
@@ -66,13 +71,18 @@ public class SkillDataStore {
 		this.skillPoints = defaults.getSkillPoints();
 		this.consumes = defaults.getConsumes();
 		for (Entry<String, Object> var : defaults.getVars().entrySet()) {
-			this.vars.put(var.getKey(),var.getValue());
+			this.vars.put(var.getKey(), var.getValue());
 		}
 	}
 
 	public void readConfigInfo(final ConfigurationSection conf) {
 		if (conf != null) {
-			// bthis.name = skillInfo.getName();
+			if (conf.contains("requires")) {
+				this.requires = conf.getStringList("requires");
+			}
+			if (conf.contains("requiresOne")) {
+				this.requiresOne = conf.getStringList("requiresOne");
+			}
 			if (conf.contains("perm")) {
 				this.permission = conf.getString("perm");
 			}
@@ -116,16 +126,16 @@ public class SkillDataStore {
 					Entry<String, Object> entry = entries.next();
 					Object data = (Object) entry.getValue();
 					if (data instanceof Double) {
-						System.out.print("Var "+entry.getKey()+": "+data+" is double");
-						this.vars.put(entry.getKey(), (Double)data);
+						System.out.print("Var " + entry.getKey() + ": " + data + " is double");
+						this.vars.put(entry.getKey(), (Double) data);
 					} else if (data instanceof Integer) {
-						System.out.print("Var "+entry.getKey()+": "+data+" is integer"); 
-						this.vars.put(entry.getKey(), (Integer)data);
+						System.out.print("Var " + entry.getKey() + ": " + data + " is integer");
+						this.vars.put(entry.getKey(), (Integer) data);
 					} else if (data instanceof String) {
-						System.out.print("Var "+entry.getKey()+": "+data+" is string");
-						this.vars.put(entry.getKey(), (String)data);
+						System.out.print("Var " + entry.getKey() + ": " + data + " is string");
+						this.vars.put(entry.getKey(), (String) data);
 					} else {
-						System.out.print("Var "+entry.getKey()+": "+data+" is 'other'");
+						System.out.print("Var " + entry.getKey() + ": " + data + " is 'other'");
 						this.vars.put(entry.getKey(), data);
 					}
 				}

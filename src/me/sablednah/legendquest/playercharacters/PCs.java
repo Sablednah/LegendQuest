@@ -316,7 +316,7 @@ public class PCs {
 
 	public double getSize(Entity entity) {
 		double size = 1.6D;
-
+		if (entity==null) { return size; }
 		EntityType type = entity.getType();
 		if (type == EntityType.COMPLEX_PART) {
 			type = ((ComplexEntityPart) entity).getParent().getType();

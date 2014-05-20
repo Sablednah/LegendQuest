@@ -57,7 +57,11 @@ public class SkillPool {
 
 	public void initSkill(String skill, String name) {
 		SkillDefinition def = skillDefs.get(skill.toLowerCase());
-		initSkill(def, name.toLowerCase());
+		if (def != null) {
+			initSkill(def, name.toLowerCase());
+		} else {
+			lq.debug.error(skill + " not found.");
+		}
 	}
 
 	public void initSkill(SkillDefinition def, String name) {

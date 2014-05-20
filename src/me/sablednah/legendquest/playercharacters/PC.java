@@ -199,7 +199,7 @@ public class PC {
 
 	public boolean allowedWeapon(Material id) {
 		Boolean valid = false;
-		
+
 		if (id == null) {
 			valid = true;
 			lq.debug.fine("Air/Fist is valid weapon");
@@ -238,7 +238,7 @@ public class PC {
 			if (!lq.validWorld(p.getWorld().getName())) {
 				return;
 			}
-			
+
 			PlayerInventory i = p.getInventory();
 
 			ItemStack helm = i.getHelmet();
@@ -380,7 +380,7 @@ public class PC {
 		int result = 0;
 		for (Entry<String, Integer> cost : skillsPurchased.entrySet()) {
 			String lKey = cost.getKey().toLowerCase();
-			if (lKey.startsWith(mainClass.name) || lKey.startsWith(race.name) || (subClass != null && lKey.startsWith(subClass.name))) {
+			if (lKey.startsWith(mainClass.name.toLowerCase()) || lKey.startsWith(race.name.toLowerCase()) || (subClass != null && lKey.startsWith(subClass.name.toLowerCase()))) {
 				result += cost.getValue();
 			}
 		}
@@ -564,22 +564,69 @@ public class PC {
 	public void checkSkills() {
 		HashMap<String, SkillDataStore> potentialSkills = getUniqueSkills();
 		Map<String, Boolean> activeSkills = new HashMap<String, Boolean>();
-		int level = SetExp.getLevelOfXpAmount(currentXP);
-		for (SkillDataStore s : potentialSkills.values()) {
-//			System.out.print("Checking validity of skill "+s.name);
-			if (s.levelRequired <= level && s.skillPoints < 1) {
-//				System.out.print(s.name+" valid");
-				activeSkills.put(s.name, true);
-				continue;
-			}
-			// skill points now :/
-			if (skillsPurchased.containsKey(mainClass.name + "|" + s.name) || skillsPurchased.containsKey(race.name + "|" + s.name) || (subClass != null && skillsPurchased.containsKey(subClass.name + "|" + s.name))) {
-//				System.out.print(s.name+" valid purchase");
-				activeSkills.put(s.name, true);
-				continue;
+		for (Entry<String, SkillDataStore> s : potentialSkills.entrySet()) {
+			if (isValidSkill(s.getKey())) {
+				activeSkills.put(s.getValue().name, true);
 			}
 		}
 		skillsSelected = activeSkills;
+	}
+
+	public boolean isValidSkill(String skill) {
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+		HashMap<String, SkillDataStore> potentialSkills = getUniqueSkills();
+		if (potentialSkills.containsKey(skill)) {
+			SkillDataStore s = potentialSkills.get(skill);
+			boolean valid = false;
+			if (s.levelRequired <= level && s.skillPoints < 1) {
+				valid = true;
+			}
+			if ((skillsPurchased.containsKey(mainClass.name + "|" + s.name) || skillsPurchased.containsKey(race.name + "|" + s.name) || (subClass != null && skillsPurchased.containsKey(subClass.name + "|" + s.name))) && (s.levelRequired <= level)) {
+				valid = true;
+			}
+			if (!valid) {
+				return false;
+			}
+			valid = checkSkillDeps(skill);
+			if (valid) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean checkSkillDeps(String skill) {
+		boolean valid = false;
+		HashMap<String, SkillDataStore> potentialSkills = getUniqueSkills();
+		if (potentialSkills.containsKey(skill)) {
+			SkillDataStore s = potentialSkills.get(skill);
+			if (s.requiresOne != null && !s.requiresOne.isEmpty()) {
+				for (String skillname : s.requiresOne) {
+					if (isValidSkill(skillname)) {
+						valid = true;
+					}
+				}
+			} else {
+				valid = true;
+			}
+
+			if (valid) {
+				if (s.requires != null && !s.requires.isEmpty()) {
+					for (String skillname : s.requires) {
+						if (!isValidSkill(skillname)) {
+							valid = false;
+						}
+					}
+				}
+			}
+
+			if ((s.requires == null || s.requires.isEmpty())) {
+				if (s.requiresOne == null || s.requiresOne.isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return valid;
 	}
 
 	public HashMap<String, SkillDataStore> getUniqueSkills() {
@@ -595,12 +642,12 @@ public class PC {
 		Set<SkillDataStore> set = new HashSet<SkillDataStore>();
 		set.addAll(race.availableSkills);
 		set.addAll(race.outsourcedSkills);
-		set.addAll(mainClass.availableSkills);
-		set.addAll(mainClass.outsourcedSkills);
 		if (subClass != null) {
 			set.addAll(subClass.availableSkills);
 			set.addAll(subClass.outsourcedSkills);
 		}
+		set.addAll(mainClass.availableSkills);
+		set.addAll(mainClass.outsourcedSkills);
 		List<SkillDataStore> uniques = new ArrayList<SkillDataStore>();
 		uniques.addAll(set);
 		return makeMap(uniques);
@@ -609,7 +656,6 @@ public class PC {
 	public HashMap<String, SkillDataStore> makeMap(List<SkillDataStore> in) {
 		HashMap<String, SkillDataStore> out = new HashMap<String, SkillDataStore>();
 		for (SkillDataStore item : in) {
-			//System.out.print("skill map [ "+item.name+" | "+item.vars.toString()+" ]");
 			out.put(item.name, item);
 		}
 		return out;
@@ -617,7 +663,6 @@ public class PC {
 
 	public String getSkillsource(String skillName) {
 		String source = null;
-
 		for (SkillDataStore s : race.availableSkills) {
 			if (s.name.equalsIgnoreCase(skillName)) {
 				return race.name;
@@ -670,7 +715,7 @@ public class PC {
 	public void healthCheck() {
 		Player p = Bukkit.getServer().getPlayer(uuid);
 		if (p != null) {
-			
+
 			if (!lq.validWorld(p.getWorld().getName())) {
 				if (lq.configMain.manageHealthNonLqWorlds) {
 					HealthStore hs = lq.datasync.getAltHealthStore(p.getUniqueId());
@@ -690,7 +735,7 @@ public class PC {
 				}
 				return;
 			}
-			
+
 			getMaxHealth();
 
 			this.health = p.getHealth();
@@ -818,7 +863,7 @@ public class PC {
 		if (!lq.validWorld(getPlayer().getWorld().getName())) {
 			return false;
 		}
-		
+
 		checkSkills();
 		if (skillsSelected != null && name != null) {
 			Boolean hasSkill = skillsSelected.get(name);
@@ -839,12 +884,9 @@ public class PC {
 				if (p != null && p.isOnline()) {
 					skill.setLastUseLoc(p.getLocation().clone());
 				}
-				// skillSet.put(name,skill);
 				if (skill.delay < 1 && skill.buildup < 1) {
 					skill.startperms(lq, p);
 					skill.start(lq, this);
-				} else {
-					// System.out.print("[skill tick] Queued up skill: " + skill.name);
 				}
 			} else if (phase == SkillPhase.COOLDOWN) {
 				if (p != null && p.isOnline()) {
@@ -1009,18 +1051,28 @@ public class PC {
 		if (skill != null) {
 			getPlayer().sendMessage("Skill " + skillname + " found");
 			int cost = skill.skillPoints;
-			getPlayer().sendMessage("cost " + cost + "...");
 			if (getSkillPointsLeft() >= cost) {
-				getPlayer().sendMessage("cost " + cost + "...");
-				String classname = this.getSkillsource(skillname);
-				skillsPurchased.put(classname + "|" + skillname, cost);
-				getPlayer().sendMessage("classname " + classname + "...");
-				return true;
+				if (checkSkillDeps(skillname)) {
+					String classname = this.getSkillsource(skillname);
+					skillsPurchased.put(classname + "|" + skillname, cost);
+					return true;
+				} else {
+					if (skill.requires!=null && !skill.requires.isEmpty()) {
+						getPlayer().sendMessage(lq.configLang.skillRequires + skill.requires.toString());
+					}
+					if (skill.requiresOne!=null && !skill.requiresOne.isEmpty()) {
+						getPlayer().sendMessage(lq.configLang.skillRequiresOne + skill.requiresOne.toString());
+					}
+					return false;
+				}
+			} else {
+				getPlayer().sendMessage(lq.configLang.skillPointsMissing + "'" + skillname + "': " + getSkillPointsLeft() + " (" + getSkillPointsSpent() + "/" + getMaxSkillPointsLeft() + ")");
+				return false;
 			}
 		} else {
 			getPlayer().sendMessage("Skill " + skillname + " not found");
+			return false;
 		}
-		return false;
 	}
 
 	public SkillDataStore getSkillData(String name) {

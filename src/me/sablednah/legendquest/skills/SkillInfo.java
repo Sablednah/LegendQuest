@@ -41,6 +41,7 @@ public class SkillInfo {
 		this.author = author;
 		this.description = description;		
 	}
+	
 	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int manaCost, ItemStack consumes, int levelRequired, int skillPoints, HashMap<String, Object> vars) {
 		this.name = name;
 		this.version = version;
