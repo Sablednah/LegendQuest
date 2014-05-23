@@ -180,6 +180,7 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         pc.scheduleHealthCheck();
                         lq.players.scheduleUpdate(p.getUniqueId());
                         pc.checkInv();
+                        pc.skillSet = pc.getUniqueSkills(true);
                         sender.sendMessage(lq.configLang.classChanged + ": " + className);
                         lq.debug.fine(lq.configLang.classChanged + ": " + className + " - " + p.getName());
                         return true;

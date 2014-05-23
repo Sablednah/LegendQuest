@@ -22,7 +22,7 @@ public abstract class Skill implements EventListener, Listener {
 
 	public Main					lq;
 	public ConfigurationSection	config;
-	public Skill				skill		= this;
+	public Skill				skill	= this;
 	public SkillInfo			defaultOptions;
 
 	public abstract boolean onEnable();
@@ -36,7 +36,7 @@ public abstract class Skill implements EventListener, Listener {
 	}
 
 	public final String getName() {
-		//if (aliasedname!=null) { return aliasedname; }
+		// if (aliasedname!=null) { return aliasedname; }
 		return defaultOptions.getName();
 	}
 
@@ -51,14 +51,14 @@ public abstract class Skill implements EventListener, Listener {
 
 	protected final void initialize(Main plugin, SkillInfo si) {
 		this.lq = plugin;
-		
+
 		// get plugin config
 		this.config = lq.configSkills.skillSetings.get(si.getName());
 		// YamlConfiguration.loadConfiguration(getSkillConfig());
 		// si contains manifest/skill details - need to copy over config
 		si.readConfigInfo(this.config);
 		defaultOptions = si;// new SkillInfo(config);
-		
+
 		try {
 			if (!onEnable()) {
 				disable();
@@ -141,7 +141,7 @@ public abstract class Skill implements EventListener, Listener {
 	}
 
 	public boolean validSkillUser(Player p) {
-		//System.out.print("doing valid skillcheck for "+getName());
+		// System.out.print("doing valid skillcheck for "+getName());
 		return getPC(p).validSkill(getName().toLowerCase());
 	}
 
@@ -156,7 +156,7 @@ public abstract class Skill implements EventListener, Listener {
 	public SkillDataStore getPlayerSkillData(Player p) {
 		SkillDataStore skillData = null;
 		if (p != null) {
-			//skillData = getPC(p).skillSet.get(getName());
+			// skillData = getPC(p).skillSet.get(getName());
 			skillData = getPC(p).getSkillData(getName().toLowerCase());
 		}
 		return skillData;

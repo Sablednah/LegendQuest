@@ -243,6 +243,7 @@ public class PlayerEvents implements Listener {
 
 		if (xpAmount >= p.getExpToLevel()) {
 			pc.scheduleHealthCheck();
+			pc.skillSet = pc.getUniqueSkills(true);
 			final LevelUpEvent e = new LevelUpEvent(p, p.getLevel() + 1, pc);
 			Bukkit.getServer().getPluginManager().callEvent(e);
 		}

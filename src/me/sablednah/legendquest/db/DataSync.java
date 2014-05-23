@@ -191,7 +191,7 @@ public class DataSync {
 		}
 		return null;
 	}
-	
+
 	public synchronized int getXP(final UUID uuid, final String className) {
 		String sql;
 		int xp = 0;
@@ -215,7 +215,7 @@ public class DataSync {
 		String sql;
 		double hp = 0;
 		double maxhp = 0;
-		
+
 		try {
 			sql = "SELECT maxhealth,health FROM otherhealth WHERE uuid='" + uuid.toString() + "';";
 			final ResultSet r = dbconn.query(sql);
@@ -225,7 +225,7 @@ public class DataSync {
 					maxhp = r.getDouble("maxhealth");
 				}
 			}
-			HealthStore hs = new HealthStore(uuid,hp,maxhp);
+			HealthStore hs = new HealthStore(uuid, hp, maxhp);
 			return hs;
 		} catch (final SQLException e) {
 			lq.logSevere("Error reading otherhealth from database.");
@@ -233,7 +233,7 @@ public class DataSync {
 		}
 		return null;
 	}
-	
+
 	public synchronized double getAltHealth(UUID uuid) {
 		String sql;
 		double hp = 0;
@@ -497,7 +497,9 @@ public class DataSync {
 			ResultSet r = dbconn.query(sql);
 			r.close();
 			String sql2;
-			for (final Map.Entry<String, Integer> entry : pc.xpEarnt.entrySet()) {
+
+			HashMap<String, Integer> copy = pc.xpEarnt;
+			for (final Map.Entry<String, Integer> entry : copy.entrySet()) {
 				sql2 = "REPLACE INTO xpEarnt (";
 				sql2 = sql2 + "uuid,player,class,xp";
 				sql2 = sql2 + ") values(\"";
@@ -511,7 +513,8 @@ public class DataSync {
 				r.close();
 			}
 
-			for (final Map.Entry<String, Integer> entry : pc.skillsPurchased.entrySet()) {
+			HashMap<String, Integer> copy2 = pc.skillsPurchased;
+			for (final Map.Entry<String, Integer> entry : copy2.entrySet()) {
 				sql2 = "REPLACE INTO skillsBought (";
 				sql2 = sql2 + "uuid, player,skillName,cost";
 				sql2 = sql2 + ") values(\"";
@@ -524,8 +527,8 @@ public class DataSync {
 				r = dbconn.query(sql2);
 				r.close();
 			}
-
-			for (final Entry<Material, String> entry : pc.skillLinkings.entrySet()) {
+			HashMap<Material, String> copy3 = pc.skillLinkings;
+			for (final Entry<Material, String> entry : copy3.entrySet()) {
 				sql2 = "REPLACE INTO skillsLinked (";
 				sql2 = sql2 + "uuid, player,material,skillName";
 				sql2 = sql2 + ") values(\"";
