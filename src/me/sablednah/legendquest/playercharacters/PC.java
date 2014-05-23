@@ -296,6 +296,9 @@ public class PC {
 		double conBonus = ((con * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= conBonus;
 		result = (hp + (level * perlevel));
+		
+		result = (Math.round(result*10.0)/10.0);
+		
 		this.maxHP = result;
 
 		return this.maxHP;
@@ -742,6 +745,9 @@ public class PC {
 			if (this.health > this.maxHP) {
 				this.health = this.maxHP;
 			}
+			
+			p.setHealth(Math.min(this.health, p.getMaxHealth()));
+			
 			p.setMaxHealth(this.maxHP);
 			p.setHealth(this.health);
 			double scale = this.maxHP;

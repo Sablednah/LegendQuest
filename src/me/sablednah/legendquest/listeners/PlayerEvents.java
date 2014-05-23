@@ -88,6 +88,7 @@ public class PlayerEvents implements Listener {
 		} else {
 			p.setTotalExperience(pc.currentXP);
 			p.setMaxHealth(pc.maxHP);
+			if (pc.health>pc.maxHP) { pc.health=pc.maxHP; }
 			p.setHealth(pc.health);
 			pc.healthCheck();			
 		}
