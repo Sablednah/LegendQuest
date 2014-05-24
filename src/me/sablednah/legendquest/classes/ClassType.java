@@ -30,7 +30,7 @@ public class ClassType {
 	public double						healthPerLevel;
 	public double						manaPerLevel;
 	public int							manaBonus;
-	public int							manaPerSecond;
+	public double						manaPerSecond;
 
 	public String						perm;
 

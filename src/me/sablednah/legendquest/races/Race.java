@@ -22,7 +22,7 @@ public class Race {
 	public int					baseHealth;
 
 	public int					baseMana;
-	public int					manaPerSecond;
+	public double				manaPerSecond;
 
 	public String				perm;
 

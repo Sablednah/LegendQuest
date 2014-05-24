@@ -763,7 +763,7 @@ public class PC {
 	}
 
 	public boolean manaGain() {
-		int gain;
+		double gain;
 		gain = race.manaPerSecond;
 		if (subClass != null) {
 			gain += (Math.max(mainClass.manaPerSecond, subClass.manaPerSecond));
@@ -773,9 +773,9 @@ public class PC {
 		return manaGain(gain);
 	}
 
-	public boolean manaGain(int gain) {
-		int manaNow = this.mana;
-		this.mana += gain;
+	public boolean manaGain(double gain) {
+		double manaNow = this.mana;
+		this.mana += Math.round(gain);
 		if (this.mana > getMaxMana()) {
 			this.mana = getMaxMana();
 		}

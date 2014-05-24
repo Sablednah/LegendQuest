@@ -112,7 +112,7 @@ public class Races {
 					r.allowRepairing = thisConfig.getBoolean("allowRepairing");
 
 					r.baseMana = thisConfig.getInt("baseMana");
-					r.manaPerSecond = thisConfig.getInt("manaPerSecond");
+					r.manaPerSecond = thisConfig.getDouble("manaPerSecond");
 
 					r.xpAdjustKill = thisConfig.getDouble("xpAdjustKill");
 					r.xpAdjustSmelt = thisConfig.getDouble("xpAdjustSmelt");

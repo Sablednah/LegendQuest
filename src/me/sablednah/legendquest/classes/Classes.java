@@ -159,7 +159,7 @@ public class Classes {
 
 					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
 					c.manaBonus = thisConfig.getInt("manaBonus");
-					c.manaPerSecond = thisConfig.getInt("manaPerSecond");
+					c.manaPerSecond = thisConfig.getDouble("manaPerSecond");
 					
 					c.xpAdjustKill = thisConfig.getDouble("xpAdjustKill");
 					c.xpAdjustSmelt = thisConfig.getDouble("xpAdjustSmelt");
