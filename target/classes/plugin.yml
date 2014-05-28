@@ -1,5 +1,5 @@
 name: LegendQuest
-version: 1.4.1
+version: 1.4.2
 description: |
     RPG plugin for MineCraft servers using the Bukkit API
     Allows Race, Classes, Skills and effects.
@@ -62,7 +62,7 @@ commands:
     hp:
         description: Get your health
         usage: Use "/<command> help" for more info
-        aliases: [lqhp,lquesthp,legendqhp,legendquesthp,test]
+        aliases: [lqhp,lquesthp,legendqhp,legendquesthp]
         permission: legendquest.command.hp
         permission-message: You don't have <permission>
     plurals:
@@ -75,6 +75,7 @@ commands:
 permissions:
     legendquest.*:
         description: Gives access to all legendquest commands/functions.
+        default: op
         children:
             legendquest.command.*: true
     legendquest.command.*:

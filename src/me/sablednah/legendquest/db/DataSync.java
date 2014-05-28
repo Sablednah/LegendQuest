@@ -302,7 +302,7 @@ public class DataSync {
 
 		// characters
 		create = "CREATE TABLE if not exists pcs (";
-		create += "uuid varchar(32) NOT NULL";
+		create += "uuid varchar(36) NOT NULL";
 		if (!lq.configMain.useMySQL) {
 			create += " UNIQUE ON CONFLICT FAIL";
 		}
@@ -348,7 +348,7 @@ public class DataSync {
 
 		// experience
 		create = "CREATE TABLE if not exists xpEarnt (";
-		create += "uuid varchar(32) NOT NULL, ";
+		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "class varchar(64) NOT NULL, ";
 		create += "xp INTEGER";
@@ -375,7 +375,7 @@ public class DataSync {
 
 		// purchased skills
 		create = "CREATE TABLE if not exists skillsBought (";
-		create += "uuid varchar(32) NOT NULL, ";
+		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "skillName varchar(64) NOT NULL, ";
 		create += "cost INTEGER";
@@ -402,7 +402,7 @@ public class DataSync {
 
 		// linked skills
 		create = "CREATE TABLE if not exists skillsLinked (";
-		create += "uuid varchar(32) NOT NULL, ";
+		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "material varchar(64) NOT NULL, ";
 		create += "skillName varchar(64) NOT NULL, ";
@@ -429,7 +429,7 @@ public class DataSync {
 
 		// otherHealth
 		create = "CREATE TABLE if not exists otherHealth(";
-		create += "uuid varchar(32) NOT NULL, ";
+		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "health DOUBLE, ";
 		create += "maxhealth DOUBLE";
