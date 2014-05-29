@@ -299,6 +299,11 @@ public class Races {
 						}
 					}
 
+					for (SkillDataStore s :r.availableSkills) {
+						lq.debug.info("Vars ["+s .name+"] : "+s.vars.toString());
+						
+					}
+					
 					// outsourced skills - skills without skill class - using command/on/off and perm nodes to achieve
 					// effect.
 					r.outsourcedSkills = new ArrayList<SkillDataStore>();
@@ -306,14 +311,13 @@ public class Races {
 					if (permSkills != null) {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
-
+							lq.debug.info("Loading permskill: " + key);
 							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
 							si.setName(key);
 							si.readConfigBasicInfo(skillInfo);
 							SkillDataStore skilldata = new SkillDataStore(si);
 							skilldata.readConfigInfo(skillInfo);
 							r.outsourcedSkills.add(skilldata);
-
 						}
 					}
 

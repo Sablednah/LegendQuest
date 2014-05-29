@@ -96,20 +96,6 @@ public class Classes {
 					c.filename = classfile.getName();
 					c.name = thisConfig.getString("name");
 
-					// c.size = (float) thisConfig.getDouble("size", 1.0);
-					// c.speed = thisConfig.getDouble("speed", 1.0);
-					// c.xp = thisConfig.getInt("xp", 0);
-					/*
-					 * @SuppressWarnings("unchecked") List<String> effects = (List<String>)
-					 * thisConfig.getList("effects"); if (effects != null) { for (String thisEffect : effects) { //
-					 * ZombieMod.logger.info("["+ZombieMod.myName+"] Effect: " + thisEffect); Effect x =
-					 * Effect.valueOf(thisEffect); // ZombieMod.logger.info("["+ZombieMod.myName+"] x: " + x);
-					 * c.effects.add(x); } }
-					 */
-					/*
-					 * @SuppressWarnings("unchecked") List<String> abilities = (List<String>)
-					 * thisConfig.getList("abilities"); c.abilities = abilities;
-					 */
 					c.frequency = thisConfig.getInt("frequency");
 
 					final List<String> allowedRaces = (List<String>) thisConfig.getList("allowedRaces");
@@ -351,13 +337,10 @@ public class Classes {
 					
 					
 					for (SkillDataStore s :c.availableSkills) {
-						System.out.print("Vars ["+s.name+"] : "+s.vars.toString());
+						lq.debug.info("Vars ["+s.name+"] : "+s.vars.toString());
 						
 					}
-
-					
-					
-					
+			
 					// outsourced skills - skills without skill class - using command/on/off and perm nodes to achieve
 					// effect.
 					c.outsourcedSkills = new ArrayList<SkillDataStore>();
@@ -365,6 +348,7 @@ public class Classes {
 					if (permSkills != null) {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
+							lq.debug.info("Loading permskill: " + key);
 							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
 							si.setName(key);
 							si.readConfigBasicInfo(skillInfo);

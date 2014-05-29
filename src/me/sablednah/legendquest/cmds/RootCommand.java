@@ -1,9 +1,12 @@
 package me.sablednah.legendquest.cmds;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.Classes;
+import me.sablednah.legendquest.db.DataSync;
+import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
 import me.sablednah.legendquest.utils.Utils;
 
@@ -78,12 +81,26 @@ public class RootCommand implements CommandExecutor {
                     sendMultilineMessage(sender, lq.configLang.helpCommand);
                     return true;
                 case RELOAD:
-                    lq.configMain.reloadConfig();
+                	for (Player player : lq.getServer().getOnlinePlayers()) {
+            			UUID uuid = player.getUniqueId();
+            			lq.players.removePlayer(uuid);
+            		}
+            		lq.datasync.shutdown();
+                    
+            		lq.configMain.reloadConfig();
                     lq.configLang.reloadConfig();
+                    lq.configSkills.reloadConfig();
+                    
+                    lq.players = null;
+                    lq.datasync = null;
                     lq.classes = null;
                     lq.races = null;
+                    
                     lq.races = new Races(lq);
                     lq.classes = new Classes(lq);
+            		lq.datasync = new DataSync(lq);
+                    lq.players = new PCs(lq);
+                    
                     sender.sendMessage(lq.configLang.commandReloaded);
                     return true;
                 case RACE:
@@ -110,7 +127,9 @@ public class RootCommand implements CommandExecutor {
                 case SKILL:
                     newcmd = new CmdSkill(lq);
                     break;
-                    
+                case ADMIN:
+                    newcmd = new CmdAdmin(lq);
+                    break;                    
             }
             
             lq.debug.fine("newcmd: " + newcmd);

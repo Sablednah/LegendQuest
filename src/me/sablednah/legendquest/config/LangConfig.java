@@ -17,6 +17,8 @@ public class LangConfig extends Config {
 	public String					startup					= "The sky above the port was the color of television, tuned to a dead channel.";
 	public String					shutdown				= "=== END OF LINE ===";
 
+	public String					adminName				= "GM";
+	
 	public String					invalidCommand			= "Sorry couldn't recognise command: ";
 	// TODO add more help info...
 	public String					helpCommand				= "/lq help : Displays this list\n" + "/lq stats [player] : Display character stats\n" + "/lq hp [player] : Display player health (and mana)\n"
@@ -60,12 +62,14 @@ public class LangConfig extends Config {
 
 	public String					youAreCurrently			= "You are currently ";
 	public String					raceChanged				= "Your race has been changed to ";
+	public String					raceChangedAdmin        = "GM has changed your race to ";
 	public String					raceChangeNotAllowed	= "Sorry you have already selected a race. ";
 	public String					raceList				= "-------- Races --------";
 	public String					raceNotAllowed			= "Sorry, you can't select that race.";
 
 	public String					classSelectRaceFirst	= "Please Select Race before class.";
 	public String					classChanged			= "You have changed your class to: ";
+	public String					classChangedAdmin		= "GM has changed your class to: ";
 	public String					classList				= "------- Classes -------";
 	public String					classChangeWarnXpLoss	= "Warning: Changing class will lose your accumulated XP";
 	public String					classConfirm			= "Repeat with confirm appended  e.g. /class mage confirm";
@@ -141,6 +145,8 @@ public class LangConfig extends Config {
 	public String					skillStunned			= "Sorry you're stuned, you can't use: ";
 
 	public String					xpChange				= "You gained Exp: ";
+	public String					xpChangeAdmin			= "You gave Exp: ";
+
 
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
@@ -257,6 +263,6 @@ public class LangConfig extends Config {
 		this.skillInvalid = this.getConfigItem("skillInvalid", this.skillInvalid);
 		
 		this.xpChange = this.getConfigItem("xpChange", this.xpChange);
-		
+		this.xpChangeAdmin = this.getConfigItem("xpChangeAdmin", this.xpChangeAdmin);
 	}
 }

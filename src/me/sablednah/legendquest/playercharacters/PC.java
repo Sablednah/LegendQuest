@@ -25,6 +25,7 @@ import me.sablednah.legendquest.mechanics.Attribute;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -296,9 +297,9 @@ public class PC {
 		double conBonus = ((con * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= conBonus;
 		result = (hp + (level * perlevel));
-		
-		result = (Math.round(result*10.0)/10.0);
-		
+
+		result = (Math.round(result * 10.0) / 10.0);
+
 		this.maxHP = result;
 
 		return this.maxHP;
@@ -745,9 +746,9 @@ public class PC {
 			if (this.health > this.maxHP) {
 				this.health = this.maxHP;
 			}
-			
+
 			p.setHealth(Math.min(this.health, p.getMaxHealth()));
-			
+
 			p.setMaxHealth(this.maxHP);
 			p.setHealth(this.health);
 			double scale = this.maxHP;
@@ -813,6 +814,11 @@ public class PC {
 		if (p != null) {
 			SetExp.setTotalExperience(p, newXP);
 		}
+	}
+
+	public void giveXP(int XPGain) {
+		PlayerExpChangeEvent event = new PlayerExpChangeEvent(getPlayer(), XPGain);
+		Bukkit.getPluginManager().callEvent(event);
 	}
 
 	public boolean canCraft() {
@@ -1063,10 +1069,10 @@ public class PC {
 					skillsPurchased.put(classname + "|" + skillname, cost);
 					return true;
 				} else {
-					if (skill.requires!=null && !skill.requires.isEmpty()) {
+					if (skill.requires != null && !skill.requires.isEmpty()) {
 						getPlayer().sendMessage(lq.configLang.skillRequires + skill.requires.toString());
 					}
-					if (skill.requiresOne!=null && !skill.requiresOne.isEmpty()) {
+					if (skill.requiresOne != null && !skill.requiresOne.isEmpty()) {
 						getPlayer().sendMessage(lq.configLang.skillRequiresOne + skill.requiresOne.toString());
 					}
 					return false;
@@ -1084,5 +1090,75 @@ public class PC {
 	public SkillDataStore getSkillData(String name) {
 		SkillDataStore s = skillSet.get(name);
 		return s;
+	}
+
+	public void changeClass(ClassType cl, Boolean sub) {
+		if (cl==null) {
+            lq.debug.fine(lq.configLang.classInvalid);
+            return;
+		}
+		
+		Player p = getPlayer();
+
+		final int xpNow = SetExp.getTotalExperience(p);
+
+		int newxp = 0;
+		if (p.getLevel() > 1 && xpNow < lq.configMain.max_xp) {
+			lq.debug.fine("Level is: " + p.getLevel());
+			if ((!sub && this.mainClass != lq.classes.defaultClass) || (sub && this.subClass != null)) {
+				lq.debug.fine("resetting " + p.getName() + " XP: " + p.getTotalExperience() + " - " + ((int) (p.getTotalExperience() * (lq.configMain.percentXpKeepClassChange / 100))));
+				// reset XP
+				newxp = (int) (xpNow * (lq.configMain.percentXpKeepClassChange / 100));
+				this.setXP(newxp);
+				lq.players.savePlayer(this);
+			}
+		}
+
+		String oldClassname;
+		if (sub) {
+			oldClassname = this.subClass.name.toLowerCase();
+			this.subClass = cl;
+		} else {
+			oldClassname = this.mainClass.name.toLowerCase();
+			this.mainClass = cl;
+		}
+		int newclassxp = 0;
+		if (this.xpEarnt.containsKey(cl.name.toLowerCase())) {
+			newclassxp = this.xpEarnt.get(cl.name.toLowerCase());
+		} else {
+			newclassxp = newxp;
+		}
+
+		// if mastered class - save this xp and check if target class is mastered.
+		if (xpNow > lq.configMain.max_xp) {
+			this.xpEarnt.put(oldClassname, xpNow);
+
+			if (newclassxp > lq.configMain.max_xp) {
+				this.setXP(newclassxp);
+			} else {
+				this.setXP(0);
+			}
+		} else {
+			// old class was not masteted - xp loss if any was done above.
+			this.setXP(newclassxp);
+		}
+
+		lq.players.addPlayer(uuid, this);
+		lq.players.savePlayer(this);
+		this.scheduleHealthCheck();
+		lq.players.scheduleUpdate(uuid);
+		this.checkInv();
+		this.skillSet = this.getUniqueSkills(true);
+		lq.debug.fine(lq.configLang.classChanged + ": " + cl.name + " - " + p.getName());
+	}
+
+	public void changeRace(Race r) {
+        this.race = r;
+        this.raceChanged = true;
+        lq.players.addPlayer(uuid, this);
+        lq.players.savePlayer(uuid);
+        this.scheduleHealthCheck();
+        this.checkInv();
+        this.skillSet = this.getUniqueSkills(true);
 	}
 }

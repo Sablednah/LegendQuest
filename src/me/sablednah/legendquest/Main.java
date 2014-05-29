@@ -139,7 +139,8 @@ public class Main extends JavaPlugin {
 		getCommand("roll").setExecutor(new CmdRoll(this));
 		getCommand("hp").setExecutor(new CmdHP(this));
 		getCommand("link").setExecutor(new CmdLink(this));
-
+		getCommand("admin").setExecutor(new CmdAdmin(this));
+		
 		getCommand("plurals").setExecutor(new CmdPlurals(this));
 
 		// getCommand("skills").setExecutor(new CmdPlurals(this));

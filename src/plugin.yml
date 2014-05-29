@@ -71,7 +71,14 @@ commands:
         aliases: [classes,races,skills,binds,links]
         permission: legendquest.command.plurals
         permission-message: You don't have <permission>
+    admin:
+        description: Perform admin commands
+        usage: Use "/<command> help" for more info
+        aliases: [dm, lqadmin,lquestadmin,legendqadmin,legendquestadmin]
+        permission: legendquest.command.admin
+        permission-message: You don't have <permission>
         
+
 permissions:
     legendquest.*:
         description: Gives access to all legendquest commands/functions.
@@ -79,7 +86,7 @@ permissions:
         children:
             legendquest.command.*: true
     legendquest.command.*:
-        description: Allows user to use legendquest commands.
+        description: Allows user to use all basic legendquest commands.
         default: op
         children:
             legendquest.command.reload: true
@@ -92,6 +99,9 @@ permissions:
             legendquest.command.link: true
             legendquest.command.karma: true
             legendquest.command.plurals: true
+    legendquest.command.admin:
+        description: Allows user to use legendquest admin commands.
+        default: op
     legendquest.command.reload:
         description: Allows user to use legendquest reload command.
         default: false

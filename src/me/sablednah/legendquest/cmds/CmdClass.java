@@ -124,65 +124,8 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                         
                         // only rest XP if they have some worth bothering AND they are changing class - not setting
                         // non-default
-                        
-                        if (xpNow > lq.configMain.max_xp) {
-                            valid = true;
-                        }
-                        
-                        int newxp = 0;
-                        if (p.getLevel() > 1 && xpNow < lq.configMain.max_xp) {
-                            lq.debug.fine("Level is: " + p.getLevel());
-                            if ((!sub && pc.mainClass != lq.classes.defaultClass) || (sub && pc.subClass != null)) {
-                                lq.debug.fine("resetting " + p.getName() + " XP: " + p.getTotalExperience() + " - "
-                                        + ((int) (p.getTotalExperience() * (lq.configMain.percentXpKeepClassChange / 100))));
-                                
-                                // reset XP
-                                newxp = (int) (xpNow * (lq.configMain.percentXpKeepClassChange / 100));
-                                pc.setXP(newxp);
-                                lq.players.savePlayer(pc);
-                                
-                            }
-                        }
-                        
-                        String oldClassname;
-                        if (sub) {
-                            oldClassname = pc.subClass.name.toLowerCase();
-                            ;
-                            pc.subClass = cl;
-                        } else {
-                            oldClassname = pc.mainClass.name.toLowerCase();
-                            ;
-                            pc.mainClass = cl;
-                        }
-                        int newclassxp = 0;
-                        if (pc.xpEarnt.containsKey(cl.name.toLowerCase())) {
-                            newclassxp = pc.xpEarnt.get(cl.name.toLowerCase());
-                        } else {
-                            newclassxp = newxp;
-                        }
-                        
-                        // if mastered class - save this xp and check if target class is mastered.
-                        if (xpNow > lq.configMain.max_xp) {
-                            pc.xpEarnt.put(oldClassname, xpNow);
-                            
-                            if (newclassxp > lq.configMain.max_xp) {
-                                pc.setXP(newclassxp);
-                            } else {
-                                pc.setXP(0);
-                            }
-                        } else {
-                            // old class was not masteted - xp loss if any was done above.
-                            pc.setXP(newclassxp);
-                        }
-                        
-                        lq.players.addPlayer(p.getUniqueId(), pc);
-                        lq.players.savePlayer(pc);
-                        pc.scheduleHealthCheck();
-                        lq.players.scheduleUpdate(p.getUniqueId());
-                        pc.checkInv();
-                        pc.skillSet = pc.getUniqueSkills(true);
+                        pc.changeClass(cl, sub);
                         sender.sendMessage(lq.configLang.classChanged + ": " + className);
-                        lq.debug.fine(lq.configLang.classChanged + ": " + className + " - " + p.getName());
                         return true;
                     }
                 }
