@@ -132,12 +132,12 @@ public class DataSync {
 
 				lq.debug.fine("class is " + pc.mainClass.name);
 
-				pc.statStr = r.getInt("statStr");
-				pc.statDex = r.getInt("statDex");
-				pc.statInt = r.getInt("statInt");
-				pc.statWis = r.getInt("statWis");
-				pc.statCon = r.getInt("statCon");
-				pc.statChr = r.getInt("statChr");
+				pc.setStatStr(r.getInt("statStr"));
+				pc.setStatDex(r.getInt("statDex"));
+				pc.setStatInt(r.getInt("statInt"));
+				pc.setStatWis(r.getInt("statWis"));
+				pc.setStatCon(r.getInt("statCon"));
+				pc.setStatChr(r.getInt("statChr"));
 
 			}
 			r.close();

@@ -18,12 +18,13 @@ public class MainConfig extends Config {
 
 	public ArrayList<String>	worlds						= new ArrayList<String>();
 	public boolean				randomStats					= true;
+
 	public double				percentXpKeepClassChange	= 10.00D;
 	public double				percentXpLossRespawn		= 10.00D;
-
 	public int					max_level					= 150;
 	public int					max_xp						= 58245;
 	public boolean				XPnotify					= true;
+	public double				scaleXP						= 100.00D;
 
 	public boolean				useSkillTestForCombat		= true;
 	public boolean				verboseCombat				= true;
@@ -51,6 +52,11 @@ public class MainConfig extends Config {
 	public boolean				useSizeForCombat			= true;
 
 	public boolean				manageHealthNonLqWorlds		= true;
+
+	public boolean				chatUsePrefix				= true;
+	public boolean				chatProcessPrefix			= true;
+
+	public String				chatPrefix					= "[{race}|{class}] {current}";
 
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
@@ -96,6 +102,10 @@ public class MainConfig extends Config {
 
 		this.skillBuildupMoveAllowed = this.getConfigItem("skillBuildupMoveAllowed", this.skillBuildupMoveAllowed);
 		this.skillTickInterval = (long) this.getConfigItem("skillTickInterval", this.skillTickInterval);
+
+		this.chatUsePrefix = this.getConfigItem("chatUsePrefix", this.chatUsePrefix);
+		this.chatProcessPrefix = this.getConfigItem("chatProcessPrefix", this.chatProcessPrefix);		
+		this.chatPrefix = this.getConfigItem("chatPrefix", this.chatPrefix);
 		
 	}
 }

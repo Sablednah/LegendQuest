@@ -2,7 +2,10 @@ package me.sablednah.legendquest.mechanics;
 
 import java.util.Random;
 
+import org.bukkit.Bukkit;
+
 //import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.events.AbilityCheckEvent;
 import me.sablednah.legendquest.playercharacters.PC;
 
 
@@ -28,11 +31,12 @@ public class Mechanics {
             stat = 10;
         }
         int result = (int) (stat/2)-5;
-/*
-        if (Main.debugMode){
-            System.out.print("Attribute Mod ["+attr+"]: "+result);
-        } 
-*/
+        
+        AbilityCheckEvent e = new AbilityCheckEvent(pc, attr, result);
+        Bukkit.getServer().getPluginManager().callEvent(e);
+        
+        result = e.getValue();
+        
         return result;
     }
     

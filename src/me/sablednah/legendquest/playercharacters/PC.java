@@ -24,6 +24,7 @@ import me.sablednah.legendquest.mechanics.Attribute;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -396,7 +397,7 @@ public class PC {
 	 */
 	public int getStatChr() {
 		int stat;
-		stat = statStr;
+		stat = statChr;
 		if (race != null) {
 			stat += race.statChr;
 		}
@@ -425,7 +426,7 @@ public class PC {
 	 */
 	public int getStatCon() {
 		int stat;
-		stat = statStr;
+		stat = statCon;
 		if (race != null) {
 			stat += race.statCon;
 		}
@@ -541,7 +542,7 @@ public class PC {
 	 */
 	public int getStatWis() {
 		int stat;
-		stat = statStr;
+		stat = statWis;
 		if (race != null) {
 			stat += race.statWis;
 		}
@@ -1093,11 +1094,11 @@ public class PC {
 	}
 
 	public void changeClass(ClassType cl, Boolean sub) {
-		if (cl==null) {
-            lq.debug.fine(lq.configLang.classInvalid);
-            return;
+		if (cl == null) {
+			lq.debug.fine(lq.configLang.classInvalid);
+			return;
 		}
-		
+
 		Player p = getPlayer();
 
 		final int xpNow = SetExp.getTotalExperience(p);
@@ -1153,12 +1154,59 @@ public class PC {
 	}
 
 	public void changeRace(Race r) {
-        this.race = r;
-        this.raceChanged = true;
-        lq.players.addPlayer(uuid, this);
-        lq.players.savePlayer(uuid);
-        this.scheduleHealthCheck();
-        this.checkInv();
-        this.skillSet = this.getUniqueSkills(true);
+		this.race = r;
+		this.raceChanged = true;
+		lq.players.addPlayer(uuid, this);
+		lq.players.savePlayer(uuid);
+		this.scheduleHealthCheck();
+		this.checkInv();
+		this.skillSet = this.getUniqueSkills(true);
+	}
+
+	public void damage(double dmg) {
+		damage(dmg,null);
+	}
+
+	public void damage(double dmg, Entity source) {
+		getPlayer().damage(dmg, source);
+		this.scheduleHealthCheck();
+	}
+
+	public void heal(double health) {
+		heal(health,null);
+	}
+
+	public void heal(double health, Entity source) {
+		Player p=getPlayer();
+		double h = p.getHealth();
+		h=h+health;
+		if (h>p.getMaxHealth()) { h=p.getMaxHealth(); }
+		p.setHealth(h);
+		this.health=h;
+		this.scheduleHealthCheck();
+	}
+
+	public void setStatStr(int statStr) {
+		this.statStr = statStr;
+	}
+
+	public void setStatDex(int statDex) {
+		this.statDex = statDex;
+	}
+
+	public void setStatInt(int statInt) {
+		this.statInt = statInt;
+	}
+
+	public void setStatWis(int statWis) {
+		this.statWis = statWis;
+	}
+
+	public void setStatCon(int statCon) {
+		this.statCon = statCon;
+	}
+
+	public void setStatChr(int statChr) {
+		this.statChr = statChr;
 	}
 }

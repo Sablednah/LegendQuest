@@ -128,6 +128,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new KarmaMonitorEvents(this), this);
 		pm.registerEvents(new AttributeCheckEvent(this), this);
 		pm.registerEvents(new SkillLinkEvents(this), this);
+		pm.registerEvents(new ChatEvents(this), this);
 
 		// setup commands
 		getCommand("lq").setExecutor(new RootCommand(this));

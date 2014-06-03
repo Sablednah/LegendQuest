@@ -146,8 +146,9 @@ public class DamageEvents implements Listener {
 			pc = lq.players.getPC((Player) victim);
 			dodge = pc.getAttributeModifier(Attribute.DEX);
 		}
+		
 		if (event instanceof EntityDamageByEntityEvent) {
-			damager = getTwistedInstigatorPlayer(((EntityDamageByEntityEvent) event).getDamager());
+			damager = getTwistedInstigatorEntity(((EntityDamageByEntityEvent) event).getDamager());
 			ranged = (((EntityDamageByEntityEvent) event).getDamager() instanceof Projectile);
 			pc = getTwistedInstigator(((EntityDamageByEntityEvent) event).getDamager());
 			if (pc != null) {

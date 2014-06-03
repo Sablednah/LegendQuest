@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.events.SkillTick;
 import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillPhase;
 import me.sablednah.legendquest.skills.SkillType;
@@ -26,8 +27,9 @@ import org.bukkit.permissions.PermissionAttachment;
 public class PCs {
 
 	public Main										lq;
-	public Map<UUID, PC>							activePlayers		= new HashMap<UUID, PC>();
-	public HashMap<String, PermissionAttachment>	permissions			= new HashMap<String, PermissionAttachment>();
+	public Map<UUID, PC>							activePlayers	= new HashMap<UUID, PC>();
+	public HashMap<String, PermissionAttachment>	permissions		= new HashMap<String, PermissionAttachment>();
+	public int										ticks			= 0;
 
 	public PCs(Main p) {
 		this.lq = p;
@@ -138,29 +140,20 @@ public class PCs {
 
 	public class SkillTicker implements Runnable {
 		public void run() {
+			ticks++;
 			for (PC activePlayer : activePlayers.values()) {
 				Player p = lq.getServer().getPlayer(activePlayer.uuid);
 				if (p != null && p.isOnline()) {
 					for (SkillDataStore skill : activePlayer.skillSet.values()) {
 						boolean startskill = false;
 						boolean stopskill = false;
-
 						SkillPhase phase = skill.checkPhase();
 						SkillPhase lastPhase = skill.getPhase();
 						SkillPhase virtualPhase = phase;
-
 						if (skill.type == SkillType.PASSIVE) {
 							// passive skills are "always on"
 							skill.setActive(true);
 						} else {
-							/*
-							 * if (skill.name.toLowerCase().startsWith("summon")) {
-							 * System.out.print("{skill tick} Checking  "+ skill.name + " Perm:" + skill.permission +
-							 * " command:" + skill.startCommand); } if (skill.name.toLowerCase().startsWith("summon")) {
-							 * System.out.print("{skill tick} "+ skill.name + "| lastPhase  "+ lastPhase + " phase:" +
-							 * phase); }
-							 */
-
 							// ensure skills spend 1 tick at each state they have a value for >0
 							switch (lastPhase) {
 								case READY:
@@ -283,7 +276,6 @@ public class PCs {
 									}
 									skill.setActive(false);
 									break;
-
 							}
 						}
 						if (skill.isActive()) {
@@ -309,6 +301,8 @@ public class PCs {
 						}
 						skill.setPhase(virtualPhase);
 					}
+					SkillTick e = new SkillTick(p);
+					lq.getServer().getPluginManager().callEvent(e);
 				}
 			}
 		}
@@ -316,7 +310,9 @@ public class PCs {
 
 	public double getSize(Entity entity) {
 		double size = 1.6D;
-		if (entity==null) { return size; }
+		if (entity == null) {
+			return size;
+		}
 		EntityType type = entity.getType();
 		if (type == EntityType.COMPLEX_PART) {
 			type = ((ComplexEntityPart) entity).getParent().getType();
@@ -403,8 +399,8 @@ public class PCs {
 				break;
 			case MAGMA_CUBE:
 			case SLIME:
-				Slime s = (Slime)entity;
-				size = s.getSize()*0.5D;
+				Slime s = (Slime) entity;
+				size = s.getSize() * 0.5D;
 				break;
 			/* non typical entities just in case */
 			case FALLING_BLOCK:

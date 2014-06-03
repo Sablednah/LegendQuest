@@ -5,6 +5,7 @@ import java.util.Map;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.experience.SetExp;
+import me.sablednah.legendquest.mechanics.Attribute;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.Utils;
 
@@ -55,17 +56,54 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
         if (pc != null) {
             sender.sendMessage(lq.configLang.playerStats);
             sender.sendMessage(lq.configLang.playerName + ": " + pc.charname + " (" + targetName + ")");
-            sender.sendMessage(lq.configLang.statSTR + ": " + pc.getStatStr());
-            sender.sendMessage(lq.configLang.statDEX + ": " + pc.getStatDex());
-            sender.sendMessage(lq.configLang.statINT + ": " + pc.getStatInt());
-            sender.sendMessage(lq.configLang.statWIS + ": " + pc.getStatWis());
-            sender.sendMessage(lq.configLang.statCON + ": " + pc.getStatCon());
-            sender.sendMessage(lq.configLang.statCHR + ": " + pc.getStatChr());
+            String mod = "";
+            if (pc.getAttributeModifier(Attribute.STR)>=0) {
+            	mod = "+" + pc.getAttributeModifier(Attribute.STR);
+            } else {
+            	mod = "" + pc.getAttributeModifier(Attribute.STR);
+            }
+            sender.sendMessage(lq.configLang.statSTR + ": " + pc.getStatStr() + " (" + mod + ")");
+            
+            if (pc.getAttributeModifier(Attribute.DEX)>=0) {
+            	mod = "+" + pc.getAttributeModifier(Attribute.DEX);
+            } else {
+            	mod = "" + pc.getAttributeModifier(Attribute.DEX);
+            }
+            sender.sendMessage(lq.configLang.statDEX + ": " + pc.getStatDex() + " (" + mod + ")");
+            
+            if (pc.getAttributeModifier(Attribute.INT)>=0) {
+            	mod = "+" + pc.getAttributeModifier(Attribute.INT);
+            } else {
+            	mod = "" + pc.getAttributeModifier(Attribute.INT);
+            }
+            sender.sendMessage(lq.configLang.statINT + ": " + pc.getStatInt() + " (" + mod + ")");
+            
+            if (pc.getAttributeModifier(Attribute.WIS)>=0) {
+            	mod = "+" + pc.getAttributeModifier(Attribute.WIS);
+            } else {
+            	mod = "" + pc.getAttributeModifier(Attribute.WIS);
+            }
+            sender.sendMessage(lq.configLang.statWIS + ": " + pc.getStatWis() + " (" + mod + ")");
+            
+            if (pc.getAttributeModifier(Attribute.CON)>=0) {
+            	mod = "+" + pc.getAttributeModifier(Attribute.CON);
+            } else {
+            	mod = "" + pc.getAttributeModifier(Attribute.CON);
+            }
+            sender.sendMessage(lq.configLang.statCON + ": " + pc.getStatCon() + " (" + mod + ")");
+            
+            if (pc.getAttributeModifier(Attribute.CHR)>=0) {
+            	mod = "+" + pc.getAttributeModifier(Attribute.CHR);
+            } else {
+            	mod = "" + pc.getAttributeModifier(Attribute.CHR);
+            }
+            sender.sendMessage(lq.configLang.statCHR + ": " + pc.getStatChr() + " (" + mod + ")");
+
             sender.sendMessage(lq.configLang.statRace + ": " + pc.race.name);
             sender.sendMessage(lq.configLang.statClass + ": " + pc.mainClass.name);
 
             sender.sendMessage("--------------------");
-            sender.sendMessage(lq.configLang.statKarma + ": " + pc.karma);
+            sender.sendMessage(lq.configLang.statKarma + ": "+ pc.karmaName() + " ("  + pc.karma + ")");
             sender.sendMessage("--------------------");
 
             DecimalFormat df = new DecimalFormat("#.00");

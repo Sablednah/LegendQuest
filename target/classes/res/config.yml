@@ -35,11 +35,13 @@ manageHealthNonLqWorlds: true
 # XPnotify: report xp gain amount to player
 # percentXpKeepClassChange: amount of XP to keep if switching class before mastery.
 # percentXpLossRespawn: amount of XP to drop/loose on death/respawn
+# scaleXP: amount of XP received to apply.
 
 max_level: 150
 XPnotify: true
 percentXpKeepClassChange: 10.00
 percentXpLossRespawn: 10.00
+scaleXP: 100
 
 #-------------------
 
@@ -81,3 +83,15 @@ karmaKillSlime: 100
 
 skillBuildupMoveAllowed: 2.0
 skillTickInterval: 10
+
+## Chat
+# chatUsePrefix: Should chatPrefix be added to the chat format. 
+# chatProcessPrefix: Should {race} and {class} in format string be processed.
+# chatPrefix: Prefix to use.  {current} is replaced with the existing format.
+#
+# if you se another plugin to process chat you should set chatUsePrefix to false, chatProcessPrefix to true and add {race} and {class} to the format string. 
+
+chatUsePrefix: true
+chatProcessPrefix: true
+chatPrefix: "[{race}|{class}] {current}"
+

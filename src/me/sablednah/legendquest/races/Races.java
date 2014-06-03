@@ -280,7 +280,7 @@ public class Races {
 						for (final String key : inateSkills.getKeys(false)) {
 							String skillName = key.toLowerCase();
 							String realSkill = key.toLowerCase();
-							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(skillName);
+							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
 							if (skillInfo.contains("skillname")) {
 								realSkill = skillInfo.getString("skillname").toLowerCase();
 								//create a "copy" of the skill under new name

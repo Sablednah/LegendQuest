@@ -77,6 +77,10 @@ public class SkillDataStore {
 
 	public void readConfigInfo(final ConfigurationSection conf) {
 		if (conf != null) {
+			if (conf.contains("type")) {
+				String ty = conf.getString("type");
+				this.type = SkillType.valueOf(ty.toUpperCase());
+			}
 			if (conf.contains("requires")) {
 				this.requires = conf.getStringList("requires");
 			}

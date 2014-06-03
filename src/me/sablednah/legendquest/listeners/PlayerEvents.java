@@ -233,11 +233,15 @@ public class PlayerEvents implements Listener {
 
 		UUID uuid = p.getUniqueId();
 		PC pc = lq.players.getPC(uuid);
+		
+		//ScaleXP
+		xpAmount = (int) (xpAmount * (lq.configMain.scaleXP/100.0D));
 
 		// half xp gain for dual class
 		if (pc.subClass != null) {
 			xpAmount = xpAmount / 2;
 		}
+		
 		pc.setXP(SetExp.getTotalExperience(p) + xpAmount);
 		lq.players.addPlayer(uuid, pc);
 		lq.players.savePlayer(pc);
