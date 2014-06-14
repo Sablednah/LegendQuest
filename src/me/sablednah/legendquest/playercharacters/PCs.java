@@ -37,6 +37,9 @@ public class PCs {
 			UUID uuid = player.getUniqueId();
 			PC pc = getPC(player);
 			addPlayer(uuid, pc);
+			if (lq.scoreboard != null) {
+				//
+			}
 		}
 		Bukkit.getServer().getScheduler().runTaskTimer(lq, new SkillTicker(), 10L, lq.configMain.skillTickInterval);
 	}

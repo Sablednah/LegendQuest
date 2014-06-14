@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EventListener;
+import java.util.List;
 import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
@@ -16,6 +17,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.metadata.Metadatable;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class Skill implements EventListener, Listener {
@@ -192,4 +195,35 @@ public abstract class Skill implements EventListener, Listener {
 		this.lq = lq;
 	}
 
+	public Double getMetaDouble(Metadatable object, String label) {
+		List<MetadataValue> values = object.getMetadata(label);
+		for (MetadataValue value : values) {
+			if (value.getOwningPlugin() == lq) {
+				return value.asDouble();
+			}
+		}
+		return 0.0D;
+	}
+
+	public Integer getMetaInteger(Metadatable object, String label) {
+		List<MetadataValue> values = object.getMetadata(label);
+		for (MetadataValue value : values) {
+			if (value.getOwningPlugin() == lq) {
+				return value.asInt();
+			}
+		}
+		return 0;
+	}
+
+	public String getMetaString(Metadatable object, String label) {
+		List<MetadataValue> values = object.getMetadata(label);
+		for (MetadataValue value : values) {
+			if (value.getOwningPlugin() == lq) {
+				return value.asString();
+			}
+		}
+		return "";
+	}
+
+	
 }

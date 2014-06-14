@@ -1,16 +1,17 @@
 package me.sablednah.legendquest;
+
 /*
-     >>\.
-    /_  )`.
-   /  _)`^)`.   _.---. _
-  (_,' \  `^-)""      `.\
-        |              | \
-        \              / |
-       / \  /.___.'\  (\ (_
-      < ,"||     \ |`. \`-'
-       \\ ()      )|  )/
-       |_>|>     /_] //
-         /_]        /_]
+ >>\.
+ /_  )`.
+ /  _)`^)`.   _.---. _
+ (_,' \  `^-)""      `.\
+ |              | \
+ \              / |
+ / \  /.___.'\  (\ (_
+ < ,"||     \ |`. \`-'
+ \\ ()      )|  )/
+ |_>|>     /_] //
+ /_]        /_]
  */
 import java.util.ArrayList;
 import java.util.UUID;
@@ -31,6 +32,9 @@ import me.sablednah.legendquest.utils.ManaTicker;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 public class Main extends JavaPlugin {
 
@@ -46,7 +50,10 @@ public class Main extends JavaPlugin {
 	public PCs					players;
 	public EffectManager		effectManager;
 	public DebugLog				debug;
-
+	public Scoreboard			board;
+	public ScoreboardManager	scoreboard;
+	public Objective			objClass;
+	
 	// TODO switch test flag for live
 	public static final Boolean	debugMode	= false;
 
@@ -113,12 +120,22 @@ public class Main extends JavaPlugin {
 		// start database data writing task
 		datasync = new DataSync(this);
 
+		// Start scoreboard
+		/*
+		if (configMain.useScoreBoard) {
+			scoreboard = this.getServer().getScoreboardManager();
+			board = scoreboard.getMainScoreboard();
+			objClass = board.registerNewObjective("LQ", "dummy");
+			objClass.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		}
+		*/
+
 		// now load players
 		players = new PCs(this);
 
-		//start effect manager
+		// start effect manager
 		effectManager = new EffectManager(this);
-		
+
 		// Lets listen for events shall we?
 		final PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PlayerEvents(this), this);
@@ -141,7 +158,7 @@ public class Main extends JavaPlugin {
 		getCommand("hp").setExecutor(new CmdHP(this));
 		getCommand("link").setExecutor(new CmdLink(this));
 		getCommand("admin").setExecutor(new CmdAdmin(this));
-		
+
 		getCommand("plurals").setExecutor(new CmdPlurals(this));
 
 		// getCommand("skills").setExecutor(new CmdPlurals(this));

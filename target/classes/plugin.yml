@@ -8,7 +8,7 @@ website: http://dev.bukkit.org/server-mods/legendquest/
 
 main: me.sablednah.legendquest.Main
 depend: [SQLibrary]
-softdepend: [ LQSkills, Vault ]
+softdepend: [ LQSkills, LQSkillsExtras, Vault, Factions, CreeperHeal ]
 
 commands:
     lq:

@@ -19,6 +19,8 @@ public class MainConfig extends Config {
 	public ArrayList<String>	worlds						= new ArrayList<String>();
 	public boolean				randomStats					= true;
 
+	public boolean	useScoreBoard = true;
+
 	public double				percentXpKeepClassChange	= 10.00D;
 	public double				percentXpLossRespawn		= 10.00D;
 	public int					max_level					= 150;
@@ -55,8 +57,8 @@ public class MainConfig extends Config {
 
 	public boolean				chatUsePrefix				= true;
 	public boolean				chatProcessPrefix			= true;
+	public String				chatPrefix					= "[{race}|{class} ({lvl})] {current}";
 
-	public String				chatPrefix					= "[{race}|{class}] {current}";
 
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
@@ -72,7 +74,9 @@ public class MainConfig extends Config {
 		this.sqlDatabase = this.getConfigItem("sqlDatabase", this.sqlDatabase);
 
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
-
+		
+		this.useScoreBoard = this.getConfigItem("useScoreBoard", this.useScoreBoard);
+		
 		this.randomStats = this.getConfigItem("randomStats", this.randomStats);
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
 		this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);

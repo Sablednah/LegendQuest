@@ -52,13 +52,16 @@ public class ChatEvents implements Listener {
 
 			String racename = "";
 			String classname = "";
+			String lvl = "";
 			
 			PC pc = lq.players.getPC(event.getPlayer());
 			racename = pc.race.name;
 			classname = pc.mainClass.name;
+			lvl = String.valueOf(event.getPlayer().getLevel());
 			
 			format = format.replace("{race}", racename);
 			format = format.replace("{class}", classname);
+			format = format.replace("{lvl}", lvl);
 
 //			System.out.print(format);
 			

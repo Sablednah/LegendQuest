@@ -84,6 +84,8 @@ karmaKillSlime: 100
 skillBuildupMoveAllowed: 2.0
 skillTickInterval: 10
 
+#---------------------
+
 ## Chat
 # chatUsePrefix: Should chatPrefix be added to the chat format. 
 # chatProcessPrefix: Should {race} and {class} in format string be processed.
@@ -94,4 +96,11 @@ skillTickInterval: 10
 chatUsePrefix: true
 chatProcessPrefix: true
 chatPrefix: "[{race}|{class}] {current}"
+
+#--------------------
+## ScoreBoards
+# useScoreBoard : enable scoreboard system.  disable to prevent conflicts with other scoreboard based plugins.
+
+useScoreBoard: true
+
 
