@@ -140,6 +140,8 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "tools";
+								//also add in utility list
+								materialList.addAll(lq.configData.dataSets.get("utility"));
 							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {
@@ -211,6 +213,8 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "tools";
+								//also add in utility list
+								materialList.addAll(lq.configData.dataSets.get("utility"));
 							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {

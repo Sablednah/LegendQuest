@@ -989,11 +989,13 @@ public class PC {
 				x = lq.configLang.karmaPositiveItems.size() - 1;
 			}
 			karma = lq.configLang.karmaPositiveItems.get(x);
-		} else {
+		} else if (number < 0) {
 			if (x > lq.configLang.karmaNegativeItems.size() - 1) {
 				x = lq.configLang.karmaNegativeItems.size() - 1;
 			}
 			karma = lq.configLang.karmaNegativeItems.get(x);
+		} else {
+			karma = lq.configLang.karmaPositiveItems.get(0);			
 		}
 
 		return karma;

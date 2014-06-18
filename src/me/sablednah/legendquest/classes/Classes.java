@@ -168,6 +168,8 @@ public class Classes {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "tools";
+								//also add in utility list
+								materiallist.addAll(lq.configData.dataSets.get("utility"));
 							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("diamond")) {
 								keyName = keyName + "tools";
 							}
@@ -243,6 +245,8 @@ public class Classes {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "tools";
+								//also add in utility list
+								materiallist.addAll(lq.configData.dataSets.get("utility"));
 							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("diamond")) {
 								keyName = keyName + "tools";
 							}

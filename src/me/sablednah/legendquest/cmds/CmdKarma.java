@@ -33,6 +33,8 @@ public class CmdKarma extends CommandTemplate implements CommandExecutor {
 			targetName = args[0];
 			if (targetName.equals("test")) {
 				PC pc2 = lq.players.getPC(Utils.getPlayerUUID("sablednah"));
+				sender.sendMessage("0 : " + pc2.karmaName(0));
+				sender.sendMessage("1 : " + pc2.karmaName(1));
 				sender.sendMessage("5 : " + pc2.karmaName(5));
 				sender.sendMessage("50 : " + pc2.karmaName(50));
 				sender.sendMessage("500 : " + pc2.karmaName(500));
@@ -45,6 +47,8 @@ public class CmdKarma extends CommandTemplate implements CommandExecutor {
 				sender.sendMessage("5000000000 : " + pc2.karmaName(5000000000L));
 				sender.sendMessage("50000000000 : " + pc2.karmaName(50000000000L));
 				sender.sendMessage("500000000000 : " + pc2.karmaName(500000000000L));
+				sender.sendMessage("-0 : " + pc2.karmaName(-0));
+				sender.sendMessage("-1 : " + pc2.karmaName(-1));
 				sender.sendMessage("-5 : " + pc2.karmaName(-5));
 				sender.sendMessage("-50 : " + pc2.karmaName(-50));
 				sender.sendMessage("-500 : " + pc2.karmaName(-500));
