@@ -16,10 +16,13 @@ public class MainConfig extends Config {
 	public int					sqlPort						= 3306;
 	public String				sqlDatabase					= "legendquest";
 
+	public boolean				logSQL						= true;
+	public String				logLevel					= "ALL";
+
 	public ArrayList<String>	worlds						= new ArrayList<String>();
 	public boolean				randomStats					= true;
 
-	public boolean	useScoreBoard = true;
+	public boolean				useScoreBoard				= true;
 
 	public double				percentXpKeepClassChange	= 10.00D;
 	public double				percentXpLossRespawn		= 10.00D;
@@ -30,6 +33,7 @@ public class MainConfig extends Config {
 
 	public boolean				useSkillTestForCombat		= true;
 	public boolean				verboseCombat				= true;
+	public boolean				useSizeForCombat			= true;
 
 	public int					karmaDamagePlayer			= -10;
 	public int					karmaDamageVillager			= -5;
@@ -44,14 +48,10 @@ public class MainConfig extends Config {
 	public int					karmaKillAnimal				= -50;
 	public int					karmaKillMonster			= 200;
 	public int					karmaKillSlime				= 100;
-
 	public int					karmaScale					= 500;
 
 	public double				skillBuildupMoveAllowed		= 2.0D;
-
 	public long					skillTickInterval			= 10L;
-
-	public boolean				useSizeForCombat			= true;
 
 	public boolean				manageHealthNonLqWorlds		= true;
 
@@ -59,6 +59,7 @@ public class MainConfig extends Config {
 	public boolean				chatProcessPrefix			= true;
 	public String				chatPrefix					= "[{race}|{class} ({lvl})] {current}";
 
+	public boolean				attributesModifyBaseStats	= false;
 
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
@@ -72,17 +73,20 @@ public class MainConfig extends Config {
 		this.sqlHostname = this.getConfigItem("sqlHostname", this.sqlHostname);
 		this.sqlPort = this.getConfigItem("sqlPort", this.sqlPort);
 		this.sqlDatabase = this.getConfigItem("sqlDatabase", this.sqlDatabase);
+		this.logSQL = this.getConfigItem("logSQL", this.logSQL);
+		this.logLevel = this.getConfigItem("logLevel", this.logLevel);
 
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
-		
+
 		this.useScoreBoard = this.getConfigItem("useScoreBoard", this.useScoreBoard);
-		
+
 		this.randomStats = this.getConfigItem("randomStats", this.randomStats);
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
 		this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);
 		this.max_level = this.getConfigItem("max_level", this.max_level);
 		this.max_xp = SetExp.getExpToLevel(this.max_level);
 		this.XPnotify = this.getConfigItem("XPnotify", this.XPnotify);
+		this.scaleXP = this.getConfigItem("scaleXP", this.scaleXP);
 
 		this.useSkillTestForCombat = this.getConfigItem("useSkillTestForCombat", this.useSkillTestForCombat);
 		this.useSizeForCombat = this.getConfigItem("useSizeForCombat", this.useSizeForCombat);
@@ -108,8 +112,10 @@ public class MainConfig extends Config {
 		this.skillTickInterval = (long) this.getConfigItem("skillTickInterval", this.skillTickInterval);
 
 		this.chatUsePrefix = this.getConfigItem("chatUsePrefix", this.chatUsePrefix);
-		this.chatProcessPrefix = this.getConfigItem("chatProcessPrefix", this.chatProcessPrefix);		
+		this.chatProcessPrefix = this.getConfigItem("chatProcessPrefix", this.chatProcessPrefix);
 		this.chatPrefix = this.getConfigItem("chatPrefix", this.chatPrefix);
-		
+
+		this.attributesModifyBaseStats = this.getConfigItem("attributesModifyBaseStats", this.attributesModifyBaseStats);
+
 	}
 }

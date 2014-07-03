@@ -56,8 +56,10 @@ public class DamageEvents implements Listener {
 				}
 			}
 			lq.players.addPlayer(p.getUniqueId(), pc);
+			if (p.getHealth()>0) {
 			pc.scheduleHealthCheck();
 			lq.players.scheduleUpdate(p.getUniqueId());
+			}
 		}
 	}
 
@@ -235,6 +237,9 @@ public class DamageEvents implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
+		if (event.getEntity() instanceof Player) {
+			return;
+		}
 		if (event.getEntity() instanceof LivingEntity) {
 			LivingEntity e = (LivingEntity)event.getEntity();
 //			EntityDamageEvent cause = e.getLastDamageCause();

@@ -33,16 +33,20 @@ import org.bukkit.inventory.PlayerInventory;
 public class PC {
 
 	public class DelayedCheck implements Runnable {
-
 		public void run() {
 			healthCheck();
 		}
 	}
 
 	public class DelayedInvCheck implements Runnable {
-
 		public void run() {
 			checkInv();
+		}
+	}
+
+	public class DelayedXPSave implements Runnable {
+		public void run() {
+			saveXP();
 		}
 	}
 
@@ -297,7 +301,11 @@ public class PC {
 		}
 		double conBonus = ((con * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= conBonus;
-		result = (hp + (level * perlevel));
+		double base = hp;
+		if (lq.configMain.attributesModifyBaseStats) {
+			base *= conBonus;
+		}
+		result = (base + (level * perlevel));
 
 		result = (Math.round(result * 10.0) / 10.0);
 
@@ -323,7 +331,11 @@ public class PC {
 		}
 		double wisBonus = ((wis * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= wisBonus;
-		result = (mana + bonus + (level * perlevel));
+		double base = mana + bonus;
+		if (lq.configMain.attributesModifyBaseStats) {
+			base *= wisBonus;
+		}
+		result = (base + (level * perlevel));
 
 		return (int) result;
 	}
@@ -340,9 +352,15 @@ public class PC {
 		} else {
 			perlevel = mainClass.healthPerLevel;
 		}
+		perlevel += race.skillPointsPerLevel;
 		double intBonus = ((intel * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= intBonus;
-		result = (sp + (level * (perlevel + race.skillPointsPerLevel)));
+
+		double base = sp;
+		if (lq.configMain.attributesModifyBaseStats) {
+			base *= intBonus;
+		}
+		result = (base + (level * (perlevel)));
 
 		return (int) result;
 	}
@@ -744,22 +762,25 @@ public class PC {
 			getMaxHealth();
 
 			this.health = p.getHealth();
-			if (this.health > this.maxHP) {
-				this.health = this.maxHP;
-			}
 
-			p.setHealth(Math.min(this.health, p.getMaxHealth()));
+			if (this.health > 0.0D) {
+				if (this.health > this.maxHP) {
+					this.health = this.maxHP;
+				}
 
-			p.setMaxHealth(this.maxHP);
-			p.setHealth(this.health);
-			double scale = this.maxHP;
-			if (scale > 40.0D) {
-				scale = 40.0D;
-			}
-			p.setHealthScale(scale);
-			p.setHealthScaled(true);
-			if (lq.configMain.debugMode) {
-				lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+				p.setHealth(Math.min(this.health, p.getMaxHealth()));
+
+				p.setMaxHealth(this.maxHP);
+				p.setHealth(this.health);
+				double scale = this.maxHP;
+				if (scale > 40.0D) {
+					scale = 40.0D;
+				}
+				p.setHealthScale(scale);
+				p.setHealthScaled(true);
+				if (lq.configMain.debugMode) {
+					lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+				}
 			}
 		}
 	}
@@ -798,6 +819,10 @@ public class PC {
 	public void scheduleHealthCheck() {
 		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedCheck(), 2L);
 	}
+	
+	public void scheduleXPSave() {
+		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedXPSave(), 2L);
+	}
 
 	public void setXP(int newXP) {
 		xpEarnt.put(mainClass.name.toLowerCase(), newXP);
@@ -816,10 +841,21 @@ public class PC {
 			SetExp.setTotalExperience(p, newXP);
 		}
 	}
+	
+	public void saveXP() {
+		currentXP = SetExp.getTotalExperience(getPlayer());
+		xpEarnt.put(mainClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
+		if (subClass != null) {
+			xpEarnt.put(subClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
+		}
+		
+	}
 
 	public void giveXP(int XPGain) {
 		PlayerExpChangeEvent event = new PlayerExpChangeEvent(getPlayer(), XPGain);
 		Bukkit.getPluginManager().callEvent(event);
+		XPGain = event.getAmount();
+		this.setXP(currentXP + XPGain);
 	}
 
 	public boolean canCraft() {
@@ -995,7 +1031,7 @@ public class PC {
 			}
 			karma = lq.configLang.karmaNegativeItems.get(x);
 		} else {
-			karma = lq.configLang.karmaPositiveItems.get(0);			
+			karma = lq.configLang.karmaPositiveItems.get(0);
 		}
 
 		return karma;
@@ -1166,7 +1202,7 @@ public class PC {
 	}
 
 	public void damage(double dmg) {
-		damage(dmg,null);
+		damage(dmg, null);
 	}
 
 	public void damage(double dmg, Entity source) {
@@ -1175,16 +1211,18 @@ public class PC {
 	}
 
 	public void heal(double health) {
-		heal(health,null);
+		heal(health, null);
 	}
 
 	public void heal(double health, Entity source) {
-		Player p=getPlayer();
+		Player p = getPlayer();
 		double h = p.getHealth();
-		h=h+health;
-		if (h>p.getMaxHealth()) { h=p.getMaxHealth(); }
+		h = h + health;
+		if (h > p.getMaxHealth()) {
+			h = p.getMaxHealth();
+		}
 		p.setHealth(h);
-		this.health=h;
+		this.health = h;
 		this.scheduleHealthCheck();
 	}
 

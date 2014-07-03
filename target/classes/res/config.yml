@@ -41,7 +41,7 @@ max_level: 150
 XPnotify: true
 percentXpKeepClassChange: 10.00
 percentXpLossRespawn: 10.00
-scaleXP: 100
+scaleXP: 100.0
 
 #-------------------
 
@@ -98,9 +98,20 @@ chatProcessPrefix: true
 chatPrefix: "[{race}|{class}] {current}"
 
 #--------------------
+
 ## ScoreBoards
 # useScoreBoard : enable scoreboard system.  disable to prevent conflicts with other scoreboard based plugins.
 
 useScoreBoard: true
+
+#--------------------
+
+## Mechanics
+# attributesModifyBaseStats:  allow attributes to modify the base stats for mana/health/skill points as well as per level
+
+attributesModifyBaseStats: false
+
+
+
 
 

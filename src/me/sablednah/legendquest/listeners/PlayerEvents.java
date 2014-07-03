@@ -53,11 +53,14 @@ public class PlayerEvents implements Listener {
 	}
 
 	// preserve XP on death...
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onDeath(final PlayerDeathEvent event) {
 		int xp = (int) (event.getDroppedExp() * (lq.configMain.percentXpLossRespawn / 100.0D));
 		event.setDroppedExp(xp);
 		event.setKeepLevel(true);
+		if (Main.debugMode) {
+			System.out.print("DIED: "+event.getEntity().getName()+" [" +  event.hashCode() + "] " + event.getEventName() + " - "+ event.getDeathMessage());
+		}		
 	}
 
 	// set to monitor - we're not gonna change the login, only load our data
@@ -89,13 +92,15 @@ public class PlayerEvents implements Listener {
 			p.setTotalExperience(pc.currentXP);
 			p.setMaxHealth(pc.maxHP);
 			if (pc.health>pc.maxHP) { pc.health=pc.maxHP; }
+			if (pc.health>p.getMaxHealth()) { pc.health=p.getMaxHealth(); }
 			p.setHealth(pc.health);
 			pc.healthCheck();			
 		}
 
+
+		
 		Location l = p.getLocation();
 		Chunk c = l.getChunk();
-
 		int x = c.getX();
 		int z = c.getZ();
 
@@ -106,13 +111,13 @@ public class PlayerEvents implements Listener {
 					Entity[] ents = chunk.getEntities();
 					for (Entity e : ents) {
 						if (e.getType() == EntityType.IRON_GOLEM) {
-							System.out.print("removing Golem from:" + i + " , " + j);
+							System.out.print("Removing Golem from:" + i + " , " + j);
 							e.remove();
 						}
 					}
 				}
 			}
-		}
+		}		
 	}
 
 	// set to monitor - we're not gonna change the port, only load our data
@@ -230,21 +235,34 @@ public class PlayerEvents implements Listener {
 		}
 
 		int xpAmount = event.getAmount();
-
+if (Main.debugMode) {
+	System.out.print("xpAmount: "+xpAmount);
+}
 		UUID uuid = p.getUniqueId();
 		PC pc = lq.players.getPC(uuid);
 		
 		//ScaleXP
 		xpAmount = (int) (xpAmount * (lq.configMain.scaleXP/100.0D));
 
+		if (Main.debugMode) {
+			System.out.print("ScaleXP ("+lq.configMain.scaleXP+") xpAmount: "+xpAmount);
+		}
+
+		
 		// half xp gain for dual class
 		if (pc.subClass != null) {
 			xpAmount = xpAmount / 2;
 		}
+
+		if (Main.debugMode) {
+			System.out.print("subclassed xpAmount: "+xpAmount);
+		}
+
+		pc.scheduleXPSave();
 		
-		pc.setXP(SetExp.getTotalExperience(p) + xpAmount);
 		lq.players.addPlayer(uuid, pc);
 		lq.players.savePlayer(pc);
+		event.setAmount(xpAmount);
 
 		if (xpAmount >= p.getExpToLevel()) {
 			pc.scheduleHealthCheck();
@@ -254,7 +272,7 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-	// track EXP changes - and halve then if dual class
+	// track EXP changes - and notify if needed
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onXPNotify(PlayerExpChangeEvent event) {
 		if (lq.configMain.XPnotify) {

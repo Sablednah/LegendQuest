@@ -18,7 +18,7 @@ public class LangConfig extends Config {
 	public String					shutdown				= "=== END OF LINE ===";
 
 	public String					adminName				= "GM";
-	
+
 	public String					invalidCommand			= "Sorry couldn't recognise command: ";
 	// TODO add more help info...
 	public String					helpCommand				= "/lq help : Displays this list\n" + "/lq stats [player] : Display character stats\n" + "/lq hp [player] : Display player health (and mana)\n"
@@ -52,7 +52,7 @@ public class LangConfig extends Config {
 	public String					classScanEnd			= "Scanning for class files completed.";
 	public String					classScanInvalid		= "Invalid class file: ";
 	public String					classInvalid			= "Invalid class: ";
-	
+
 	public String					classScanRaceWarning	= "Warning Found unknown Race: ";
 	public String					classScanNoRaceOrGroup	= "No Valid race or group found in: ";
 	public String					classScanGroupWarning	= "No Valid group found in: ";
@@ -62,7 +62,7 @@ public class LangConfig extends Config {
 
 	public String					youAreCurrently			= "You are currently ";
 	public String					raceChanged				= "Your race has been changed to ";
-	public String					raceChangedAdmin        = "GM has changed your race to ";
+	public String					raceChangedAdmin		= "GM has changed your race to ";
 	public String					raceChangeNotAllowed	= "Sorry you have already selected a race. ";
 	public String					raceList				= "-------- Races --------";
 	public String					raceNotAllowed			= "Sorry, you can't select that race.";
@@ -133,8 +133,10 @@ public class LangConfig extends Config {
 
 	public String					skillLinkEmptyHand		= "Cannot link Skill to empty hand";
 	public String					skillLinked				= " skill linked to item ";
+	public String					skillUnlinked			= "Skill unlinked from item ";
 	public String					skillLinkList			= "You have the following skill links: ";
 	public String					skillPointsBought		= "You have learnt a skill: ";
+	public String					skillPointsOwned		= " already learnt.";
 	public String					skillPointsMissing		= "Sorry you don't have enough skill points to buy ";
 	public String					skillPointsNoSkill		= "Please specify a skill to buy";
 	public String					skillRequiresOne		= "Skill requires one of these skill: ";
@@ -146,7 +148,6 @@ public class LangConfig extends Config {
 
 	public String					xpChange				= "You gained Exp: ";
 	public String					xpChangeAdmin			= "You gave Exp: ";
-
 
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
@@ -251,6 +252,9 @@ public class LangConfig extends Config {
 		this.skillLackOfMana = this.getConfigItem("skillLackOfMana", this.skillLackOfMana);
 		this.skillLackOfItem = this.getConfigItem("skillLackOfItem", this.skillLackOfItem);
 		this.skillLinkEmptyHand = this.getConfigItem("skillLinkEmptyHand", this.skillLinkEmptyHand);
+		this.skillLinked = this.getConfigItem("skillLinked", this.skillLinked);
+		this.skillUnlinked = this.getConfigItem("skillUnlinked", this.skillUnlinked);
+
 		this.skillLinkList = this.getConfigItem("skillLinkList", this.skillLinkList);
 		this.skillPointsBought = this.getConfigItem("skillPointsBought", this.skillPointsBought);
 		this.skillPointsMissing = this.getConfigItem("skillPointsMissing", this.skillPointsMissing);
@@ -261,7 +265,7 @@ public class LangConfig extends Config {
 		this.skillCommandLineUse = this.getConfigItem("skillCommandLineUse", this.skillCommandLineUse);
 		this.skillLinkUse = this.getConfigItem("skillLinkUse", this.skillLinkUse);
 		this.skillInvalid = this.getConfigItem("skillInvalid", this.skillInvalid);
-		
+
 		this.xpChange = this.getConfigItem("xpChange", this.xpChange);
 		this.xpChangeAdmin = this.getConfigItem("xpChangeAdmin", this.xpChangeAdmin);
 	}

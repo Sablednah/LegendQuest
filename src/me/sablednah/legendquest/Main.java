@@ -15,6 +15,7 @@ package me.sablednah.legendquest;
  */
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import me.sablednah.legendquest.classes.Classes;
@@ -55,7 +56,7 @@ public class Main extends JavaPlugin {
 	public Objective			objClass;
 	
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= false;
+	public static final Boolean	debugMode	= true;
 
 	public void log(final String msg) {
 		logger.info(msg);
@@ -95,8 +96,11 @@ public class Main extends JavaPlugin {
 		// load main core settings
 		configMain = new MainConfig(this);
 
+		debug.log.setLevel(Level.parse(configMain.logLevel));
+		
 		if (configMain.debugMode) {
 			debug.setDebugMode();
+			debug.log.setLevel(Level.ALL);
 		}
 
 		// Get localised text from config
@@ -157,6 +161,7 @@ public class Main extends JavaPlugin {
 		getCommand("roll").setExecutor(new CmdRoll(this));
 		getCommand("hp").setExecutor(new CmdHP(this));
 		getCommand("link").setExecutor(new CmdLink(this));
+		getCommand("unlink").setExecutor(new CmdUnlink(this));
 		getCommand("admin").setExecutor(new CmdAdmin(this));
 
 		getCommand("plurals").setExecutor(new CmdPlurals(this));

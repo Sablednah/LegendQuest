@@ -1,5 +1,5 @@
 name: LegendQuest
-version: 1.5.2
+version: 1.5.3
 description: |
     RPG plugin for MineCraft servers using the Bukkit API
     Allows Race, Classes, Skills and effects.
@@ -53,6 +53,12 @@ commands:
         aliases: [lqlink,lquestlink,legendqlink,legendquestlink,bind,lqbind,lquestbind,legendbind,legendquestbind]
         permission: legendquest.command.link
         permission-message: You don't have <permission>
+    unlink:
+        description: Unlink skill to item.
+        usage: Use "/<command> help" for more info
+        aliases: [lquklink,lquestunlink,legendqunlink,legendquestunlink,unbind,lqunbind,lquestunbind,legendunbind,legendquestunbind]
+        permission: legendquest.command.unlink
+        permission-message: You don't have <permission>
     roll:
         description: Test an attribute
         usage: Use "/<command> help" for more info
@@ -97,6 +103,7 @@ permissions:
             legendquest.command.roll: true
             legendquest.command.hp: true
             legendquest.command.link: true
+            legendquest.command.unlink: true
             legendquest.command.karma: true
             legendquest.command.plurals: true
     legendquest.command.admin:
@@ -128,6 +135,9 @@ permissions:
         default: true
     legendquest.command.link:
         description: Allows user to use legendquest link command.
+        default: true
+    legendquest.command.unlink:
+        description: Allows user to use legendquest unlink command.
         default: true
     legendquest.command.plurals:
         description: Allows user to use legendquest command plurals.

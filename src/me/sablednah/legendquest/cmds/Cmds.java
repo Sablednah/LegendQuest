@@ -6,6 +6,7 @@ public enum Cmds {
     CLASS(true, 0),
     SKILL(true, 0),
     LINK(false, 1),
+    UNLINK(false, 1),
     RELOAD(true, 0),
     STATS(true, 0),
     KARMA(true, 0),

@@ -12,9 +12,11 @@ import me.sablednah.legendquest.utils.Utils;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 
 public class RootCommand implements CommandExecutor {
@@ -25,7 +27,8 @@ public class RootCommand implements CommandExecutor {
         this.lq = p;
     }
     
-    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+    @SuppressWarnings("deprecation")
+	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         String cmd;
         
         if (!(args.length > 0)) {
@@ -33,12 +36,20 @@ public class RootCommand implements CommandExecutor {
         } else {
             cmd = args[0];
             if (cmd.equalsIgnoreCase("test")) {
+            	if (args[1].equalsIgnoreCase("xp")) {
+            		float Exp = Float.parseFloat(args[2]);
+                    int ExpOrbs = (int) Exp;
+                    World world = ((Player)sender).getWorld();
+                    ((ExperienceOrb)world.spawn(((Player)sender).getTargetBlock(null, 200).getLocation(), ExperienceOrb.class)).setExperience( ExpOrbs );
+            		return true;
+            	} else {
             	sender.sendMessage("effect test");
             	Effect eff = Effect.valueOf(args[1]);
-            	@SuppressWarnings("deprecation")
+//            	@SuppressWarnings("deprecation")
 				Location l = ((Player)sender).getTargetBlock(null, 64).getLocation();
             	Utils.playEffect(eff, l, Integer.parseInt(args[2]), Integer.parseInt(args[3]));
             	return true;
+            	}
             }
         }
         
@@ -123,6 +134,9 @@ public class RootCommand implements CommandExecutor {
                     break;
                 case LINK:
                     newcmd = new CmdLink(lq);
+                    break;
+                case UNLINK:
+                    newcmd = new CmdUnlink(lq);
                     break;
                 case SKILL:
                     newcmd = new CmdSkill(lq);

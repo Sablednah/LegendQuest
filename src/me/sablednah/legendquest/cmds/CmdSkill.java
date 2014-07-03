@@ -79,7 +79,9 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 					sender.sendMessage(lq.configLang.skillPointsNoSkill);
 				} else {
 					String skillToBuy = args[1].toLowerCase();
-					if (pc.buySkill(skillToBuy)) {
+					if (pc.validSkill(skillToBuy)) {
+						sender.sendMessage(skillToBuy + lq.configLang.skillPointsOwned);						
+					} else if (pc.buySkill(skillToBuy)) {
 						sender.sendMessage(lq.configLang.skillPointsBought + "'" + skillToBuy + "'");
 					}
 				}

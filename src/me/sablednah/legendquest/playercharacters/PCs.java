@@ -148,6 +148,8 @@ public class PCs {
 				Player p = lq.getServer().getPlayer(activePlayer.uuid);
 				if (p != null && p.isOnline()) {
 					for (SkillDataStore skill : activePlayer.skillSet.values()) {
+						if ( !activePlayer.validSkill(skill.name) ) { continue; }						
+						
 						boolean startskill = false;
 						boolean stopskill = false;
 						SkillPhase phase = skill.checkPhase();

@@ -109,7 +109,7 @@ public class DataSync {
 		String sql;
 		final PC pc = new PC(lq, uuid);
 		sql = "SELECT * FROM pcs WHERE uuid='" + uuid.toString() + "';";
-		lq.debug.fine(sql);
+		if (lq.configMain.logSQL) { lq.debug.fine(sql); }
 		try {
 			ResultSet r = dbconn.query(sql);
 			if (r == null) {
@@ -143,7 +143,7 @@ public class DataSync {
 			r.close();
 
 			sql = "SELECT xp, class FROM xpEarnt WHERE uuid='" + uuid.toString() + "';";
-			lq.debug.fine(sql);
+			if (lq.configMain.logSQL) { lq.debug.fine(sql);}
 			int thisXP;
 			r = dbconn.query(sql);
 			if (r != null) {
@@ -159,7 +159,7 @@ public class DataSync {
 			}
 
 			sql = "SELECT skillName, cost FROM skillsBought WHERE uuid='" + uuid.toString() + "';";
-			lq.debug.fine(sql);
+			if (lq.configMain.logSQL) { lq.debug.fine(sql);}
 			int skillCost;
 			r = dbconn.query(sql);
 			if (r != null) {
@@ -171,7 +171,7 @@ public class DataSync {
 			}
 
 			sql = "SELECT skillName, material FROM skillsLinked WHERE uuid='" + uuid.toString() + "';";
-			lq.debug.fine(sql);
+			if (lq.configMain.logSQL) { lq.debug.fine(sql);}
 			r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -329,12 +329,12 @@ public class DataSync {
 			create += ", PRIMARY KEY (uuid)";
 		}
 		create += " );";
-		lq.debug.fine(create);
+		if (lq.configMain.logSQL) { lq.debug.fine(create);}
 
 		ResultSet r;
 		try {
 			r = dbconn.query(create);
-			lq.debug.fine(r.toString());
+			//lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
 				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_index ON pcs(uuid)";
@@ -358,10 +358,10 @@ public class DataSync {
 			create += ", UNIQUE(uuid, class) ON CONFLICT REPLACE";
 		}
 		create += " );";
-		lq.debug.fine(create);
+		if (lq.configMain.logSQL) { lq.debug.fine(create);}
 		try {
 			r = dbconn.query(create);
-			lq.debug.fine(r.toString());
+			//lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
 				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_class_index ON xpEarnt(uuid,class)";
@@ -385,10 +385,10 @@ public class DataSync {
 			create += ", UNIQUE(uuid, skillName) ON CONFLICT REPLACE";
 		}
 		create += " );";
-		lq.debug.fine(create);
+		if (lq.configMain.logSQL) { lq.debug.fine(create);}
 		try {
 			r = dbconn.query(create);
-			lq.debug.fine(r.toString());
+			//lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
 				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_skill_index ON skillsBought(uuid,skillName)";
@@ -412,10 +412,10 @@ public class DataSync {
 			create += "UNIQUE(uuid, material) ON CONFLICT REPLACE";
 		}
 		create += " );";
-		lq.debug.fine(create);
+		if (lq.configMain.logSQL) { lq.debug.fine(create);}
 		try {
 			r = dbconn.query(create);
-			lq.debug.fine(r.toString());
+			//lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
 				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_material_index ON skillsLinked(uuid,material)";
@@ -439,10 +439,10 @@ public class DataSync {
 			create += ", UNIQUE(uuid) ON CONFLICT REPLACE";
 		}
 		create += " );";
-		lq.debug.fine(create);
+		if (lq.configMain.logSQL) { lq.debug.fine(create);}
 		try {
 			r = dbconn.query(create);
-			lq.debug.fine(r.toString());
+			//lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
 				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_index ON otherhealth(uuid)";
@@ -491,7 +491,7 @@ public class DataSync {
 		sql = sql + pc.statCon + ",";
 		sql = sql + pc.statChr;
 		sql = sql + ");";
-		lq.debug.fine(sql);
+		if (lq.configMain.logSQL) { lq.debug.fine(sql);}
 
 		try {
 			ResultSet r = dbconn.query(sql);
@@ -508,7 +508,7 @@ public class DataSync {
 				sql2 = sql2 + entry.getKey().toLowerCase() + "\",";
 				sql2 = sql2 + entry.getValue();
 				sql2 = sql2 + ");";
-				lq.debug.fine(sql2);
+				if (lq.configMain.logSQL) { lq.debug.fine(sql2);}
 				r = dbconn.query(sql2);
 				r.close();
 			}
@@ -523,7 +523,7 @@ public class DataSync {
 				sql2 = sql2 + entry.getKey() + "\",\"";
 				sql2 = sql2 + entry.getValue();
 				sql2 = sql2 + "\");";
-				lq.debug.fine(sql2);
+				if (lq.configMain.logSQL) { lq.debug.fine(sql2);}
 				r = dbconn.query(sql2);
 				r.close();
 			}
@@ -537,7 +537,7 @@ public class DataSync {
 				sql2 = sql2 + entry.getKey().toString() + "\",\"";
 				sql2 = sql2 + entry.getValue();
 				sql2 = sql2 + "\");";
-				lq.debug.fine(sql2);
+				if (lq.configMain.logSQL) { lq.debug.fine(sql2);}
 				r = dbconn.query(sql2);
 				r.close();
 			}
@@ -558,7 +558,7 @@ public class DataSync {
 		sql = sql + hs.getHealth() + "\",\"";
 		sql = sql + hs.getMaxhealth() + "\"";
 		sql = sql + ");";
-		lq.debug.fine(sql);
+		if (lq.configMain.logSQL) { lq.debug.fine(sql);}
 
 		try {
 			ResultSet r = dbconn.query(sql);
@@ -568,5 +568,4 @@ public class DataSync {
 			e.printStackTrace();
 		}
 	}
-
 }
