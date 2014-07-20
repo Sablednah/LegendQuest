@@ -31,6 +31,7 @@ public enum Effects {
 	ENDER_SIGNAL(EffectType.BUKKIT, null, Effect.ENDER_SIGNAL),
 	MOBSPAWNER_FLAMES(EffectType.BUKKIT, null, Effect.MOBSPAWNER_FLAMES),
 	BLEED(EffectType.CUSTOM, null, Effect.POTION_BREAK),
+	SLOWBLEED(EffectType.CUSTOM, null, Effect.POTION_BREAK),
 	STUNNED(EffectType.CUSTOM, PotionEffectType.SLOW, Effect.POTION_BREAK);
 
 	private EffectType			effectType;

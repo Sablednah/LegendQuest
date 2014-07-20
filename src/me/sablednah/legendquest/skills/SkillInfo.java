@@ -63,6 +63,9 @@ public class SkillInfo {
 
 	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int manaCost, String consumes, int levelRequired, int skillPoints, String[] dblnames,
 			double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues) throws BadSkillFormat {
+		if (Main.debugMode) {
+			System.out.print("Skillinfo: "+name);
+		}
 		this.name = name;
 		this.version = version;
 		this.type = type;
@@ -78,10 +81,15 @@ public class SkillInfo {
 		if (consumes != null && !consumes.isEmpty()) {
 			this.consumes = new ItemStack(Material.getMaterial(consumes));
 		}
-		readVars(dblnames, dblvalues, intnames, intvalues, strnames, strvalues);
+		try {
+			readVars(dblnames, dblvalues, intnames, intvalues, strnames, strvalues);
+		} catch (BadSkillFormat e) {
+			System.out.print(e.getMessage());
+		}
 	}
 
 	private void readVars(String[] dblnames, double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues) throws BadSkillFormat {
+		try {
 		if (dblnames != null && dblnames.length > 0) {
 			for (int i = 0; i < dblnames.length; i++) {
 				vars.put(dblnames[i], dblvalues[i]);
@@ -96,6 +104,9 @@ public class SkillInfo {
 			for (int i = 0; i < strnames.length; i++) {
 				vars.put(strnames[i], strvalues[i]);
 			}
+		}
+		} catch(ArrayIndexOutOfBoundsException e) {
+			throw new BadSkillFormat("Error reading skill vars: "+name);
 		}
 	}
 

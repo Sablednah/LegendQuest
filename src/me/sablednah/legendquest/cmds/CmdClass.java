@@ -79,8 +79,8 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
                     sender.sendMessage(lq.configLang.classInvalid + ": " + className);
                     return true;
                 } else {
-                    // make sure they have a race...
-                    if (!pc.raceChanged) {
+                    // make sure they have a race... (if more than one race)
+                    if (!pc.raceChanged && lq.races.getRaces().size()>1) {
                         sender.sendMessage(lq.configLang.classSelectRaceFirst);
                         return true;
                     } else {

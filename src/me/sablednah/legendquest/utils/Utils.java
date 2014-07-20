@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -33,6 +34,7 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 public class Utils {
@@ -417,5 +419,50 @@ public class Utils {
 				l.getWorld().playEffect(l, e, 15,radius);
 				break;
 		}
+	}
+	
+	public static Player getTargetPlayer(Player player, int distance) {
+		LivingEntity e = getTarget(player, distance);
+		if (e instanceof Player) {
+			return (Player) e;
+		} else {
+			return null;
+		}
+	}
+
+	public static LivingEntity getTarget(Player player, int distance) {
+		List<Entity> nearbyE = player.getNearbyEntities(distance,distance,distance);
+		ArrayList<LivingEntity> livingE = new ArrayList<LivingEntity>();
+
+		for (Entity e : nearbyE) {
+			if (e instanceof LivingEntity) {
+				livingE.add((LivingEntity) e);
+			}
+		}
+
+		BlockIterator bItr = new BlockIterator(player, distance);
+		Block block;
+		Location loc;
+		int bx, by, bz;
+		double ex, ey, ez;
+		// loop through player's line of sight
+		while (bItr.hasNext()) {
+			block = bItr.next();
+			bx = block.getX();
+			by = block.getY();
+			bz = block.getZ();
+			// check for entities near this block in the line of sight
+			for (LivingEntity e : livingE) {
+				loc = e.getLocation();
+				ex = loc.getX();
+				ey = loc.getY();
+				ez = loc.getZ();
+				if ((bx - .75 <= ex && ex <= bx + 1.75) && (bz - .75 <= ez && ez <= bz + 1.75) && (by - 1 <= ey && ey <= by + 2.5)) {
+					// entity is close enough, set target and stop
+					return e;
+				}
+			}
+		}
+		return null;
 	}
 }

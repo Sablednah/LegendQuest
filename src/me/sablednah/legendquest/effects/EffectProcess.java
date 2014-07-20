@@ -50,4 +50,60 @@ public class EffectProcess {
 	public void start() {
 		this.startTime = System.currentTimeMillis();
 	}
+
+	public Effects getEffect() {
+		return effect;
+	}
+
+	public void setEffect(Effects effect) {
+		this.effect = effect;
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public OwnerType getOwner() {
+		return owner;
+	}
+
+	public void setOwner(OwnerType owner) {
+		this.owner = owner;
+	}
+
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public int getRadius() {
+		return radius;
+	}
+
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
 }

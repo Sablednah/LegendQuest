@@ -56,7 +56,7 @@ public class Main extends JavaPlugin {
 	public Objective			objClass;
 	
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= true;
+	public static final Boolean	debugMode	= false;
 
 	public void log(final String msg) {
 		logger.info(msg);

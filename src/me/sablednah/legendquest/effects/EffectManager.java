@@ -22,6 +22,7 @@ public class EffectManager {
 	Main				lq;
 	List<EffectProcess>	activeProcess	= new ArrayList<EffectProcess>();
 	List<EffectProcess>	pendingProcess	= new ArrayList<EffectProcess>();
+	long				effecttickcount	= 0;
 
 	public EffectManager(Main lq) {
 		this.lq = lq;
@@ -36,6 +37,60 @@ public class EffectManager {
 		return activeProcess.add(ep);
 	}
 
+	public boolean removeAllProcess(OwnerType ot, UUID uuid) {
+		boolean found = false;
+		Iterator<EffectProcess> pp = pendingProcess.iterator();
+		while (pp.hasNext()) {
+			EffectProcess ep = pp.next();
+			if (ep.owner!= null && ep.owner.equals(ot)) {
+				if (ep.uuid.equals(uuid)) {
+					pp.remove();
+					found = true;
+				}
+			}
+		}
+		Iterator<EffectProcess> ap = activeProcess.iterator();
+		while (ap.hasNext()) {
+			EffectProcess epa = ap.next();
+			if (epa.owner!= null && epa.owner.equals(ot)) {
+				if (epa.uuid.equals(uuid)) {
+					ap.remove();
+					found = true;
+				}
+			}
+		}
+		return found;
+	}
+
+	public boolean removeEffects(OwnerType ot, UUID uuid, Effects effect) {
+		boolean found = false;
+		Iterator<EffectProcess> pp = pendingProcess.iterator();
+		while (pp.hasNext()) {
+			EffectProcess ep = pp.next();
+			if (ep.effect!= null && ep.effect.equals(effect)) {
+				if (ep.owner.equals(ot)) {
+					if (ep.uuid.equals(uuid)) {
+						pp.remove();
+						found = true;
+					}
+				}
+			}
+		}
+		Iterator<EffectProcess> ap = activeProcess.iterator();
+		while (ap.hasNext()) {
+			EffectProcess epa = ap.next();
+			if (epa.effect!= null && epa.effect.equals(effect)) {
+				if (epa.owner.equals(ot)) {
+					if (epa.uuid.equals(uuid)) {
+						ap.remove();
+						found = true;
+					}
+				}
+			}
+		}
+		return found;
+	}
+
 	public List<EffectProcess> getPendingProcess() {
 		return pendingProcess;
 	}
@@ -47,6 +102,8 @@ public class EffectManager {
 	public class EffectRunner implements Runnable {
 		@SuppressWarnings("deprecation")
 		public void run() {
+
+			effecttickcount++;
 
 			Effect effect;
 
@@ -124,32 +181,36 @@ public class EffectManager {
 						}
 						break;
 					case CUSTOM:
-						if (pending.effect == Effects.BLEED) {
-							// ;nothing to do
-						} else if (pending.effect == Effects.STUNNED) {
-							if (pending.startTime <= System.currentTimeMillis()) {
-								int ticks = (int) pending.duration / 50;
-								PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false);
-								switch (pending.owner) {
-									case PLAYER:
-										Player p = lq.getServer().getPlayer(pending.uuid);
-										if (p != null) {
-											p.addPotionEffect(peffect);
-										}
-										break;
-									case MOB:
-										LivingEntity ent = getEntity(pending.uuid);
-										if (ent != null) {
-											ent.addPotionEffect(peffect);
-										}
-										break;
-									case LOCATATION:
-										for (LivingEntity e : getNearbyEntities(pending.location, pending.radius)) {
-											e.addPotionEffect(peffect);
-										}
-										break;
+						switch (pending.effect) {
+							case BLEED:
+							case SLOWBLEED:
+								// ;nothing to do
+								break;
+							case STUNNED:
+								if (pending.startTime <= System.currentTimeMillis()) {
+									int ticks = (int) pending.duration / 50;
+									PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false);
+									switch (pending.owner) {
+										case PLAYER:
+											Player p = lq.getServer().getPlayer(pending.uuid);
+											if (p != null) {
+												p.addPotionEffect(peffect);
+											}
+											break;
+										case MOB:
+											LivingEntity ent = getEntity(pending.uuid);
+											if (ent != null) {
+												ent.addPotionEffect(peffect);
+											}
+											break;
+										case LOCATATION:
+											for (LivingEntity e : getNearbyEntities(pending.location, pending.radius)) {
+												e.addPotionEffect(peffect);
+											}
+											break;
+									}
 								}
-							}
+								break;
 						}
 						break;
 				}
@@ -227,42 +288,72 @@ public class EffectManager {
 								case PLAYER:
 									Player p = lq.getServer().getPlayer(active.uuid);
 									if (p != null) {
-										if (active.effect == Effects.BLEED) {
-											if (Math.random() > 0.8D) {
-												Utils.playEffect(effect, p.getLocation(), 5);
-											}
-											p.damage(1.0D);
-										} else if (active.effect == Effects.STUNNED) {
-											if (Math.random() > 0.8D) {
-												Utils.playEffect(effect, p.getLocation(), 0);
-											}
+										switch (active.effect) {
+											case BLEED:
+												if (Math.random() > 0.8D) {
+													Utils.playEffect(effect, p.getLocation(), 5);
+												}
+												p.damage(1.0D);
+												break;
+											case SLOWBLEED:
+												if (effecttickcount % 240 == 0) {
+													if (Math.random() > 0.1D) {
+														Utils.playEffect(effect, p.getLocation(), 5);
+													}
+													p.damage(1.0D);
+												}
+												break;
+											case STUNNED:
+												if (Math.random() > 0.8D) {
+													Utils.playEffect(effect, p.getLocation(), 0);
+												}
+												break;
 										}
 									}
 									break;
 								case MOB:
 									LivingEntity ent = getEntity(active.uuid);
 									if (ent != null) {
-										if (active.effect == Effects.BLEED) {
-											if (Math.random() > 0.8D) {
-												Utils.playEffect(effect, ent.getLocation(), 5);
-											}
-											ent.damage(1.0D);
-										} else if (active.effect == Effects.STUNNED) {
-											if (Math.random() > 0.8D) {
-												Utils.playEffect(effect, ent.getLocation(), 0);
-											}
+										switch (active.effect) {
+											case BLEED:
+												if (Math.random() > 0.8D) {
+													Utils.playEffect(effect, ent.getLocation(), 5);
+												}
+												ent.damage(1.0D);
+												break;
+											case SLOWBLEED:
+												if (effecttickcount % 240 == 0) {
+													if (Math.random() > 0.1D) {
+														Utils.playEffect(effect, ent.getLocation(), 5);
+													}
+													ent.damage(1.0D);
+												}
+												break;
+											case STUNNED:
+												if (Math.random() > 0.8D) {
+													Utils.playEffect(effect, ent.getLocation(), 0);
+												}
+												break;
 										}
 									}
 									break;
 								case LOCATATION:
-									if (active.effect == Effects.BLEED) {
-										if (Math.random() > 0.8D) {
-											Utils.playEffect(effect, active.location, 5);
-										}
-									} else if (active.effect == Effects.STUNNED) {
-										if (Math.random() > 0.8D) {
-											Utils.playEffect(effect, active.location, 0);
-										}
+									switch (active.effect) {
+										case BLEED:
+											if (Math.random() > 0.8D) {
+												Utils.playEffect(effect, active.location, 5);
+											}
+											break;
+										case SLOWBLEED:
+											if (Math.random() > 0.9D) {
+												Utils.playEffect(effect, active.location, 5);
+											}
+											break;
+										case STUNNED:
+											if (Math.random() > 0.8D) {
+												Utils.playEffect(effect, active.location, 0);
+											}
+											break;
 									}
 									break;
 							}

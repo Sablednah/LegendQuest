@@ -104,6 +104,7 @@ public class Races {
 					r.statCon = thisConfig.getInt("statmods.con");
 					r.statChr = thisConfig.getInt("statmods.chr");
 					r.baseHealth = thisConfig.getInt("basehealth");
+					r.baseSpeed = (float) thisConfig.getDouble("basespeed",0.2F);
 
 					r.allowCrafting = thisConfig.getBoolean("allowCrafting");
 					r.allowSmelting = thisConfig.getBoolean("allowSmelting");
@@ -224,7 +225,7 @@ public class Races {
 								} else if (Utils.isParsableToInt(keyName)) {
 									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
 								} else {
-									lq.debug.error("Dissallowed tool '" + keyName + "' in " + r.filename + " not understood");
+									lq.debug.error("Disallowed tool '" + keyName + "' in " + r.filename + " not understood");
 								}
 							}
 						}
@@ -247,7 +248,7 @@ public class Races {
 								} else if (Utils.isParsableToInt(keyName)) {
 									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
 								} else {
-									lq.debug.error("Dissallowed Armour '" + keyName + "' in " + r.filename + " not understood");
+									lq.debug.error("Disallowed Armour '" + keyName + "' in " + r.filename + " not understood");
 								}
 							}
 						}
@@ -270,7 +271,7 @@ public class Races {
 								} else if (Utils.isParsableToInt(keyName)) {
 									materialList.add(Material.getMaterial(Integer.parseInt(keyName)));
 								} else {
-									lq.debug.error("Dissallowed Weapons '" + keyName + "' in " + r.filename + " not understood");
+									lq.debug.error("Disallowed Weapons '" + keyName + "' in " + r.filename + " not understood");
 								}
 							}
 						}

@@ -94,7 +94,8 @@ public class PlayerEvents implements Listener {
 			if (pc.health>pc.maxHP) { pc.health=pc.maxHP; }
 			if (pc.health>p.getMaxHealth()) { pc.health=p.getMaxHealth(); }
 			p.setHealth(pc.health);
-			pc.healthCheck();			
+			pc.healthCheck();
+			p.setWalkSpeed(pc.race.baseSpeed);
 		}
 
 
@@ -224,6 +225,7 @@ public class PlayerEvents implements Listener {
 		pc.setXP(newXp);
 		lq.players.savePlayer(pc);
 		lq.getServer().getScheduler().runTaskLater(lq, new delayedSpawn(newXp, p), 5);
+		p.setWalkSpeed(pc.race.baseSpeed);
 	}
 
 	// track EXP changes - and halve then if dual class
