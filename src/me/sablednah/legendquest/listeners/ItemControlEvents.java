@@ -201,7 +201,7 @@ public class ItemControlEvents implements Listener {
 		final PC pc = lq.players.getPC(p);
 		// detect auto armour equip...
 		if (event.isShiftClick()) {
-			lq.debug.fine("Shift Click used in admin armour by " + p.getDisplayName());
+			lq.debug.fine("Shift Click used by " + p.getDisplayName());
 		}
 		if (event.getCursor() != null) {
 			// player has item on the cursor
@@ -237,6 +237,23 @@ public class ItemControlEvents implements Listener {
 		final PC pc = lq.players.getPC(p);
 		// pc.scheduleCheckInv();
 		pc.checkInv();
+	}
+
+	@EventHandler()
+	public void onArmourUse(PlayerInteractEvent event) {
+		if (((event.getAction().equals(Action.RIGHT_CLICK_AIR)) || (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))) {
+			if (event.hasItem() && event.getItem() != null) {
+				final Player p = (Player) event.getPlayer();
+				if (!lq.validWorld(p.getWorld().getName())) {
+					return;
+				}
+				final PC pc = lq.players.getPC(p);
+				if (!pc.allowedArmour(event.getItem().getType())) {
+					pc.scheduleCheckInv();
+					// pc.checkInv();
+				}
+			}
+		}
 	}
 
 	// Stop Projectile 'Fire'
