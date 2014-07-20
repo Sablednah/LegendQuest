@@ -32,6 +32,8 @@ public class ClassType {
 	public int							manaBonus;
 	public double						manaPerSecond;
 
+	public float						speedMod = 0.0F;
+	
 	public String						perm;
 
 	public List<Material>				allowedTools;

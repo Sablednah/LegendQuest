@@ -365,6 +365,13 @@ public class PC {
 		return (int) result;
 	}
 
+	public float getSpeed() {
+		float sp;
+		sp = race.baseSpeed;
+		sp += mainClass.speedMod;
+		return sp;
+	}
+	
 	public double getXPMod(ExperienceSource es) {
 		double xp;
 		switch (es) {

@@ -155,6 +155,9 @@ public class Classes {
 					c.skillPoints = thisConfig.getInt("skillPoints");
 
 					c.perm = thisConfig.getString("perm");
+					
+					c.speedMod = (float) thisConfig.getDouble("speedmod",0.0F);
+
 
 					// allowed lists
 
