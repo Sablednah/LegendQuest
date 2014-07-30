@@ -91,7 +91,7 @@ skillTickInterval: 10
 # chatProcessPrefix: Should {race} and {class} in format string be processed.
 # chatPrefix: Prefix to use.  {current} is replaced with the existing format.
 #
-# if you se another plugin to process chat you should set chatUsePrefix to false, chatProcessPrefix to true and add {race} and {class} to the format string. 
+# if you use another plugin to process chat you should set chatUsePrefix to false, chatProcessPrefix to true and add {race} and {class} to the format string. 
 
 chatUsePrefix: true
 chatProcessPrefix: true
@@ -107,8 +107,11 @@ useScoreBoard: true
 #--------------------
 
 ## Mechanics
+# disableStats:  bypass the stats/attribute system.
 # attributesModifyBaseStats:  allow attributes to modify the base stats for mana/health/skill points as well as per level
 
+verboseStats: true
+disableStats: false
 attributesModifyBaseStats: false
 
 

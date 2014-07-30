@@ -60,6 +60,8 @@ public class MainConfig extends Config {
 	public String				chatPrefix					= "[{race}|{class} ({lvl})] {current}";
 
 	public boolean				attributesModifyBaseStats	= false;
+	public boolean				disableStats				= false;
+	public boolean				verboseStats				= true;
 
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
@@ -116,6 +118,9 @@ public class MainConfig extends Config {
 		this.chatPrefix = this.getConfigItem("chatPrefix", this.chatPrefix);
 
 		this.attributesModifyBaseStats = this.getConfigItem("attributesModifyBaseStats", this.attributesModifyBaseStats);
-
+		this.disableStats = this.getConfigItem("disableStats", this.disableStats);
+		this.verboseStats = this.getConfigItem("verboseStats", this.verboseStats);
+		
+		
 	}
 }

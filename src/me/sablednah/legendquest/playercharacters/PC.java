@@ -421,6 +421,7 @@ public class PC {
 	 * @return the statChr
 	 */
 	public int getStatChr() {
+		if (lq.configMain.disableStats) { return 10; }
 		int stat;
 		stat = statChr;
 		if (race != null) {
@@ -450,6 +451,7 @@ public class PC {
 	 * @return the statCon
 	 */
 	public int getStatCon() {
+		if (lq.configMain.disableStats) { return 10; }
 		int stat;
 		stat = statCon;
 		if (race != null) {
@@ -479,6 +481,7 @@ public class PC {
 	 * @return the statDex
 	 */
 	public int getStatDex() {
+		if (lq.configMain.disableStats) { return 10; }
 		int stat;
 		stat = statDex;
 		if (race != null) {
@@ -508,6 +511,7 @@ public class PC {
 	 * @return the statInt
 	 */
 	public int getStatInt() {
+		if (lq.configMain.disableStats) { return 10; }
 		int stat;
 		stat = statInt;
 		if (race != null) {
@@ -537,6 +541,7 @@ public class PC {
 	 * @return the statStr
 	 */
 	public int getStatStr() {
+		if (lq.configMain.disableStats) { return 10; }
 		int stat;
 		stat = statStr;
 		if (race != null) {
@@ -566,6 +571,7 @@ public class PC {
 	 * @return the statWis
 	 */
 	public int getStatWis() {
+		if (lq.configMain.disableStats) { return 10; }
 		int stat;
 		stat = statWis;
 		if (race != null) {
@@ -977,6 +983,7 @@ public class PC {
 	}
 
 	public int getStat(Attribute attr) {
+		if (lq.configMain.disableStats) { return 10; }
 		switch (attr) {
 			case STR:
 				return getStatStr();
