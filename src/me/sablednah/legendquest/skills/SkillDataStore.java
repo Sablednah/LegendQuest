@@ -81,6 +81,9 @@ public class SkillDataStore {
 				String ty = conf.getString("type");
 				this.type = SkillType.valueOf(ty.toUpperCase());
 			}
+			if (conf.contains("description")) {
+				this.description = conf.getString("description");
+			}
 			if (conf.contains("requires")) {
 				this.requires = conf.getStringList("requires");
 			}
@@ -130,16 +133,24 @@ public class SkillDataStore {
 					Entry<String, Object> entry = entries.next();
 					Object data = (Object) entry.getValue();
 					if (data instanceof Double) {
-						System.out.print("Var " + entry.getKey() + ": " + data + " is double");
+						if (Main.debugMode) {
+							System.out.print("Var " + entry.getKey() + ": " + data + " is double");
+						}
 						this.vars.put(entry.getKey(), (Double) data);
 					} else if (data instanceof Integer) {
-						System.out.print("Var " + entry.getKey() + ": " + data + " is integer");
+						if (Main.debugMode) {
+							System.out.print("Var " + entry.getKey() + ": " + data + " is integer");
+						}
 						this.vars.put(entry.getKey(), (Integer) data);
 					} else if (data instanceof String) {
-						System.out.print("Var " + entry.getKey() + ": " + data + " is string");
+						if (Main.debugMode) {
+							System.out.print("Var " + entry.getKey() + ": " + data + " is string");
+						}
 						this.vars.put(entry.getKey(), (String) data);
 					} else {
-						System.out.print("Var " + entry.getKey() + ": " + data + " is 'other'");
+						if (Main.debugMode) {
+							System.out.print("Var " + entry.getKey() + ": " + data + " is 'other'");
+						}
 						this.vars.put(entry.getKey(), data);
 					}
 				}

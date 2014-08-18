@@ -18,6 +18,7 @@ import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillPhase;
+import me.sablednah.legendquest.skills.SkillType;
 import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.mechanics.Attribute;
@@ -141,6 +142,10 @@ public class PC {
 		if (id == null) {
 			valid = true;
 			lq.debug.fine("Naked is valid armour");
+		}
+		if (id == Material.AIR) {
+			valid = true;
+			lq.debug.fine("'Air' is always valid armour");
 		}
 		if (mainClass.allowedArmour.contains(id)) {
 			valid = true;
@@ -371,7 +376,7 @@ public class PC {
 		sp += mainClass.speedMod;
 		return sp;
 	}
-	
+
 	public double getXPMod(ExperienceSource es) {
 		double xp;
 		switch (es) {
@@ -421,7 +426,9 @@ public class PC {
 	 * @return the statChr
 	 */
 	public int getStatChr() {
-		if (lq.configMain.disableStats) { return 10; }
+		if (lq.configMain.disableStats) {
+			return 10;
+		}
 		int stat;
 		stat = statChr;
 		if (race != null) {
@@ -451,7 +458,9 @@ public class PC {
 	 * @return the statCon
 	 */
 	public int getStatCon() {
-		if (lq.configMain.disableStats) { return 10; }
+		if (lq.configMain.disableStats) {
+			return 10;
+		}
 		int stat;
 		stat = statCon;
 		if (race != null) {
@@ -481,7 +490,9 @@ public class PC {
 	 * @return the statDex
 	 */
 	public int getStatDex() {
-		if (lq.configMain.disableStats) { return 10; }
+		if (lq.configMain.disableStats) {
+			return 10;
+		}
 		int stat;
 		stat = statDex;
 		if (race != null) {
@@ -511,7 +522,9 @@ public class PC {
 	 * @return the statInt
 	 */
 	public int getStatInt() {
-		if (lq.configMain.disableStats) { return 10; }
+		if (lq.configMain.disableStats) {
+			return 10;
+		}
 		int stat;
 		stat = statInt;
 		if (race != null) {
@@ -541,7 +554,9 @@ public class PC {
 	 * @return the statStr
 	 */
 	public int getStatStr() {
-		if (lq.configMain.disableStats) { return 10; }
+		if (lq.configMain.disableStats) {
+			return 10;
+		}
 		int stat;
 		stat = statStr;
 		if (race != null) {
@@ -571,7 +586,9 @@ public class PC {
 	 * @return the statWis
 	 */
 	public int getStatWis() {
-		if (lq.configMain.disableStats) { return 10; }
+		if (lq.configMain.disableStats) {
+			return 10;
+		}
 		int stat;
 		stat = statWis;
 		if (race != null) {
@@ -676,16 +693,30 @@ public class PC {
 		}
 
 		Set<SkillDataStore> set = new HashSet<SkillDataStore>();
-		set.addAll(race.availableSkills);
-		set.addAll(race.outsourcedSkills);
-		if (subClass != null) {
-			set.addAll(subClass.availableSkills);
-			set.addAll(subClass.outsourcedSkills);
+		if (race.availableSkills != null) {
+			set.addAll(race.availableSkills);
 		}
-		set.addAll(mainClass.availableSkills);
-		set.addAll(mainClass.outsourcedSkills);
+		if (race.outsourcedSkills != null) {
+			set.addAll(race.outsourcedSkills);
+		}
+		if (subClass != null) {
+			if (subClass.availableSkills != null) {
+				set.addAll(subClass.availableSkills);
+			}
+			if (subClass.outsourcedSkills != null) {
+				set.addAll(subClass.outsourcedSkills);
+			}
+		}
+		if (mainClass.availableSkills != null) {
+			set.addAll(mainClass.availableSkills);
+		}
+		if (mainClass.outsourcedSkills != null) {
+			set.addAll(mainClass.outsourcedSkills);
+		}
 		List<SkillDataStore> uniques = new ArrayList<SkillDataStore>();
-		uniques.addAll(set);
+		if (set != null) {
+			uniques.addAll(set);
+		}
 		return makeMap(uniques);
 	}
 
@@ -773,27 +804,31 @@ public class PC {
 			}
 
 			getMaxHealth();
-
 			this.health = p.getHealth();
 
-			if (this.health > 0.0D) {
-				if (this.health > this.maxHP) {
-					this.health = this.maxHP;
+			try {
+				if (this.health > 0.0D) {
+					if (this.health > this.maxHP) {
+						this.health = this.maxHP;
+					}
+					p.setHealth(Math.min(this.health, p.getMaxHealth()));
+					
+					p.setMaxHealth(this.maxHP);
+					p.setHealth(this.health);
+					double scale = this.maxHP;
+					if (scale > 40.0D) {
+						scale = 40.0D;
+					}
+					p.setHealthScale(scale);
+					p.setHealthScaled(true);
+					if (lq.configMain.debugMode) {
+						lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+					}
 				}
-
-				p.setHealth(Math.min(this.health, p.getMaxHealth()));
-
-				p.setMaxHealth(this.maxHP);
-				p.setHealth(this.health);
-				double scale = this.maxHP;
-				if (scale > 40.0D) {
-					scale = 40.0D;
-				}
-				p.setHealthScale(scale);
-				p.setHealthScaled(true);
-				if (lq.configMain.debugMode) {
-					lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
-				}
+			} catch (IllegalArgumentException e) {
+				System.out.print("Health error: check legendquest.log for details.");
+				lq.debug.fine("Healtherror - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+				lq.debug.thrown("PC", "healthCheck", e);
 			}
 		}
 	}
@@ -832,7 +867,7 @@ public class PC {
 	public void scheduleHealthCheck() {
 		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedCheck(), 2L);
 	}
-	
+
 	public void scheduleXPSave() {
 		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedXPSave(), 2L);
 	}
@@ -854,14 +889,14 @@ public class PC {
 			SetExp.setTotalExperience(p, newXP);
 		}
 	}
-	
+
 	public void saveXP() {
 		currentXP = SetExp.getTotalExperience(getPlayer());
 		xpEarnt.put(mainClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
 		if (subClass != null) {
 			xpEarnt.put(subClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
 		}
-		
+
 	}
 
 	public void giveXP(int XPGain) {
@@ -922,10 +957,14 @@ public class PC {
 	}
 
 	public boolean validSkill(String name) {
-		if (!lq.validWorld(getPlayer().getWorld().getName())) {
-			return false;
+		Player p = getPlayer();
+		if (p != null) {
+			if (p.isOnline()) {
+				if (!lq.validWorld(p.getWorld().getName())) {
+					return false;
+				}
+			}
 		}
-
 		checkSkills();
 		if (skillsSelected != null && name != null) {
 			Boolean hasSkill = skillsSelected.get(name);
@@ -942,6 +981,10 @@ public class PC {
 			Player p = getPlayer();
 			if (phase == SkillPhase.READY) {
 				SkillDataStore skill = skillSet.get(name);
+				if (skill.type != null && (!skill.type.equals(SkillType.ACTIVE))) {
+					p.sendMessage(name + lq.configLang.skillInvalidPassive);
+					return;
+				}
 				skill.setLastUse(System.currentTimeMillis());
 				if (p != null && p.isOnline()) {
 					skill.setLastUseLoc(p.getLocation().clone());
@@ -983,7 +1026,9 @@ public class PC {
 	}
 
 	public int getStat(Attribute attr) {
-		if (lq.configMain.disableStats) { return 10; }
+		if (lq.configMain.disableStats) {
+			return 10;
+		}
 		switch (attr) {
 			case STR:
 				return getStatStr();

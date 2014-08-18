@@ -3,6 +3,7 @@ package me.sablednah.legendquest.listeners;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -62,6 +63,9 @@ public class ChatEvents implements Listener {
 			format = format.replace("{race}", racename);
 			format = format.replace("{class}", classname);
 			format = format.replace("{lvl}", lvl);
+			
+			format = ChatColor.translateAlternateColorCodes('§', format);
+			format = ChatColor.translateAlternateColorCodes('&', format);
 
 //			System.out.print(format);
 			

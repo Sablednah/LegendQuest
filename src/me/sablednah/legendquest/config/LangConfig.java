@@ -94,6 +94,7 @@ public class LangConfig extends Config {
 	public String					playerName				= "Name";
 	public String					statKarma				= "Karma";
 	public String					statXP					= "Exp";
+	public String					storedExperience		= "-- Stored Experience --";
 
 	public String					cantEquipArmour			= "Sorry you can't wear that armour.";
 	public String					cantUseTool				= "Sorry you can't use that tool.";
@@ -110,6 +111,9 @@ public class LangConfig extends Config {
 	public String					skillList				= "You have the following skills available.";
 	public String					skillListHeader			= "-- Skill Name --,-- Level --,--Cost--";
 	public String					skillsList				= "------- SkillPool --------";
+	public String					skillsListPasive		= "--- Passive Skills ---";
+	public String					skillsListActive		= "--- Active Skills ----";
+
 
 	public String					combatHit				= "You hit your target.";
 	public String					combatMissed			= "Your target evaded your attack.";
@@ -139,11 +143,13 @@ public class LangConfig extends Config {
 	public String					skillPointsOwned		= " already learnt.";
 	public String					skillPointsMissing		= "Sorry you don't have enough skill points to buy ";
 	public String					skillPointsNoSkill		= "Please specify a skill to buy";
+	public String					skillInfoNoSkill		= "Please specify a skill to get info";
 	public String					skillRequiresOne		= "Skill requires one of these skill: ";
 	public String					skillRequires			= "Skill requires all these skills: ";
 	public String					skillCommandLineUse		= "Using skill: ";
 	public String					skillLinkUse			= "Using Linked skill: ";
 	public String					skillInvalid			= "Sorry you can't use: ";
+	public String					skillInvalidPassive		= " is a passive or triggered skill, not usable via a command";
 	public String					skillStunned			= "Sorry you're stuned, you can't use: ";
 
 	public String					xpChange				= "You gained Exp: ";
@@ -167,6 +173,7 @@ public class LangConfig extends Config {
 		this.statRace = this.getConfigItem("statRace", this.statRace);
 		this.statClass = this.getConfigItem("statClass", this.statClass);
 		this.statKarma = this.getConfigItem("statKarma", this.statKarma);
+		this.storedExperience = this.getConfigItem("storedExperience", this.storedExperience);
 
 		this.raceScan = this.getConfigItem("raceScan", this.raceScan);
 		this.raceScanFound = this.getConfigItem("raceScanFound", this.raceScanFound);
@@ -259,6 +266,7 @@ public class LangConfig extends Config {
 		this.skillPointsBought = this.getConfigItem("skillPointsBought", this.skillPointsBought);
 		this.skillPointsMissing = this.getConfigItem("skillPointsMissing", this.skillPointsMissing);
 		this.skillPointsNoSkill = this.getConfigItem("skillPointsNoSkill", this.skillPointsNoSkill);
+		this.skillInfoNoSkill = this.getConfigItem("skillInfoNoSkill", this.skillInfoNoSkill);
 		this.skillRequiresOne = this.getConfigItem("skillRequiresOne", this.skillRequiresOne);
 		this.skillRequires = this.getConfigItem("skillRequires", this.skillRequires);
 

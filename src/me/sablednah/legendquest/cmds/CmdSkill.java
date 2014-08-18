@@ -1,5 +1,6 @@
 package me.sablednah.legendquest.cmds;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,9 @@ import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.effects.Effects;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
+import me.sablednah.legendquest.skills.Skill;
 import me.sablednah.legendquest.skills.SkillDataStore;
+import me.sablednah.legendquest.skills.SkillType;
 import me.sablednah.legendquest.utils.Utils;
 
 import org.bukkit.command.Command;
@@ -80,13 +83,22 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 				} else {
 					String skillToBuy = args[1].toLowerCase();
 					if (pc.validSkill(skillToBuy)) {
-						sender.sendMessage(skillToBuy + lq.configLang.skillPointsOwned);						
+						sender.sendMessage(skillToBuy + lq.configLang.skillPointsOwned);
 					} else if (pc.buySkill(skillToBuy)) {
 						sender.sendMessage(lq.configLang.skillPointsBought + "'" + skillToBuy + "'");
 					}
 				}
 				return true;
+			} else if (actionName.equalsIgnoreCase("info")) {
+				if (args.length < 2) {
+					sender.sendMessage(lq.configLang.skillInfoNoSkill);
+				} else {
+					String skillToInfo = args[1].toLowerCase();
+					skillinfo(skillToInfo, sender, pc);
+				}
+				return true;
 			} else {
+
 				if (lq.effectManager.getPlayerEffects(p.getUniqueId()).contains(Effects.STUNNED)) {
 					// stunned - no skills
 					sender.sendMessage(lq.configLang.skillStunned + actionName);
@@ -99,87 +111,216 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 		}
 	}
 
+	private void skillinfo(String skillToInfo, CommandSender sender, PC pc) {
+		Skill skill = lq.skills.skillList.get(skillToInfo);
+		if (skill != null) {
+			String d = skill.defaultOptions.description;
+			int[] timings = {skill.defaultOptions.buildup,skill.defaultOptions.delay,skill.defaultOptions.duration,skill.defaultOptions.cooldown};
+					
+			HashMap<String, Object> vars = null;
+			if (pc != null) {
+				SkillDataStore sk = pc.skillSet.get(skillToInfo);
+				if (sk!=null) {
+					vars = sk.vars;
+					d = sk.description;
+					int[] tim = {sk.buildup,sk.delay,sk.duration,sk.cooldown};
+					timings= tim;
+				}
+			} else {
+				vars = skill.defaultOptions.vars;
+			}
+			if (vars != null) {
+				for (Entry<String, Object> var : vars.entrySet()) {
+					// System.out.print("var:"+var.getKey()+"="+var.getValue());
+					d = d.replaceAll("\\[" + var.getKey() + "\\]", var.getValue().toString());
+				}
+			}
+			d = d.replaceAll("\\[buildup\\]", String.valueOf(timings[0]/1000.0D));
+			d = d.replaceAll("\\[delay\\]", String.valueOf(timings[1]/1000.0D));
+			d = d.replaceAll("\\[duration\\]", String.valueOf(timings[2]/1000.0D));
+			d = d.replaceAll("\\[cooldown\\]", String.valueOf(timings[3]/1000.0D));
+			
+			// System.out.print(d);
+			sender.sendMessage(skillToInfo + " : " + d);
+		} else {
+			sender.sendMessage(lq.configLang.skillInfoNoSkill);
+		}
+	}
+
 	private void sendSkillList(CommandSender sender, PC pc) {
 		sender.sendMessage(lq.configLang.skillsList);
-		String strout;
+
+		DecimalFormat df = new DecimalFormat("0000");
 
 		if (pc == null || !(sender instanceof Player)) {
 			// send a full list
 			HashMap<String, SkillDataStore> skillmap = new HashMap<String, SkillDataStore>();
+			HashMap<String, SkillDataStore> passivemap = new HashMap<String, SkillDataStore>();
 
 			for (ClassType cls : lq.classes.getClassTypes().values()) {
 				for (SkillDataStore s : cls.availableSkills) {
-					skillmap.put(s.levelRequired + " |" + s.name, s);
+					if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+						passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					} else {
+						skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					}
 				}
 				for (SkillDataStore s : cls.outsourcedSkills) {
-					skillmap.put(s.levelRequired + " |" + s.name, s);
+					if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+						passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					} else {
+						skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					}
 				}
 			}
 			for (Race cls : lq.races.getRaces().values()) {
 				for (SkillDataStore s : cls.availableSkills) {
-					skillmap.put(s.levelRequired + " |" + s.name, s);
+					if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+						passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					} else {
+						skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					}
 				}
 				for (SkillDataStore s : cls.outsourcedSkills) {
-					skillmap.put(s.levelRequired + " |" + s.name, s);
+					if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+						passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					} else {
+						skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					}
 				}
 			}
+
 			TreeMap<String, SkillDataStore> tm = new TreeMap<String, SkillDataStore>(skillmap);
-			for (Entry<String, SkillDataStore> entry : tm.entrySet()) {
-				SkillDataStore s = entry.getValue();
-				strout = " - " + s.name + " [" + lq.configLang.statLevelShort + " " + s.levelRequired + " | " + lq.configLang.statSp + " " + s.skillPoints + "]";
-				sender.sendMessage(strout);
-			}
+			TreeMap<String, SkillDataStore> tmpassive = new TreeMap<String, SkillDataStore>(passivemap);
+
+			sender.sendMessage(lq.configLang.skillsListPasive);
+			sender.sendMessage(showList(tmpassive, pc));
+
+			sender.sendMessage(lq.configLang.skillsListActive);
+			sender.sendMessage(showList(tm, pc));
 		} else {
 			// get skills allowed for this player
-			Map<String, Boolean> selected = pc.skillsSelected;
 
 			HashMap<String, SkillDataStore> skillmap = new HashMap<String, SkillDataStore>();
+			HashMap<String, SkillDataStore> passivemap = new HashMap<String, SkillDataStore>();
 
 			for (SkillDataStore s : pc.race.availableSkills) {
-				skillmap.put(s.levelRequired + " |" + s.name, s);
+				if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+					passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				} else {
+					skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				}
 			}
 			for (SkillDataStore s : pc.race.outsourcedSkills) {
-				skillmap.put(s.levelRequired + " |" + s.name, s);
+				if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+					passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				} else {
+					skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				}
 			}
 			if (pc.subClass != null) {
 				for (SkillDataStore s : pc.subClass.availableSkills) {
-					skillmap.put(s.levelRequired + " |" + s.name, s);
+					if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+						passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					} else {
+						skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					}
 				}
 				for (SkillDataStore s : pc.subClass.outsourcedSkills) {
-					skillmap.put(s.levelRequired + " |" + s.name, s);
+					if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+						passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					} else {
+						skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+					}
 				}
 			}
 			for (SkillDataStore s : pc.mainClass.availableSkills) {
-				skillmap.put(s.levelRequired + " |" + s.name, s);
+				if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+					passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				} else {
+					skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				}
 			}
 			for (SkillDataStore s : pc.mainClass.outsourcedSkills) {
-				skillmap.put(s.levelRequired + " |" + s.name, s);
+				if (s.type != null && !s.type.equals(SkillType.ACTIVE)) {
+					passivemap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				} else {
+					skillmap.put(df.format(s.levelRequired) + " |" + s.name, s);
+				}
 			}
 
 			TreeMap<String, SkillDataStore> tm = new TreeMap<String, SkillDataStore>(skillmap);
+			TreeMap<String, SkillDataStore> tmpassive = new TreeMap<String, SkillDataStore>(passivemap);
 
-			for (Entry<String, SkillDataStore> entry : tm.entrySet()) {
-				SkillDataStore s = entry.getValue();
-				SkillDataStore x = pc.getSkillData(entry.getKey());
-				if (x != null) {
-					strout = " - " + s.name + " [" + lq.configLang.statLevelShort + " " + x.levelRequired + " | " + lq.configLang.statSp + " " + x.skillPoints + "]";
-				} else {
-					strout = " - " + s.name + " [" + lq.configLang.statLevelShort + " " + s.levelRequired + " | " + lq.configLang.statSp + " " + s.skillPoints + "]";
-				}
-				if (selected.containsKey(s.name)) {
-					strout += " *";
-				} else {
-					if (x != null) {
-						if (x.requires != null && !x.requires.isEmpty()) {
-							strout += " All-" + x.requires.toString();
-						}
-						if (x.requiresOne != null && !x.requiresOne.isEmpty()) {
-							strout += " One-" + x.requiresOne.toString();
-						}
-					}
-				}
-				sender.sendMessage(strout);
-			}
+			sender.sendMessage(lq.configLang.skillsListPasive);
+			sender.sendMessage(showList(tmpassive, pc));
+
+			sender.sendMessage(lq.configLang.skillsListActive);
+			sender.sendMessage(showList(tm, pc));
 		}
+	}
+
+	public String[] showList(TreeMap<String, SkillDataStore> tm, PC pc) {
+		Map<String, Boolean> selected = null;
+		if (pc != null) {
+			selected = pc.skillsSelected;
+		}
+
+		// System.out.print(tm.entrySet().size());
+
+		String[] strouts = new String[tm.entrySet().size()];
+		int cntr = 0;
+		for (Entry<String, SkillDataStore> entry : tm.entrySet()) {
+			String strout = "";
+			SkillDataStore s = entry.getValue();
+			SkillDataStore x = null;
+			if (pc != null) {
+				x = pc.getSkillData(entry.getKey());
+			}
+
+			int lev = 0;
+			int sp = 0;
+
+			if (x != null) {
+				lev = x.levelRequired;
+				sp = x.skillPoints;
+			} else {
+				lev = s.levelRequired;
+				sp = s.skillPoints;
+			}
+
+			strout += lq.configLang.statLevelShort + " ";
+			if (lev < 10) {
+				strout += " ";
+			}
+			if (lev < 100) {
+				strout += " ";
+			}
+			strout += lev + " : " + s.name;
+			if (sp > 0) {
+				if (selected != null && selected.containsKey(s.name)) {
+					strout += " [Purchased]";
+				} else {
+					strout += " [" + lq.configLang.statSp + " " + sp + "]";
+				}
+			}
+			if (selected != null && selected.containsKey(s.name)) {
+				strout += " *";
+			} else {
+				if ((s.requires != null && !s.requires.isEmpty()) || (s.requiresOne != null && !s.requiresOne.isEmpty())) {
+					strout += " [Requires:";
+					if (s.requires != null && !s.requires.isEmpty()) {
+						strout += " All-" + s.requires.toString();
+					}
+					if (s.requiresOne != null && !s.requiresOne.isEmpty()) {
+						strout += " One-" + s.requiresOne.toString();
+					}
+					strout += "}";
+				}
+			}
+			strouts[cntr] = strout;
+			cntr++;
+		}
+		return strouts;
 	}
 }

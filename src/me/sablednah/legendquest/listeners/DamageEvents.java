@@ -56,9 +56,9 @@ public class DamageEvents implements Listener {
 				}
 			}
 			lq.players.addPlayer(p.getUniqueId(), pc);
-			if (p.getHealth()>0) {
-			pc.scheduleHealthCheck();
-			lq.players.scheduleUpdate(p.getUniqueId());
+			if (p.getHealth() > 0) {
+				pc.scheduleHealthCheck();
+				lq.players.scheduleUpdate(p.getUniqueId());
 			}
 		}
 	}
@@ -69,11 +69,11 @@ public class DamageEvents implements Listener {
 			return;
 		}
 		Entity victim = event.getEntity();
-		
+
 		if (!lq.validWorld(victim.getWorld().getName())) {
 			return;
 		}
-		
+
 		PC victimPC = null;
 		if (victim instanceof Player) {
 			victimPC = lq.players.getPC((Player) victim);
@@ -132,13 +132,13 @@ public class DamageEvents implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void checkDammage(EntityDamageEvent event) {
+	public void checkDammage(EntityDamageByEntityEvent event) {
 		Entity victim = event.getEntity();
-		
+
 		if (!lq.validWorld(victim.getWorld().getName())) {
 			return;
 		}
-		
+
 		Entity damager = null;
 		boolean ranged = false;
 		PC pc = null;
@@ -148,21 +148,21 @@ public class DamageEvents implements Listener {
 			pc = lq.players.getPC((Player) victim);
 			dodge = pc.getAttributeModifier(Attribute.DEX);
 		}
-		
-		if (event instanceof EntityDamageByEntityEvent) {
-			damager = getTwistedInstigatorEntity(((EntityDamageByEntityEvent) event).getDamager());
-			ranged = (((EntityDamageByEntityEvent) event).getDamager() instanceof Projectile);
-			pc = getTwistedInstigator(((EntityDamageByEntityEvent) event).getDamager());
-			if (pc != null) {
-				power = pc.getAttributeModifier(Attribute.STR);
-			}
+
+		// if (event instanceof EntityDamageByEntityEvent) {
+		damager = getTwistedInstigatorEntity(((EntityDamageByEntityEvent) event).getDamager());
+		ranged = (((EntityDamageByEntityEvent) event).getDamager() instanceof Projectile);
+		pc = getTwistedInstigator(((EntityDamageByEntityEvent) event).getDamager());
+		if (pc != null) {
+			power = pc.getAttributeModifier(Attribute.STR);
 		}
-/*
+		// }
+
 		if (Main.debugMode) {
 			System.out.print("power before: " + power);
 			System.out.print("dodge before: " + dodge);
 		}
-*/
+
 		CombatModifiers e = new CombatModifiers(power, dodge, damager, victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
 		power = e.getPower();
@@ -171,14 +171,17 @@ public class DamageEvents implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-/*
+
 		if (Main.debugMode) {
 			System.out.print("power after: " + power);
 			System.out.print("dodge after: " + dodge);
 		}
-*/
+
 		double dmg = event.getDamage();
 		dmg = dmg + power - dodge;
+		if (dmg < 0) {
+			dmg = 0;
+		}
 		event.setDamage(dmg);
 	}
 
@@ -241,23 +244,23 @@ public class DamageEvents implements Listener {
 			return;
 		}
 		if (event.getEntity() instanceof LivingEntity) {
-			LivingEntity e = (LivingEntity)event.getEntity();
-//			EntityDamageEvent cause = e.getLastDamageCause();
-//			if (cause == EntityDamageEvent.) {
+			LivingEntity e = (LivingEntity) event.getEntity();
+			// EntityDamageEvent cause = e.getLastDamageCause();
+			// if (cause == EntityDamageEvent.) {
 			Player killer = e.getKiller();
-			if (killer!=null){
+			if (killer != null) {
 				PC pc = lq.players.getPC(killer);
 				double mod = pc.getXPMod(ExperienceSource.KILL);
-				if (mod<=-100.0D) {
-					//no experience
+				if (mod <= -100.0D) {
+					// no experience
 					event.setDroppedExp(0);
 				} else {
 					int xp = event.getDroppedExp();
-					xp = (int) (xp*((100.0D+mod)/100.0D));
+					xp = (int) (xp * ((100.0D + mod) / 100.0D));
 					event.setDroppedExp(xp);
 				}
 			}
 		}
 	}
-	
+
 }

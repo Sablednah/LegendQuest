@@ -163,6 +163,10 @@ public class ItemControlEvents implements Listener {
 						p.sendMessage(lq.configLang.cantUseTool);
 						event.setCancelled(true);
 					}
+				} else {
+					if (Main.debugMode) {
+						System.out.print("not in dataset - item allowed");
+					}
 				}
 			}
 		}
@@ -208,7 +212,8 @@ public class ItemControlEvents implements Listener {
 			final Material itemID = event.getCursor().getType();
 			switch (event.getSlotType()) {
 				case ARMOR: // and is trying to equip it
-					if (!pc.allowedArmour(itemID)) {
+					boolean allowed = pc.allowedArmour(itemID);
+					if (!allowed) {
 						p.sendMessage(lq.configLang.cantEquipArmour);
 						event.setCancelled(true);
 						p.updateInventory();
@@ -239,10 +244,26 @@ public class ItemControlEvents implements Listener {
 		pc.checkInv();
 	}
 
+/*
+ 	@EventHandler(priority = EventPriority.MONITOR)
+	public void onUse(PlayerInteractEvent event) {
+		System.out.print(event.getEventName());
+		System.out.print(event.getAction());
+		System.out.print(event.getItem());
+		System.out.print(event.getPlayer());
+		System.out.print(event.hasItem());
+		System.out.print(event.isCancelled());
+		System.out.print(PlayerInteractEvent.getHandlerList().toString());
+	}
+*/
+
 	@EventHandler()
 	public void onArmourUse(PlayerInteractEvent event) {
 		if (((event.getAction().equals(Action.RIGHT_CLICK_AIR)) || (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))) {
 			if (event.hasItem() && event.getItem() != null) {
+				if (!lq.configData.dataSets.get("armour").contains(event.getItem().getType())) {
+					return;
+				}
 				final Player p = (Player) event.getPlayer();
 				if (!lq.validWorld(p.getWorld().getName())) {
 					return;

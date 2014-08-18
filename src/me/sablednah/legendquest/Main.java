@@ -1,18 +1,18 @@
 package me.sablednah.legendquest;
 
 /*
- >>\.
- /_  )`.
- /  _)`^)`.   _.---. _
- (_,' \  `^-)""      `.\
- |              | \
- \              / |
- / \  /.___.'\  (\ (_
- < ,"||     \ |`. \`-'
- \\ ()      )|  )/
- |_>|>     /_] //
- /_]        /_]
- */
+*    >>\.
+*   /_  )`.
+*  /  _)`^)`.   _.---. _
+* (_,' \  `^-)""      `.\
+*       |              | \
+*       \              / |
+*      / \  /.___.'\  (\ (_
+*     < ,"||     \ |`. \`-'
+*      \\ ()      )|  )/
+*      |_>|>     /_] //
+*        /_]        /_]
+*/
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -59,7 +59,8 @@ public class Main extends JavaPlugin {
 	public static final Boolean	debugMode	= false;
 
 	public void log(final String msg) {
-		logger.info(msg);
+	//	logger.info(msg);
+		this.getServer().getConsoleSender().sendMessage("[LegendQuest] "+msg);
 		debug.info("[serverlog] " + msg);
 	}
 

@@ -9,6 +9,7 @@ import java.util.List;
 
 import me.sablednah.legendquest.Main;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -99,8 +100,10 @@ public class Config {
 
     public String getConfigItem(final String name, final String defaultConfig) {
         config.addDefault(name, defaultConfig);
-        final String output = config.getString(name, defaultConfig);
-        lq.debug.fine(name + " is: " + output + " [string]");
+        String output = config.getString(name, defaultConfig);
+        output = ChatColor.translateAlternateColorCodes('§', output);
+        output = ChatColor.translateAlternateColorCodes('&', output);
+        lq.debug.fine(name + " is: " + output + ChatColor.WHITE+" [string]");
         return output;
     }
 

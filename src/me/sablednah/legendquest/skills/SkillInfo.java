@@ -134,6 +134,10 @@ public class SkillInfo {
 	public void readConfigInfo(ConfigurationSection conf) {
 		if (conf != null) {
 			// bthis.name = skillInfo.getName();
+			if (conf.contains("description")) {
+				this.description = conf.getString("description");
+			}
+
 			if (conf.contains("buildup")) {
 				this.buildup = conf.getInt("buildup");
 			}
