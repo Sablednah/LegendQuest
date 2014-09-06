@@ -1,5 +1,6 @@
 package me.sablednah.legendquest.cmds;
 
+import java.util.Collections;
 import java.util.List;
 
 import me.sablednah.legendquest.Main;
@@ -140,31 +141,79 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
         if (pc == null || !(sender instanceof Player)) {
             // send a full list
             for (final ClassType cls : lq.classes.getClassTypes().values()) {
-                strout = " - " + cls.name;
                 if (cls.defaultClass) {
-                    strout += " *";
+                    strout = "# ";
+                } else {
+                    strout = "  ";                	
+                }
+                strout += cls.name;
+
+                if (cls.requires!=null && !cls.requires.isEmpty()) {
+                	strout += " "+cls.requires.toString();
+                }
+                if (cls.requiresOne!=null && !cls.requiresOne.isEmpty()) {
+                	strout += " 1x"+cls.requiresOne.toString();
                 }
                 sender.sendMessage(strout);
             }
         } else {
             // get classes allowed for this race
-            final List<String> classList = lq.classes.getClasses(pc.race.name, (Player) sender);
+            List<String> classList = lq.classes.getClasses(pc.race.name, (Player) sender);
+            Collections.sort(classList);
             if (classList != null) {
                 for (final String cls : classList) {
                     if (cls.equalsIgnoreCase(pc.mainClass.name)) {
-                        strout = " > ";
+                        if (cls.equalsIgnoreCase(lq.classes.defaultClass.name)) {
+                            strout = ">#";
+                        } else {
+                            strout = "> ";
+                        }
                     } else if (pc.subClass != null && cls.equalsIgnoreCase(pc.subClass.name)) {
-                        strout = " » ";
+                        if (cls.equalsIgnoreCase(lq.classes.defaultClass.name)) {
+                            strout = "»#";
+                        } else {
+                            strout = "» ";
+                        }
                     } else {
-                        strout = " - ";
+                        if (cls.equalsIgnoreCase(lq.classes.defaultClass.name)) {
+                            strout = "-#";
+                        } else {
+                            strout = "- ";
+                        }
                     }
                     
-                    strout += " - " + cls.substring(0, 1).toUpperCase() + cls.substring(1);
+                    strout += cls.substring(0, 1).toUpperCase() + cls.substring(1);
                     
-                    if (cls.equalsIgnoreCase(lq.classes.defaultClass.name)) {
+                    if (pc.hasMastered(cls)) {
                         strout += " *";
+                    } else {
+                        strout += "  ";                    	
                     }
                     
+                    ClassType clsfile = lq.classes.getClassTypes().get(cls.toLowerCase());
+                    
+                    if (clsfile.requires!=null && !clsfile.requires.isEmpty()) {
+                    	strout += " [ ";
+                    	for (String c : clsfile.requires) {
+                    		strout += c;
+                            if (pc.hasMastered(c.toLowerCase())) {
+                                strout += "*";
+                            }                    		
+                    		strout += " ";
+                    	}
+                    	strout += "]";
+                    }
+                    if (clsfile.requiresOne!=null && !clsfile.requiresOne.isEmpty()) {
+                    	strout += " [ 1x ";
+                    	for (String c : clsfile.requiresOne) {
+                    		strout += c;
+                            if (pc.hasMastered(c.toLowerCase())) {
+                                strout += "*";
+                            }                    		
+                    		strout += " ";
+                    	}
+                    	strout += "]";
+                    }
                     sender.sendMessage(strout);
                 }
             }

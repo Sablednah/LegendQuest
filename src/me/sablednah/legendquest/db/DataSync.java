@@ -527,6 +527,15 @@ public class DataSync {
 				r = dbconn.query(sql2);
 				r.close();
 			}
+
+			sql2 = "DELETE FROM skillsLinked ";
+			sql2 = sql2 + "where uuid=\"";
+			sql2 = sql2 + pc.uuid + "\"";
+			sql2 = sql2 + ";";
+			if (lq.configMain.logSQL) { lq.debug.fine(sql2);}
+			r = dbconn.query(sql2);
+			r.close();
+			
 			HashMap<Material, String> copy3 = pc.skillLinkings;
 			for (final Entry<Material, String> entry : copy3.entrySet()) {
 				sql2 = "REPLACE INTO skillsLinked (";

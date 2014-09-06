@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -465,4 +466,12 @@ public class Utils {
 		}
 		return null;
 	}
+	
+	public static String cleanEnumName(Object o) {
+		String base = o.toString();
+		base = base.toLowerCase().replaceAll("_", " ");
+		base = WordUtils.capitalize(base);
+		return base;
+	}
+
 }

@@ -46,7 +46,7 @@ public class SkillLinkEvents implements Listener {
 							System.out.print(lq.configLang.skillLinkUse + linkedSkill);
 						}
 */
-						pc.useSkill(linkedSkill);
+						pc.useSkill(linkedSkill,null);
 					}
 				}
 			}

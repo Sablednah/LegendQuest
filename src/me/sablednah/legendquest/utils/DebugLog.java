@@ -56,7 +56,7 @@ public class DebugLog {
         try {
             // get the file name
             final String fn = p.getDataFolder() + File.separator + this.filename;
-            System.out.print(fn);
+            //System.out.print(fn);
             final File f = new File(p.getDataFolder(), this.filename);
 
             // create file handler to link file to log - set format to sensible 1 line format

@@ -80,6 +80,9 @@ public class Main extends JavaPlugin {
 			UUID uuid = player.getUniqueId();
 			players.removePlayer(uuid);
 		}
+		//disable skills
+		skills.shutdown();
+		
 		debug.closeLog();
 		datasync.shutdown();
 

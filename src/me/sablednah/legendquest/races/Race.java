@@ -41,6 +41,7 @@ public class Race {
 	public boolean				allowBrewing;
 	public boolean				allowEnchating;
 	public boolean				allowRepairing;
+	public boolean				allowTaming;
 
 	// frequency used for NPC chance.
 	public int					frequency;

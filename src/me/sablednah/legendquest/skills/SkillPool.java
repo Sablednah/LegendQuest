@@ -137,4 +137,9 @@ public class SkillPool {
 	public void dispatchEvent(SkillEvent event, EventListener listener) {
 		this.ed.fire(event, listener);
 	}
+
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
+	}
 }

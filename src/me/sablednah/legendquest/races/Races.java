@@ -208,6 +208,9 @@ public class Races {
 					// build disallowed lists
 
 					stringList = (List<String>) thisConfig.getList("dissallowedTools");
+					if (stringList == null) {
+						stringList = (List<String>) thisConfig.getList("disallowedTools");
+					}
 					materialList = new ArrayList<Material>();
 					if (stringList != null) {
 						for (int i = 0; i < stringList.size(); i++) {
@@ -233,6 +236,9 @@ public class Races {
 					r.dissallowedTools = materialList;
 
 					stringList = (List<String>) thisConfig.getList("dissallowedArmour");
+					if (stringList == null) {
+						stringList = (List<String>) thisConfig.getList("disallowedArmour");
+					}
 					materialList = new ArrayList<Material>();
 					if (stringList != null) {
 						for (int i = 0; i < stringList.size(); i++) {
@@ -256,6 +262,9 @@ public class Races {
 					r.dissallowedArmour = materialList;
 
 					stringList = (List<String>) thisConfig.getList("dissallowedWeapons");
+					if (stringList == null) {
+						stringList = (List<String>) thisConfig.getList("disallowedWeapons");
+					}
 					materialList = new ArrayList<Material>();
 					if (stringList != null) {
 						for (int i = 0; i < stringList.size(); i++) {
@@ -329,7 +338,8 @@ public class Races {
 				} catch (final Exception e) {
 					validConfig = false;
 					lq.log(lq.configLang.raceScanInvalid + race.getName());
-					e.printStackTrace();
+					lq.logger.throwing("Races", "Races", e);
+//					e.printStackTrace();
 				}
 
 				if (validConfig) {

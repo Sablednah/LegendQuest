@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -86,39 +87,60 @@ public class AbilityControlEvents implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void furnaceXP(FurnaceExtractEvent event) {
 		Player p = event.getPlayer();
-		if (p!=null) {
+		if (p != null) {
 			PC pc = lq.players.getPC(p);
 			double mod = pc.getXPMod(ExperienceSource.SMELT);
-			if (mod<=-100.0D) {
-				//no experience
+			if (mod <= -100.0D) {
+				// no experience
 				event.setExpToDrop(0);
 			} else {
 				int xp = event.getExpToDrop();
-				xp = (int) (xp*((100.0D+mod)/100.0D));
+				xp = (int) (xp * ((100.0D + mod) / 100.0D));
 				event.setExpToDrop(xp);
 			}
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void blockXP(BlockBreakEvent event) {
 		Player p = event.getPlayer();
-		if (p!=null) {
+		if (p != null) {
 			PC pc = lq.players.getPC(p);
 			double mod = pc.getXPMod(ExperienceSource.MINE);
-			if (mod<=-100.0D) {
-				//no experience
+			if (mod <= -100.0D) {
+				// no experience
 				event.setExpToDrop(0);
 			} else {
 				int xp = event.getExpToDrop();
-				xp = (int) (xp*((100.0D+mod)/100.0D));
+				xp = (int) (xp * ((100.0D + mod) / 100.0D));
 				event.setExpToDrop(xp);
 			}
 		}
 	}
-	
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onTameEntity(EntityTameEvent event) {
+		Player p = (Player) event.getOwner();
+
+		if (!lq.validWorld(p.getWorld().getName())) {
+			return;
+		}
+
+		PC pc = lq.players.getPC(p);
+
+		if (Main.debugMode) {
+			System.out.print("Tame attempt - tame event - " + p.getName());
+		}
+		if (!pc.canTame()) {
+			p.sendMessage(lq.configLang.cantTame);
+			event.setCancelled(true);
+			return;
+		}
+
+	}
+
 }

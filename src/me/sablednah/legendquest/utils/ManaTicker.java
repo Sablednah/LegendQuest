@@ -13,7 +13,7 @@ public class ManaTicker implements Runnable {
     
     public ManaTicker(final Main p) {
         this.lq = p;
-        noticeInterval = 10;
+        noticeInterval = 5;
         noticeIntervalCounter = 0;
     }
     

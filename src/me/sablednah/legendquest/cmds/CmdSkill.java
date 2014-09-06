@@ -105,7 +105,7 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 					return true;
 				}
 				sender.sendMessage(lq.configLang.skillCommandLineUse + actionName);
-				pc.useSkill(actionName);
+				pc.useSkill(actionName,args);
 				return true;
 			}
 		}

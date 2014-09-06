@@ -37,7 +37,7 @@ public class PluginSkill extends Skill {
     @Override
     public boolean onEnable() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
 

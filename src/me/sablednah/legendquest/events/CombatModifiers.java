@@ -48,7 +48,7 @@ public class CombatModifiers extends Event implements Cancellable {
     }
 
     public void setDodge(int chance) {
-        this.dodge = chance;
+		this.dodge = chance;
     }
     
     public boolean isCancelled() {

@@ -3,8 +3,6 @@ package me.sablednah.legendquest.mechanics;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
-
-//import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.AbilityCheckEvent;
 import me.sablednah.legendquest.playercharacters.PC;
 
@@ -37,6 +35,14 @@ public class Mechanics {
         
         result = e.getValue();
         
+/*
+	if (Main.debugMode) {
+	        HandlerList andlers = e.getHandlers();
+	        for (RegisteredListener andle : andlers.getRegisteredListeners()) {
+	        	System.out.print(andle.getListener().toString());
+	        }
+        }
+*/
         return result;
     }
     

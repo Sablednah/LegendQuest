@@ -104,6 +104,7 @@ public class LangConfig extends Config {
 	public String					cantEnchant				= "Sorry you can't enchant.";
 	public String					cantRepair				= "Sorry you can't repair.";
 	public String					cantBrew				= "Sorry you can't brew potions";
+	public String					cantTame				= "Sorry you can't tame";
 
 	public String					noSkills				= "You have no skills to use.";
 	public String					hasSkills				= "You have the following usable skills:";
@@ -230,6 +231,7 @@ public class LangConfig extends Config {
 		this.cantBrew = this.getConfigItem("cantBrew", this.cantBrew);
 		this.cantEnchant = this.getConfigItem("cantEnchant", this.cantEnchant);
 		this.cantRepair = this.getConfigItem("cantRepair", this.cantRepair);
+		this.cantTame = this.getConfigItem("cantTame", this.cantTame);
 
 		this.noSkills = this.getConfigItem("noSkills", this.noSkills);
 		this.hasSkills = this.getConfigItem("hasSkills", this.hasSkills);

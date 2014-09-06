@@ -32,8 +32,8 @@ public class ClassType {
 	public int							manaBonus;
 	public double						manaPerSecond;
 
-	public float						speedMod = 0.0F;
-	
+	public float						speedMod		= 0.0F;
+
 	public String						perm;
 
 	public List<Material>				allowedTools;
@@ -49,6 +49,7 @@ public class ClassType {
 	public boolean						allowBrewing;
 	public boolean						allowEnchating;
 	public boolean						allowRepairing;
+	public boolean						allowTaming;
 
 	public int							skillPoints;
 	public double						skillPointsPerLevel;
@@ -58,5 +59,6 @@ public class ClassType {
 	public double						xpAdjustKill	= 0.0D;
 	public double						xpAdjustSmelt	= 0.0D;
 	public double						xpAdjustMine	= 0.0D;
+	public int							healthMod		= 0;
 
 }

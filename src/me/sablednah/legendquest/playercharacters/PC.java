@@ -291,7 +291,7 @@ public class PC {
 	}
 
 	public double getMaxHealth() {
-		int hp, level, con;
+		int hp, level, con, bonus;
 		double result, perlevel;
 		con = getAttributeModifier(Attribute.CON);
 		hp = race.baseHealth + con;
@@ -301,12 +301,14 @@ public class PC {
 		level = SetExp.getLevelOfXpAmount(currentXP);
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
+			bonus = Math.max(mainClass.healthMod, subClass.healthMod);
 		} else {
 			perlevel = mainClass.healthPerLevel;
+			bonus = mainClass.healthMod;
 		}
 		double conBonus = ((con * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= conBonus;
-		double base = hp;
+		double base = hp+bonus;
 		if (lq.configMain.attributesModifyBaseStats) {
 			base *= conBonus;
 		}
@@ -814,7 +816,7 @@ public class PC {
 					p.setHealth(Math.min(this.health, p.getMaxHealth()));
 					
 					p.setMaxHealth(this.maxHP);
-					p.setHealth(this.health);
+//					p.setHealth(this.health);
 					double scale = this.maxHP;
 					if (scale > 40.0D) {
 						scale = 40.0D;
@@ -823,6 +825,7 @@ public class PC {
 					p.setHealthScaled(true);
 					if (lq.configMain.debugMode) {
 						lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
+						System.out.print("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
 					}
 				}
 			} catch (IllegalArgumentException e) {
@@ -841,6 +844,13 @@ public class PC {
 		} else {
 			gain += mainClass.manaPerSecond;
 		}
+
+		int wis = getAttributeModifier(Attribute.WIS);
+		double wisBonus = ((wis * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
+		if (wisBonus<-50.00D) { wisBonus = -50.00D; }
+		
+		gain *= wisBonus;
+		
 		return manaGain(gain);
 	}
 
@@ -956,6 +966,16 @@ public class PC {
 		return false;
 	}
 
+	public boolean canTame() {
+		if (race.allowTaming || mainClass.allowTaming) {
+			return true;
+		}
+		if (subClass != null && subClass.allowTaming) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean validSkill(String name) {
 		Player p = getPlayer();
 		if (p != null) {
@@ -975,7 +995,7 @@ public class PC {
 		return false;
 	}
 
-	public void useSkill(String name) {
+	public void useSkill(String name, String[] args) {
 		if (validSkill(name)) {
 			SkillPhase phase = getSkillPhase(name);
 			Player p = getPlayer();
@@ -985,6 +1005,7 @@ public class PC {
 					p.sendMessage(name + lq.configLang.skillInvalidPassive);
 					return;
 				}
+				skill.setlastArgs(args);
 				skill.setLastUse(System.currentTimeMillis());
 				if (p != null && p.isOnline()) {
 					skill.setLastUseLoc(p.getLocation().clone());
@@ -1265,7 +1286,11 @@ public class PC {
 	}
 
 	public void damage(double dmg, Entity source) {
-		getPlayer().damage(dmg, source);
+		if (source!=null) {
+			getPlayer().damage(dmg, source);
+		} else {
+			getPlayer().damage(dmg);
+		}
 		this.scheduleHealthCheck();
 	}
 

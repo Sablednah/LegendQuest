@@ -136,6 +136,7 @@ public class Classes {
 					c.statCon = thisConfig.getInt("statmods.con");
 					c.statChr = thisConfig.getInt("statmods.chr");
 					c.healthPerLevel = thisConfig.getDouble("healthperlevel");
+					c.healthMod = thisConfig.getInt("healthmod",0);
 
 					c.allowCrafting = thisConfig.getBoolean("allowCrafting");
 					c.allowSmelting = thisConfig.getBoolean("allowSmelting");
@@ -242,6 +243,9 @@ public class Classes {
 					// build disallowed lists
 
 					stringList = (List<String>) thisConfig.getList("dissallowedTools");
+					if (stringList == null) {
+						stringList = (List<String>) thisConfig.getList("disallowedTools");
+					}
 					materiallist = new ArrayList<Material>();
 					if (stringList != null) {
 						for (int i = 0; i < stringList.size(); i++) {
@@ -269,6 +273,9 @@ public class Classes {
 					c.dissallowedTools = materiallist;
 
 					stringList = (List<String>) thisConfig.getList("dissallowedArmour");
+					if (stringList == null) {
+						stringList = (List<String>) thisConfig.getList("disallowedArmour");
+					}
 					materiallist = new ArrayList<Material>();
 					if (stringList != null) {
 						for (int i = 0; i < stringList.size(); i++) {
@@ -294,6 +301,9 @@ public class Classes {
 					c.dissallowedArmour = materiallist;
 
 					stringList = (List<String>) thisConfig.getList("dissallowedWeapons");
+					if (stringList == null) {
+						stringList = (List<String>) thisConfig.getList("disallowedWeapons");
+					}
 					materiallist = new ArrayList<Material>();
 					if (stringList != null) {
 						for (int i = 0; i < stringList.size(); i++) {
@@ -345,7 +355,6 @@ public class Classes {
 					
 					for (SkillDataStore s :c.availableSkills) {
 						lq.debug.info("Vars ["+s.name+"] : "+s.vars.toString());
-						
 					}
 			
 					// outsourced skills - skills without skill class - using command/on/off and perm nodes to achieve
@@ -378,7 +387,14 @@ public class Classes {
 				} catch (final Exception e) {
 					validConfig = false;
 					lq.logSevere(lq.configLang.classScanInvalid + classfile.getName());
-					e.printStackTrace();
+					lq.logger.throwing("Classes", "classes", e);
+					System.out.print(e.getLocalizedMessage());
+					lq.logSevere(e.getLocalizedMessage());
+					for ( StackTraceElement st : e.getStackTrace()) {
+//						System.out.print(st.toString());
+						lq.logSevere(st.toString());
+					}
+//					e.printStackTrace();
 				}
 
 				if (validConfig) {
@@ -525,6 +541,5 @@ public class Classes {
 	public String getRandomClass(){
 		return wpmClasses.nextElt();
 	}
-
 
 }

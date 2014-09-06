@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
+import me.sablednah.legendquest.utils.Utils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,6 +47,7 @@ public class SkillDataStore {
 
 	private Location				lastUseLoc		= null;
 	private long					lastUse			= 0;
+	private String[]				lastArgs		= null;
 	private boolean					isCanceled		= false;
 	private boolean					isActive		= false;
 
@@ -211,6 +213,7 @@ public class SkillDataStore {
 				p.sendMessage(lq.configLang.skillLackOfMana);
 				isCanceled = true;
 				lastUse = 0;
+				lastArgs=null;
 				activePlayer.skillSet.put(name, this);
 				return false;
 			}
@@ -219,9 +222,10 @@ public class SkillDataStore {
 		// pay for stuff
 		if (consumes != null) {
 			if (!activePlayer.payItem(consumes)) {
-				p.sendMessage(lq.configLang.skillLackOfItem);
+				p.sendMessage(lq.configLang.skillLackOfItem + Utils.cleanEnumName(consumes));
 				isCanceled = true;
 				lastUse = 0;
+				lastArgs=null;
 				activePlayer.skillSet.put(name, this);
 				return false;
 			}
@@ -287,6 +291,14 @@ public class SkillDataStore {
 
 	public void setAliasedname(String aliasedname) {
 		this.aliasedname = aliasedname;
+	}
+
+	public void setlastArgs(String[] args) {
+		this.lastArgs=args;		
+	}
+
+	public String[] getlastArgs() {
+		return this.lastArgs;		
 	}
 
 }

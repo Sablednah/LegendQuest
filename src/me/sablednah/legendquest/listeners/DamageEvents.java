@@ -10,6 +10,7 @@ import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.playercharacters.PC;
 
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -173,18 +174,71 @@ public class DamageEvents implements Listener {
 		}
 
 		if (Main.debugMode) {
-			System.out.print("power after: " + power);
-			System.out.print("dodge after: " + dodge);
+			System.out.print("Power after: " + power);
+			System.out.print("Dodge after: " + dodge);
 		}
 
+
+		if (ranged) {
+	    	if (((EntityDamageByEntityEvent) event).getDamager().getType() == EntityType.ARROW) {	    
+			    Arrow arrow = (Arrow)event.getDamager();
+			    double speed = arrow.getVelocity().length();
+			    if (speed>3.0D) { speed = 3.0D; }
+			    power = (int) Math.round((power/3.0D) * speed);  // scale boost by bow power.
+				if (Main.debugMode) {
+					System.out.print("damage arrow: " + arrow.getVelocity().length());
+					System.out.print("power after arrow: " + power);
+				}
+	    	}
+	    }
+
+
 		double dmg = event.getDamage();
+
+		if (Main.debugMode) {
+			System.out.print("damage before stats: " + dmg);
+		}
+		
 		dmg = dmg + power - dodge;
 		if (dmg < 0) {
 			dmg = 0;
 		}
 		event.setDamage(dmg);
+		
+		if (Main.debugMode) {
+			System.out.print("damage after stats: " + dmg);
+		}
 	}
 
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void checkDammagestart(EntityDamageByEntityEvent event) {
+		double dmg = event.getDamage();
+		if (Main.debugMode) {
+			System.out.print("damage before: " + dmg);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void checkDammageEnd(EntityDamageByEntityEvent event) {
+		double dmg = event.getDamage();
+		if (Main.debugMode) {
+			System.out.print("damage end: " + dmg);
+		}
+	}
+	
+/*
+ 	  @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
+	  public void OnBowFire(EntityShootBowEvent event) {
+	    if (event.getProjectile().getType() != EntityType.ARROW) {
+	      return;
+	    }
+	    Arrow arrow = (Arrow)event.getProjectile();
+		if (Main.debugMode) {
+			System.out.print("damage arrow: " + arrow.getVelocity().length());
+		}	    
+	  }
+*/
+	
 	public PC getTwistedInstigator(Entity atacker) {
 		PC pc = null;
 		if (atacker instanceof Projectile) {
@@ -262,5 +316,4 @@ public class DamageEvents implements Listener {
 			}
 		}
 	}
-
 }

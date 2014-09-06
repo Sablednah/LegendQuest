@@ -38,6 +38,19 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 		if (args.length > 0) {
 			if (args.length == 1) {
 				targetName = args[0];
+				if (targetName.equalsIgnoreCase("full")) {
+					if (isPlayer) {
+						if (!lq.validWorld(((Player) sender).getWorld().getName())) {
+							((Player) sender).sendMessage(lq.configLang.invalidWorld);
+							return true;
+						}
+						targetName = sender.getName();
+						full = true;
+					} else {
+						sender.sendMessage(cmd.toString() + ": " + lq.configLang.invalidArgumentsCommand);
+						return true;
+					}					
+				}
 			} else {
 				full = true;
 				if (args[0].equalsIgnoreCase("full")) {
