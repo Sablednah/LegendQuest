@@ -11,6 +11,8 @@ public class ClassType {
 
 	public String						name;
 	public String						filename;
+	public String						description;
+	
 	// frequency used for NPC chance.
 	public int							frequency;
 
@@ -21,6 +23,9 @@ public class ClassType {
 	public List<String>					requiresOne;
 
 	public boolean						defaultClass;
+	public boolean						mainClassOnly;
+	public boolean						subClassOnly;
+
 	public int							statStr;
 	public int							statDex;
 	public int							statInt;

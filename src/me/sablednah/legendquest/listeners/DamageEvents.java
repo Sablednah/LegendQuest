@@ -9,6 +9,7 @@ import me.sablednah.legendquest.mechanics.Attribute;
 import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.playercharacters.PC;
+import me.sablednah.legendquest.utils.plugins.PluginUtils;
 
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -145,20 +146,29 @@ public class DamageEvents implements Listener {
 		PC pc = null;
 		int dodge = 0;
 		int power = 0;
-		if (victim instanceof Player) {
-			pc = lq.players.getPC((Player) victim);
-			dodge = pc.getAttributeModifier(Attribute.DEX);
-		}
 
 		// if (event instanceof EntityDamageByEntityEvent) {
 		damager = getTwistedInstigatorEntity(((EntityDamageByEntityEvent) event).getDamager());
+
+		if (damager != null && victim!= null && victim.getType()==EntityType.PLAYER  && damager.getType()==EntityType.PLAYER) {
+			if (!PluginUtils.canHurt((Player) victim, (Player) damager)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+		
 		ranged = (((EntityDamageByEntityEvent) event).getDamager() instanceof Projectile);
+		
 		pc = getTwistedInstigator(((EntityDamageByEntityEvent) event).getDamager());
 		if (pc != null) {
 			power = pc.getAttributeModifier(Attribute.STR);
 		}
-		// }
 
+		if (victim instanceof Player) {
+			pc = lq.players.getPC((Player) victim);
+			dodge = pc.getAttributeModifier(Attribute.DEX);
+		}
+		
 		if (Main.debugMode) {
 			System.out.print("power before: " + power);
 			System.out.print("dodge before: " + dodge);

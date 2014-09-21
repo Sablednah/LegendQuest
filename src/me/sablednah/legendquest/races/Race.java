@@ -10,6 +10,8 @@ public class Race {
 
 	public String				filename;
 	public String				name;
+	public String				description;
+
 	public String				plural;
 	public Double				size;
 	public boolean				defaultRace;
@@ -21,8 +23,8 @@ public class Race {
 	public int					statChr;
 	public int					baseHealth;
 
-	public float				baseSpeed = 0.2F;
-	
+	public float				baseSpeed		= 0.2F;
+
 	public int					baseMana;
 	public double				manaPerSecond;
 

@@ -92,6 +92,8 @@ public class Races {
 
 					r.filename = race.getName();
 					r.name = thisConfig.getString("name");
+					r.description = thisConfig.getString("description", null);
+
 					r.frequency = thisConfig.getInt("frequency");
 
 					r.plural = thisConfig.getString("plural");
@@ -144,6 +146,9 @@ public class Races {
 								//also add in utility list
 								materialList.addAll(lq.configData.dataSets.get("utility"));
 							}
+							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
+								keyName += "tools";
+							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {
 									materialList.addAll(lq.configData.dataSets.get(keyName));
@@ -167,6 +172,9 @@ public class Races {
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "armour";
 							}
+							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
+								keyName += "armour";
+							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {
 									materialList.addAll(lq.configData.dataSets.get(keyName));
@@ -189,6 +197,9 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "weapons";
+							}
+							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
+								keyName += "weapons";
 							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {
@@ -220,6 +231,9 @@ public class Races {
 								//also add in utility list
 								materialList.addAll(lq.configData.dataSets.get("utility"));
 							}
+							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
+								keyName += "tools";
+							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {
 									materialList.addAll(lq.configData.dataSets.get(keyName));
@@ -245,6 +259,8 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "armour";
+							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("chain") || keyName.equalsIgnoreCase("leather") || keyName.equalsIgnoreCase("diamond")) {
+								keyName = keyName + "armour";
 							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {

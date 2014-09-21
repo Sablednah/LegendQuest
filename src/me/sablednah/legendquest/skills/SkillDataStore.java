@@ -42,6 +42,7 @@ public class SkillDataStore {
 	public HashMap<String, Object>	vars			= new HashMap<String, Object>();
 
 	public String					permission;
+	public List<String>				permissions;
 	public String					startCommand;
 	public String					endCommand;
 
@@ -94,6 +95,9 @@ public class SkillDataStore {
 			}
 			if (conf.contains("perm")) {
 				this.permission = conf.getString("perm");
+			}
+			if (conf.contains("perms")) {
+				this.permissions = conf.getStringList("perms");
 			}
 			if (conf.contains("command")) {
 				this.startCommand = conf.getString("command");
@@ -196,12 +200,34 @@ public class SkillDataStore {
 
 	public void startperms(Main lq, Player p) {
 		if (permission != null && (!permission.isEmpty())) {
+//			System.out.print("Processing perm: "+permission);
 			if (lq.players.permissions.containsKey(p.getUniqueId().toString() + permission)) {
-				p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + permission));
+//				System.out.print("Found: "+p.getUniqueId().toString() + permission);
+				if (p.hasPermission(permission)) {
+//					System.out.print("Active - will remove: "+permission);
+					p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + permission));
+				}
 				lq.players.permissions.remove(p.getUniqueId().toString() + permission);
 			}
 			PermissionAttachment attachment = p.addAttachment(lq, permission, true, (int) lq.configMain.skillTickInterval + 1);
+//			System.out.print("Added : "+ permission + " - "+ attachment);
 			lq.players.permissions.put(p.getUniqueId().toString() + permission, attachment);
+		}
+		if (permissions != null && (!permissions.isEmpty())) {
+			for (String perm : permissions) {
+//				System.out.print("Processing perms perm : "+perm);
+				if (lq.players.permissions.containsKey(p.getUniqueId().toString() + perm)) {
+//					System.out.print("Found: "+p.getUniqueId().toString() + permission);
+					if (p.hasPermission(perm)) {
+//						System.out.print("Active - will remove: "+ perm);
+						p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + perm));
+					}
+					lq.players.permissions.remove(p.getUniqueId().toString() + perm);
+				}
+				PermissionAttachment attachment = p.addAttachment(lq, perm, true, (int) lq.configMain.skillTickInterval + 1);
+//				System.out.print("Added : "+ perm + " - "+ attachment);
+				lq.players.permissions.put(p.getUniqueId().toString() + perm, attachment);				
+			}
 		}
 	}
 
@@ -213,7 +239,7 @@ public class SkillDataStore {
 				p.sendMessage(lq.configLang.skillLackOfMana);
 				isCanceled = true;
 				lastUse = 0;
-				lastArgs=null;
+				lastArgs = null;
 				activePlayer.skillSet.put(name, this);
 				return false;
 			}
@@ -225,7 +251,7 @@ public class SkillDataStore {
 				p.sendMessage(lq.configLang.skillLackOfItem + Utils.cleanEnumName(consumes));
 				isCanceled = true;
 				lastUse = 0;
-				lastArgs=null;
+				lastArgs = null;
 				activePlayer.skillSet.put(name, this);
 				return false;
 			}
@@ -294,11 +320,11 @@ public class SkillDataStore {
 	}
 
 	public void setlastArgs(String[] args) {
-		this.lastArgs=args;		
+		this.lastArgs = args;
 	}
 
 	public String[] getlastArgs() {
-		return this.lastArgs;		
+		return this.lastArgs;
 	}
 
 }

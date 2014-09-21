@@ -95,6 +95,7 @@ public class Classes {
 
 					c.filename = classfile.getName();
 					c.name = thisConfig.getString("name");
+					c.description = thisConfig.getString("description", null);
 
 					c.frequency = thisConfig.getInt("frequency");
 
@@ -129,6 +130,8 @@ public class Classes {
 					c.requires = requires;
 
 					c.defaultClass = thisConfig.getBoolean("default");
+					c.mainClassOnly = thisConfig.getBoolean("mainclassonly",false);
+					c.subClassOnly = thisConfig.getBoolean("subclassonly",false);
 					c.statStr = thisConfig.getInt("statmods.str");
 					c.statDex = thisConfig.getInt("statmods.dex");
 					c.statInt = thisConfig.getInt("statmods.int");
@@ -224,6 +227,9 @@ public class Classes {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "weapons";
+							}
+							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
+								keyName += "weapons";
 							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {
@@ -468,10 +474,10 @@ public class Classes {
 	}
 
 	public List<String> getClasses(final String raceName) {
-		return getClasses(raceName, null);
+		return getClasses(raceName, null, null);
 	}
 
-	public List<String> getClasses(final String raceName, final Player player) {
+	public List<String> getClasses(final String raceName, final Player player, Boolean sub) {
 
 		final Race race = lq.races.getRace(raceName);
 		if (race != null) {
@@ -504,7 +510,9 @@ public class Classes {
 						if (!pc.hasMastered(required)) {
 							allValid = false;
 						}
-						lq.logger.info("req: " + required + " - " + pc.hasMastered(required));
+						if (lq.configMain.debugMode) {
+							lq.logger.info("req: " + required + " - " + pc.hasMastered(required));
+						}
 					}
 					// not mastered all required - skip me!!
 					if (!allValid) {
@@ -517,7 +525,9 @@ public class Classes {
 						if (pc.hasMastered(requested)) {
 							oneValid = true;
 						}
-						lq.logger.info("requested: " + requested + " - " + pc.hasMastered(requested));
+						if (lq.configMain.debugMode) {
+							lq.logger.info("requested: " + requested + " - " + pc.hasMastered(requested));
+						}
 					}
 
 					// if one is mastered allow
@@ -526,6 +536,15 @@ public class Classes {
 					}
 				}
 
+				if (sub != null) {
+					if (c.mainClassOnly && sub==true) {
+						continue;
+					}
+					if (c.subClassOnly && sub==false) {
+						continue;
+					}
+				}
+				
 				result.add(c.name.toLowerCase());
 			}
 			return result;

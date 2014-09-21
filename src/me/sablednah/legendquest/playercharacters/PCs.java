@@ -303,6 +303,15 @@ public class PCs {
 									permissions.remove(p.getUniqueId().toString() + skill.permission);
 								}
 							}
+							if (skill.permissions != null && (!skill.permissions.isEmpty())) {
+								for (String perm : skill.permissions) {
+									if (permissions.containsKey(p.getUniqueId().toString() + perm)) {
+										p.removeAttachment(permissions.get(p.getUniqueId().toString() + perm));
+										permissions.remove(p.getUniqueId().toString() + perm);
+									}
+									
+								}
+							}
 						}
 						skill.setPhase(virtualPhase);
 					}

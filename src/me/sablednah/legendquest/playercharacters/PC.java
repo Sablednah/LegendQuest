@@ -771,9 +771,13 @@ public class PC {
 	}
 
 	public boolean hasMastered(String className) {
-		lq.logger.info("className (" + className + ")...");
+		if (lq.configMain.debugMode) {
+			lq.logger.info("className (" + className + ")...");
+		}
 		if (xpEarnt.containsKey(className.toLowerCase())) {
-			lq.logger.info("className (" + className + "): " + xpEarnt.get(className.toLowerCase()));
+			if (lq.configMain.debugMode) {
+				lq.logger.info("className (" + className + "): " + xpEarnt.get(className.toLowerCase()));
+			}
 			if (xpEarnt.get(className.toLowerCase()) >= lq.configMain.max_xp) {
 				return true;
 			}
@@ -1231,11 +1235,19 @@ public class PC {
 				this.setXP(newxp);
 				lq.players.savePlayer(this);
 			}
+			if (sub && this.subClass == null) {
+				//moving from no subclass to subclass
+				newxp = xpNow;				
+			}
 		}
 
 		String oldClassname;
 		if (sub) {
-			oldClassname = this.subClass.name.toLowerCase();
+			if (this.subClass != null) {
+				oldClassname = this.subClass.name.toLowerCase();
+			} else {
+				oldClassname = null;
+			}
 			this.subClass = cl;
 		} else {
 			oldClassname = this.mainClass.name.toLowerCase();
@@ -1250,7 +1262,9 @@ public class PC {
 
 		// if mastered class - save this xp and check if target class is mastered.
 		if (xpNow > lq.configMain.max_xp) {
-			this.xpEarnt.put(oldClassname, xpNow);
+			if (oldClassname!= null) {
+				this.xpEarnt.put(oldClassname, xpNow);
+			}
 
 			if (newclassxp > lq.configMain.max_xp) {
 				this.setXP(newclassxp);

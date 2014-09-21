@@ -57,7 +57,7 @@ public class MainConfig extends Config {
 
 	public boolean				chatUsePrefix				= true;
 	public boolean				chatProcessPrefix			= true;
-	public String				chatPrefix					= "[{race}|{class} ({lvl})] {current}";
+	public String				chatPrefix					= "[{race}|{class} L:{lvl}] {current}";
 
 	public boolean				attributesModifyBaseStats	= false;
 	public boolean				disableStats				= false;

@@ -55,7 +55,7 @@ public class DebugLog {
         this.lq = p;
         try {
             // get the file name
-            final String fn = p.getDataFolder() + File.separator + this.filename;
+           // final String fn = p.getDataFolder() + File.separator + this.filename;
             //System.out.print(fn);
             final File f = new File(p.getDataFolder(), this.filename);
 
