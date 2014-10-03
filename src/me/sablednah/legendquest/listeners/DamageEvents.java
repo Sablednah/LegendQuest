@@ -96,8 +96,8 @@ public class DamageEvents implements Listener {
 			} else if (dif < -5) {
 				dif = -5;
 			}
-			hitchance = hitchance + dif;
-			dodgechance = dodgechance + dif;
+			hitchance = hitchance - dif;
+			dodgechance = dodgechance - dif;
 		}
 
 		boolean ranged = (event.getDamager() instanceof Projectile);
@@ -110,6 +110,12 @@ public class DamageEvents implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+		
+		if (ranged) {
+			hitchance=hitchance-lq.configMain.rangedHitBonus;
+//			dodgechance=dodgechance-lq.configMain.rangedHitBonus;
+		}
+		
 		boolean hitCheck = Mechanics.opposedTest(attackerPC, hitchance, Attribute.DEX, victimPC, dodgechance, Attribute.DEX);
 		if (!hitCheck) {
 			if (lq.configMain.verboseCombat) {

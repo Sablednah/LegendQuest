@@ -34,6 +34,7 @@ public class MainConfig extends Config {
 	public boolean				useSkillTestForCombat		= true;
 	public boolean				verboseCombat				= true;
 	public boolean				useSizeForCombat			= true;
+	public int					rangedHitBonus				= 10;
 
 	public int					karmaDamagePlayer			= -10;
 	public int					karmaDamageVillager			= -5;
@@ -93,6 +94,7 @@ public class MainConfig extends Config {
 		this.useSkillTestForCombat = this.getConfigItem("useSkillTestForCombat", this.useSkillTestForCombat);
 		this.useSizeForCombat = this.getConfigItem("useSizeForCombat", this.useSizeForCombat);
 		this.verboseCombat = this.getConfigItem("verboseCombat", this.verboseCombat);
+		this.rangedHitBonus = this.getConfigItem("rangedHitBonus", this.rangedHitBonus);
 
 		this.karmaDamagePlayer = this.getConfigItem("karmaDamagePlayer", this.karmaDamagePlayer);
 		this.karmaDamageVillager = this.getConfigItem("karmaDamageVillager", this.karmaDamageVillager);
@@ -120,7 +122,6 @@ public class MainConfig extends Config {
 		this.attributesModifyBaseStats = this.getConfigItem("attributesModifyBaseStats", this.attributesModifyBaseStats);
 		this.disableStats = this.getConfigItem("disableStats", this.disableStats);
 		this.verboseStats = this.getConfigItem("verboseStats", this.verboseStats);
-		
-		
+
 	}
 }

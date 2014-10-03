@@ -102,6 +102,9 @@ public class Mechanics {
 		int testScore = skillTest(testDif, testAttr, tester);
 		int oppScore = skillTest(oppDif, oppAttr, oponent);
 
+		
+// System.out.print(testScore + " - op:" +oppScore );
+		
 		if (testScore == oppScore) {
 			int testMod = getPlayersAttributeModifier(tester, testAttr);
 			int oppMod = getPlayersAttributeModifier(oponent, oppAttr);

@@ -437,7 +437,9 @@ public class Utils {
 
 		for (Entity e : nearbyE) {
 			if (e instanceof LivingEntity) {
-				livingE.add((LivingEntity) e);
+				if (e != player) {
+				    livingE.add((LivingEntity) e);
+				}
 			}
 		}
 

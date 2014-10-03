@@ -78,6 +78,36 @@ public class SkillDataStore {
 		}
 	}
 
+	public SkillDataStore(SkillDataStore as) {
+		this.aliasedname=as.aliasedname;
+		this.author=as.author;
+		this.buildup=as.buildup;
+		this.consumes=as.consumes;
+		this.cooldown=as.cooldown;
+		this.delay=as.delay;
+		this.description=as.description;
+		this.duration=as.duration;
+		this.endCommand=as.endCommand;
+		this.isActive=as.isActive;
+		this.isCanceled=as.isCanceled;
+		this.lastArgs=as.lastArgs;
+		this.lastUse=as.lastUse;
+		this.lastUseLoc=as.lastUseLoc;
+		this.levelRequired=as.levelRequired;
+		this.manaCost=as.manaCost;
+		this.name=as.name;
+		this.permission=as.permission;
+		this.permissions=as.permissions;
+		this.phase=as.phase;
+		this.requires=as.requires;
+		this.requiresOne=as.requiresOne;
+		this.skillPoints=as.skillPoints;
+		this.startCommand=as.startCommand;
+		this.type=as.type;
+		this.vars=as.vars;
+		this.version=as.version;		
+	}
+
 	public void readConfigInfo(final ConfigurationSection conf) {
 		if (conf != null) {
 			if (conf.contains("type")) {
@@ -256,6 +286,8 @@ public class SkillDataStore {
 				return false;
 			}
 		}
+
+		// if (this.name.equalsIgnoreCase("aura") || this.name.equalsIgnoreCase("might")) { System.out.print("Skill use: "+p.getName()); }
 
 		// run the start command if any.
 		if (startCommand != null && (!startCommand.isEmpty())) {

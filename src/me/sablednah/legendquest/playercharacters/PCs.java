@@ -149,7 +149,6 @@ public class PCs {
 				if (p != null && p.isOnline()) {
 					for (SkillDataStore skill : activePlayer.skillSet.values()) {
 						if ( !activePlayer.validSkill(skill.name) ) { continue; }						
-						
 						boolean startskill = false;
 						boolean stopskill = false;
 						SkillPhase phase = skill.checkPhase();
@@ -283,6 +282,16 @@ public class PCs {
 									break;
 							}
 						}
+/*						
+						if (lastPhase!= SkillPhase.READY && (skill.name.equalsIgnoreCase("aura") || skill.name.equalsIgnoreCase("might"))) { 
+							System.out.print("Skill "+skill.name+" use: "+p.getName());
+							System.out.print("Skill virtual: "+virtualPhase.toString());
+							System.out.print("Skill phase: "+phase.toString());
+							System.out.print("Skill lastPhase: "+lastPhase.toString());
+							
+						}
+*/
+						
 						if (skill.isActive()) {
 							skill.startperms(lq, p);
 							if (startskill) {

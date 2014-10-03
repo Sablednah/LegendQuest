@@ -696,24 +696,48 @@ public class PC {
 
 		Set<SkillDataStore> set = new HashSet<SkillDataStore>();
 		if (race.availableSkills != null) {
-			set.addAll(race.availableSkills);
+//			set.addAll(race.availableSkills);
+			for (SkillDataStore as : race.availableSkills) {
+				SkillDataStore tempskill = new SkillDataStore(as);
+				set.add(tempskill);
+			}
 		}
 		if (race.outsourcedSkills != null) {
-			set.addAll(race.outsourcedSkills);
+//			set.addAll(race.outsourcedSkills);
+			for (SkillDataStore as : race.outsourcedSkills) {
+				SkillDataStore tempskill = new SkillDataStore(as);
+				set.add(tempskill);
+			}
 		}
 		if (subClass != null) {
 			if (subClass.availableSkills != null) {
-				set.addAll(subClass.availableSkills);
+				//set.addAll(subClass.availableSkills);
+				for (SkillDataStore as : subClass.availableSkills) {
+					SkillDataStore tempskill = new SkillDataStore(as);
+					set.add(tempskill);
+				}
 			}
 			if (subClass.outsourcedSkills != null) {
-				set.addAll(subClass.outsourcedSkills);
+				//set.addAll(subClass.outsourcedSkills);
+				for (SkillDataStore as : subClass.outsourcedSkills) {
+					SkillDataStore tempskill = new SkillDataStore(as);
+					set.add(tempskill);
+				}
 			}
 		}
 		if (mainClass.availableSkills != null) {
-			set.addAll(mainClass.availableSkills);
+			//set.addAll(mainClass.availableSkills);
+			for (SkillDataStore as : mainClass.availableSkills) {
+				SkillDataStore tempskill = new SkillDataStore(as);
+				set.add(tempskill);
+			}
 		}
 		if (mainClass.outsourcedSkills != null) {
-			set.addAll(mainClass.outsourcedSkills);
+			//set.addAll(mainClass.outsourcedSkills);
+			for (SkillDataStore as : mainClass.outsourcedSkills) {
+				SkillDataStore tempskill = new SkillDataStore(as);
+				set.add(tempskill);
+			}
 		}
 		List<SkillDataStore> uniques = new ArrayList<SkillDataStore>();
 		if (set != null) {
@@ -1009,8 +1033,10 @@ public class PC {
 					p.sendMessage(name + lq.configLang.skillInvalidPassive);
 					return;
 				}
+//if ((skill.name.equalsIgnoreCase("aura") || skill.name.equalsIgnoreCase("might"))) {  System.out.print("start might: "+p.getName() + " - " + skill.getLastUse());  }
 				skill.setlastArgs(args);
 				skill.setLastUse(System.currentTimeMillis());
+// if ((skill.name.equalsIgnoreCase("aura") || skill.name.equalsIgnoreCase("might"))) {  System.out.print("start Might: "+p.getName() + " - " + skill.getLastUse());  }
 				if (p != null && p.isOnline()) {
 					skill.setLastUseLoc(p.getLocation().clone());
 				}
