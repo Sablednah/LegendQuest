@@ -92,7 +92,8 @@ public class Races {
 
 					r.filename = race.getName();
 					r.name = thisConfig.getString("name");
-					r.description = thisConfig.getString("description", null);
+					r.description = thisConfig.getString("description", "");
+					r.longdescription = thisConfig.getString("longdescription", "");
 
 					r.frequency = thisConfig.getInt("frequency");
 
@@ -342,7 +343,7 @@ public class Races {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
 							lq.debug.info("Loading permskill: " + key);
-							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
+							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null);
 							si.setName(key);
 							si.readConfigBasicInfo(skillInfo);
 							SkillDataStore skilldata = new SkillDataStore(si);

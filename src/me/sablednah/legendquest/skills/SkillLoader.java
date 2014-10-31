@@ -107,6 +107,8 @@ public class SkillLoader {
 						manifest.delay(), 
 						manifest.duration(),
 						manifest.cooldown(), 
+						manifest.pay(), 
+						manifest.xp(), 
 						manifest.manaCost(), 
 						manifest.consumes(), 
 						manifest.levelRequired(), 

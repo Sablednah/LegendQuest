@@ -3,6 +3,8 @@
 startup: "The sky above the port was the color of television, tuned to a dead channel."
 shutdown: "=== END OF LINE ==="
 
+adminName: "GM"
+
 invalidCommand: "Sorry couldn't recognise command: "
 
 helpCommand: |
@@ -62,6 +64,8 @@ raceChanged: "Your race has been changed to "
 raceChangedAdmin: "GM has changed your race to "
 raceChangeNotAllowed: "Sorry you have already selected a race. "
 raceList: "-------- Races --------"
+raceChangeWarnXpLoss: "Warning: Changing race will lose your accumulated XP"
+raceConfirm: "Repeat with confirm appended  e.g. /race human confirm"
 raceNotAllowed: "Sorry, you can't select that race."
 
 classSelectRaceFirst: "Please Select Race before class."
@@ -107,6 +111,13 @@ skillPoints: "Skill Points: "
 skillList: "You have the following skills available."
 skillListHeader: "-- Skill Name --,-- Level --,--Cost--"
 skillsList: "------- SkillPool --------"
+skillsListPasive: "--- Passive Skills ---"
+skillsListActive: "--- Active Skills ----"
+skillLackOfPay: "Sorry you can't use that skill, you need to pay:"
+skillUnlinked: "Skill unlinked from item "
+skillPointsOwned: " already learnt."
+skillInfoNoSkill: "Please specify a skill to get info"
+skillInvalidPassive: " is a passive or triggered skill, not usable via a command"
 
 combatHit: "You hit your target."
 combatMissed: "Your target evaded your attack."
@@ -140,3 +151,7 @@ skillStunned: "Sorry you're stunned, you can't use: "
 
 xpChange: "You gained Exp: "
 xpChangeAdmin: "You gave Exp: "
+
+ecoPaid: " paid."
+ecoDeclined: "Card Declined: Insufficient funds."
+

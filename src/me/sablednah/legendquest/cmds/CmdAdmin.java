@@ -139,7 +139,7 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 				sender.sendMessage(lq.configLang.invalidArgumentsCommand);
 				return true;
 			} else {
-				// look for a classname
+				// look for xp+name
 				int xp = 0;
 				String playername;
 				if (NumberUtils.isNumber(args[1])) {
@@ -166,6 +166,41 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 				PC targetPC = lq.players.getPC(targetPlayer);
 				targetPC.giveXP(realxp);
 				sender.sendMessage(lq.configLang.xpChangeAdmin + targetPlayer.getDisplayName() + " / " + xp);
+				return true;
+
+			}
+		} else if (args[0].equalsIgnoreCase("karma")) {
+			if (args.length < 3) {
+				sender.sendMessage(lq.configLang.invalidArgumentsCommand);
+				return true;
+			} else {
+				// look for a classname
+				int xp = 0;
+				String playername;
+				if (NumberUtils.isNumber(args[1])) {
+					xp = Integer.parseInt(args[1]);
+					playername = args[2];
+				} else {
+					if (!NumberUtils.isNumber(args[2])) {
+						sender.sendMessage(lq.configLang.invalidArgumentsCommand + ": " + args[1] + " " + args[2]);
+						return true;
+					}
+					xp = Integer.parseInt(args[2]);
+					playername = args[1];
+				}
+
+				Player targetPlayer = lq.getServer().getPlayer(playername);
+
+				if (targetPlayer == null || !targetPlayer.isOnline()) {
+					sender.sendMessage(lq.configLang.invalidArgumentsCommand + ": " + args[1] + " / " + args[2]);
+					return true;
+				}
+				
+				PC targetPC = lq.players.getPC(targetPlayer);
+				long realkarma = targetPC.karma;
+				realkarma = realkarma+xp;
+				targetPC.karma = realkarma; 				
+				sender.sendMessage(targetPlayer.getDisplayName() + " karma now " + realkarma);
 				return true;
 
 			}

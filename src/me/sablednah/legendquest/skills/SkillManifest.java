@@ -11,35 +11,39 @@ public @interface SkillManifest {
 
 	public abstract SkillType type();
 
-	public abstract String author();
+	public abstract String author() default "";
 
-	public abstract String description();
+	public abstract String description() default "";
 
-	public abstract int buildup();
+	public abstract int buildup() default 0;
 
-	public abstract int delay();
+	public abstract int delay() default 0;
 
-	public abstract int duration();
+	public abstract int duration() default 0;
 
-	public abstract int cooldown();
+	public abstract int cooldown() default 0;
 
-	public abstract int manaCost();
+	public abstract int manaCost() default 0;
 
-	public abstract String consumes();
+	public abstract int pay() default 0;
+	
+	public abstract int xp() default 0;
 
-	public abstract int levelRequired();
+	public abstract String consumes() default "";
 
-	public abstract int skillPoints();
+	public abstract int levelRequired() default 0;
 
-	public abstract String[] strvarnames();
+	public abstract int skillPoints() default 0;
 
-	public abstract String[] strvarvalues();
+	public abstract String[] strvarnames() default {};
 
-	public abstract String[] intvarnames();
+	public abstract String[] strvarvalues() default {};
 
-	public abstract int[] intvarvalues();
+	public abstract String[] intvarnames() default {};
 
-	public abstract String[] dblvarnames();
+	public abstract int[] intvarvalues() default {};
 
-	public abstract double[] dblvarvalues();
+	public abstract String[] dblvarnames() default {};
+
+	public abstract double[] dblvarvalues() default {};
 }

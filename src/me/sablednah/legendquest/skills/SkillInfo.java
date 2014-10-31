@@ -24,6 +24,8 @@ public class SkillInfo {
 	public int						duration		= 0;
 	public int						cooldown		= 0;
 	public int						manaCost		= 0;
+	public int						pay    			= 0;
+	public int						xp    			= 0;
 	public ItemStack				consumes		= null;
 	public int						levelRequired	= 0;
 	public int						skillPoints		= 0;
@@ -42,7 +44,7 @@ public class SkillInfo {
 		this.description = description;		
 	}
 	
-	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int manaCost, ItemStack consumes, int levelRequired, int skillPoints, HashMap<String, Object> vars) {
+	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, ItemStack consumes, int levelRequired, int skillPoints, HashMap<String, Object> vars) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
@@ -53,6 +55,8 @@ public class SkillInfo {
 		this.duration = duration;
 		this.cooldown = cooldown;
 		this.manaCost = manaCost;
+		this.pay = pay;
+		this.xp = xp;
 		this.levelRequired = levelRequired;
 		this.skillPoints = skillPoints;
 		if (consumes != null) {
@@ -61,7 +65,7 @@ public class SkillInfo {
 		this.vars = vars;
 	}
 
-	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int manaCost, String consumes, int levelRequired, int skillPoints, String[] dblnames,
+	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, String consumes, int levelRequired, int skillPoints, String[] dblnames,
 			double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues) throws BadSkillFormat {
 		if (Main.debugMode) {
 			System.out.print("Skillinfo: "+name);
@@ -76,6 +80,8 @@ public class SkillInfo {
 		this.duration = duration;
 		this.cooldown = cooldown;
 		this.manaCost = manaCost;
+		this.pay = pay;
+		this.xp = xp;
 		this.levelRequired = levelRequired;
 		this.skillPoints = skillPoints;
 		if (consumes != null && !consumes.isEmpty()) {
@@ -158,6 +164,12 @@ public class SkillInfo {
 			}
 			if (conf.contains("manaCost")) {
 				this.manaCost = conf.getInt("manaCost");
+			}
+			if (conf.contains("pay")) {
+				this.pay = conf.getInt("pay");
+			}
+			if (conf.contains("xp")) {
+				this.xp = conf.getInt("xp");
 			}
 			if (conf.contains("consumes")) {
 				this.consumes = new ItemStack(Material.getMaterial(conf.getString("consumes")));
@@ -261,6 +273,22 @@ public class SkillInfo {
 
 	public void setManaCost(int manaCost) {
 		this.manaCost = manaCost;
+	}
+
+	public int getPay() {
+		return pay;
+	}
+
+	public void setPay(int pay) {
+		this.pay = pay;
+	}
+
+	public int getXp() {
+		return xp;
+	}
+
+	public void setXp(int xp) {
+		this.xp = xp;
 	}
 
 	public ItemStack getConsumes() {

@@ -70,7 +70,7 @@ public class SkillPool {
 		SkillDefinition def2 = null;
 		if (!name.equalsIgnoreCase(def.getSkillInfo().getName())) {
 			SkillInfo si2 = new SkillInfo(def.getSkillInfo().getAuthor(), name, def.getSkillInfo().getDescription(), def.getSkillInfo().getType(), def.getSkillInfo().getVersion(),
-					def.getSkillInfo().getBuildup(),def.getSkillInfo().getDelay(),def.getSkillInfo().getDuration(),def.getSkillInfo().getCooldown(),def.getSkillInfo().getManaCost(),
+					def.getSkillInfo().getBuildup(),def.getSkillInfo().getDelay(),def.getSkillInfo().getDuration(),def.getSkillInfo().getCooldown(),def.getSkillInfo().getPay(),def.getSkillInfo().getXp(),def.getSkillInfo().getManaCost(),
 					def.getSkillInfo().getConsumes(),def.getSkillInfo().getLevelRequired(),def.getSkillInfo().getSkillPoints(),def.getSkillInfo().getVars()); 
 			def2 = new SkillDefinition(def.getSkillClass(), def.getSource(), si2);
 			Skill sk = instantiateSkill(def2);

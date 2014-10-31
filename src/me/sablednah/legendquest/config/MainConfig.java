@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.experience.SetExp;
+import me.sablednah.legendquest.mechanics.Difficulty;
 
 public class MainConfig extends Config {
 
@@ -24,6 +25,8 @@ public class MainConfig extends Config {
 
 	public boolean				useScoreBoard				= true;
 
+	public boolean				allowRaceSwap				= false;
+	public double				percentXpKeepRaceChange		= 10.00D;
 	public double				percentXpKeepClassChange	= 10.00D;
 	public double				percentXpLossRespawn		= 10.00D;
 	public int					max_level					= 150;
@@ -64,6 +67,23 @@ public class MainConfig extends Config {
 	public boolean				disableStats				= false;
 	public boolean				verboseStats				= true;
 
+	public int					ecoRaceSwap					= 100000;
+	public int					ecoClassSwap				= 10000;
+
+	public int					partyRange					= 32;
+	public boolean				useParties					= true;
+	public int					partyBonus					= 50;
+
+	public int					heightBonus					= 2;
+
+	public String				hitchance					= "AVERAGE";
+	public String				dodgechance					= "AVERAGE";
+	public String				blockchance					= "TOUGH";
+
+	public Difficulty			hitchanceenum				= Difficulty.AVERAGE;
+	public Difficulty			dodgechanceenum				= Difficulty.AVERAGE;
+	public Difficulty			blockchanceenum				= Difficulty.TOUGH;
+
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
 		super(p, "config.yml");
@@ -91,10 +111,24 @@ public class MainConfig extends Config {
 		this.XPnotify = this.getConfigItem("XPnotify", this.XPnotify);
 		this.scaleXP = this.getConfigItem("scaleXP", this.scaleXP);
 
+		this.allowRaceSwap = this.getConfigItem("allowRaceSwap", this.allowRaceSwap);
+
 		this.useSkillTestForCombat = this.getConfigItem("useSkillTestForCombat", this.useSkillTestForCombat);
 		this.useSizeForCombat = this.getConfigItem("useSizeForCombat", this.useSizeForCombat);
 		this.verboseCombat = this.getConfigItem("verboseCombat", this.verboseCombat);
 		this.rangedHitBonus = this.getConfigItem("rangedHitBonus", this.rangedHitBonus);
+		this.heightBonus = this.getConfigItem("heightBonus", this.heightBonus);
+		this.hitchance = this.getConfigItem("hitchance", this.hitchance);
+		this.dodgechance = this.getConfigItem("dodgechance", this.dodgechance);
+		this.blockchance = this.getConfigItem("blockchance", this.blockchance);
+
+		this.hitchanceenum = Difficulty.valueOf(hitchance);
+		this.dodgechanceenum = Difficulty.valueOf(dodgechance);
+		this.blockchanceenum = Difficulty.valueOf(blockchance);
+
+		this.partyRange = this.getConfigItem("partyRange", this.partyRange);
+		this.useParties = this.getConfigItem("useParties", this.useParties);
+		this.partyBonus = this.getConfigItem("partyBonus", this.partyBonus);
 
 		this.karmaDamagePlayer = this.getConfigItem("karmaDamagePlayer", this.karmaDamagePlayer);
 		this.karmaDamageVillager = this.getConfigItem("karmaDamageVillager", this.karmaDamageVillager);
@@ -122,6 +156,9 @@ public class MainConfig extends Config {
 		this.attributesModifyBaseStats = this.getConfigItem("attributesModifyBaseStats", this.attributesModifyBaseStats);
 		this.disableStats = this.getConfigItem("disableStats", this.disableStats);
 		this.verboseStats = this.getConfigItem("verboseStats", this.verboseStats);
+
+		this.ecoClassSwap = this.getConfigItem("ecoClassSwap", this.ecoClassSwap);
+		this.ecoRaceSwap = this.getConfigItem("ecoRaceSwap", this.ecoRaceSwap);
 
 	}
 }

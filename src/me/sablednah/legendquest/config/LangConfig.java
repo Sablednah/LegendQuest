@@ -66,6 +66,8 @@ public class LangConfig extends Config {
 	public String					raceChangeNotAllowed	= "Sorry you have already selected a race. ";
 	public String					raceList				= "-------- Races --------";
 	public String					raceNotAllowed			= "Sorry, you can't select that race.";
+	public String					raceChangeWarnXpLoss	= "Warning: Changing race will lose your accumulated XP";
+	public String					raceConfirm				= "Repeat with confirm appended  e.g. /race human confirm";
 
 	public String					classSelectRaceFirst	= "Please Select Race before class.";
 	public String					classChanged			= "You have changed your class to: ";
@@ -115,7 +117,6 @@ public class LangConfig extends Config {
 	public String					skillsListPasive		= "--- Passive Skills ---";
 	public String					skillsListActive		= "--- Active Skills ----";
 
-
 	public String					combatHit				= "You hit your target.";
 	public String					combatMissed			= "Your target evaded your attack.";
 	public String					combatDodged			= "You evaded an attack.";
@@ -130,6 +131,7 @@ public class LangConfig extends Config {
 	public String					skillBuildupDisturbed	= "cancelled due to movement! Stay still...";
 	public String					skillLackOfMana			= "Sorry not enough mana.";
 	public String					skillLackOfItem			= "Sorry you can't use that skill, you need ";
+	public String					skillLackOfPay			= "Sorry you can't use that skill, you need to pay:";
 
 	public String					skillCooldown			= "Skill cooling down.";
 	public String					skillDelayed			= "Skill Delayed.";
@@ -155,6 +157,11 @@ public class LangConfig extends Config {
 
 	public String					xpChange				= "You gained Exp: ";
 	public String					xpChangeAdmin			= "You gave Exp: ";
+
+	public String					ecoPaid					= " paid.";
+	public String					ecoDeclined				= "Card Declined: Insufficient funds.";
+
+	public String					partyXpChange			= "Your party gained Exp: ";
 
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
@@ -197,11 +204,15 @@ public class LangConfig extends Config {
 		this.raceChanged = this.getConfigItem("raceChanged", this.raceChanged);
 		this.raceChangeNotAllowed = this.getConfigItem("raceChangeNotAllowed", this.raceChangeNotAllowed);
 		this.raceList = this.getConfigItem("raceList", this.raceList);
+		this.raceChangeWarnXpLoss = this.getConfigItem("raceChangeWarnXpLoss", this.raceChangeWarnXpLoss);
+		this.raceConfirm = this.getConfigItem("raceConfirm", this.raceConfirm);
 
 		this.classSelectRaceFirst = this.getConfigItem("classSelectRaceFirst", this.classSelectRaceFirst);
 		this.classChanged = this.getConfigItem("classChanged", this.classChanged);
 		this.classList = this.getConfigItem("classList", this.classList);
 		this.classNotAllowed = this.getConfigItem("classNotAllowed", this.classNotAllowed);
+		this.classChangeWarnXpLoss = this.getConfigItem("classChangeWarnXpLoss", this.classChangeWarnXpLoss);
+		this.classConfirm = this.getConfigItem("classConfirm", this.classConfirm);
 
 		this.helpCommand = this.getConfigItem("helpCommand", this.helpCommand);
 
@@ -258,6 +269,7 @@ public class LangConfig extends Config {
 		this.skillBuilding = this.getConfigItem("skillBuilding", this.skillBuilding);
 		this.skillActive = this.getConfigItem("skillActive", this.skillActive);
 
+		this.skillLackOfPay = this.getConfigItem("skillLackOfPay", this.skillLackOfPay);
 		this.skillLackOfMana = this.getConfigItem("skillLackOfMana", this.skillLackOfMana);
 		this.skillLackOfItem = this.getConfigItem("skillLackOfItem", this.skillLackOfItem);
 		this.skillLinkEmptyHand = this.getConfigItem("skillLinkEmptyHand", this.skillLinkEmptyHand);
@@ -278,5 +290,11 @@ public class LangConfig extends Config {
 
 		this.xpChange = this.getConfigItem("xpChange", this.xpChange);
 		this.xpChangeAdmin = this.getConfigItem("xpChangeAdmin", this.xpChangeAdmin);
+
+		this.ecoPaid = this.getConfigItem("ecoPaid", this.ecoPaid);
+		this.ecoDeclined = this.getConfigItem("ecoDeclined", this.ecoDeclined);
+		
+		this.partyXpChange = this.getConfigItem("partyXpChange", this.partyXpChange);
+		
 	}
 }

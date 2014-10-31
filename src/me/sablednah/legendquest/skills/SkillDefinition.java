@@ -32,7 +32,7 @@ public class SkillDefinition {
 		SkillInfo s = new SkillInfo(info.getAuthor(), info.getName(), 
 				info.getDescription(), info.getType(), info.getVersion(), 
 				info.getBuildup(), info.getDelay(), info.getDuration(), info.getCooldown(), 
-				info.getManaCost(), info.getConsumes(), info.getLevelRequired(), info.getSkillPoints(),
+				info.getPay(), info.getXp(), info.getManaCost(), info.getConsumes(), info.getLevelRequired(), info.getSkillPoints(),
 				info.getVars());
 		return s;
 	}

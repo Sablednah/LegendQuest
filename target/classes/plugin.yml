@@ -65,6 +65,12 @@ commands:
         aliases: [lqroll,lquestroll,legendqroll,legendquestroll,test]
         permission: legendquest.command.roll
         permission-message: You don't have <permission>
+    party:
+        description: Party commands
+        usage: Use "/<command> help" for more info
+        aliases: [lqparty,lquestparty,legendqparty,legendquestparty]
+        permission: legendquest.command.party
+        permission-message: You don't have <permission>
     hp:
         description: Get your health
         usage: Use "/<command> help" for more info
@@ -84,7 +90,6 @@ commands:
         permission: legendquest.command.admin
         permission-message: You don't have <permission>
         
-
 permissions:
     legendquest.*:
         description: Gives access to all legendquest commands/functions.
@@ -105,6 +110,7 @@ permissions:
             legendquest.command.link: true
             legendquest.command.unlink: true
             legendquest.command.karma: true
+            legendquest.command.party: true
             legendquest.command.plurals: true
     legendquest.command.admin:
         description: Allows user to use legendquest admin commands.
@@ -129,6 +135,9 @@ permissions:
         default: true
     legendquest.command.hp:
         description: Allows user to use legendquest hp command.
+        default: true
+    legendquest.command.party:
+        description: Allows user to use legendquest party command.
         default: true
     legendquest.command.karma:
         description: Allows user to use legendquest karma command.

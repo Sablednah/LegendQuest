@@ -12,6 +12,7 @@ public enum Cmds {
     KARMA(true, 0),
     ROLL(true, 0),
     HP(true, 0),
+    PARTY(false, 0),
     HELP(true, 0), 
     ADMIN(true, 1);
     

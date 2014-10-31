@@ -211,6 +211,32 @@ public class EffectManager {
 									}
 								}
 								break;
+							case SNEAK:
+								int ticks = (int) pending.duration / 50;
+								PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false);
+								switch (pending.owner) {
+									case PLAYER:
+										Player p = lq.getServer().getPlayer(pending.uuid);
+										if (p != null) {
+											p.setSneaking(true);
+										}
+										break;
+									case MOB:
+										LivingEntity ent = getEntity(pending.uuid);
+										if (ent != null) {
+											ent.addPotionEffect(peffect);
+										}
+										break;
+									case LOCATATION:
+										for (LivingEntity e : getNearbyEntities(pending.location, pending.radius)) {
+											if (e instanceof Player) {
+												((Player)e).setSneaking(true);												
+											} else {
+												e.addPotionEffect(peffect);
+											}
+										}
+										break;
+								}
 						}
 						break;
 				}
@@ -227,6 +253,10 @@ public class EffectManager {
 				long end = active.startTime + active.duration;
 
 				if (end < System.currentTimeMillis()) {
+					if (active.effect == Effects.SNEAK && active.owner == OwnerType.PLAYER) {
+						Player p = lq.getServer().getPlayer(active.uuid);
+						p.setSneaking(false);
+					}
 					iter2.remove();
 				} else {
 					effect = active.effect.getEffect();
@@ -289,6 +319,9 @@ public class EffectManager {
 									Player p = lq.getServer().getPlayer(active.uuid);
 									if (p != null) {
 										switch (active.effect) {
+											case SNEAK:
+												p.setSneaking(true);
+												break;
 											case BLEED:
 												if (Math.random() > 0.8D) {
 													Utils.playEffect(effect, p.getLocation(), 5);

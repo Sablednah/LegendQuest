@@ -32,7 +32,8 @@ public enum Effects {
 	MOBSPAWNER_FLAMES(EffectType.BUKKIT, null, Effect.MOBSPAWNER_FLAMES),
 	BLEED(EffectType.CUSTOM, null, Effect.POTION_BREAK),
 	SLOWBLEED(EffectType.CUSTOM, null, Effect.POTION_BREAK),
-	STUNNED(EffectType.CUSTOM, PotionEffectType.SLOW, Effect.POTION_BREAK);
+	STUNNED(EffectType.CUSTOM, PotionEffectType.SLOW, Effect.POTION_BREAK),
+	SNEAK(EffectType.LABEL, null, null);
 
 	private EffectType			effectType;
 	private PotionEffectType	potioneffectType;

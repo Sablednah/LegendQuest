@@ -11,6 +11,7 @@ public class Race {
 	public String				filename;
 	public String				name;
 	public String				description;
+	public String				longdescription;
 
 	public String				plural;
 	public Double				size;

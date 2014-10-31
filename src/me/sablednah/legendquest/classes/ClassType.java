@@ -12,6 +12,7 @@ public class ClassType {
 	public String						name;
 	public String						filename;
 	public String						description;
+	public String						longdescription;
 	
 	// frequency used for NPC chance.
 	public int							frequency;

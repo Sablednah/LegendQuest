@@ -59,6 +59,14 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 			if (className.equalsIgnoreCase("list")) {
 				sendClassList(sender, pc);
 				return true;
+			} else if (className.equalsIgnoreCase("info")) {
+				if (args.length < 2) {
+					sender.sendMessage(lq.configLang.invalidArgumentsCommand);
+				} else {
+					className = args[1].toLowerCase();
+					classinfo(className, sender, pc);
+				}
+				return true;
 			} else {
 
 				boolean sub = false;
@@ -104,6 +112,11 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 						if (confirm) {
 							valid = true;
 						}
+						
+						if (lq.configMain.percentXpKeepClassChange >99) {
+							valid = true;
+						}
+						
 						if (p.getLevel() < 2) {
 							valid = true;
 						}
@@ -125,12 +138,25 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 
 						// only rest XP if they have some worth bothering AND they are changing class - not setting
 						// non-default
-						pc.changeClass(cl, sub);
-						sender.sendMessage(lq.configLang.classChanged + ": " + className);
+						boolean result = pc.changeClass(cl, sub);
+						if (result) {
+							sender.sendMessage(lq.configLang.classChanged + ": " + className);
+						}
 						return true;
 					}
 				}
 			}
+		}
+	}
+
+	public void classinfo(String className, CommandSender sender, PC pc) {
+		final ClassType cl = lq.classes.getClass(className);
+		if (cl == null) {
+			sender.sendMessage(lq.configLang.classInvalid + ": " + className);
+			return;
+		} else {
+			sender.sendMessage(cl.name + " : " + cl.description);
+			sender.sendMessage(cl.longdescription);
 		}
 	}
 

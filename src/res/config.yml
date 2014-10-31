@@ -20,6 +20,15 @@ randomStats: true
 
 #-------------------
 
+## Logs
+# logSQL: set to true to log all sql calls in debug log
+# logLevel: ALL  Level of logging select from SEVERE, WARNING, INFO, CONFIG, FINE, FINER, and FINEST
+
+logSQL: true
+logLevel: ALL
+
+#-------------------
+
 ## Per world settings
 # worlds: List of Worlds to allow LQ.  Leave blank to allow all.
 # manageHealthNonLqWorlds: should LQ track health on no-lq worlds to restore health when switching worlds.
@@ -34,12 +43,16 @@ manageHealthNonLqWorlds: true
 # max-level: level at which class is considered mastered.
 # XPnotify: report xp gain amount to player
 # percentXpKeepClassChange: amount of XP to keep if switching class before mastery.
+# allowRaceSwap: set to true to enable changing race.
+# percentXpKeepClassChange: amount of XP to keep if switching race.
 # percentXpLossRespawn: amount of XP to drop/loose on death/respawn
 # scaleXP: amount of XP received to apply.
 
 max_level: 150
 XPnotify: true
 percentXpKeepClassChange: 10.00
+allowRaceSwap: false
+percentXpKeepRaceChange: 50.00
 percentXpLossRespawn: 10.00
 scaleXP: 100.0
 
@@ -49,10 +62,23 @@ scaleXP: 100.0
 # useSkillTestForCombat: True to do opposing dexterity checks in combat.  Results in average opponents missing 50% of "hits", but lets skilled combatants hit more often compared to unskilled. and a greater RPG feel.
 # verboseCombat: Report all hits/misses in combat
 # useSizeForCombat: adjust skill test difficulties based on sizes making large targets easier and small harder.
+# rangedHitBonus: bonus to ranged attacks to offset time spent drawing.
+# heightBonus: melee bonus if attacker is over 1 block higher than defender.
+# hitchance, dodgechance, blockchance: base target difficulty use one of...  
+#    VERY_EASY (0),
+#    EASY (5),
+#    AVERAGE (10),
+#    TOUGH (15),
+#    CHALLENGING (20);
 
 useSkillTestForCombat: true
 verboseCombat: true
 useSizeForCombat: true
+rangedHitBonus: 10
+heightBonus: 2
+hitchance: AVERAGE
+dodgechance: AVERAGE
+blockchance: TOUGH
 
 #-------------------
 
@@ -61,19 +87,19 @@ useSizeForCombat: true
 # karmaDamage/karmaKill points are awarded for the appropriate action.
 karmaScale: 500
 
-karmaDamagePlayer: -10
-karmaDamageVillager: -5
-karmaDamagePet: -2
+karmaDamagePlayer: -100
+karmaDamageVillager: -50
+karmaDamagePet: -20
 karmaDamageAnimal: -1
 karmaDamageMonster: 2
 karmaDamageSlime: 1
 
-karmaKillPlayer: -1000
+karmaKillPlayer: -10000
 karmaKillVillager: -500
 karmaKillPet: -200
 karmaKillAnimal: -50
-karmaKillMonster: 200
-karmaKillSlime: 100
+karmaKillMonster: 20
+karmaKillSlime: 10
 
 #-------------------
 
@@ -107,14 +133,22 @@ useScoreBoard: true
 #--------------------
 
 ## Mechanics
-# disableStats:  bypass the stats/attribute system.
-# attributesModifyBaseStats:  allow attributes to modify the base stats for mana/health/skill points as well as per level
+# verboseStats: whether to show stats in one line (false), or on separate lines (true). 
+# disableStats: bypass the stats/attribute system.
+# attributesModifyBaseStats: allow attributes to modify the base stats for mana/health/skill points as well as per level
 
 verboseStats: true
 disableStats: false
 attributesModifyBaseStats: false
 
+#--------------------
 
+## Mechanics
+# ecoClassSwap: amount to pay to switch class
+# ecoRaceSwap: amount to pay to switch race
+
+ecoClassSwap: 1000
+ecoRaceSwap: 10000
 
 
 

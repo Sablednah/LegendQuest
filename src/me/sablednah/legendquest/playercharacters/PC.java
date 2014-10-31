@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+// import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
@@ -19,13 +20,17 @@ import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillPhase;
 import me.sablednah.legendquest.skills.SkillType;
+import me.sablednah.legendquest.utils.plugins.PluginUtils;
 import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.mechanics.Attribute;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -65,7 +70,7 @@ public class PC {
 	public double							maxHP;
 	public int								currentXP;
 
-	public double							health;
+	private double							health;
 	public int								mana;
 	public long								karma;
 
@@ -99,7 +104,35 @@ public class PC {
 	 **/
 	public PC(Main plugin, UUID uuid) {
 		String pName;
-		pName = plugin.getServer().getOfflinePlayer(uuid).getName();
+		// System.out.print("op-uuid: "+uuid);
+		OfflinePlayer op = plugin.getServer().getOfflinePlayer(uuid);
+		pName = op.getName();
+
+		// System.out.print("e: "+e.toString());
+		// System.out.print("eType: "+e.getType());
+		// System.out.print("e.id: "+e.getEntityId());
+
+		if (pName == null) {
+			if (op.isOnline()) {
+				pName = op.getPlayer().getName();
+			} else {
+				Entity e = getEntityFromUUID(uuid);
+				if (e != null) {
+					if (e instanceof Player) {
+						pName = ((Player) e).getName();
+					} else {
+						if (e instanceof LivingEntity) {
+							pName = ((LivingEntity) e).getCustomName();
+						} else {
+							pName = "Herobrine";
+						}
+					}
+				} else {
+					pName = "Unkn0wn";
+				}
+			}
+		}
+
 		this.lq = plugin;
 		this.uuid = uuid;
 		this.player = pName;
@@ -308,7 +341,7 @@ public class PC {
 		}
 		double conBonus = ((con * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= conBonus;
-		double base = hp+bonus;
+		double base = hp + bonus;
 		if (lq.configMain.attributesModifyBaseStats) {
 			base *= conBonus;
 		}
@@ -696,14 +729,14 @@ public class PC {
 
 		Set<SkillDataStore> set = new HashSet<SkillDataStore>();
 		if (race.availableSkills != null) {
-//			set.addAll(race.availableSkills);
+			// set.addAll(race.availableSkills);
 			for (SkillDataStore as : race.availableSkills) {
 				SkillDataStore tempskill = new SkillDataStore(as);
 				set.add(tempskill);
 			}
 		}
 		if (race.outsourcedSkills != null) {
-//			set.addAll(race.outsourcedSkills);
+			// set.addAll(race.outsourcedSkills);
 			for (SkillDataStore as : race.outsourcedSkills) {
 				SkillDataStore tempskill = new SkillDataStore(as);
 				set.add(tempskill);
@@ -711,14 +744,14 @@ public class PC {
 		}
 		if (subClass != null) {
 			if (subClass.availableSkills != null) {
-				//set.addAll(subClass.availableSkills);
+				// set.addAll(subClass.availableSkills);
 				for (SkillDataStore as : subClass.availableSkills) {
 					SkillDataStore tempskill = new SkillDataStore(as);
 					set.add(tempskill);
 				}
 			}
 			if (subClass.outsourcedSkills != null) {
-				//set.addAll(subClass.outsourcedSkills);
+				// set.addAll(subClass.outsourcedSkills);
 				for (SkillDataStore as : subClass.outsourcedSkills) {
 					SkillDataStore tempskill = new SkillDataStore(as);
 					set.add(tempskill);
@@ -726,14 +759,14 @@ public class PC {
 			}
 		}
 		if (mainClass.availableSkills != null) {
-			//set.addAll(mainClass.availableSkills);
+			// set.addAll(mainClass.availableSkills);
 			for (SkillDataStore as : mainClass.availableSkills) {
 				SkillDataStore tempskill = new SkillDataStore(as);
 				set.add(tempskill);
 			}
 		}
 		if (mainClass.outsourcedSkills != null) {
-			//set.addAll(mainClass.outsourcedSkills);
+			// set.addAll(mainClass.outsourcedSkills);
 			for (SkillDataStore as : mainClass.outsourcedSkills) {
 				SkillDataStore tempskill = new SkillDataStore(as);
 				set.add(tempskill);
@@ -842,9 +875,9 @@ public class PC {
 						this.health = this.maxHP;
 					}
 					p.setHealth(Math.min(this.health, p.getMaxHealth()));
-					
+
 					p.setMaxHealth(this.maxHP);
-//					p.setHealth(this.health);
+					// p.setHealth(this.health);
 					double scale = this.maxHP;
 					if (scale > 40.0D) {
 						scale = 40.0D;
@@ -875,10 +908,12 @@ public class PC {
 
 		int wis = getAttributeModifier(Attribute.WIS);
 		double wisBonus = ((wis * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
-		if (wisBonus<-50.00D) { wisBonus = -50.00D; }
-		
+		if (wisBonus < -50.00D) {
+			wisBonus = -50.00D;
+		}
+
 		gain *= wisBonus;
-		
+
 		return manaGain(gain);
 	}
 
@@ -907,7 +942,7 @@ public class PC {
 	}
 
 	public void scheduleXPSave() {
-		Bukkit.getServer().getScheduler().runTaskLater(lq, new DelayedXPSave(), 2L);
+		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(lq, new DelayedXPSave(), 2L);
 	}
 
 	public void setXP(int newXP) {
@@ -1003,7 +1038,7 @@ public class PC {
 		}
 		return false;
 	}
-	
+
 	public boolean validSkill(String name) {
 		Player p = getPlayer();
 		if (p != null) {
@@ -1026,17 +1061,21 @@ public class PC {
 	public void useSkill(String name, String[] args) {
 		if (validSkill(name)) {
 			SkillPhase phase = getSkillPhase(name);
+			int time = 0;
 			Player p = getPlayer();
+			SkillDataStore skill = skillSet.get(name);
+			time = (int) skill.getTimeLeft();
 			if (phase == SkillPhase.READY) {
-				SkillDataStore skill = skillSet.get(name);
 				if (skill.type != null && (!skill.type.equals(SkillType.ACTIVE))) {
 					p.sendMessage(name + lq.configLang.skillInvalidPassive);
 					return;
 				}
-//if ((skill.name.equalsIgnoreCase("aura") || skill.name.equalsIgnoreCase("might"))) {  System.out.print("start might: "+p.getName() + " - " + skill.getLastUse());  }
+				// if ((skill.name.equalsIgnoreCase("aura") || skill.name.equalsIgnoreCase("might"))) {
+				// System.out.print("start might: "+p.getName() + " - " + skill.getLastUse()); }
 				skill.setlastArgs(args);
 				skill.setLastUse(System.currentTimeMillis());
-// if ((skill.name.equalsIgnoreCase("aura") || skill.name.equalsIgnoreCase("might"))) {  System.out.print("start Might: "+p.getName() + " - " + skill.getLastUse());  }
+				// if ((skill.name.equalsIgnoreCase("aura") || skill.name.equalsIgnoreCase("might"))) {
+				// System.out.print("start Might: "+p.getName() + " - " + skill.getLastUse()); }
 				if (p != null && p.isOnline()) {
 					skill.setLastUseLoc(p.getLocation().clone());
 				}
@@ -1046,19 +1085,19 @@ public class PC {
 				}
 			} else if (phase == SkillPhase.COOLDOWN) {
 				if (p != null && p.isOnline()) {
-					p.sendMessage(name + " " + lq.configLang.skillCooldown);
+					p.sendMessage(name + " " + lq.configLang.skillCooldown + " " + time + "s");
 				}
 			} else if (phase == SkillPhase.DELAYED) {
 				if (p != null && p.isOnline()) {
-					p.sendMessage(name + " " + lq.configLang.skillDelayed);
+					p.sendMessage(name + " " + lq.configLang.skillDelayed + " " + time + "s");
 				}
 			} else if (phase == SkillPhase.BUILDING) {
 				if (p != null && p.isOnline()) {
-					p.sendMessage(name + " " + lq.configLang.skillBuilding);
+					p.sendMessage(name + " " + lq.configLang.skillBuilding + " " + time + "s");
 				}
 			} else if (phase == SkillPhase.ACTIVE) {
 				if (p != null && p.isOnline()) {
-					p.sendMessage(name + " " + lq.configLang.skillActive);
+					p.sendMessage(name + " " + lq.configLang.skillActive + " " + time + "s");
 				}
 			}
 		} else {
@@ -1160,6 +1199,30 @@ public class PC {
 		}
 	}
 
+	public boolean payCash(int pay) {
+		if (lq.hasVault) {
+			Player p = getPlayer();
+			if (p == null) {
+				return false;
+			}
+			return PluginUtils.payCash(pay, p);
+		} else {
+			return true; // economy disabled
+		}
+	}
+
+	public Double getBalance() {
+		if (lq.hasVault) {
+			Player p = getPlayer();
+			if (p == null) {
+				return null;
+			}
+			return PluginUtils.balance(p);
+		} else {
+			return null; // economy disabled
+		}
+	}
+
 	public boolean payItem(ItemStack item) {
 		int amount = item.getAmount();
 		Player p = getPlayer();
@@ -1175,7 +1238,7 @@ public class PC {
 			return false;
 		} else {
 			for (ItemStack i : inv.getContents()) {
-				if (i.getType().equals(payment)) {
+				if (i.getType() != null && i.getType().equals(payment)) {
 					if (i.getAmount() == amount) {
 						inv.remove(i);
 						return true;
@@ -1241,14 +1304,22 @@ public class PC {
 		return s;
 	}
 
-	public void changeClass(ClassType cl, Boolean sub) {
+	public boolean changeClass(ClassType cl, Boolean sub) {
 		if (cl == null) {
 			lq.debug.fine(lq.configLang.classInvalid);
-			return;
+			return false;
+		}
+
+		if (lq.hasVault && lq.configMain.ecoClassSwap > 0) {
+			if ((!sub && this.mainClass != lq.classes.defaultClass) || (sub && this.subClass == null)) {
+				boolean payCheck = this.payCash(lq.configMain.ecoClassSwap);
+				if (!payCheck) {
+					return false;
+				}
+			}
 		}
 
 		Player p = getPlayer();
-
 		final int xpNow = SetExp.getTotalExperience(p);
 
 		int newxp = 0;
@@ -1262,8 +1333,8 @@ public class PC {
 				lq.players.savePlayer(this);
 			}
 			if (sub && this.subClass == null) {
-				//moving from no subclass to subclass
-				newxp = xpNow;				
+				// moving from no subclass to subclass
+				newxp = xpNow;
 			}
 		}
 
@@ -1288,7 +1359,7 @@ public class PC {
 
 		// if mastered class - save this xp and check if target class is mastered.
 		if (xpNow > lq.configMain.max_xp) {
-			if (oldClassname!= null) {
+			if (oldClassname != null) {
 				this.xpEarnt.put(oldClassname, xpNow);
 			}
 
@@ -1309,9 +1380,29 @@ public class PC {
 		this.checkInv();
 		this.skillSet = this.getUniqueSkills(true);
 		lq.debug.fine(lq.configLang.classChanged + ": " + cl.name + " - " + p.getName());
+
+		return true;
 	}
 
-	public void changeRace(Race r) {
+	public boolean changeRace(Race r) {
+		if (r == null) {
+			lq.debug.fine(lq.configLang.raceInvalid);
+			return false;
+		}
+
+		if (raceChanged) {
+			if (lq.hasVault && lq.configMain.ecoRaceSwap > 0) {
+				boolean payCheck = this.payCash(lq.configMain.ecoClassSwap);
+				if (!payCheck) {
+					return false;
+				}
+			}
+			Player p = getPlayer();
+			final int xpNow = SetExp.getTotalExperience(p);
+			int newxp = (int) (xpNow * (lq.configMain.percentXpKeepRaceChange / 100));
+			this.setXP(newxp);
+		}
+
 		this.race = r;
 		this.raceChanged = true;
 		lq.players.addPlayer(uuid, this);
@@ -1319,6 +1410,7 @@ public class PC {
 		this.scheduleHealthCheck();
 		this.checkInv();
 		this.skillSet = this.getUniqueSkills(true);
+		return true;
 	}
 
 	public void damage(double dmg) {
@@ -1326,7 +1418,7 @@ public class PC {
 	}
 
 	public void damage(double dmg, Entity source) {
-		if (source!=null) {
+		if (source != null) {
 			getPlayer().damage(dmg, source);
 		} else {
 			getPlayer().damage(dmg);
@@ -1372,5 +1464,24 @@ public class PC {
 
 	public void setStatChr(int statChr) {
 		this.statChr = statChr;
+	}
+
+	public Entity getEntityFromUUID(UUID uuid) {
+		for (World w : Bukkit.getServer().getWorlds()) {
+			for (Entity e : w.getEntities()) {
+				if (e.getUniqueId().equals(uuid)) {
+					return e;
+				}
+			}
+		}
+		return null;
+	}
+
+	public double getHealth() {
+		return health;
+	}
+
+	public void setHealth(double health) {
+		this.health = health;
 	}
 }

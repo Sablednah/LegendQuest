@@ -6,6 +6,12 @@ dataSets:
     weapons: [ IRON_SWORD, WOOD_SWORD, STONE_SWORD, DIAMOND_SWORD, GOLD_SWORD, BOW, SNOW_BALL, EGG ]
     swords: [ IRON_SWORD, WOOD_SWORD, STONE_SWORD, DIAMOND_SWORD, GOLD_SWORD ]
     
+    woodweapons: [ WOOD_SWORD, WOOD_AXE, WOOD_PICKAXE ]
+    stoneweapons: [ STONE_SWORD, STONE_AXE, STONE_PICKAXE ]
+    ironweapons: [ IRON_SWORD, IRON_AXE, IRON_PICKAXE ]
+    goldweapons: [ GOLD_SWORD, GOLD_AXE, GOLD_PICKAXE ]
+    diamondweapons: [ DIAMOND_SWORD, DIAMOND_AXE, DIAMOND_PICKAXE ]
+    
     ranged: [ BOW, SNOW_BALL, EGG ]
     bows: [ BOW ]
     eggs: [ EGG ]

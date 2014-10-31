@@ -147,6 +147,9 @@ public class RootCommand implements CommandExecutor {
                 case SKILL:
                     newcmd = new CmdSkill(lq);
                     break;
+                case PARTY:
+                    newcmd = new CmdParty(lq);
+                    break;
                 case ADMIN:
                     newcmd = new CmdAdmin(lq);
                     break;                    

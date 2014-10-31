@@ -1,9 +1,11 @@
 package me.sablednah.legendquest.listeners;
 
+import java.util.List;
 import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.db.HealthStore;
+import me.sablednah.legendquest.effects.OwnerType;
 import me.sablednah.legendquest.events.LevelUpEvent;
 import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.playercharacters.PC;
@@ -30,16 +32,15 @@ public class PlayerEvents implements Listener {
 	public class delayedSpawn implements Runnable {
 
 		public int		xp;
-		public Player	player;
+		public UUID	player;
 
-		public delayedSpawn(int xp, Player player) {
+		public delayedSpawn(int xp, UUID player) {
 			this.xp = xp;
 			this.player = player;
 		}
 
 		public void run() {
-			UUID uuid = player.getUniqueId();
-			PC pc = lq.players.getPC(uuid);
+			PC pc = lq.players.getPC(player);
 			pc.setXP(xp);
 			lq.players.savePlayer(pc);
 			pc.scheduleHealthCheck();
@@ -59,8 +60,8 @@ public class PlayerEvents implements Listener {
 		event.setDroppedExp(xp);
 		event.setKeepLevel(true);
 		if (Main.debugMode) {
-			System.out.print("DIED: "+event.getEntity().getName()+" [" +  event.hashCode() + "] " + event.getEventName() + " - "+ event.getDeathMessage());
-		}		
+			System.out.print("DIED: " + event.getEntity().getName() + " [" + event.hashCode() + "] " + event.getEventName() + " - " + event.getDeathMessage());
+		}
 	}
 
 	// set to monitor - we're not gonna change the login, only load our data
@@ -91,21 +92,24 @@ public class PlayerEvents implements Listener {
 		} else {
 			p.setTotalExperience(pc.currentXP);
 			p.setMaxHealth(pc.maxHP);
-			if (pc.health>pc.maxHP) { pc.health=pc.maxHP; }
-			if (pc.health>p.getMaxHealth()) { pc.health=p.getMaxHealth(); }
-			p.setHealth(pc.health);
+			if (pc.getHealth() > pc.maxHP) {
+				pc.setHealth(pc.maxHP);
+			}
+			if (pc.getHealth() > p.getMaxHealth()) {
+				pc.setHealth(p.getMaxHealth());
+			}
+			p.setHealth(pc.getHealth());
 			pc.healthCheck();
 			p.setWalkSpeed(pc.race.baseSpeed);
 		}
 
 
-		
-		Location l = p.getLocation();
-		Chunk c = l.getChunk();
-		int x = c.getX();
-		int z = c.getZ();
-
 		if (Main.debugMode) {
+			Location l = p.getLocation();
+			Chunk c = l.getChunk();
+			int x = c.getX();
+			int z = c.getZ();
+
 			for (int i = -10; i < 11; i++) {
 				for (int j = -10; j < 11; j++) {
 					Chunk chunk = p.getWorld().getChunkAt(x + i, z + j);
@@ -118,7 +122,7 @@ public class PlayerEvents implements Listener {
 					}
 				}
 			}
-		}		
+		}
 	}
 
 	// set to monitor - we're not gonna change the port, only load our data
@@ -146,19 +150,19 @@ public class PlayerEvents implements Listener {
 			}
 			return;
 		} else {
-			if (!lq.validWorld(p.getWorld().getName())) {				
+			if (!lq.validWorld(p.getWorld().getName())) {
 				// from invalid word to valid world
-				//save current health
+				// save current health
 				HealthStore hs = new HealthStore(p.getUniqueId(), p.getHealth(), p.getMaxHealth());
 				lq.datasync.addHPWrite(hs);
-				
-				//load character
+
+				// load character
 				UUID uuid = p.getUniqueId();
 				PC pc = lq.players.getPC(p);
 				lq.players.addPlayer(uuid, pc);
 				p.setTotalExperience(pc.currentXP);
 				p.setMaxHealth(pc.maxHP);
-				p.setHealth(pc.health);
+				p.setHealth(pc.getHealth());
 				pc.healthCheck();
 				pc.scheduleHealthCheck();
 				pc.scheduleCheckInv();
@@ -216,6 +220,7 @@ public class PlayerEvents implements Listener {
 		}
 
 		PC pc = lq.players.getPC(p);
+		lq.effectManager.removeAllProcess(OwnerType.PLAYER,p.getUniqueId());
 		lq.logWarn("currentXP: " + pc.currentXP);
 		int currentXP = SetExp.getTotalExperience(p);
 		lq.logWarn("totxp: " + currentXP);
@@ -223,8 +228,8 @@ public class PlayerEvents implements Listener {
 		lq.logWarn("xpLoss: " + xpLoss);
 		int newXp = currentXP - xpLoss;
 		pc.setXP(newXp);
-		lq.players.savePlayer(pc);
-		lq.getServer().getScheduler().runTaskLater(lq, new delayedSpawn(newXp, p), 5);
+//		lq.players.savePlayer(pc);
+		lq.getServer().getScheduler().runTaskLaterAsynchronously(lq, new delayedSpawn(newXp, pc.uuid), 5);
 		p.setWalkSpeed(pc.race.baseSpeed);
 	}
 
@@ -236,35 +241,61 @@ public class PlayerEvents implements Listener {
 			return;
 		}
 
-		int xpAmount = event.getAmount();
-if (Main.debugMode) {
-	System.out.print("xpAmount: "+xpAmount);
-}
+		double xpAmount = event.getAmount();
+		if (Main.debugMode) {
+			System.out.print("xpAmount: " + xpAmount);
+		}
 		UUID uuid = p.getUniqueId();
 		PC pc = lq.players.getPC(uuid);
-		
-		//ScaleXP
-		xpAmount = (int) (xpAmount * (lq.configMain.scaleXP/100.0D));
+
+		// ScaleXP
+		xpAmount = (int) (xpAmount * (lq.configMain.scaleXP / 100.0D));
 
 		if (Main.debugMode) {
-			System.out.print("ScaleXP ("+lq.configMain.scaleXP+") xpAmount: "+xpAmount);
+			System.out.print("ScaleXP (" + lq.configMain.scaleXP + ") xpAmount: " + xpAmount);
 		}
 
-		
 		// half xp gain for dual class
 		if (pc.subClass != null) {
-			xpAmount = xpAmount / 2;
+			xpAmount = xpAmount / 2.0D;
+		}
+		if (Main.debugMode) {
+			System.out.print("subclassed xpAmount: " + xpAmount);
 		}
 
-		if (Main.debugMode) {
-			System.out.print("subclassed xpAmount: "+xpAmount);
+		// useParties
+		if (lq.configMain.useParties) {
+			List<Player> party = lq.partyManager.getPartyMembers(p);
+			if (party != null) { // has party
+				if (party.size() > 1) { // party has at least 2 people!
+					xpAmount = (xpAmount * (1 + (lq.configMain.partyBonus / 100.0D))); // bonus party XP
+					if (Main.debugMode) {
+						System.out.print("partyBonus (" + lq.configMain.partyBonus + ") xpAmount: " + xpAmount);
+					}
+					xpAmount = xpAmount / party.size();
+					if (Main.debugMode) {
+						System.out.print("partyBonus perperson xpAmount: " + xpAmount);
+					}
+					if (Main.debugMode) {
+						System.out.print("party xpAmount: " + xpAmount);
+					}
+					for (Player pp : party) {
+						if (!(pp.getUniqueId().equals(p.getUniqueId()))) {
+							pp.giveExp((int) Math.round(xpAmount));
+							if (lq.configMain.XPnotify) {
+								pp.sendMessage(lq.configLang.partyXpChange + xpAmount);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		pc.scheduleXPSave();
-		
-		lq.players.addPlayer(uuid, pc);
+
+//		lq.players.addPlayer(uuid, pc);
 		lq.players.savePlayer(pc);
-		event.setAmount(xpAmount);
+		event.setAmount((int) Math.round(xpAmount));
 
 		if (xpAmount >= p.getExpToLevel()) {
 			pc.scheduleHealthCheck();

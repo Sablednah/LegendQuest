@@ -52,7 +52,7 @@ public class CmdHP extends CommandTemplate implements CommandExecutor {
 		}
 		if (pc != null) {
 			DecimalFormat df = new DecimalFormat("#.00");
-			sender.sendMessage(Utils.barGraph(pc.health, pc.maxHP, 20, lq.configLang.statHealth, (" " + df.format(pc.health) + " / " + df.format(pc.maxHP))));
+			sender.sendMessage(Utils.barGraph(pc.getHealth(), pc.maxHP, 20, lq.configLang.statHealth, (" " + df.format(pc.getHealth()) + " / " + df.format(pc.maxHP))));
 			sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + df.format(pc.mana) + " / " + df.format(pc.getMaxMana()))));
 			return true;
 		} else {

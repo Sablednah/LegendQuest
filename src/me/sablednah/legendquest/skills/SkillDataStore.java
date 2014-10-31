@@ -32,6 +32,9 @@ public class SkillDataStore {
 	public int						cooldown		= 0;
 
 	public int						manaCost		= 0;
+	public int						pay				= 0;
+	public int						xp				= 0;
+	
 	public ItemStack				consumes		= null;
 
 	public int						levelRequired	= 0;
@@ -70,6 +73,8 @@ public class SkillDataStore {
 		this.duration = defaults.getDuration();
 		this.cooldown = defaults.getCooldown();
 		this.manaCost = defaults.getManaCost();
+		this.pay = defaults.getPay();
+		this.xp = defaults.getXp();
 		this.levelRequired = defaults.getLevelRequired();
 		this.skillPoints = defaults.getSkillPoints();
 		this.consumes = defaults.getConsumes();
@@ -95,6 +100,8 @@ public class SkillDataStore {
 		this.lastUseLoc=as.lastUseLoc;
 		this.levelRequired=as.levelRequired;
 		this.manaCost=as.manaCost;
+		this.pay=as.pay;
+		this.xp=as.xp;
 		this.name=as.name;
 		this.permission=as.permission;
 		this.permissions=as.permissions;
@@ -107,6 +114,9 @@ public class SkillDataStore {
 		this.vars=as.vars;
 		this.version=as.version;		
 	}
+	
+	//skillname, lastUse, lastUseLoc, phase, ,lastArgs
+
 
 	public void readConfigInfo(final ConfigurationSection conf) {
 		if (conf != null) {
@@ -155,6 +165,12 @@ public class SkillDataStore {
 			}
 			if (conf.contains("cost")) {
 				this.skillPoints = conf.getInt("cost");
+			}
+			if (conf.contains("pay")) {
+				this.pay = conf.getInt("pay");
+			}
+			if (conf.contains("xp")) {
+				this.xp = conf.getInt("xp");
 			}
 			if (conf.contains("manaCost")) {
 				this.manaCost = conf.getInt("manaCost");
@@ -227,6 +243,46 @@ public class SkillDataStore {
 
 		return SkillPhase.READY;
 	}
+	
+	public long getTimeLeft() {
+		long diff = 0;
+		if (this.type == SkillType.PASSIVE) {
+			return 0;
+		}
+		long time = System.currentTimeMillis();
+		long timeline = lastUse;
+
+		if (time < timeline) { // last used in future!?!
+			return 0;
+		}
+
+		timeline = timeline + buildup;
+		if (time < timeline) {// skill is building up
+			
+			diff = (long)Math.floor(( (timeline - time))/1000);
+			return diff;
+		}
+
+		timeline = timeline + delay;
+		if (time < timeline) {// skill is delayed
+			diff = (long)Math.floor(( (timeline - time))/1000);
+			return diff;
+		}
+
+		timeline = timeline + duration;
+		if (time < timeline) {// skill is active
+			diff = (long)Math.floor(( (timeline - time))/1000);
+			return diff;
+		}
+
+		timeline = timeline + cooldown;
+		if (time < timeline) {// skill is coolingdown
+			diff = (long)Math.floor(( (timeline - time))/1000);
+			return diff;
+		}
+
+		return 0;
+	}
 
 	public void startperms(Main lq, Player p) {
 		if (permission != null && (!permission.isEmpty())) {
@@ -235,7 +291,13 @@ public class SkillDataStore {
 //				System.out.print("Found: "+p.getUniqueId().toString() + permission);
 				if (p.hasPermission(permission)) {
 //					System.out.print("Active - will remove: "+permission);
-					p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + permission));
+					try {
+						p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + permission));
+						lq.players.permissions.get(p.getUniqueId().toString() + permission).remove();
+					} catch (IllegalArgumentException e) {
+						//attachment has gone.
+						lq.debug.warning(e.getMessage());
+					}
 				}
 				lq.players.permissions.remove(p.getUniqueId().toString() + permission);
 			}
@@ -250,7 +312,12 @@ public class SkillDataStore {
 //					System.out.print("Found: "+p.getUniqueId().toString() + permission);
 					if (p.hasPermission(perm)) {
 //						System.out.print("Active - will remove: "+ perm);
-						p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + perm));
+						try {
+							p.removeAttachment(lq.players.permissions.get(p.getUniqueId().toString() + perm));
+						} catch (IllegalArgumentException e) {
+							//attachment has gone.
+							lq.debug.warning(e.getMessage());
+						}
 					}
 					lq.players.permissions.remove(p.getUniqueId().toString() + perm);
 				}
@@ -275,6 +342,18 @@ public class SkillDataStore {
 			}
 		}
 
+		if (pay > 0 && lq.hasVault) {
+			if (!activePlayer.payCash(pay)) {
+				p.sendMessage(lq.configLang.skillLackOfPay+pay);
+				isCanceled = true;
+				lastUse = 0;
+				lastArgs = null;
+				activePlayer.skillSet.put(name, this);
+				return false;
+			}
+		}
+
+		
 		// pay for stuff
 		if (consumes != null) {
 			if (!activePlayer.payItem(consumes)) {
@@ -296,11 +375,24 @@ public class SkillDataStore {
 
 		Skill skillClass = lq.skills.skillList.get(name.toLowerCase());
 		if (skillClass != null) {
-			// CommandResult result =
-			skillClass.onCommand(p);
+			CommandResult result = skillClass.onCommand(p);
+			switch (result) {
+				case SUCCESS:
+					if (xp>0) {
+						activePlayer.giveXP(xp);
+					}
+					return true;
+				case FAIL:
+					return false;
+				case NOTAVAILABLE:
+					return false;
+				default:
+					return false;						
+			}
+		} else { 
+			return false;
 		}
-
-		return true;
+		
 	}
 
 	public Location getLastUseLoc() {

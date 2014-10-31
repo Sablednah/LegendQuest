@@ -24,6 +24,7 @@ import me.sablednah.legendquest.config.*;
 import me.sablednah.legendquest.db.DataSync;
 import me.sablednah.legendquest.effects.EffectManager;
 import me.sablednah.legendquest.listeners.*;
+import me.sablednah.legendquest.party.PartyManager;
 import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
 import me.sablednah.legendquest.skills.SkillPool;
@@ -50,10 +51,12 @@ public class Main extends JavaPlugin {
 	public DataSync				datasync;
 	public PCs					players;
 	public EffectManager		effectManager;
+	public PartyManager			partyManager;
 	public DebugLog				debug;
 	public Scoreboard			board;
 	public ScoreboardManager	scoreboard;
 	public Objective			objClass;
+	public boolean				hasVault;
 	
 	// TODO switch test flag for live
 	public static final Boolean	debugMode	= false;
@@ -116,6 +119,12 @@ public class Main extends JavaPlugin {
 		// Notify loading has begun...
 		log(configLang.startup);
 
+		//look for vault
+		hasVault = this.getServer().getPluginManager().isPluginEnabled("Vault");
+        if (hasVault) {
+            logger.info("Vault detected.");
+        }
+		
 		// load skills
 		configSkills = new SkillConfig(this);
 		skills = new SkillPool(this);
@@ -143,6 +152,9 @@ public class Main extends JavaPlugin {
 
 		// start effect manager
 		effectManager = new EffectManager(this);
+		
+		// start party manager
+		partyManager = new PartyManager(this);
 
 		// Lets listen for events shall we?
 		final PluginManager pm = getServer().getPluginManager();
@@ -164,6 +176,7 @@ public class Main extends JavaPlugin {
 		getCommand("skill").setExecutor(new CmdSkill(this));
 		getCommand("roll").setExecutor(new CmdRoll(this));
 		getCommand("hp").setExecutor(new CmdHP(this));
+		getCommand("party").setExecutor(new CmdParty(this));
 		getCommand("link").setExecutor(new CmdLink(this));
 		getCommand("unlink").setExecutor(new CmdUnlink(this));
 		getCommand("admin").setExecutor(new CmdAdmin(this));

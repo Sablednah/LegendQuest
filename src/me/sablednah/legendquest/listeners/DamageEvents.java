@@ -6,7 +6,6 @@ import me.sablednah.legendquest.events.CombatHitCheck;
 import me.sablednah.legendquest.events.CombatModifiers;
 import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.mechanics.Attribute;
-import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.plugins.PluginUtils;
@@ -51,13 +50,13 @@ public class DamageEvents implements Listener {
 
 			PC pc = lq.players.getPC(p);
 			if (pc != null) {
-				pc.health = newHealth;
+				pc.setHealth(newHealth);
 				if (lq.configMain.debugMode) {
 					lq.debug.fine("HP: " + p.getHealth() + " | D: " + dmg + " | nHP: " + newHealth + " | p.max: " + p.getMaxHealth() + " | pc.max: " + pc.maxHP);
 					p.sendMessage("HP: " + p.getHealth() + " | D: " + dmg + " | hHP: " + newHealth + " | p.max: " + p.getMaxHealth() + " | pc.max: " + pc.maxHP);
 				}
 			}
-			lq.players.addPlayer(p.getUniqueId(), pc);
+//			lq.players.addPlayer(p.getUniqueId(), pc);
 			if (p.getHealth() > 0) {
 				pc.scheduleHealthCheck();
 				lq.players.scheduleUpdate(p.getUniqueId());
@@ -72,17 +71,24 @@ public class DamageEvents implements Listener {
 		}
 		Entity victim = event.getEntity();
 
+		if (victim instanceof Projectile) { return; }
+		
 		if (!lq.validWorld(victim.getWorld().getName())) {
 			return;
 		}
 
+		int hitchance =  lq.configMain.hitchanceenum.getDifficulty(); //Difficulty.AVERAGE.getDifficulty();
+		int dodgechance = lq.configMain.dodgechanceenum.getDifficulty(); //Difficulty.AVERAGE.getDifficulty();
+
+		
 		PC victimPC = null;
 		if (victim instanceof Player) {
 			victimPC = lq.players.getPC((Player) victim);
+			if (((Player)victim).isBlocking()) {
+				hitchance = lq.configMain.blockchanceenum.getDifficulty();				
+			}
 		}
 		PC attackerPC = getTwistedInstigator(event.getDamager());
-		int hitchance = Difficulty.AVERAGE.getDifficulty();
-		int dodgechance = Difficulty.AVERAGE.getDifficulty();
 
 		if (lq.configMain.useSizeForCombat) {
 			double atackerSize = lq.players.getSize(this.getTwistedInstigatorEntity(event.getDamager()));
@@ -90,14 +96,14 @@ public class DamageEvents implements Listener {
 
 			// 1 difficulty per 0.5D size diference
 			int dif = (int) Math.round((defenderSize - atackerSize) / 0.5D);
-
+//positive = bigger target.
 			if (dif > 5) {
 				dif = 5;
 			} else if (dif < -5) {
 				dif = -5;
 			}
 			hitchance = hitchance - dif;
-			dodgechance = dodgechance - dif;
+			dodgechance = dodgechance + dif;
 		}
 
 		boolean ranged = (event.getDamager() instanceof Projectile);
@@ -114,6 +120,10 @@ public class DamageEvents implements Listener {
 		if (ranged) {
 			hitchance=hitchance-lq.configMain.rangedHitBonus;
 //			dodgechance=dodgechance-lq.configMain.rangedHitBonus;
+		} else {
+			if (event.getDamager().getLocation().getY()+1.0D > victim.getLocation().getY()) {
+				hitchance=hitchance-lq.configMain.heightBonus;
+			}
 		}
 		
 		boolean hitCheck = Mechanics.opposedTest(attackerPC, hitchance, Attribute.DEX, victimPC, dodgechance, Attribute.DEX);
