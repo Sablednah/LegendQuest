@@ -14,6 +14,7 @@ public enum Cmds {
     HP(true, 0),
     PARTY(false, 0),
     HELP(true, 0), 
+    FLAG(true, 2),
     ADMIN(true, 1);
     
     private Boolean canConsole;

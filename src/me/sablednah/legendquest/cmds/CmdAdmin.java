@@ -271,6 +271,24 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 					return true;
 				}
 			}
+		} else if (args[0].equalsIgnoreCase("reset")) {
+			if (args.length < 2) {
+				sender.sendMessage(lq.configLang.invalidArgumentsCommand);
+				return true;
+			} else {
+				String playername = args[1];
+				Player targetPlayer = lq.getServer().getPlayer(playername);
+
+				if (targetPlayer == null || !targetPlayer.isOnline()) {
+					sender.sendMessage(lq.configLang.invalidArgumentsCommand + ": " + args[1] );
+					return true;
+				}
+				PC targetPC = lq.players.getPC(targetPlayer);
+				targetPC.reset();
+				sender.sendMessage(targetPlayer.getDisplayName() + " reset.");
+				return true;
+
+			}
 		}
 		return false;
 	}

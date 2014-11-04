@@ -16,6 +16,7 @@ public class MainConfig extends Config {
 	public String				sqlHostname					= "localhost";
 	public int					sqlPort						= 3306;
 	public String				sqlDatabase					= "legendquest";
+	public String				sqlPrefix					= "lq_";
 
 	public boolean				logSQL						= true;
 	public String				logLevel					= "ALL";
@@ -24,6 +25,9 @@ public class MainConfig extends Config {
 	public boolean				randomStats					= true;
 
 	public boolean				useScoreBoard				= true;
+	public boolean				usePlayerSlot				= true;
+	public boolean				showPlayerHealth			= true;
+	public boolean				showListLevels				= true;
 
 	public boolean				allowRaceSwap				= false;
 	public double				percentXpKeepRaceChange		= 10.00D;
@@ -98,10 +102,14 @@ public class MainConfig extends Config {
 		this.sqlDatabase = this.getConfigItem("sqlDatabase", this.sqlDatabase);
 		this.logSQL = this.getConfigItem("logSQL", this.logSQL);
 		this.logLevel = this.getConfigItem("logLevel", this.logLevel);
-
+		this.sqlPrefix = this.getConfigItem("sqlPrefix", this.sqlPrefix);
+		
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
 
 		this.useScoreBoard = this.getConfigItem("useScoreBoard", this.useScoreBoard);
+		this.usePlayerSlot = this.getConfigItem("usePlayerSlot", this.usePlayerSlot);
+		this.showPlayerHealth = this.getConfigItem("showPlayerHealth", this.showPlayerHealth);
+		this.showListLevels = this.getConfigItem("showListLevels", this.showListLevels);
 
 		this.randomStats = this.getConfigItem("randomStats", this.randomStats);
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);

@@ -11,6 +11,7 @@ sqlPassword: password
 sqlHostname: localhost
 sqlPort: 3306
 sqlDatabase: legendquest
+sqlPrefix: "lq_"
 
 #-------------------
 
@@ -129,6 +130,9 @@ chatPrefix: "[{race}|{class}] {current}"
 # useScoreBoard : enable scoreboard system.  disable to prevent conflicts with other scoreboard based plugins.
 
 useScoreBoard: true
+usePlayerSlot: true
+showPlayerHealth: true
+showListLevels: true
 
 #--------------------
 

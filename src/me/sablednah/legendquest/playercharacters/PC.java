@@ -84,6 +84,7 @@ public class PC {
 	public HashMap<String, SkillDataStore>	skillSet		= null;
 	public Map<String, Boolean>				skillsSelected;
 	public HashMap<String, Integer>			skillsPurchased	= new HashMap<String, Integer>();
+	public HashMap<String, String>			dataStore		= new HashMap<String, String>();
 	public HashMap<Material, String>		skillLinkings	= new HashMap<Material, String>();
 
 	// private boolean skillsEnabled = true;
@@ -1234,6 +1235,9 @@ public class PC {
 		}
 		PlayerInventory inv = p.getInventory();
 		Material payment = item.getType();
+		if (inv == null) {
+			return false;
+		}
 		if (!inv.contains(payment)) {
 			return false;
 		} else {
@@ -1483,5 +1487,58 @@ public class PC {
 
 	public void setHealth(double health) {
 		this.health = health;
+	}
+
+	public String putData(String key, String value) {
+		return dataStore.put(key, value);
+	}
+
+	public String getData(String key) {
+		return dataStore.get(key);
+	}
+
+	public void reset() {
+		Player p = getPlayer();
+		this.player = p.getName();
+		this.charname = p.getName();
+		this.mainClass = this.lq.classes.defaultClass;
+		this.race = this.lq.races.defaultRace;
+		this.raceChanged = false;
+		this.subClass = null;
+		this.maxHP = 20;
+		this.health = 20;
+		this.mana = getMaxMana();
+		this.currentXP = 0;
+		dataStore = new HashMap<String, String>();
+		skillLinkings = new HashMap<Material, String>();
+		if (!lq.configMain.randomStats) {
+			statStr = statDex = statInt = statWis = statCon = statChr = 12;
+		} else {
+			int[] statline = { 16, 14, 13, 12, 11, 10 };
+			Random r = new Random(p.getName().hashCode());
+			for (int i = 0; i < statline.length; i++) {
+				int position = i + r.nextInt(statline.length - i);
+				int temp = statline[i];
+				statline[i] = statline[position];
+				statline[position] = temp;
+			}
+			statStr = statline[0];
+			statDex = statline[1];
+			statInt = statline[2];
+			statWis = statline[3];
+			statCon = statline[4];
+			statChr = statline[5];
+		}
+		skillSet = getUniqueSkills(true);
+		checkSkills();
+		scheduleCheckInv();
+		scheduleHealthCheck();
+		xpEarnt = new HashMap<String, Integer>();
+		dataStore = new HashMap<String, String>();
+		skillLinkings = new HashMap<Material, String>();
+		p.setExp(0);
+		this.setXP(0);
+		this.currentXP = 0;
+
 	}
 }

@@ -150,6 +150,9 @@ public class RootCommand implements CommandExecutor {
                 case PARTY:
                     newcmd = new CmdParty(lq);
                     break;
+                case FLAG:
+                    newcmd = new CmdFlag(lq);
+                    break;
                 case ADMIN:
                     newcmd = new CmdAdmin(lq);
                     break;                    
