@@ -183,6 +183,11 @@ public class Main extends JavaPlugin {
 
 		getCommand("plurals").setExecutor(new CmdPlurals(this));
 
+		getCommand("lq").setTabCompleter(new TabComplete(this));
+		getCommand("race").setTabCompleter(new TabComplete(this));
+		getCommand("class").setTabCompleter(new TabComplete(this));
+		getCommand("skill").setTabCompleter(new TabComplete(this));
+		
 		// getCommand("skills").setExecutor(new CmdPlurals(this));
 		// getCommand("classes").setExecutor(new CmdPlurals(this));
 		// getCommand("races").setExecutor(new CmdPlurals(this));
