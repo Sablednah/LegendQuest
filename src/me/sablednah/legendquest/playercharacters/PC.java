@@ -1384,6 +1384,7 @@ public class PC {
 		this.checkInv();
 		this.skillSet = this.getUniqueSkills(true);
 		lq.debug.fine(lq.configLang.classChanged + ": " + cl.name + " - " + p.getName());
+		lq.players.scoreboards.put(this.uuid, null);
 
 		return true;
 	}
@@ -1414,6 +1415,7 @@ public class PC {
 		this.scheduleHealthCheck();
 		this.checkInv();
 		this.skillSet = this.getUniqueSkills(true);
+		lq.players.scoreboards.put(this.uuid, null);
 		return true;
 	}
 
