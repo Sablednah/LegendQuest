@@ -356,7 +356,7 @@ public class Races {
 					validConfig = false;
 					lq.log(lq.configLang.raceScanInvalid + race.getName());
 					lq.logger.throwing("Races", "Races", e);
-//					e.printStackTrace();
+					e.printStackTrace();
 				}
 
 				if (validConfig) {

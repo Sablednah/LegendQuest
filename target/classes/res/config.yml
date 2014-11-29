@@ -12,6 +12,7 @@ sqlHostname: localhost
 sqlPort: 3306
 sqlDatabase: legendquest
 sqlPrefix: "lq_"
+sqlKeepAliveInterval: 60
 
 #-------------------
 

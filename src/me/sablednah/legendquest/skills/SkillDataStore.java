@@ -176,7 +176,22 @@ public class SkillDataStore {
 				this.manaCost = conf.getInt("manaCost");
 			}
 			if (conf.contains("consumes")) {
-				this.consumes = new ItemStack(Material.getMaterial(conf.getString("consumes")));
+				if (conf.getString("consumes") != null && conf.getString("consumes") != "" ) {
+					Material mat = null;
+					try {
+						mat = Material.getMaterial(conf.getString("consumes"));
+					} catch (IllegalArgumentException exp) {
+						System.out.print("'"+conf.getString("consumes") + "' is not a valid entity name for consumes material.");
+						mat = null;
+					}
+					if (mat != null) {
+						this.consumes = new ItemStack(mat);
+					} else {
+						this.consumes = null;
+					}
+				} else {
+					this.consumes = null;
+				}
 			}
 			if (conf.contains("vars")) {
 				Map<String, Object> tmpvar = conf.getConfigurationSection("vars").getValues(false);

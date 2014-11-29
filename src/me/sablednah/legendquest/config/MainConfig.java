@@ -17,6 +17,7 @@ public class MainConfig extends Config {
 	public int					sqlPort						= 3306;
 	public String				sqlDatabase					= "legendquest";
 	public String				sqlPrefix					= "lq_";
+	public int					sqlKeepAliveInterval		= 60;
 
 	public boolean				logSQL						= true;
 	public String				logLevel					= "ALL";
@@ -103,7 +104,8 @@ public class MainConfig extends Config {
 		this.logSQL = this.getConfigItem("logSQL", this.logSQL);
 		this.logLevel = this.getConfigItem("logLevel", this.logLevel);
 		this.sqlPrefix = this.getConfigItem("sqlPrefix", this.sqlPrefix);
-		
+		this.sqlKeepAliveInterval = this.getConfigItem("sqlKeepAliveInterval", this.sqlKeepAliveInterval);
+
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
 
 		this.useScoreBoard = this.getConfigItem("useScoreBoard", this.useScoreBoard);

@@ -1242,7 +1242,7 @@ public class PC {
 			return false;
 		} else {
 			for (ItemStack i : inv.getContents()) {
-				if (i.getType() != null && i.getType().equals(payment)) {
+				if (i!=null && i.getType() != null && i.getType().equals(payment)) {
 					if (i.getAmount() == amount) {
 						inv.remove(i);
 						return true;

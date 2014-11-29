@@ -31,6 +31,7 @@ public class DataSync {
 
 		public void run() {
 			try {
+				makeOpen();
 				dbconn.query("SELECT 1");
 			} catch (final SQLException e) {
 				lq.logSevere("Error during database keep-alive.");
@@ -51,10 +52,10 @@ public class DataSync {
 			if (hs != null) {
 				writeHealthData(hs);
 			}
-			
+
 			if (dirtyPartyData) {
 				saveParties(lq.partyManager.partyList);
-				dirtyPartyData=false;
+				dirtyPartyData = false;
 			}
 		}
 	}
@@ -63,7 +64,7 @@ public class DataSync {
 	public ConcurrentLinkedQueue<PC>			pendingWrites	= new ConcurrentLinkedQueue<PC>();
 	public ConcurrentLinkedQueue<HealthStore>	pendingHPWrites	= new ConcurrentLinkedQueue<HealthStore>();
 	public Database								dbconn;
-	public boolean								dirtyPartyData = false;
+	public boolean								dirtyPartyData	= false;
 
 	private final BukkitTask					aSyncTaskKeeper;
 	private final BukkitTask					aSyncTaskQueue;
@@ -83,9 +84,18 @@ public class DataSync {
 		tableCheck();
 		updateCheck();
 
-		this.aSyncTaskKeeper = lq.getServer().getScheduler().runTaskTimerAsynchronously(lq, new dbKeepAlive(), 1200L, 1200L);
-		this.aSyncTaskQueue = lq.getServer().getScheduler().runTaskTimerAsynchronously(lq, new dbProcessCache(), 30L, 101L);
+		this.aSyncTaskKeeper = lq.getServer().getScheduler().runTaskTimerAsynchronously(lq, new dbKeepAlive(), lq.configMain.sqlKeepAliveInterval * 20L, lq.configMain.sqlKeepAliveInterval * 20L);
+		this.aSyncTaskQueue = lq.getServer().getScheduler().runTaskTimerAsynchronously(lq, new dbProcessCache(), 11L, 2L);
 
+	}
+
+	public boolean makeOpen() {
+		if (lq.configMain.useMySQL) {
+			if (!dbconn.isOpen()) {
+				return dbconn.open();
+			}
+		}
+		return true;
 	}
 
 	public synchronized void addWrite(final PC pc) {
@@ -122,11 +132,12 @@ public class DataSync {
 		lq.debug.fine("loading " + uuid.toString() + " from db");
 		String sql;
 		final PC pc = new PC(lq, uuid);
-		sql = "SELECT * FROM "+lq.configMain.sqlPrefix+"pcs WHERE uuid='" + uuid.toString() + "';";
+		sql = "SELECT * FROM " + lq.configMain.sqlPrefix + "pcs WHERE uuid='" + uuid.toString() + "';";
 		if (lq.configMain.logSQL) {
 			lq.debug.fine(sql);
 		}
 		try {
+			makeOpen();
 			ResultSet r = dbconn.query(sql);
 			if (r == null) {
 				return null;
@@ -158,11 +169,12 @@ public class DataSync {
 			}
 			r.close();
 
-			sql = "SELECT xp, class FROM "+lq.configMain.sqlPrefix+"xpEarnt WHERE uuid='" + uuid.toString() + "';";
+			sql = "SELECT xp, class FROM " + lq.configMain.sqlPrefix + "xpEarnt WHERE uuid='" + uuid.toString() + "';";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql);
 			}
 			int thisXP;
+			makeOpen();
 			r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -176,11 +188,12 @@ public class DataSync {
 				}
 			}
 
-			sql = "SELECT skillName, cost FROM "+lq.configMain.sqlPrefix+"skillsBought WHERE uuid='" + uuid.toString() + "';";
+			sql = "SELECT skillName, cost FROM " + lq.configMain.sqlPrefix + "skillsBought WHERE uuid='" + uuid.toString() + "';";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql);
 			}
 			int skillCost;
+			makeOpen();
 			r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -190,10 +203,11 @@ public class DataSync {
 				}
 			}
 
-			sql = "SELECT skillName, material FROM "+lq.configMain.sqlPrefix+"skillsLinked WHERE uuid='" + uuid.toString() + "';";
+			sql = "SELECT skillName, material FROM " + lq.configMain.sqlPrefix + "skillsLinked WHERE uuid='" + uuid.toString() + "';";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql);
 			}
+			makeOpen();
 			r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -205,10 +219,11 @@ public class DataSync {
 			pc.skillSet = pc.getUniqueSkills(true);
 
 			// load skill timings from db
-			sql = "SELECT skillname,lastuse,lastuseloc,phase,lastargs FROM "+lq.configMain.sqlPrefix+"skilldata WHERE uuid='" + uuid.toString() + "';";
+			sql = "SELECT skillname,lastuse,lastuseloc,phase,lastargs FROM " + lq.configMain.sqlPrefix + "skilldata WHERE uuid='" + uuid.toString() + "';";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql);
 			}
+			makeOpen();
 			r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -226,12 +241,12 @@ public class DataSync {
 					}
 				}
 			}
-			
+
 			pc.dataStore = this.getDataStore(uuid);
 
 			return pc;
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading "+lq.configMain.sqlPrefix+"skilldata from database.");
+			lq.logSevere("Error reading " + lq.configMain.sqlPrefix + "skilldata from database.");
 			e.printStackTrace();
 		}
 		return null;
@@ -241,7 +256,8 @@ public class DataSync {
 		String sql;
 		int xp = 0;
 		try {
-			sql = "SELECT xp FROM "+lq.configMain.sqlPrefix+"xpEarnt WHERE uuid='" + uuid.toString() + "' and class='" + className.toLowerCase() + "';";
+			makeOpen();
+			sql = "SELECT xp FROM " + lq.configMain.sqlPrefix + "xpEarnt WHERE uuid='" + uuid.toString() + "' and class='" + className.toLowerCase() + "';";
 			final ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -250,7 +266,7 @@ public class DataSync {
 			}
 			return xp;
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading "+lq.configMain.sqlPrefix+"xpEarnt from database.");
+			lq.logSevere("Error reading " + lq.configMain.sqlPrefix + "xpEarnt from database.");
 			e.printStackTrace();
 		}
 		return xp;
@@ -262,7 +278,8 @@ public class DataSync {
 		double maxhp = 0;
 
 		try {
-			sql = "SELECT maxhealth,health FROM "+lq.configMain.sqlPrefix+"otherhealth WHERE uuid='" + uuid.toString() + "';";
+			makeOpen();
+			sql = "SELECT maxhealth,health FROM " + lq.configMain.sqlPrefix + "otherhealth WHERE uuid='" + uuid.toString() + "';";
 			final ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -273,7 +290,7 @@ public class DataSync {
 			HealthStore hs = new HealthStore(uuid, hp, maxhp);
 			return hs;
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading "+lq.configMain.sqlPrefix+"otherhealth from database.");
+			lq.logSevere("Error reading " + lq.configMain.sqlPrefix + "otherhealth from database.");
 			e.printStackTrace();
 		}
 		return null;
@@ -283,7 +300,8 @@ public class DataSync {
 		String sql;
 		double hp = 0;
 		try {
-			sql = "SELECT health FROM "+lq.configMain.sqlPrefix+"otherhealth WHERE uuid='" + uuid.toString() + "';";
+			makeOpen();
+			sql = "SELECT health FROM " + lq.configMain.sqlPrefix + "otherhealth WHERE uuid='" + uuid.toString() + "';";
 			final ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -292,7 +310,7 @@ public class DataSync {
 			}
 			return hp;
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading "+lq.configMain.sqlPrefix+"otherhealth from database.");
+			lq.logSevere("Error reading " + lq.configMain.sqlPrefix + "otherhealth from database.");
 			e.printStackTrace();
 		}
 		return hp;
@@ -302,7 +320,8 @@ public class DataSync {
 		String sql;
 		double hp = 0.0D;
 		try {
-			sql = "SELECT maxhealth FROM "+lq.configMain.sqlPrefix+"otherhealth WHERE uuid='" + uuid.toString() + "';";
+			makeOpen();
+			sql = "SELECT maxhealth FROM " + lq.configMain.sqlPrefix + "otherhealth WHERE uuid='" + uuid.toString() + "';";
 			final ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -311,7 +330,7 @@ public class DataSync {
 			}
 			return hp;
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading max "+lq.configMain.sqlPrefix+"otherhealth from database.");
+			lq.logSevere("Error reading max " + lq.configMain.sqlPrefix + "otherhealth from database.");
 			e.printStackTrace();
 		}
 		return hp;
@@ -321,7 +340,8 @@ public class DataSync {
 		String sql;
 		final HashMap<String, Integer> result = new HashMap<String, Integer>();
 		try {
-			sql = "SELECT xp,class FROM "+lq.configMain.sqlPrefix+"xpEarnt WHERE uuid='" + uuid.toString() + "';";
+			makeOpen();
+			sql = "SELECT xp,class FROM " + lq.configMain.sqlPrefix + "xpEarnt WHERE uuid='" + uuid.toString() + "';";
 			final ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -329,7 +349,7 @@ public class DataSync {
 				}
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading "+lq.configMain.sqlPrefix+"xpEarnt from database.");
+			lq.logSevere("Error reading " + lq.configMain.sqlPrefix + "xpEarnt from database.");
 			e.printStackTrace();
 		}
 		return result;
@@ -339,7 +359,8 @@ public class DataSync {
 		String sql;
 		ConcurrentHashMap<UUID, Party> result = new ConcurrentHashMap<UUID, Party>();
 		try {
-			sql = "SELECT uuid,party,owner,accepted FROM "+lq.configMain.sqlPrefix+"partydata;";
+			makeOpen();
+			sql = "SELECT uuid,party,owner,accepted FROM " + lq.configMain.sqlPrefix + "partydata;";
 			final ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -348,7 +369,7 @@ public class DataSync {
 				}
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading "+lq.configMain.sqlPrefix+"partydata from database.");
+			lq.logSevere("Error reading " + lq.configMain.sqlPrefix + "partydata from database.");
 			e.printStackTrace();
 		}
 		return result;
@@ -365,7 +386,7 @@ public class DataSync {
 		String create;
 
 		// characters
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"pcs (";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "pcs (";
 		create += "uuid varchar(36) NOT NULL";
 		if (!lq.configMain.useMySQL) {
 			create += " UNIQUE ON CONFLICT FAIL";
@@ -399,21 +420,23 @@ public class DataSync {
 
 		ResultSet r;
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_index ON "+lq.configMain.sqlPrefix+"pcs(uuid)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_index ON " + lq.configMain.sqlPrefix + "pcs(uuid)";
 				r = dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"pcs'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "pcs'.");
 			e.printStackTrace();
 		}
 
 		// experience
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"xpEarnt (";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "xpEarnt (";
 		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "class varchar(64) NOT NULL, ";
@@ -428,21 +451,23 @@ public class DataSync {
 			lq.debug.fine(create);
 		}
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_class_index ON "+lq.configMain.sqlPrefix+"xpEarnt(uuid,class)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_class_index ON " + lq.configMain.sqlPrefix + "xpEarnt(uuid,class)";
 				dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"xpEarnt'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "xpEarnt'.");
 			e.printStackTrace();
 		}
 
 		// purchased skills
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"skillsBought (";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "skillsBought (";
 		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "skillName varchar(64) NOT NULL, ";
@@ -457,21 +482,23 @@ public class DataSync {
 			lq.debug.fine(create);
 		}
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_skill_index ON "+lq.configMain.sqlPrefix+"skillsBought(uuid,skillName)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_skill_index ON " + lq.configMain.sqlPrefix + "skillsBought(uuid,skillName)";
 				dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"skillsBought'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "skillsBought'.");
 			e.printStackTrace();
 		}
 
 		// linked skills
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"skillsLinked (";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "skillsLinked (";
 		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "material varchar(64) NOT NULL, ";
@@ -486,21 +513,23 @@ public class DataSync {
 			lq.debug.fine(create);
 		}
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_material_index ON "+lq.configMain.sqlPrefix+"skillsLinked(uuid,material)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_material_index ON " + lq.configMain.sqlPrefix + "skillsLinked(uuid,material)";
 				dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"skillsLinked'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "skillsLinked'.");
 			e.printStackTrace();
 		}
 
 		// otherHealth
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"otherHealth(";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "otherHealth(";
 		create += "uuid varchar(36) NOT NULL, ";
 		create += "player varchar(16) NOT NULL, ";
 		create += "health DOUBLE, ";
@@ -515,23 +544,25 @@ public class DataSync {
 			lq.debug.fine(create);
 		}
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_index ON "+lq.configMain.sqlPrefix+"otherhealth(uuid)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_index ON " + lq.configMain.sqlPrefix + "otherhealth(uuid)";
 				dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"otherHealth'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "otherHealth'.");
 			e.printStackTrace();
 		}
 
 		// save skill timings.
 		// uuid, skillname, lastuse, lastuseloc, phase, ,lastargs
 
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"skilldata(";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "skilldata(";
 		create += "uuid varchar(36) NOT NULL, ";
 		create += "skillname varchar(64) NOT NULL, ";
 		create += "lastuse LONG, ";
@@ -548,21 +579,23 @@ public class DataSync {
 			lq.debug.fine(create);
 		}
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_skilldata_index ON "+lq.configMain.sqlPrefix+"skilldata(uuid,skillname)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_skilldata_index ON " + lq.configMain.sqlPrefix + "skilldata(uuid,skillname)";
 				dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"skilldata'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "skilldata'.");
 			e.printStackTrace();
 		}
 
 		// party data
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"partydata(";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "partydata(";
 		create += "uuid varchar(36) NOT NULL, ";
 		create += "party varchar(64) NOT NULL, ";
 		create += "owner INTEGER, ";
@@ -577,21 +610,23 @@ public class DataSync {
 			lq.debug.fine(create);
 		}
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_partydata_index ON "+lq.configMain.sqlPrefix+"partydata(uuid,party)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_partydata_index ON " + lq.configMain.sqlPrefix + "partydata(uuid,party)";
 				dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"partydata'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "partydata'.");
 			e.printStackTrace();
 		}
-		
+
 		// generic options table
-		create = "CREATE TABLE if not exists "+lq.configMain.sqlPrefix+"datastore(";
+		create = "CREATE TABLE if not exists " + lq.configMain.sqlPrefix + "datastore(";
 		create += "uuid varchar(36) NOT NULL, ";
 		create += "akey varchar(64) NOT NULL, ";
 		create += "value varchar(256) NOT NULL ";
@@ -605,16 +640,18 @@ public class DataSync {
 			lq.debug.fine(create);
 		}
 		try {
+			makeOpen();
 			r = dbconn.query(create);
 			// lq.debug.fine(r.toString());
 			r.close();
 			if (!lq.configMain.useMySQL) {
-				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_key_index ON "+lq.configMain.sqlPrefix+"datastore(uuid,akey)";
+				makeOpen();
+				create = "CREATE UNIQUE INDEX IF NOT EXISTS uuid_key_index ON " + lq.configMain.sqlPrefix + "datastore(uuid,akey)";
 				dbconn.query(create);
 				r.close();
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error creating table '"+lq.configMain.sqlPrefix+"datastore'.");
+			lq.logSevere("Error creating table '" + lq.configMain.sqlPrefix + "datastore'.");
 			e.printStackTrace();
 		}
 
@@ -626,7 +663,7 @@ public class DataSync {
 
 	private synchronized void writeData(final PC pc) {
 		String sql;
-		sql = "REPLACE INTO "+lq.configMain.sqlPrefix+"pcs (";
+		sql = "REPLACE INTO " + lq.configMain.sqlPrefix + "pcs (";
 		sql = sql + "uuid,player,charname,race,raceChanged,mainClass,subClass,maxHP,health,mana,karma,statStr,statDex,statInt,statWis,statCon,statChr";
 		sql = sql + ") values(\"";
 		sql = sql + pc.uuid.toString() + "\",\"";
@@ -660,13 +697,14 @@ public class DataSync {
 		}
 
 		try {
+			makeOpen();
 			ResultSet r = dbconn.query(sql);
 			r.close();
 			String sql2;
 
 			HashMap<String, Integer> copy = pc.xpEarnt;
 			for (final Map.Entry<String, Integer> entry : copy.entrySet()) {
-				sql2 = "REPLACE INTO "+lq.configMain.sqlPrefix+"xpEarnt (";
+				sql2 = "REPLACE INTO " + lq.configMain.sqlPrefix + "xpEarnt (";
 				sql2 = sql2 + "uuid,player,class,xp";
 				sql2 = sql2 + ") values(\"";
 				sql2 = sql2 + pc.uuid.toString() + "\",\"";
@@ -677,13 +715,14 @@ public class DataSync {
 				if (lq.configMain.logSQL) {
 					lq.debug.fine(sql2);
 				}
+				makeOpen();
 				r = dbconn.query(sql2);
 				r.close();
 			}
 
 			HashMap<String, Integer> copy2 = pc.skillsPurchased;
 			for (final Map.Entry<String, Integer> entry : copy2.entrySet()) {
-				sql2 = "REPLACE INTO "+lq.configMain.sqlPrefix+"skillsBought (";
+				sql2 = "REPLACE INTO " + lq.configMain.sqlPrefix + "skillsBought (";
 				sql2 = sql2 + "uuid, player,skillName,cost";
 				sql2 = sql2 + ") values(\"";
 				sql2 = sql2 + pc.uuid + "\",\"";
@@ -694,23 +733,25 @@ public class DataSync {
 				if (lq.configMain.logSQL) {
 					lq.debug.fine(sql2);
 				}
+				makeOpen();
 				r = dbconn.query(sql2);
 				r.close();
 			}
 
-			sql2 = "DELETE FROM "+lq.configMain.sqlPrefix+"skillsLinked ";
+			sql2 = "DELETE FROM " + lq.configMain.sqlPrefix + "skillsLinked ";
 			sql2 = sql2 + "where uuid=\"";
 			sql2 = sql2 + pc.uuid + "\"";
 			sql2 = sql2 + ";";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql2);
 			}
+			makeOpen();
 			r = dbconn.query(sql2);
 			r.close();
 
 			HashMap<Material, String> copy3 = pc.skillLinkings;
 			for (final Entry<Material, String> entry : copy3.entrySet()) {
-				sql2 = "REPLACE INTO "+lq.configMain.sqlPrefix+"skillsLinked (";
+				sql2 = "REPLACE INTO " + lq.configMain.sqlPrefix + "skillsLinked (";
 				sql2 = sql2 + "uuid, player,material,skillName";
 				sql2 = sql2 + ") values(\"";
 				sql2 = sql2 + pc.uuid + "\",\"";
@@ -721,6 +762,7 @@ public class DataSync {
 				if (lq.configMain.logSQL) {
 					lq.debug.fine(sql2);
 				}
+				makeOpen();
 				r = dbconn.query(sql2);
 				r.close();
 			}
@@ -728,10 +770,10 @@ public class DataSync {
 			writeAllSkillData(pc);
 
 		} catch (final SQLException e) {
-			lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"pc to database.");
+			lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "pc to database.");
 			e.printStackTrace();
 		}
-		
+
 		this.saveDataStore(pc.uuid, pc.dataStore);
 	}
 
@@ -744,16 +786,17 @@ public class DataSync {
 		ResultSet r;
 		try {
 
-			sql = "DELETE FROM "+lq.configMain.sqlPrefix+"partydata;";
+			sql = "DELETE FROM " + lq.configMain.sqlPrefix + "partydata;";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql);
 			}
+			makeOpen();
 			r = dbconn.query(sql);
 			r.close();
 
 			for (Entry<UUID, Party> partyinfo : partyList.entrySet()) {
 				Party p = partyinfo.getValue();
-				sql = "REPLACE INTO "+lq.configMain.sqlPrefix+"partydata(";
+				sql = "REPLACE INTO " + lq.configMain.sqlPrefix + "partydata(";
 				sql = sql + "uuid,party,owner,accepted";
 				sql = sql + ") values(\"";
 				sql = sql + p.player.toString() + "\",";
@@ -774,15 +817,16 @@ public class DataSync {
 				}
 				// System.out.print(sql);
 				try {
+					makeOpen();
 					r = dbconn.query(sql);
 					r.close();
 				} catch (final SQLException e) {
-					lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"partydata to database.");
+					lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "partydata to database.");
 					e.printStackTrace();
 				}
 			}
 		} catch (SQLException e) {
-			lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"partydata sets to database.");
+			lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "partydata sets to database.");
 			e.printStackTrace();
 		}
 	}
@@ -793,13 +837,14 @@ public class DataSync {
 		ResultSet r;
 		try {
 
-			sql = "DELETE FROM "+lq.configMain.sqlPrefix+"skilldata ";
+			sql = "DELETE FROM " + lq.configMain.sqlPrefix + "skilldata ";
 			sql = sql + "where uuid=\"";
 			sql = sql + pc.uuid + "\"";
 			sql = sql + ";";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql);
 			}
+			makeOpen();
 			r = dbconn.query(sql);
 			r.close();
 
@@ -808,7 +853,7 @@ public class DataSync {
 			}
 
 		} catch (SQLException e) {
-			lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"skilldata sets to database.");
+			lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "skilldata sets to database.");
 			e.printStackTrace();
 		}
 	}
@@ -818,7 +863,7 @@ public class DataSync {
 		String sql;
 		SerializableLocation sl = null;
 		String args = StringUtils.join(sds.getlastArgs(), "¦|¦");
-		sql = "REPLACE INTO "+lq.configMain.sqlPrefix+"skilldata(";
+		sql = "REPLACE INTO " + lq.configMain.sqlPrefix + "skilldata(";
 		sql = sql + "uuid,skillname,lastuse,lastuseloc,phase,lastargs";
 		sql = sql + ") values(\"";
 		sql = sql + uuid.toString() + "\"";
@@ -838,17 +883,18 @@ public class DataSync {
 		}
 		// System.out.print(sql);
 		try {
+			makeOpen();
 			ResultSet r = dbconn.query(sql);
 			r.close();
 		} catch (final SQLException e) {
-			lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"skilldata to database.");
+			lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "skilldata to database.");
 			e.printStackTrace();
 		}
 	}
 
 	private void writeHealthData(HealthStore hs) {
 		String sql;
-		sql = "REPLACE INTO "+lq.configMain.sqlPrefix+"otherHealth(";
+		sql = "REPLACE INTO " + lq.configMain.sqlPrefix + "otherHealth(";
 		sql = sql + "uuid,player,health,maxhealth";
 		sql = sql + ") values(\"";
 		sql = sql + hs.getUuid().toString() + "\",\"";
@@ -861,19 +907,21 @@ public class DataSync {
 		}
 
 		try {
+			makeOpen();
 			ResultSet r = dbconn.query(sql);
 			r.close();
 		} catch (final SQLException e) {
-			lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"otherhealth to database.");
+			lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "otherhealth to database.");
 			e.printStackTrace();
 		}
 	}
 
-	public synchronized HashMap<String,String> getDataStore(UUID uuid) {
-		HashMap<String,String> dataStore = new HashMap<String,String>();
-		String sql ="";
+	public synchronized HashMap<String, String> getDataStore(UUID uuid) {
+		HashMap<String, String> dataStore = new HashMap<String, String>();
+		String sql = "";
 		try {
-			sql = "SELECT akey,value FROM "+lq.configMain.sqlPrefix+"datastore WHERE uuid='" + uuid.toString() + "';";
+			makeOpen();
+			sql = "SELECT akey,value FROM " + lq.configMain.sqlPrefix + "datastore WHERE uuid='" + uuid.toString() + "';";
 			final ResultSet r = dbconn.query(sql);
 			if (r != null) {
 				while (r.next()) {
@@ -881,7 +929,7 @@ public class DataSync {
 				}
 			}
 		} catch (final SQLException e) {
-			lq.logSevere("Error reading "+lq.configMain.sqlPrefix+"datastore from database.");
+			lq.logSevere("Error reading " + lq.configMain.sqlPrefix + "datastore from database.");
 			e.printStackTrace();
 		}
 		return dataStore;
@@ -892,18 +940,19 @@ public class DataSync {
 		ResultSet r;
 		try {
 
-			sql = "DELETE FROM "+lq.configMain.sqlPrefix+"datastore WHERE uuid='" + uuid.toString() + "';";
+			sql = "DELETE FROM " + lq.configMain.sqlPrefix + "datastore WHERE uuid='" + uuid.toString() + "';";
 			if (lq.configMain.logSQL) {
 				lq.debug.fine(sql);
 			}
+			makeOpen();
 			r = dbconn.query(sql);
 			r.close();
 			for (Entry<String, String> dataInfo : dataStore.entrySet()) {
 				String key = dataInfo.getKey();
 				String value = dataInfo.getValue();
 				key = StringEscapeUtils.escapeSql(key);
-				value = StringEscapeUtils.escapeSql(value);				
-				sql = "REPLACE INTO "+lq.configMain.sqlPrefix+"datastore(";
+				value = StringEscapeUtils.escapeSql(value);
+				sql = "REPLACE INTO " + lq.configMain.sqlPrefix + "datastore(";
 				sql = sql + "uuid,akey,value";
 				sql = sql + ") values(\"";
 				sql = sql + uuid.toString() + "\",";
@@ -915,17 +964,18 @@ public class DataSync {
 				}
 				// System.out.print(sql);
 				try {
+					makeOpen();
 					r = dbconn.query(sql);
 					r.close();
 				} catch (final SQLException e) {
-					lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"datastore to database.");
+					lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "datastore to database.");
 					e.printStackTrace();
 				}
 			}
 		} catch (SQLException e) {
-			lq.logSevere("Error writing "+lq.configMain.sqlPrefix+"datastore sets to database.");
+			lq.logSevere("Error writing " + lq.configMain.sqlPrefix + "datastore sets to database.");
 			e.printStackTrace();
 		}
 	}
-	
+
 }

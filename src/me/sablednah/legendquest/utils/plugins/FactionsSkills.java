@@ -5,8 +5,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import com.massivecraft.factions.Rel;
-import com.massivecraft.factions.entity.UPlayer;
-import com.massivecraft.factions.listeners.FactionsListenerMain;
+import com.massivecraft.factions.entity.MPlayer;
+import com.massivecraft.factions.engine.EngineMain;
 import com.massivecraft.massivecore.ps.PS;
 
 
@@ -22,12 +22,12 @@ public class FactionsSkills {
 
 	public static Boolean canBuildFactions(PS ps, Player p) {
 		if (ps==null) { return false; }
-		return FactionsListenerMain.canPlayerBuildAt(p, ps, false);
+		return EngineMain.canPlayerBuildAt(p, ps, false);
 	}
 
 	public static Boolean canHurt(Player p, Player t) {
-	    UPlayer up = UPlayer.get(p);
-	    UPlayer ut = UPlayer.get(t);
+	    MPlayer up = MPlayer.get(p);
+	    MPlayer ut = MPlayer.get(t);
 	    
 		Rel rel = up.getRelationTo(ut);
 		
