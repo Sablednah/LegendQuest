@@ -147,6 +147,7 @@ public class Classes {
 					c.allowBrewing = thisConfig.getBoolean("allowBrewing");
 					c.allowEnchating = thisConfig.getBoolean("allowEnchating");
 					c.allowRepairing = thisConfig.getBoolean("allowRepairing");
+					c.allowTaming = thisConfig.getBoolean("allowTaming");
 
 					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
 					c.manaBonus = thisConfig.getInt("manaBonus");

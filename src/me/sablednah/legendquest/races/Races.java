@@ -114,6 +114,7 @@ public class Races {
 					r.allowBrewing = thisConfig.getBoolean("allowBrewing");
 					r.allowEnchating = thisConfig.getBoolean("allowEnchating");
 					r.allowRepairing = thisConfig.getBoolean("allowRepairing");
+					r.allowTaming = thisConfig.getBoolean("allowTaming");
 
 					r.baseMana = thisConfig.getInt("baseMana");
 					r.manaPerSecond = thisConfig.getDouble("manaPerSecond");

@@ -364,10 +364,10 @@ public class PC {
 
 		level = SetExp.getLevelOfXpAmount(currentXP);
 		if (subClass != null) {
-			perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
+			perlevel = Math.max(mainClass.manaPerLevel, subClass.manaPerLevel);
 			bonus = Math.max(mainClass.manaBonus, subClass.manaBonus);
 		} else {
-			perlevel = mainClass.healthPerLevel;
+			perlevel = mainClass.manaPerLevel;
 			bonus = mainClass.manaBonus;
 		}
 		double wisBonus = ((wis * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
@@ -391,7 +391,7 @@ public class PC {
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.skillPointsPerLevel, subClass.skillPointsPerLevel);
 		} else {
-			perlevel = mainClass.healthPerLevel;
+			perlevel = mainClass.skillPointsPerLevel;
 		}
 		perlevel += race.skillPointsPerLevel;
 		double intBonus = ((intel * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
