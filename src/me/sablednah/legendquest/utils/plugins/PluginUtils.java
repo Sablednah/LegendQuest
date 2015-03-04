@@ -1,6 +1,8 @@
 package me.sablednah.legendquest.utils.plugins;
 
 
+import me.sablednah.legendquest.Main;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -34,9 +36,12 @@ public class PluginUtils {
     public static Boolean canHurt(Player p, Player t) {
         Boolean hasFactions = Bukkit.getServer().getPluginManager().isPluginEnabled("Factions");
         if (hasFactions) {
+			if (Main.debugMode) { System.out.print("canHurt - hasfactions"); }
+
         	return FactionsSkills.canHurt(p, t);
         }
-    	return false;
+		if (Main.debugMode) { System.out.print("canHurt - hasfactions"); }
+    	return true;
     }
 
 	public static boolean payCash(int pay, Player p) {

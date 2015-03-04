@@ -1,8 +1,7 @@
 package me.sablednah.legendquest.cmds;
 
 import java.util.Arrays;
-//import java.util.UUID;
-
+import java.util.HashSet;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.Classes;
 //import me.sablednah.legendquest.db.DataSync;
@@ -27,7 +26,7 @@ public class RootCommand implements CommandExecutor {
         this.lq = p;
     }
     
-    @SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation")
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         String cmd;
         
@@ -40,13 +39,12 @@ public class RootCommand implements CommandExecutor {
             		float Exp = Float.parseFloat(args[2]);
                     int ExpOrbs = (int) Exp;
                     World world = ((Player)sender).getWorld();
-                    ((ExperienceOrb)world.spawn(((Player)sender).getTargetBlock(null, 200).getLocation(), ExperienceOrb.class)).setExperience( ExpOrbs );
+                    ((ExperienceOrb)world.spawn(((Player)sender).getTargetBlock((HashSet<Byte>) null, 200).getLocation(), ExperienceOrb.class)).setExperience( ExpOrbs );
             		return true;
             	} else {
             	sender.sendMessage("effect test");
             	Effect eff = Effect.valueOf(args[1]);
-//            	@SuppressWarnings("deprecation")
-				Location l = ((Player)sender).getTargetBlock(null, 64).getLocation();
+				Location l = ((Player)sender).getTargetBlock((HashSet<Byte>) null, 64).getLocation();
             	Utils.playEffect(eff, l, Integer.parseInt(args[2]), Integer.parseInt(args[3]));
             	return true;
             	}

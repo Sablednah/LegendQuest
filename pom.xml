@@ -8,8 +8,8 @@
 	<url>http://dev.bukkit.org/bukkit-plugins/legendquest/</url>
 	<repositories>
 		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public</url>
+		            <id>spigot-repo</id>
+		            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>dakani</id>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.7.9-R0.1</version>
+            <version>1.8-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -146,5 +146,5 @@
 		<system>jenkins</system>
 		<url>http://sabletopia.co.uk:8080/jenkins/</url>
 	</ciManagement>
-	<version>1.5.8</version>
+	<version>1.5.9</version>
 </project>

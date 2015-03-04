@@ -1,5 +1,7 @@
 package me.sablednah.legendquest.utils;
 
+import java.util.Collection;
+
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
@@ -19,7 +21,7 @@ public class ManaTicker implements Runnable {
     
     public void run() {
         noticeIntervalCounter++;
-        final Player[] players = lq.getServer().getOnlinePlayers();
+        final Collection<? extends Player> players = lq.getServer().getOnlinePlayers();
         for (final Player p : players) {
             if (!p.isDead()) {
                 final PC pc = lq.players.getPC(p);

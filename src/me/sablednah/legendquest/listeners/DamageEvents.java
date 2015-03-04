@@ -34,7 +34,13 @@ public class DamageEvents implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onDamaged(EntityDamageEvent event) {
+
+		if (Main.debugMode) { System.out.print("onDamaged triggered"); }
+
 		if (event.getEntityType() == EntityType.PLAYER) {
+
+			if (Main.debugMode) { System.out.print("onDamaged triggered is player"); }
+
 			Player p = (Player) event.getEntity();
 
 			double dmg = event.getDamage();
@@ -48,6 +54,8 @@ public class DamageEvents implements Listener {
 				return;
 			}
 
+			if (Main.debugMode) { System.out.print("onDamaged triggered - valid lqworld"); }
+			
 			PC pc = lq.players.getPC(p);
 			if (pc != null) {
 				pc.setHealth(newHealth);
@@ -113,6 +121,8 @@ public class DamageEvents implements Listener {
 		hitchance = e.getHitChance();
 		dodgechance = e.getDodgeChance();
 		if (e.isCancelled()) {
+			if (Main.debugMode) { System.out.print("CombatHitCheck - cancelled"); }
+
 			event.setCancelled(true);
 			return;
 		}
@@ -136,6 +146,8 @@ public class DamageEvents implements Listener {
 					((Player) (victim)).sendMessage(lq.configLang.combatDodged);
 				}
 			}
+			if (Main.debugMode) { System.out.print("hitCheck - cancelled"); }
+
 			event.setCancelled(true);
 		} else {
 			if (lq.configMain.verboseCombat) {
@@ -168,6 +180,8 @@ public class DamageEvents implements Listener {
 
 		if (damager != null && victim!= null && victim.getType()==EntityType.PLAYER  && damager.getType()==EntityType.PLAYER) {
 			if (!PluginUtils.canHurt((Player) victim, (Player) damager)) {
+				if (Main.debugMode) { System.out.print("canHurt - cancelled"); }
+
 				event.setCancelled(true);
 				return;
 			}
@@ -195,6 +209,8 @@ public class DamageEvents implements Listener {
 		power = e.getPower();
 		dodge = e.getDodge();
 		if (e.isCancelled()) {
+			if (Main.debugMode) { System.out.print("CombatModifiers - cancelled"); }
+
 			event.setCancelled(true);
 			return;
 		}

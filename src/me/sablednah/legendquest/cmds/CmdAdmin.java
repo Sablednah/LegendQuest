@@ -1,5 +1,6 @@
 package me.sablednah.legendquest.cmds;
 
+import java.util.HashSet;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.effects.EffectProcess;
@@ -230,7 +231,7 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 						if (args.length > 3) {
 							duration = Integer.parseInt(args[3]);
 						}
-						Location l = p.getTargetBlock(null, 200).getLocation();
+						Location l = p.getTargetBlock((HashSet<Byte>) null, 200).getLocation();
 						lq.effectManager.addPendingProcess(new EffectProcess(e, duration, OwnerType.LOCATATION, l,radius));
 						return true;
 
