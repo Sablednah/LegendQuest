@@ -410,6 +410,7 @@ public class PC {
 		float sp;
 		sp = race.baseSpeed;
 		sp += mainClass.speedMod;
+		if (sp >1.0f) {sp = 1.0f;}
 		return sp;
 	}
 
