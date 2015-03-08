@@ -51,7 +51,9 @@ public class ItemControlEvents implements Listener {
 		final Material itemUsed = p.getItemInHand().getType();
 
 		if (itemUsed != null) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed) || lq.configData.dataSets.get("utility").contains(itemUsed)) {
+			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || 
+					lq.configData.dataSets.get("tools").contains(itemUsed) || 
+					lq.configData.dataSets.get("utility").contains(itemUsed)) {
 				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
 					p.sendMessage(lq.configLang.cantUseWeapon);
 					event.setCancelled(true);
@@ -72,7 +74,9 @@ public class ItemControlEvents implements Listener {
 		final PC pc = lq.players.getPC(p);
 		final Material itemUsed = p.getItemInHand().getType();
 		if (itemUsed != null) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("tools").contains(itemUsed) || lq.configData.dataSets.get("utility").contains(itemUsed)) {
+			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || 
+					lq.configData.dataSets.get("tools").contains(itemUsed) || 
+					lq.configData.dataSets.get("utility").contains(itemUsed)) {
 				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
 					p.sendMessage(lq.configLang.cantUseTool);
 					event.setCancelled(true);

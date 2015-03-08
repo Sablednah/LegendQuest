@@ -71,6 +71,9 @@ public class SkillLinkEvents implements Listener {
 								System.out.print(lq.configLang.skillLinkUse + linkedSkill);
 							}
 							pc.useSkill(load.activeskill,null);
+							if (load.blockItemUsage) {
+								event.setCancelled(true);
+							}
 						}
 					}
 				}
