@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Material;
 
+import me.sablednah.legendquest.loadout.Loadout;
 import me.sablednah.legendquest.skills.SkillDataStore;
 
 public class ClassType {
@@ -13,7 +14,7 @@ public class ClassType {
 	public String						filename;
 	public String						description;
 	public String						longdescription;
-	
+
 	// frequency used for NPC chance.
 	public int							frequency;
 
@@ -66,5 +67,7 @@ public class ClassType {
 	public double						xpAdjustSmelt	= 0.0D;
 	public double						xpAdjustMine	= 0.0D;
 	public int							healthMod		= 0;
+
+	public List<Loadout>				classLoadouts	= new ArrayList<Loadout>();
 
 }

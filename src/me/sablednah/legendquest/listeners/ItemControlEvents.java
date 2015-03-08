@@ -17,6 +17,8 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -206,6 +208,29 @@ public class ItemControlEvents implements Listener {
 		// detect auto armour equip...
 		if (event.isShiftClick()) {
 			lq.debug.fine("Shift Click used by " + p.getDisplayName());
+			if (Main.debugMode) {
+				System.out.print("Shift-click: action = " + event.getAction());
+				System.out.print("Shift-click: rawslot = " + event.getRawSlot());
+				System.out.print("Shift-click: slot = " + event.getSlot());
+				System.out.print("Shift-click: clicktype = " + event.getClick());
+				System.out.print("Shift-click: slottype = " + event.getSlotType());
+				System.out.print("Shift-click: currentitem = " + event.getCurrentItem());
+				System.out.print("Shift-click: cursor = " + event.getCursor());
+				System.out.print("Shift-click: inventory type = " + event.getInventory().getType());
+			}
+
+			if (event.getInventory().getType().equals(InventoryType.CRAFTING) || event.getInventory().getType().equals(InventoryType.PLAYER)) {
+				if (!event.getSlotType().equals(SlotType.ARMOR)) {
+					boolean allowed2 = pc.allowedArmour(event.getCurrentItem().getType());
+					if (!allowed2) {
+						p.sendMessage(lq.configLang.cantEquipArmour);
+						event.setCancelled(true);
+						p.updateInventory();
+					}
+
+				}
+			}
+
 		}
 		if (event.getCursor() != null) {
 			// player has item on the cursor
@@ -224,38 +249,50 @@ public class ItemControlEvents implements Listener {
 	}
 
 	// check for armour validity when inventory is closed
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onInvClose(final InventoryCloseEvent event) {
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onInvClose(InventoryCloseEvent event) {
 		// check if this is a real players inventory...
+		if (Main.debugMode) {
+			System.out.print("checking inventory on close: start");
+		}
 		if (!(event.getPlayer() instanceof Player)) {
 			return;
+		}
+		if (Main.debugMode) {
+			System.out.print("checking inventory on close: in player pass");
 		}
 		if (event.getPlayer().getName() == null) {
 			return;
 		}
+		if (Main.debugMode) {
+			System.out.print("checking inventory on close: player has name");
+		}
 		final Player p = (Player) event.getPlayer();
 
+		if (Main.debugMode) {
+			System.out.print("checking inventory on close valid world ");
+		}
 		if (!lq.validWorld(p.getWorld().getName())) {
 			return;
+		}
+		if (Main.debugMode) {
+			System.out.print("checking inventory on close: getting PC");
 		}
 
 		final PC pc = lq.players.getPC(p);
 		// pc.scheduleCheckInv();
+		if (Main.debugMode) {
+			System.out.print("doing check inventory on close");
+		}
 		pc.checkInv();
 	}
 
-/*
- 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onUse(PlayerInteractEvent event) {
-		System.out.print(event.getEventName());
-		System.out.print(event.getAction());
-		System.out.print(event.getItem());
-		System.out.print(event.getPlayer());
-		System.out.print(event.hasItem());
-		System.out.print(event.isCancelled());
-		System.out.print(PlayerInteractEvent.getHandlerList().toString());
-	}
-*/
+	/*
+	 * @EventHandler(priority = EventPriority.MONITOR) public void onUse(PlayerInteractEvent event) {
+	 * System.out.print(event.getEventName()); System.out.print(event.getAction()); System.out.print(event.getItem());
+	 * System.out.print(event.getPlayer()); System.out.print(event.hasItem()); System.out.print(event.isCancelled());
+	 * System.out.print(PlayerInteractEvent.getHandlerList().toString()); }
+	 */
 
 	@EventHandler()
 	public void onArmourUse(PlayerInteractEvent event) {

@@ -101,6 +101,8 @@ public class PCs {
 		pc = lq.datasync.getData(uuid);
 		if (pc == null) {
 			pc = new PC(lq, uuid);
+		}else {
+			pc.setLoadouts();
 		}
 		return pc;
 	}

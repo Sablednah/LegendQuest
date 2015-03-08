@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.loadout.Loadout;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
 import me.sablednah.legendquest.skills.SkillDataStore;
@@ -25,6 +27,8 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class Classes {
 
@@ -358,8 +362,7 @@ public class Classes {
 								c.availableSkills.add(skilldata);
 							}
 						}
-					}
-					
+					}					
 					
 					for (SkillDataStore s :c.availableSkills) {
 						lq.debug.info("Vars ["+s.name+"] : "+s.vars.toString());
@@ -382,6 +385,58 @@ public class Classes {
 
 						}
 					}
+					
+					// loadouts
+					final ConfigurationSection loadouts = thisConfig.getConfigurationSection("loadouts");
+					if (loadouts != null) {
+						for (String key : loadouts.getKeys(false)) {
+							ConfigurationSection loadinfo = loadouts.getConfigurationSection(key);
+							lq.debug.info("Loading loadout: " + key);
+							ArrayList<String> skilllist = (ArrayList<String>) loadinfo.getList("skills");
+
+							final ConfigurationSection activator = loadinfo.getConfigurationSection("activator");
+							String aMaterial = activator.getString("material");
+							String aCustomName = activator.getString("customname");
+							String[] aLore = null;
+							if (activator.getString("lore")!=null) {
+								aLore = activator.getString("lore").split("\\|");
+							}
+							ItemStack active = new ItemStack(Material.matchMaterial(aMaterial));
+							ItemMeta ameta = active.getItemMeta();
+							if (aCustomName!=null && !aCustomName.isEmpty()) {
+								ameta.setDisplayName(aCustomName);
+							}
+							if (aLore!=null && aLore.length>0) {
+								List<String> alorelist = Arrays.asList(aLore);
+								ameta.setLore(alorelist);
+							}
+							active.setItemMeta(ameta);
+							
+							final ConfigurationSection repository = loadinfo.getConfigurationSection("repository");
+							String rMaterial = repository.getString("material");
+							String rCustomName = repository.getString("customname");
+							String[] rLore = null;
+							if (repository.getString("lore") != null) {
+								rLore = repository.getString("lore").split("\\|");
+							}
+							ItemStack repo = new ItemStack(Material.matchMaterial(rMaterial));
+							ItemMeta rmeta = active.getItemMeta();
+							if (rCustomName!=null && !rCustomName.isEmpty()) {
+								rmeta.setDisplayName(rCustomName);
+							}
+							if (rLore!=null && rLore.length>0) {
+								List<String> rlorelist = Arrays.asList(rLore);
+								ameta.setLore(rlorelist);
+							}
+							repo.setItemMeta(rmeta);
+
+							Loadout l = new Loadout(key, repo, active, skilllist);							
+							boolean blockitem = loadinfo.getBoolean("blockitemuse");
+							l.setBlockItemUsage(blockitem);
+							c.classLoadouts.add(l);
+						}
+					}
+					
 
 					// check race or group exists.
 					final boolean hasRace = checkRaceList(allowedRaces);

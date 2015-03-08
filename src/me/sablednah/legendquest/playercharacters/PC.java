@@ -21,6 +21,7 @@ import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillPhase;
 import me.sablednah.legendquest.skills.SkillType;
 import me.sablednah.legendquest.utils.plugins.PluginUtils;
+import me.sablednah.legendquest.loadout.Loadout;
 import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.mechanics.Attribute;
@@ -35,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class PC {
 
@@ -86,6 +88,8 @@ public class PC {
 	public HashMap<String, Integer>			skillsPurchased	= new HashMap<String, Integer>();
 	public HashMap<String, String>			dataStore		= new HashMap<String, String>();
 	public HashMap<Material, String>		skillLinkings	= new HashMap<Material, String>();
+
+	public List<Loadout>					loadouts		= new ArrayList<Loadout>();
 
 	// private boolean skillsEnabled = true;
 
@@ -168,7 +172,7 @@ public class PC {
 		checkSkills();
 		scheduleCheckInv();
 		scheduleHealthCheck();
-
+		loadouts = getLoadouts();
 	}
 
 	public boolean allowedArmour(Material id) {
@@ -410,7 +414,9 @@ public class PC {
 		float sp;
 		sp = race.baseSpeed;
 		sp += mainClass.speedMod;
-		if (sp >1.0f) {sp = 1.0f;}
+		if (sp > 1.0f) {
+			sp = 1.0f;
+		}
 		return sp;
 	}
 
@@ -1243,7 +1249,7 @@ public class PC {
 			return false;
 		} else {
 			for (ItemStack i : inv.getContents()) {
-				if (i!=null && i.getType() != null && i.getType().equals(payment)) {
+				if (i != null && i.getType() != null && i.getType().equals(payment)) {
 					if (i.getAmount() == amount) {
 						inv.remove(i);
 						return true;
@@ -1387,6 +1393,7 @@ public class PC {
 		lq.debug.fine(lq.configLang.classChanged + ": " + cl.name + " - " + p.getName());
 		lq.players.scoreboards.put(this.uuid, null);
 
+		this.loadouts = getLoadouts();
 		return true;
 	}
 
@@ -1417,6 +1424,9 @@ public class PC {
 		this.checkInv();
 		this.skillSet = this.getUniqueSkills(true);
 		lq.players.scoreboards.put(this.uuid, null);
+
+		this.loadouts = getLoadouts();
+
 		return true;
 	}
 
@@ -1544,4 +1554,138 @@ public class PC {
 		this.currentXP = 0;
 
 	}
+
+	public List<Loadout> getLoadouts() {
+		if (Main.debugMode) { System.out.print("getting loadouts"); }
+
+		List<Loadout> list = new ArrayList<Loadout>();
+		if (mainClass.classLoadouts != null) {
+			if (Main.debugMode) { System.out.print("adding loadouts"); }
+			for (Loadout l : mainClass.classLoadouts) {
+				if (Main.debugMode) { System.out.print("adding loadout: "+ l.name); }
+				try {
+					list.add((Loadout) l.clone());
+				} catch (CloneNotSupportedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {
+			if (Main.debugMode) { System.out.print("no class loadouts :( "); }
+		}
+		if (subClass != null) {
+			if (subClass.classLoadouts != null) {
+				for (Loadout l : subClass.classLoadouts) {
+					try {
+						list.add((Loadout) l.clone());
+					} catch (CloneNotSupportedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return list;
+	}
+
+	public Loadout getLoadout() {
+		return getLoadout(null, false);
+	}
+
+	public Loadout getLoadout(boolean matchActivator) {
+		return getLoadout(null, matchActivator);
+	}
+
+	
+	public Loadout getLoadout(ItemStack hold, boolean matchActivator) {
+		if (hold == null) {
+			Player p = getPlayer();
+			ItemStack holding = p.getItemInHand();
+			if (holding == null) {
+				return null;
+			}
+			hold = holding;
+		}
+
+		for (Loadout l : loadouts) {
+			if (Main.debugMode) { System.out.print("checking load:" + l.name); }
+
+			ItemStack match = null;
+			if (matchActivator) {
+				match = l.activator;
+			} else {
+				match = l.repository;
+			}
+			if (Main.debugMode) { System.out.print("hold type:" + hold.getType().toString()); }
+			if (Main.debugMode) { System.out.print("match type:" + match.getType().toString()); }
+			
+			if (match.getType().equals(hold.getType())) {
+				if (Main.debugMode) { System.out.print("match types"); }
+				
+				ItemMeta mdata = match.getItemMeta();
+				ItemMeta hdata = hold.getItemMeta();
+				
+				boolean namematch = false;
+				if (mdata.getDisplayName() == null && hdata.getDisplayName() == null) {
+					namematch = true;
+				}
+				if (mdata.getDisplayName() != null && hdata.getDisplayName() != null) {
+					if ((mdata.getDisplayName().equals(hdata.getDisplayName()))) {
+						namematch = true;
+					}					
+				}
+				if (Main.debugMode) { System.out.print("customname match: " + namematch); }
+				
+				boolean lorematch = false;
+				if (Main.debugMode) { System.out.print("checking lore: --------------------------"); }
+				if ((mdata.getLore() == null || mdata.getLore().isEmpty()) && (hdata.getLore() == null || hdata.getLore().isEmpty())) {
+					lorematch = true;
+					if (Main.debugMode) { System.out.print("lores are both null/empty"); }
+				}
+				if (Main.debugMode) { System.out.print("mlore: " + mdata.getLore()); }
+				if (Main.debugMode) { System.out.print("hlore: " + hdata.getLore()); }
+				if (mdata.getLore() != null && hdata.getLore() != null) {
+					List<String> mlore = mdata.getLore();
+					List<String> hlore = hdata.getLore();
+					if (mlore.size() == hlore.size()) {
+						if (Main.debugMode) { System.out.print("lores are same size"); }
+						lorematch = true;
+						for (int i=0;i<mlore.size();i++) {
+							if (!mlore.get(i).equals(hlore.get(i))) {
+								if (Main.debugMode) { System.out.print("lores are diff text: "+mlore.get(i)+" - "+hlore.get(i)); }
+								lorematch = false;
+							}
+						}
+					} else {
+						if (Main.debugMode) { System.out.print("lores are diff sizes"); }
+					}
+				} else {
+					if (Main.debugMode) { System.out.print("lores are diff nullstates"); }
+				}
+				if (Main.debugMode) { System.out.print("lore match: " + lorematch); }
+
+				if (Main.debugMode) { System.out.print("lore: ----------------------------------"); }
+				
+				
+				if (lorematch && namematch) {
+					if (Main.debugMode) { System.out.print("returning load type - " + l.name); }
+					// item is a match = return this load out.
+					return l;
+				} else {
+					if (Main.debugMode) { System.out.print("item match fail"); }
+				}
+			} else {
+				if (Main.debugMode) { System.out.print("match types failed :( "); }
+
+			}
+		}
+		return null;
+	}
+	
+	public void setLoadouts() {
+		if (loadouts==null || loadouts.size()<1) {
+			loadouts = getLoadouts();
+		}
+	}
+	
 }
