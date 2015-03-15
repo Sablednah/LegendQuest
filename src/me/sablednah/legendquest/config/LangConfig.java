@@ -132,6 +132,8 @@ public class LangConfig extends Config {
 	public String					skillLackOfMana			= "Sorry not enough mana.";
 	public String					skillLackOfItem			= "Sorry you can't use that skill, you need ";
 	public String					skillLackOfPay			= "Sorry you can't use that skill, you need to pay:";
+	public String					skillLackOfKarma		= "Sorry you can't use that skill, you need karma over:";
+	public String					skillLackOfKarmaEvil	= "Sorry you can't use that skill, you need karma below:";
 
 	public String					skillCooldown			= "Skill cooling down.";
 	public String					skillDelayed			= "Skill Delayed.";
@@ -250,6 +252,8 @@ public class LangConfig extends Config {
 		this.skillList = this.getConfigItem("skillList", this.skillList);
 		this.skillListHeader = this.getConfigItem("skillListHeader", this.skillListHeader);
 		this.skillsList = this.getConfigItem("skillsList", this.skillsList);
+		this.skillsListPasive = this.getConfigItem("skillsListPasive", this.skillsListPasive);
+		this.skillsListActive = this.getConfigItem("skillsListActive", this.skillsListActive);
 
 		this.combatHit = this.getConfigItem("combatHit", this.combatHit);
 		this.combatMissed = this.getConfigItem("combatMissed", this.combatMissed);

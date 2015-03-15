@@ -59,7 +59,7 @@ public class Main extends JavaPlugin {
 	public boolean				hasVault;
 	
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= true;
+	public static final Boolean	debugMode	= false;
 
 	public void log(final String msg) {
 	//	logger.info(msg);

@@ -1,6 +1,7 @@
 package me.sablednah.legendquest.listeners;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
@@ -281,10 +282,16 @@ public class PlayerEvents implements Listener {
 					}
 					for (Player pp : party) {
 						if (!(pp.getUniqueId().equals(p.getUniqueId()))) {
+							/*
 							pp.giveExp((int) Math.round(xpAmount));
 							if (lq.configMain.XPnotify) {
 								pp.sendMessage(lq.configLang.partyXpChange + xpAmount);
 							}
+							*/
+							Random rnd = new Random();
+							long rndNum = rnd.nextInt(8)+1;
+							Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(lq, new DelayedXP(p.getUniqueId(),xpAmount), rndNum);
+
 						}
 					}
 				}
@@ -312,5 +319,34 @@ public class PlayerEvents implements Listener {
 			event.getPlayer().sendMessage(lq.configLang.xpChange + event.getAmount());
 		}
 	}
-
+	
+	public class DelayedXP  implements Runnable {
+		UUID id = null;
+		double amount = 0.0D;
+		public DelayedXP(UUID id, double amount) {
+			this.id=id;
+			this.amount = amount;
+		}
+		public void run() {
+			Bukkit.getServer().getScheduler().runTaskLater(lq, new GiveXP(id,amount), 1L);
+		}
+	}
+	
+	public class GiveXP  implements Runnable {
+		UUID id = null;
+		double amount = 0.0D;
+		public GiveXP(UUID id, double amount) {
+			this.id=id;
+			this.amount = amount;
+		}
+		public void run() {
+			Player pp = lq.getServer().getPlayer(id);
+			if (pp!=null) {
+				pp.giveExp((int) Math.round(amount));
+				if (lq.configMain.XPnotify) {
+					pp.sendMessage(lq.configLang.partyXpChange + amount);
+				}
+			}
+		}
+	}
 }

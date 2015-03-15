@@ -26,8 +26,14 @@ public @interface SkillManifest {
 	public abstract int manaCost() default 0;
 
 	public abstract int pay() default 0;
-	
+
 	public abstract int xp() default 0;
+
+	public abstract int karmaReward() default 0;
+
+	public abstract int karmaRequired() default 0;
+
+	public abstract int karmaCost() default 0;
 
 	public abstract String consumes() default "";
 

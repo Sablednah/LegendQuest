@@ -29,6 +29,10 @@ public class SkillInfo {
 	public ItemStack				consumes		= null;
 	public int						levelRequired	= 0;
 	public int						skillPoints		= 0;
+	public int						karmaCost		= 0;
+	public int						karmaReward		= 0;
+	public int						karmaRequired	= 0;
+	
 
 	public HashMap<String, Object>	vars			= new HashMap<String, Object>();
 
@@ -44,7 +48,7 @@ public class SkillInfo {
 		this.description = description;		
 	}
 	
-	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, ItemStack consumes, int levelRequired, int skillPoints, HashMap<String, Object> vars) {
+	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, ItemStack consumes, int levelRequired, int skillPoints, HashMap<String, Object> vars, int karmaCost, int karmaReward, int karmaRequired) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
@@ -57,6 +61,9 @@ public class SkillInfo {
 		this.manaCost = manaCost;
 		this.pay = pay;
 		this.xp = xp;
+		this.karmaCost = karmaCost;
+		this.karmaReward = karmaReward;
+		this.karmaRequired = karmaRequired;
 		this.levelRequired = levelRequired;
 		this.skillPoints = skillPoints;
 		if (consumes != null) {
@@ -66,7 +73,7 @@ public class SkillInfo {
 	}
 
 	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, String consumes, int levelRequired, int skillPoints, String[] dblnames,
-			double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues) throws BadSkillFormat {
+			double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues, int karmaCost, int karmaReward, int karmaRequired) throws BadSkillFormat {
 		if (Main.debugMode) {
 			System.out.print("Skillinfo: "+name);
 		}
@@ -82,6 +89,9 @@ public class SkillInfo {
 		this.manaCost = manaCost;
 		this.pay = pay;
 		this.xp = xp;
+		this.karmaCost = karmaCost;
+		this.karmaReward = karmaReward;
+		this.karmaRequired = karmaRequired;
 		this.levelRequired = levelRequired;
 		this.skillPoints = skillPoints;
 		if (consumes != null && !consumes.isEmpty()) {
@@ -171,9 +181,21 @@ public class SkillInfo {
 			if (conf.contains("xp")) {
 				this.xp = conf.getInt("xp");
 			}
+			
+			if (conf.contains("karmaCost")) {
+				this.karmaCost = conf.getInt("karmaCost");
+			}
+			if (conf.contains("karmaReward")) {
+				this.karmaReward = conf.getInt("karmaReward");
+			}
+			if (conf.contains("karmaRequired")) {
+				this.karmaRequired = conf.getInt("karmaRequired");
+			}
+			
 			if (conf.contains("consumes")) {
 				this.consumes = new ItemStack(Material.getMaterial(conf.getString("consumes")));
 			}
+			
 			if (conf.contains("vars")) {
 				Map<String, Object> tmpvar = conf.getConfigurationSection("vars").getValues(false);
 				Iterator<Entry<String, Object>> entries = tmpvar.entrySet().iterator();
@@ -321,6 +343,30 @@ public class SkillInfo {
 
 	public void setVars(HashMap<String, Object> vars) {
 		this.vars = vars;
+	}
+
+	public int getKarmaCost() {
+		return karmaCost;
+	}
+
+	public void setKarmaCost(int karmaCost) {
+		this.karmaCost = karmaCost;
+	}
+
+	public int getKarmaReward() {
+		return karmaReward;
+	}
+
+	public void setKarmaReward(int karmaReward) {
+		this.karmaReward = karmaReward;
+	}
+
+	public int getKarmaRequired() {
+		return karmaRequired;
+	}
+
+	public void setKarmaRequired(int karmaRequired) {
+		this.karmaRequired = karmaRequired;
 	}
 	
 }

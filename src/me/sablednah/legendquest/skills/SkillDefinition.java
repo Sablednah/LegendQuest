@@ -33,7 +33,7 @@ public class SkillDefinition {
 				info.getDescription(), info.getType(), info.getVersion(), 
 				info.getBuildup(), info.getDelay(), info.getDuration(), info.getCooldown(), 
 				info.getPay(), info.getXp(), info.getManaCost(), info.getConsumes(), info.getLevelRequired(), info.getSkillPoints(),
-				info.getVars());
+				info.getVars(), info.getKarmaCost(), info.getKarmaReward(), info.getKarmaRequired() );
 		return s;
 	}
 

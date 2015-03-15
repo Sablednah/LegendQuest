@@ -35,6 +35,10 @@ public class SkillDataStore {
 	public int						pay				= 0;
 	public int						xp				= 0;
 	
+	public int						karmaCost		= 0;
+	public int						karmaReward		= 0;
+	public int						karmaRequired	= 0;
+
 	public ItemStack				consumes		= null;
 
 	public int						levelRequired	= 0;
@@ -75,6 +79,9 @@ public class SkillDataStore {
 		this.manaCost = defaults.getManaCost();
 		this.pay = defaults.getPay();
 		this.xp = defaults.getXp();
+		this.karmaCost = defaults.getKarmaCost();
+		this.karmaReward = defaults.getKarmaRequired();
+		this.karmaRequired = defaults.getKarmaReward();
 		this.levelRequired = defaults.getLevelRequired();
 		this.skillPoints = defaults.getSkillPoints();
 		this.consumes = defaults.getConsumes();
@@ -102,6 +109,9 @@ public class SkillDataStore {
 		this.manaCost=as.manaCost;
 		this.pay=as.pay;
 		this.xp=as.xp;
+		this.karmaCost = as.karmaCost;
+		this.karmaReward = as.karmaRequired;
+		this.karmaRequired = as.karmaReward;
 		this.name=as.name;
 		this.permission=as.permission;
 		this.permissions=as.permissions;
@@ -172,6 +182,18 @@ public class SkillDataStore {
 			if (conf.contains("xp")) {
 				this.xp = conf.getInt("xp");
 			}
+			
+			if (conf.contains("karmaCost")) {
+				this.karmaCost = conf.getInt("karmaCost");
+			}
+			if (conf.contains("karmaReward")) {
+				this.karmaReward = conf.getInt("karmaReward");
+			}
+			if (conf.contains("karmaRequired")) {
+				this.karmaRequired = conf.getInt("karmaRequired");
+			}
+
+			
 			if (conf.contains("manaCost")) {
 				this.manaCost = conf.getInt("manaCost");
 			}
@@ -199,6 +221,7 @@ public class SkillDataStore {
 				while (entries.hasNext()) {
 					Entry<String, Object> entry = entries.next();
 					Object data = (Object) entry.getValue();
+					
 					if (data instanceof Double) {
 						if (Main.debugMode) {
 							System.out.print("Var " + entry.getKey() + ": " + data + " is double");
@@ -357,6 +380,29 @@ public class SkillDataStore {
 			}
 		}
 
+		if (karmaRequired > 0) {
+			if (!(activePlayer.karma>karmaRequired)) {
+				p.sendMessage(lq.configLang.skillLackOfKarma);
+				isCanceled = true;
+				lastUse = 0;
+				lastArgs = null;
+				activePlayer.skillSet.put(name, this);
+				return false;
+			}
+		}
+
+		if (karmaRequired < 0) {
+			if (!(activePlayer.karma<karmaRequired)) {
+				p.sendMessage(lq.configLang.skillLackOfKarmaEvil);
+				isCanceled = true;
+				lastUse = 0;
+				lastArgs = null;
+				activePlayer.skillSet.put(name, this);
+				return false;
+			}
+		}
+
+		
 		if (pay > 0 && lq.hasVault) {
 			if (!activePlayer.payCash(pay)) {
 				p.sendMessage(lq.configLang.skillLackOfPay+pay);
@@ -367,7 +413,6 @@ public class SkillDataStore {
 				return false;
 			}
 		}
-
 		
 		// pay for stuff
 		if (consumes != null) {
@@ -380,6 +425,10 @@ public class SkillDataStore {
 				return false;
 			}
 		}
+		long karma = activePlayer.karma;
+		karma += karmaReward;
+		karma -= karmaCost;
+		activePlayer.karma = karma;
 
 		// if (this.name.equalsIgnoreCase("aura") || this.name.equalsIgnoreCase("might")) { System.out.print("Skill use: "+p.getName()); }
 

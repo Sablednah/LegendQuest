@@ -64,6 +64,10 @@ public class ChatEvents implements Listener {
 			format = format.replace("{class}", classname);
 			format = format.replace("{lvl}", lvl);
 			
+			format = format.replace("[race]", racename);
+			format = format.replace("[class]", classname);
+			format = format.replace("[lvl]", lvl);
+
 			format = ChatColor.translateAlternateColorCodes('§', format);
 			format = ChatColor.translateAlternateColorCodes('&', format);
 
