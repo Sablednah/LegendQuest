@@ -1,8 +1,5 @@
 package me.sablednah.legendquest.utils.plugins;
 
-
-import me.sablednah.legendquest.Main;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,6 +13,14 @@ public class PluginUtils {
         if (hasFactions) {
         	return FactionsSkills.canBuildFactions(l, p);
         }
+        Boolean hasGriefPrevention = Bukkit.getServer().getPluginManager().isPluginEnabled("GriefPrevention");
+        if (hasGriefPrevention) {
+        	return GriefPreventionClass.canBuild(l, p);
+        }
+        Boolean hasTowny = Bukkit.getServer().getPluginManager().isPluginEnabled("Towny");
+        if (hasTowny) {
+        	return TownyClass.canBuild(l, p);
+        }
         return true;
     }
 
@@ -23,6 +28,14 @@ public class PluginUtils {
         Boolean hasFactions = Bukkit.getServer().getPluginManager().isPluginEnabled("Factions");
         if (hasFactions) {
         	return FactionsSkills.canBuildFactions(b, p);
+        }
+        Boolean hasGriefPrevention = Bukkit.getServer().getPluginManager().isPluginEnabled("GriefPrevention");
+        if (hasGriefPrevention) {
+        	return GriefPreventionClass.canBuild(b.getLocation(), p);
+        }
+        Boolean hasTowny = Bukkit.getServer().getPluginManager().isPluginEnabled("Towny");
+        if (hasTowny) {
+        	return TownyClass.canBuild(b.getLocation(), p);
         }
         return true;
     }
@@ -36,12 +49,17 @@ public class PluginUtils {
     public static Boolean canHurt(Player p, Player t) {
         Boolean hasFactions = Bukkit.getServer().getPluginManager().isPluginEnabled("Factions");
         if (hasFactions) {
-			if (Main.debugMode) { System.out.print("canHurt - hasfactions"); }
-
         	return FactionsSkills.canHurt(p, t);
         }
-		if (Main.debugMode) { System.out.print("canHurt - hasfactions"); }
-    	return true;
+        Boolean hasGriefPrevention = Bukkit.getServer().getPluginManager().isPluginEnabled("GriefPrevention");
+        if (hasGriefPrevention) {
+        	return GriefPreventionClass.canHurt(p,t);
+        }
+        Boolean hasTowny = Bukkit.getServer().getPluginManager().isPluginEnabled("Towny");
+        if (hasTowny) {
+        	return TownyClass.canHurt(p,t);
+        }
+		return true;
     }
 
 	public static boolean payCash(int pay, Player p) {

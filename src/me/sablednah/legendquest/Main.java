@@ -30,6 +30,7 @@ import me.sablednah.legendquest.races.Races;
 import me.sablednah.legendquest.skills.SkillPool;
 import me.sablednah.legendquest.utils.DebugLog;
 import me.sablednah.legendquest.utils.ManaTicker;
+import me.sablednah.legendquest.utils.plugins.MChatClass;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -57,6 +58,7 @@ public class Main extends JavaPlugin {
 	public ScoreboardManager	scoreboard;
 	public Objective			objClass;
 	public boolean				hasVault;
+	public boolean				hasMChat;
 	
 	// TODO switch test flag for live
 	public static final Boolean	debugMode	= false;
@@ -125,7 +127,14 @@ public class Main extends JavaPlugin {
             logger.info("Vault detected.");
         }
 		
-		// load skills
+		//look for mchat
+		hasMChat = this.getServer().getPluginManager().isPluginEnabled("MChat");
+        if (hasMChat) {
+            logger.info("mChat detected.");
+            MChatClass.addVars();
+        }
+
+        // load skills
 		configSkills = new SkillConfig(this);
 		skills = new SkillPool(this);
 		skills.initSkills();

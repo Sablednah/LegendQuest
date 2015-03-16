@@ -225,17 +225,18 @@ public class ItemControlEvents implements Listener {
 
 			if (event.getInventory().getType().equals(InventoryType.CRAFTING) || event.getInventory().getType().equals(InventoryType.PLAYER)) {
 				if (!event.getSlotType().equals(SlotType.ARMOR)) {
-					boolean allowed2 = pc.allowedArmour(event.getCurrentItem().getType());
-					if (!allowed2) {
-						p.sendMessage(lq.configLang.cantEquipArmour);
-						event.setCancelled(true);
-						p.updateInventory();
+					if (lq.configData.dataSets.get("armour").contains(event.getCurrentItem().getType())) {
+						boolean allowed2 = pc.allowedArmour(event.getCurrentItem().getType());
+						if (!allowed2) {
+							p.sendMessage(lq.configLang.cantEquipArmour);
+							event.setCancelled(true);
+							p.updateInventory();
+						}
 					}
-
 				}
 			}
-
 		}
+		
 		if (event.getCursor() != null) {
 			// player has item on the cursor
 			final Material itemID = event.getCursor().getType();
