@@ -30,6 +30,7 @@ import me.sablednah.legendquest.races.Races;
 import me.sablednah.legendquest.skills.SkillPool;
 import me.sablednah.legendquest.utils.DebugLog;
 import me.sablednah.legendquest.utils.ManaTicker;
+import me.sablednah.legendquest.utils.plugins.DeluxeChatClass;
 import me.sablednah.legendquest.utils.plugins.MChatClass;
 
 import org.bukkit.entity.Player;
@@ -59,6 +60,7 @@ public class Main extends JavaPlugin {
 	public Objective			objClass;
 	public boolean				hasVault;
 	public boolean				hasMChat;
+	public boolean				hasDeluxeChat;
 	
 	// TODO switch test flag for live
 	public static final Boolean	debugMode	= false;
@@ -134,6 +136,9 @@ public class Main extends JavaPlugin {
             MChatClass.addVars();
         }
 
+		//look for deluxechat
+		hasDeluxeChat = this.getServer().getPluginManager().isPluginEnabled("DeluxeChat");
+
         // load skills
 		configSkills = new SkillConfig(this);
 		skills = new SkillPool(this);
@@ -176,6 +181,12 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new SkillLinkEvents(this), this);
 		pm.registerEvents(new ChatEvents(this), this);
 
+        if (hasDeluxeChat) {
+            logger.info("DeluxeChat detected.");
+    		pm.registerEvents(new DeluxeChatClass(this), this);
+        }
+
+		
 		// setup commands
 		getCommand("lq").setExecutor(new RootCommand(this));
 		getCommand("race").setExecutor(new CmdRace(this));

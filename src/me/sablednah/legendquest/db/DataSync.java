@@ -152,11 +152,26 @@ public class DataSync {
 				pc.karma = r.getLong("karma");
 				pc.mana = r.getInt("mana");
 				pc.race = lq.races.getRace(r.getString("race"));
+				
+				if (pc.race == null) {
+					lq.logSevere("Race '" + r.getString("race") + "' not found, setting to default race");					
+					pc.race=lq.races.defaultRace;
+				}
+				
 				pc.raceChanged = r.getBoolean("raceChanged");
 
 				pc.mainClass = lq.classes.getClass(r.getString("mainClass"));
+				if (pc.mainClass == null) {
+					lq.logSevere("Main class '" + r.getString("mainClass") + "' not found, setting to default class");					
+					pc.mainClass=lq.classes.defaultClass;
+				}
 				pc.subClass = lq.classes.getClass(r.getString("subClass"));
+				if (pc.subClass == null && (r.getString("subClass")!=null && !(r.getString("subClass").isEmpty()) )) {
+					lq.logSevere("Sub class '" + r.getString("subClass") + "' not found, setting to null");					
+					pc.subClass = null;
+				}
 
+				
 				lq.debug.fine("class is " + pc.mainClass.name);
 
 				pc.setStatStr(r.getInt("statStr"));
