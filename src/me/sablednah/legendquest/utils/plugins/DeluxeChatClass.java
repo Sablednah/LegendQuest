@@ -2,7 +2,7 @@ package me.sablednah.legendquest.utils.plugins;
 
 import java.text.DecimalFormat;
 
-import org.bukkit.Bukkit;
+//import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -18,7 +18,7 @@ import me.sablednah.legendquest.utils.Utils;
 public class DeluxeChatClass implements Listener {
 	public Main	lq;
 
-	public DeluxeChatClass(Main lq) {
+	public DeluxeChatClass(final Main lq) {
 		this.lq = lq;
 
 		/**
@@ -36,7 +36,7 @@ public class DeluxeChatClass implements Listener {
 		boolean registered = PlaceholderHandler.registerPlaceholderHook((Plugin) lq, new DeluxePlaceholderHook() {
 			@Override
 			public String onPlaceholderRequest(Player player, String id) {
-				Main lq = (Main) Bukkit.getPluginManager().getPlugin("LegendQuest");
+				// Main lq = (Main) Bukkit.getPluginManager().getPlugin("LegendQuest");
 				PC pc = lq.getPlayers().getPC(player);
 
 				if (id.equalsIgnoreCase("race")) {
@@ -96,7 +96,7 @@ public class DeluxeChatClass implements Listener {
 					return "";
 				} else if (id.equalsIgnoreCase("mastered")) {
 					if (player != null) {
-						return (player.getLevel() > lq.configMain.max_level) ? "Mastered" : "";
+						return (pc.hasMastered(pc.mainClass.name)) ? "Mastered" : "";
 					}
 				} else if (id.equalsIgnoreCase("party")) {
 					Party p = lq.partyManager.getParty(player.getUniqueId());
@@ -168,6 +168,83 @@ public class DeluxeChatClass implements Listener {
 						outputline += " (" + mod + ")";
 					}
 					return outputline;
+				} else if (id.equalsIgnoreCase("shortstatline")) {
+					String outputline = "";
+					if (pc != null) {
+						outputline = lq.configLang.statSTR + ": " + String.format("%1$3s", pc.getStatStr()) + " ";
+						outputline += lq.configLang.statDEX + ": " + String.format("%1$3s", pc.getStatDex()) + " ";
+						outputline += lq.configLang.statCON + ": " + String.format("%1$3s", pc.getStatCon()) + " ";
+						outputline += lq.configLang.statINT + ": " + String.format("%1$3s", pc.getStatInt()) + " ";
+						outputline += lq.configLang.statWIS + ": " + String.format("%1$3s", pc.getStatWis()) + " ";
+						outputline += lq.configLang.statCHR + ": " + String.format("%1$3s", pc.getStatChr());
+					}
+					return outputline;
+				} else if (id.equalsIgnoreCase("statlineheaders")) {
+					String outputline = "";
+					if (pc != null) {
+						outputline = lq.configLang.statSTR + " ";
+						outputline += lq.configLang.statDEX + " ";
+						outputline += lq.configLang.statCON + " ";
+						outputline += lq.configLang.statINT + " ";
+						outputline += lq.configLang.statWIS + " ";
+						outputline += lq.configLang.statCHR;
+					}
+					return outputline;
+				} else if (id.equalsIgnoreCase("statlinenumbers")) {
+					String outputline = "";
+					if (pc != null) {
+						outputline = String.format("%1$3s", pc.getStatStr()) + " ";
+						outputline += String.format("%1$3s", pc.getStatDex()) + " ";
+						outputline += String.format("%1$3s", pc.getStatCon()) + " ";
+						outputline += String.format("%1$3s", pc.getStatInt()) + " ";
+						outputline += String.format("%1$3s", pc.getStatWis()) + " ";
+						outputline += String.format("%1$3s", pc.getStatChr());
+					}
+					return outputline;
+				} else if (id.equalsIgnoreCase("statlinemods")) {
+					String mod = "";
+					String outputline = "";
+					if (pc != null) {
+						outputline = "";
+						if (pc.getAttributeModifier(Attribute.STR) >= 0) {
+							mod = "+" + pc.getAttributeModifier(Attribute.STR);
+						} else {
+							mod = "" + pc.getAttributeModifier(Attribute.STR);
+						}
+						outputline += String.format("%1$3s", mod)+" ";
+						if (pc.getAttributeModifier(Attribute.DEX) >= 0) {
+							mod = "+" + pc.getAttributeModifier(Attribute.DEX);
+						} else {
+							mod = "" + pc.getAttributeModifier(Attribute.DEX);
+						}
+						outputline += String.format("%1$3s", mod)+" ";
+						if (pc.getAttributeModifier(Attribute.CON) >= 0) {
+							mod = "+" + pc.getAttributeModifier(Attribute.CON);
+						} else {
+							mod = "" + pc.getAttributeModifier(Attribute.CON);
+						}
+						outputline += String.format("%1$3s", mod)+" ";
+						if (pc.getAttributeModifier(Attribute.INT) >= 0) {
+							mod = "+" + pc.getAttributeModifier(Attribute.INT);
+						} else {
+							mod = "" + pc.getAttributeModifier(Attribute.INT);
+						}
+						outputline += String.format("%1$3s", mod)+" ";
+						if (pc.getAttributeModifier(Attribute.WIS) >= 0) {
+							mod = "+" + pc.getAttributeModifier(Attribute.WIS);
+						} else {
+							mod = "" + pc.getAttributeModifier(Attribute.WIS);
+						}
+						outputline += String.format("%1$3s", mod)+" ";
+						if (pc.getAttributeModifier(Attribute.CHR) >= 0) {
+							mod = "+" + pc.getAttributeModifier(Attribute.CHR);
+						} else {
+							mod = "" + pc.getAttributeModifier(Attribute.CHR);
+						}
+						outputline += String.format("%1$3s", mod);
+					}
+					return outputline;
+
 //				} else if (id.equalsIgnoreCase("sheet")) {
 //					if (pc != null) {
 //						if (pc.subClass != null)

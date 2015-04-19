@@ -103,7 +103,7 @@ public class Config {
         String output = config.getString(name, defaultConfig);
         output = ChatColor.translateAlternateColorCodes('§', output);
         output = ChatColor.translateAlternateColorCodes('&', output);
-        lq.debug.fine(name + " is: " + output + ChatColor.WHITE+" [string]");
+        lq.debug.fine(name + " is: " + output + " [string]");
         return output;
     }
 

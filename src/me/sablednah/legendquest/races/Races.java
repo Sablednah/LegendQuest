@@ -116,6 +116,58 @@ public class Races {
 					r.allowRepairing = thisConfig.getBoolean("allowRepairing");
 					r.allowTaming = thisConfig.getBoolean("allowTaming");
 
+					List<String> disallowedCrafting = (List<String>) thisConfig.getList("disallowedCrafting");
+					if (disallowedCrafting== null || disallowedCrafting.size() == 0) {disallowedCrafting = (List<String>) thisConfig.getList("dissallowedCrafting");}
+					final List<Material> disallowedCraftingMat = new ArrayList<Material>();
+					if (disallowedCrafting!=null){
+					for (int i = 0; i < disallowedCrafting.size(); i++) {
+						Material m = null;
+						try {
+							m = Material.matchMaterial(disallowedCrafting.get(i));
+						} catch(Exception ex) {}
+						if (m!=null) {
+							disallowedCraftingMat.add(m);
+						} else {
+							System.out.print(disallowedCrafting.get(i)+" material not found for race " + r.name);
+						}
+					}}
+					r.disallowedCrafting = disallowedCraftingMat;
+					
+					List<String> disallowedSmelting = (List<String>) thisConfig.getList("disallowedSmelting");
+					if (disallowedSmelting == null || disallowedSmelting.size() == 0) {disallowedSmelting = (List<String>) thisConfig.getList("dissallowedSmelting");}
+					final List<Material> disallowedSmeltingMat = new ArrayList<Material>();
+					if (disallowedSmelting!=null){
+					for (int i = 0; i < disallowedSmelting.size(); i++) {
+						Material m = null;
+						try {
+							m = Material.matchMaterial(disallowedSmelting.get(i));
+						} catch(Exception ex) {}
+						if (m!=null) {
+							disallowedSmeltingMat.add(m);
+						} else {
+							System.out.print(disallowedSmelting.get(i)+" material not found for no smelting race " + r.name);
+						}
+					}}
+					r.disallowedSmelting = disallowedSmeltingMat;
+
+					List<String> disallowedBrewing = (List<String>) thisConfig.getList("disallowedBrewing");
+					if (disallowedBrewing== null || disallowedBrewing.size() == 0) {disallowedBrewing = (List<String>) thisConfig.getList("disallowedBrewing");}
+					final List<Material> disallowedBrewingMat = new ArrayList<Material>();
+					if (disallowedBrewing!=null){
+					for (int i = 0; i < disallowedBrewing.size(); i++) {
+						Material m = null;
+						try {
+							m = Material.matchMaterial(disallowedBrewing.get(i));
+						} catch(Exception ex) {}
+						if (m!=null) {
+							disallowedBrewingMat.add(m);
+						} else {
+							System.out.print(disallowedBrewing.get(i)+" material not found for race " + r.name);
+						}
+					}}
+					r.disallowedBrewing = disallowedBrewingMat;
+				
+
 					r.baseMana = thisConfig.getInt("baseMana");
 					r.manaPerSecond = thisConfig.getDouble("manaPerSecond");
 
@@ -145,6 +197,10 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "tools";
+								if (lq.configMain.itemsAllMeansAll) {
+									materialList.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
+
 								//also add in utility list
 								materialList.addAll(lq.configData.dataSets.get("utility"));
 							}
@@ -173,6 +229,9 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "armour";
+								if (lq.configMain.itemsAllMeansAll) {
+									materialList.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 							}
 							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
 								keyName += "armour";
@@ -199,6 +258,9 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "weapons";
+								if (lq.configMain.itemsAllMeansAll) {
+									materialList.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 							}
 							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
 								keyName += "weapons";
@@ -230,6 +292,9 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "tools";
+								if (lq.configMain.itemsAllMeansAll) {
+									materialList.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 								//also add in utility list
 								materialList.addAll(lq.configData.dataSets.get("utility"));
 							}
@@ -261,6 +326,9 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "armour";
+								if (lq.configMain.itemsAllMeansAll) {
+									materialList.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("chain") || keyName.equalsIgnoreCase("leather") || keyName.equalsIgnoreCase("diamond")) {
 								keyName = keyName + "armour";
 							}
@@ -289,6 +357,9 @@ public class Races {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "weapons";
+								if (lq.configMain.itemsAllMeansAll) {
+									materialList.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 							}
 							if (!keyName.equalsIgnoreCase("none")) {
 								if (lq.configData.dataSets.containsKey(keyName)) {

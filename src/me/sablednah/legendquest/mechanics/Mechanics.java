@@ -29,6 +29,10 @@ public class Mechanics {
 	}
 
 	public static int getPlayersAttributeModifier(PC pc, Attribute attr) {
+		return getPlayersAttributeModifier(pc, attr, false);
+	}
+
+	public static int getPlayersAttributeModifier(PC pc, Attribute attr, boolean skipMods) {
 		int stat = 10;
 		if (attr != null && pc != null) {
 			stat = pc.getStat(attr);
@@ -56,12 +60,12 @@ public class Mechanics {
 				}
 			}
 		}
+		if (!skipMods) {
+			AbilityCheckEvent e = new AbilityCheckEvent(pc, attr, result);
+			Bukkit.getServer().getPluginManager().callEvent(e);
 
-		AbilityCheckEvent e = new AbilityCheckEvent(pc, attr, result);
-		Bukkit.getServer().getPluginManager().callEvent(e);
-
-		result = e.getValue();
-
+			result = e.getValue();
+		}
 		/*
 		 * if (Main.debugMode) { HandlerList andlers = e.getHandlers(); for (RegisteredListener andle :
 		 * andlers.getRegisteredListeners()) { System.out.print(andle.getListener().toString()); } }
@@ -102,9 +106,8 @@ public class Mechanics {
 		int testScore = skillTest(testDif, testAttr, tester);
 		int oppScore = skillTest(oppDif, oppAttr, oponent);
 
-		
-// System.out.print(testScore + " - op:" +oppScore );
-		
+		// System.out.print(testScore + " - op:" +oppScore );
+
 		if (testScore == oppScore) {
 			int testMod = getPlayersAttributeModifier(tester, testAttr);
 			int oppMod = getPlayersAttributeModifier(oponent, oppAttr);
@@ -121,30 +124,30 @@ public class Mechanics {
 			}
 		}
 	}
-	
+
 	public static List<Player> getParty(Player p, int range) {
 		List<Player> list = new ArrayList<Player>();
 		List<Entity> es = p.getNearbyEntities(range, range, range);
-		for (Entity e: es) {
-			if (e.getType()==EntityType.PLAYER) {
-				if (!PluginUtils.canHurt(p,(Player)e)) {
-					 list.add((Player)e);
+		for (Entity e : es) {
+			if (e.getType() == EntityType.PLAYER) {
+				if (!PluginUtils.canHurt(p, (Player) e)) {
+					list.add((Player) e);
 				}
 			}
 		}
 		return list;
 	}
-	
+
 	public static boolean isParty(Player p, Player t, int range) {
-		if (PluginUtils.canHurt(p,t)) {
-			return false; 
+		if (PluginUtils.canHurt(p, t)) {
+			return false;
 		}
-		if (p.getLocation().distanceSquared(t.getLocation())<(range*range)) {
+		if (p.getLocation().distanceSquared(t.getLocation()) < (range * range)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 }
 
 /*

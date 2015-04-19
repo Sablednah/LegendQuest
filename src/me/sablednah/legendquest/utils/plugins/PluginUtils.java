@@ -77,6 +77,14 @@ public class PluginUtils {
         }
 		return null;
 	}
+
+	public static boolean canPay(int pay, Player p) {
+        Boolean hasVault = Bukkit.getServer().getPluginManager().isPluginEnabled("Vault");
+        if (hasVault) {
+        	return VaultClass.canPay(pay, p);
+        }
+		return true;
+	}
     
     
 }

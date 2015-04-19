@@ -88,6 +88,7 @@ public class DamageEvents implements Listener {
 		int hitchance =  lq.configMain.hitchanceenum.getDifficulty(); //Difficulty.AVERAGE.getDifficulty();
 		int dodgechance = lq.configMain.dodgechanceenum.getDifficulty(); //Difficulty.AVERAGE.getDifficulty();
 
+		if (Main.debugMode) { System.out.print("hit: "+hitchance + "  dodge: "+dodgechance + "(Start)"); }
 		
 		PC victimPC = null;
 		if (victim instanceof Player) {
@@ -96,6 +97,9 @@ public class DamageEvents implements Listener {
 				hitchance = lq.configMain.blockchanceenum.getDifficulty();				
 			}
 		}
+
+		if (Main.debugMode) { System.out.print("hit: "+hitchance + "  dodge: "+dodgechance + "(post-dodge)"); }
+		
 		PC attackerPC = getTwistedInstigator(event.getDamager());
 
 		if (lq.configMain.useSizeForCombat) {
@@ -112,7 +116,11 @@ public class DamageEvents implements Listener {
 			}
 			hitchance = hitchance - dif;
 			dodgechance = dodgechance + dif;
+
+			if (Main.debugMode) { System.out.print("SizeMod: "+dif); }
+
 		}
+		if (Main.debugMode) { System.out.print("hit: "+hitchance + "  dodge: "+dodgechance + "(post-size)"); }
 
 		boolean ranged = (event.getDamager() instanceof Projectile);
 
@@ -126,15 +134,20 @@ public class DamageEvents implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+
+		if (Main.debugMode) { System.out.print("hit: "+hitchance + "  dodge: "+dodgechance + "(post-event)"); }
 		
 		if (ranged) {
 			hitchance=hitchance-lq.configMain.rangedHitBonus;
 //			dodgechance=dodgechance-lq.configMain.rangedHitBonus;
+			if (Main.debugMode) { System.out.print("ranged: "+lq.configMain.rangedHitBonus); }
 		} else {
-			if (event.getDamager().getLocation().getY()+1.0D > victim.getLocation().getY()) {
+			if (event.getDamager().getLocation().getBlockY() > victim.getLocation().getBlockY()) {
 				hitchance=hitchance-lq.configMain.heightBonus;
+				if (Main.debugMode) { System.out.print("heightBonus: "+lq.configMain.heightBonus); }
 			}
 		}
+		if (Main.debugMode) { System.out.print("hit: "+hitchance + "  dodge: "+dodgechance + "(post-raged/height)"); }
 		
 		boolean hitCheck = Mechanics.opposedTest(attackerPC, hitchance, Attribute.DEX, victimPC, dodgechance, Attribute.DEX);
 		if (!hitCheck) {
@@ -150,7 +163,7 @@ public class DamageEvents implements Listener {
 
 			event.setCancelled(true);
 		} else {
-			if (lq.configMain.verboseCombat) {
+			if (lq.configMain.verboseCombat && !lq.configMain.hideHitMessage) {
 				if (event.getDamager() instanceof Player) {
 					((Player) (event.getDamager())).sendMessage(lq.configLang.combatHit);
 				}
@@ -220,7 +233,7 @@ public class DamageEvents implements Listener {
 			System.out.print("Dodge after: " + dodge);
 		}
 
-
+		
 		if (ranged) {
 	    	if (((EntityDamageByEntityEvent) event).getDamager().getType() == EntityType.ARROW) {	    
 			    Arrow arrow = (Arrow)event.getDamager();
@@ -309,7 +322,11 @@ public class DamageEvents implements Listener {
 	public Entity getTwistedInstigatorEntity(Entity atacker) {
 		if (atacker instanceof Projectile) {
 			Projectile bullit = (Projectile) atacker;
-			return (Entity) bullit.getShooter();
+			if (bullit instanceof Entity) {
+				return (Entity) bullit.getShooter();
+			} else {
+				return null;
+			}
 		}
 		return atacker;
 	}

@@ -118,6 +118,8 @@ skillUnlinked: "Skill unlinked from item "
 skillPointsOwned: " already learnt."
 skillInfoNoSkill: "Please specify a skill to get info"
 skillInvalidPassive: " is a passive or triggered skill, not usable via a command"
+skillInvalidTarget: "Sorry, you need to look at a target..."
+
 
 combatHit: "You hit your target."
 combatMissed: "Your target evaded your attack."

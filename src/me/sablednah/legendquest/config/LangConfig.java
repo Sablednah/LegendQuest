@@ -107,6 +107,8 @@ public class LangConfig extends Config {
 	public String					cantRepair				= "Sorry you can't repair.";
 	public String					cantBrew				= "Sorry you can't brew potions";
 	public String					cantTame				= "Sorry you can't tame";
+	public String					renameWarning			= "&cWarning &f";
+	public String					renameWarning2			= "&c attempted to rename item as: ";
 
 	public String					noSkills				= "You have no skills to use.";
 	public String					hasSkills				= "You have the following usable skills:";
@@ -154,6 +156,8 @@ public class LangConfig extends Config {
 	public String					skillCommandLineUse		= "Using skill: ";
 	public String					skillLinkUse			= "Using Linked skill: ";
 	public String					skillInvalid			= "Sorry you can't use: ";
+	public String					skillInvalidTarget		= "Sorry, you need to look at a target...";
+	
 	public String					skillInvalidPassive		= " is a passive or triggered skill, not usable via a command";
 	public String					skillStunned			= "Sorry you're stuned, you can't use: ";
 
@@ -170,6 +174,9 @@ public class LangConfig extends Config {
 
 		this.startup = this.getConfigItem("startup", this.startup);
 		this.shutdown = this.getConfigItem("shutdown", this.shutdown);
+
+		this.invalidWorld = this.getConfigItem("invalidWorld", this.invalidWorld);
+		this.adminName = this.getConfigItem("adminName", this.adminName);
 
 		this.playerStats = this.getConfigItem("playerStats", this.playerStats);
 		this.statSTR = this.getConfigItem("statSTR", this.statSTR);
@@ -190,6 +197,9 @@ public class LangConfig extends Config {
 		this.raceScanEnd = this.getConfigItem("raceScanEnd", this.raceScanEnd);
 		this.raceScanInvalid = this.getConfigItem("raceScanInvalid", this.raceScanInvalid);
 		this.raceNotAllowed = this.getConfigItem("raceNotAllowed", this.raceNotAllowed);
+		
+		this.renameWarning = this.getConfigItem("renameWarning", this.renameWarning);
+		this.renameWarning2 = this.getConfigItem("renameWarning2", this.renameWarning2);
 
 		this.classScan = this.getConfigItem("classScan", this.classScan);
 		this.classScanFound = this.getConfigItem("classScanFound", this.classScanFound);
@@ -291,14 +301,15 @@ public class LangConfig extends Config {
 		this.skillCommandLineUse = this.getConfigItem("skillCommandLineUse", this.skillCommandLineUse);
 		this.skillLinkUse = this.getConfigItem("skillLinkUse", this.skillLinkUse);
 		this.skillInvalid = this.getConfigItem("skillInvalid", this.skillInvalid);
+		this.skillInvalidTarget = this.getConfigItem("skillInvalidTarget", this.skillInvalidTarget);
 
 		this.xpChange = this.getConfigItem("xpChange", this.xpChange);
 		this.xpChangeAdmin = this.getConfigItem("xpChangeAdmin", this.xpChangeAdmin);
 
 		this.ecoPaid = this.getConfigItem("ecoPaid", this.ecoPaid);
 		this.ecoDeclined = this.getConfigItem("ecoDeclined", this.ecoDeclined);
-		
+
 		this.partyXpChange = this.getConfigItem("partyXpChange", this.partyXpChange);
-		
+
 	}
 }

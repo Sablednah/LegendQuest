@@ -26,6 +26,7 @@ import me.sablednah.legendquest.utils.WeightedProbMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -135,8 +136,8 @@ public class Classes {
 					c.requires = requires;
 
 					c.defaultClass = thisConfig.getBoolean("default");
-					c.mainClassOnly = thisConfig.getBoolean("mainclassonly",false);
-					c.subClassOnly = thisConfig.getBoolean("subclassonly",false);
+					c.mainClassOnly = thisConfig.getBoolean("mainclassonly", false);
+					c.subClassOnly = thisConfig.getBoolean("subclassonly", false);
 					c.statStr = thisConfig.getInt("statmods.str");
 					c.statDex = thisConfig.getInt("statmods.dex");
 					c.statInt = thisConfig.getInt("statmods.int");
@@ -144,7 +145,7 @@ public class Classes {
 					c.statCon = thisConfig.getInt("statmods.con");
 					c.statChr = thisConfig.getInt("statmods.chr");
 					c.healthPerLevel = thisConfig.getDouble("healthperlevel");
-					c.healthMod = thisConfig.getInt("healthmod",0);
+					c.healthMod = thisConfig.getInt("healthmod", 0);
 
 					c.allowCrafting = thisConfig.getBoolean("allowCrafting");
 					c.allowSmelting = thisConfig.getBoolean("allowSmelting");
@@ -153,21 +154,111 @@ public class Classes {
 					c.allowRepairing = thisConfig.getBoolean("allowRepairing");
 					c.allowTaming = thisConfig.getBoolean("allowTaming");
 
+					List<String> disallowedCrafting = (List<String>) thisConfig.getList("disallowedCrafting");
+					if (disallowedCrafting== null || disallowedCrafting.size() == 0) {disallowedCrafting = (List<String>) thisConfig.getList("dissallowedCrafting");}
+					final List<Material> disallowedCraftingMat = new ArrayList<Material>();
+					if (disallowedCrafting!=null){
+					for (int i = 0; i < disallowedCrafting.size(); i++) {
+						Material m = null;
+						m = Material.matchMaterial(disallowedCrafting.get(i));
+						if (m!=null) {
+							disallowedCraftingMat.add(m);
+						} else {
+							System.out.print(disallowedCrafting.get(i)+" material not found for no crafting class " + c.name);
+						}
+					}}
+					c.disallowedCrafting = disallowedCraftingMat;
+
+					List<String> disallowedSmelting = (List<String>) thisConfig.getList("disallowedSmelting");
+					if (disallowedSmelting == null || disallowedSmelting.size() == 0) {disallowedSmelting = (List<String>) thisConfig.getList("dissallowedSmelting");}
+					final List<Material> disallowedSmeltingMat = new ArrayList<Material>();
+					if (disallowedSmelting!=null){
+					for (int i = 0; i < disallowedSmelting.size(); i++) {
+						Material m = null;
+						m = Material.matchMaterial(disallowedSmelting.get(i));
+						if (m!=null) {
+							disallowedSmeltingMat.add(m);
+						} else {
+							System.out.print(disallowedSmelting.get(i)+" material not found for no smelting class " + c.name);
+						}
+					}}
+					c.disallowedSmelting = disallowedSmeltingMat;
+
+					List<String> disallowedBrewing = (List<String>) thisConfig.getList("disallowedBrewing");
+					if (disallowedBrewing== null || disallowedBrewing.size() == 0) {disallowedBrewing = (List<String>) thisConfig.getList("dissallowedBrewing");}
+					final List<Material> disallowedBrewingMat = new ArrayList<Material>();
+					if (disallowedBrewing!=null){
+					for (int i = 0; i < disallowedBrewing.size(); i++) {
+						Material m = null;
+						m = Material.matchMaterial(disallowedBrewing.get(i));
+						if (m!=null) {
+							disallowedBrewingMat.add(m);
+						} else {
+							System.out.print(disallowedBrewing.get(i)+" material not found for class " + c.name);
+						}
+					}}
+					c.disallowedBrewing = disallowedBrewingMat;
+
+					List<String> disallowedEnchanting = (List<String>) thisConfig.getList("disallowedEnchanting");
+					if (disallowedEnchanting== null || disallowedEnchanting.size() == 0) {disallowedEnchanting = (List<String>) thisConfig.getList("dissallowedEnchanting");}
+					final List<Material> disallowedEnchantingMat = new ArrayList<Material>();
+					if (disallowedEnchanting!=null){
+					for (int i = 0; i < disallowedEnchanting.size(); i++) {
+						Material m = null;
+						m = Material.matchMaterial(disallowedEnchanting.get(i));
+						if (m!=null) {
+							disallowedEnchantingMat.add(m);
+						} else {
+							System.out.print(disallowedEnchanting.get(i)+" material not found for class " + c.name);
+						}
+					}}
+					c.disallowedEnchanting = disallowedEnchantingMat;
+
+					List<String> disallowedRepairing = (List<String>) thisConfig.getList("disallowedRepairing");
+					if (disallowedRepairing== null || disallowedRepairing.size() == 0) {disallowedRepairing = (List<String>) thisConfig.getList("dissallowedRepairing");}
+					final List<Material> disallowedRepairingMat = new ArrayList<Material>();
+					if (disallowedRepairing!=null){
+					for (int i = 0; i < disallowedRepairing.size(); i++) {
+						Material m = null;
+						m = Material.matchMaterial(disallowedRepairing.get(i));
+						if (m!=null) {
+							disallowedRepairingMat.add(m);
+						} else {
+							System.out.print(disallowedRepairing.get(i)+" material not found for class " + c.name);
+						}
+					}}
+					c.disallowedRepairing = disallowedRepairingMat;
+
+					List<String> disallowedTaming = (List<String>) thisConfig.getList("disallowedTaming");
+					if (disallowedTaming== null || disallowedTaming.size() == 0) {disallowedTaming = (List<String>) thisConfig.getList("dissallowedTaming");}
+					final List<EntityType> disallowedTamingMat = new ArrayList<EntityType>();
+					if (disallowedTaming!=null){
+					for (int i = 0; i < disallowedTaming.size(); i++) {
+						EntityType m = null;
+						m = EntityType.valueOf(disallowedTaming.get(i));
+						if (m!=null) {
+							disallowedTamingMat.add(m);
+						} else {
+							System.out.print(disallowedTaming.get(i)+" entitytype not found for class " + c.name);
+						}
+					}}
+					c.disallowedTaming = disallowedTamingMat;
+
+					
 					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
 					c.manaBonus = thisConfig.getInt("manaBonus");
 					c.manaPerSecond = thisConfig.getDouble("manaPerSecond");
-					
+
 					c.xpAdjustKill = thisConfig.getDouble("xpAdjustKill");
 					c.xpAdjustSmelt = thisConfig.getDouble("xpAdjustSmelt");
 					c.xpAdjustMine = thisConfig.getDouble("xpAdjustMine");
-					
+
 					c.skillPointsPerLevel = thisConfig.getDouble("skillPointsPerLevel");
 					c.skillPoints = thisConfig.getInt("skillPoints");
 
 					c.perm = thisConfig.getString("perm");
-					
-					c.speedMod = (float) thisConfig.getDouble("speedmod",0.0F);
 
+					c.speedMod = (float) thisConfig.getDouble("speedmod", 0.0F);
 
 					// allowed lists
 
@@ -180,8 +271,11 @@ public class Classes {
 						for (int i = 0; i < stringList.size(); i++) {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								if (lq.configMain.itemsAllMeansAll) {
+									materiallist.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 								keyName = "tools";
-								//also add in utility list
+								// also add in utility list
 								materiallist.addAll(lq.configData.dataSets.get("utility"));
 							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("diamond")) {
 								keyName = keyName + "tools";
@@ -208,6 +302,9 @@ public class Classes {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "armour";
+								if (lq.configMain.itemsAllMeansAll) {
+									materiallist.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("chain") || keyName.equalsIgnoreCase("leather") || keyName.equalsIgnoreCase("diamond")) {
 								keyName = keyName + "armour";
 							}
@@ -233,6 +330,9 @@ public class Classes {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
 								keyName = "weapons";
+								if (lq.configMain.itemsAllMeansAll) {
+									materiallist.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 							}
 							if (keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("iron")) {
 								keyName += "weapons";
@@ -263,8 +363,11 @@ public class Classes {
 						for (int i = 0; i < stringList.size(); i++) {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								if (lq.configMain.itemsAllMeansAll) {
+									materiallist.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 								keyName = "tools";
-								//also add in utility list
+								// also add in utility list
 								materiallist.addAll(lq.configData.dataSets.get("utility"));
 							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("wood") || keyName.equalsIgnoreCase("stone") || keyName.equalsIgnoreCase("diamond")) {
 								keyName = keyName + "tools";
@@ -293,6 +396,9 @@ public class Classes {
 						for (int i = 0; i < stringList.size(); i++) {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								if (lq.configMain.itemsAllMeansAll) {
+									materiallist.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 								keyName = "armour";
 							} else if (keyName.equalsIgnoreCase("iron") || keyName.equalsIgnoreCase("gold") || keyName.equalsIgnoreCase("chain") || keyName.equalsIgnoreCase("leather") || keyName.equalsIgnoreCase("diamond")) {
 								keyName = keyName + "armour";
@@ -321,6 +427,9 @@ public class Classes {
 						for (int i = 0; i < stringList.size(); i++) {
 							keyName = stringList.get(i).toLowerCase();
 							if (keyName.equalsIgnoreCase("all") || keyName.equalsIgnoreCase("any")) {
+								if (lq.configMain.itemsAllMeansAll) {
+									materiallist.add(Material.PISTON_MOVING_PIECE); // placeholder for custom material.
+								}
 								keyName = "weapons";
 							}
 							if (!keyName.equalsIgnoreCase("none")) {
@@ -348,26 +457,27 @@ public class Classes {
 							ConfigurationSection skillInfo = inateSkills.getConfigurationSection(key);
 							if (skillInfo.contains("skillname")) {
 								realSkill = skillInfo.getString("skillname").toLowerCase();
-								//create a "copy" of the skill under new name
-								// this registers duplicate events with different this.name for fetching correct skill settings.
-								lq.skills.initSkill(realSkill,skillName);
+								// create a "copy" of the skill under new name
+								// this registers duplicate events with different this.name for fetching correct skill
+								// settings.
+								lq.skills.initSkill(realSkill, skillName);
 							}
 							if (lq.skills.skillList.containsKey(skillName)) {
-								lq.debug.info("Loading skillName: " + skillName+ " as skill " + realSkill);
-								SkillInfo si = 	lq.skills.skillDefs.get(realSkill).getSkillInfoClone();
+								lq.debug.info("Loading skillName: " + skillName + " as skill " + realSkill);
+								SkillInfo si = lq.skills.skillDefs.get(realSkill).getSkillInfoClone();
 								SkillDataStore skilldata = new SkillDataStore(si);
-								skilldata.name=skillName;
+								skilldata.name = skillName;
 								skilldata.readConfigInfo(skillInfo);
-								skilldata.name=skillName;
+								skilldata.name = skillName;
 								c.availableSkills.add(skilldata);
 							}
 						}
-					}					
-					
-					for (SkillDataStore s :c.availableSkills) {
-						lq.debug.info("Vars ["+s.name+"] : "+s.vars.toString());
 					}
-			
+
+					for (SkillDataStore s : c.availableSkills) {
+						lq.debug.info("Vars [" + s.name + "] : " + s.vars.toString());
+					}
+
 					// outsourced skills - skills without skill class - using command/on/off and perm nodes to achieve
 					// effect.
 					c.outsourcedSkills = new ArrayList<SkillDataStore>();
@@ -376,7 +486,7 @@ public class Classes {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
 							lq.debug.info("Loading permskill: " + key);
-							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null,0,0,0);
+							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null, 0, 0, 0);
 							si.setName(key);
 							si.readConfigBasicInfo(skillInfo);
 							SkillDataStore skilldata = new SkillDataStore(si);
@@ -385,7 +495,7 @@ public class Classes {
 
 						}
 					}
-					
+
 					// loadouts
 					final ConfigurationSection loadouts = thisConfig.getConfigurationSection("loadouts");
 					if (loadouts != null) {
@@ -398,20 +508,20 @@ public class Classes {
 							String aMaterial = activator.getString("material");
 							String aCustomName = activator.getString("customname");
 							String[] aLore = null;
-							if (activator.getString("lore")!=null) {
+							if (activator.getString("lore") != null) {
 								aLore = activator.getString("lore").split("\\|");
 							}
 							ItemStack active = new ItemStack(Material.matchMaterial(aMaterial));
 							ItemMeta ameta = active.getItemMeta();
-							if (aCustomName!=null && !aCustomName.isEmpty()) {
+							if (aCustomName != null && !aCustomName.isEmpty()) {
 								ameta.setDisplayName(aCustomName);
 							}
-							if (aLore!=null && aLore.length>0) {
+							if (aLore != null && aLore.length > 0) {
 								List<String> alorelist = Arrays.asList(aLore);
 								ameta.setLore(alorelist);
 							}
 							active.setItemMeta(ameta);
-							
+
 							final ConfigurationSection repository = loadinfo.getConfigurationSection("repository");
 							String rMaterial = repository.getString("material");
 							String rCustomName = repository.getString("customname");
@@ -421,22 +531,21 @@ public class Classes {
 							}
 							ItemStack repo = new ItemStack(Material.matchMaterial(rMaterial));
 							ItemMeta rmeta = active.getItemMeta();
-							if (rCustomName!=null && !rCustomName.isEmpty()) {
+							if (rCustomName != null && !rCustomName.isEmpty()) {
 								rmeta.setDisplayName(rCustomName);
 							}
-							if (rLore!=null && rLore.length>0) {
+							if (rLore != null && rLore.length > 0) {
 								List<String> rlorelist = Arrays.asList(rLore);
 								ameta.setLore(rlorelist);
 							}
 							repo.setItemMeta(rmeta);
 
-							Loadout l = new Loadout(key, repo, active, skilllist);							
+							Loadout l = new Loadout(key, repo, active, skilllist);
 							boolean blockitem = loadinfo.getBoolean("blockitemuse");
 							l.setBlockItemUsage(blockitem);
 							c.classLoadouts.add(l);
 						}
 					}
-					
 
 					// check race or group exists.
 					final boolean hasRace = checkRaceList(allowedRaces);
@@ -453,11 +562,11 @@ public class Classes {
 					lq.logger.throwing("Classes", "classes", e);
 					System.out.print(e.getLocalizedMessage());
 					lq.logSevere(e.getLocalizedMessage());
-					for ( StackTraceElement st : e.getStackTrace()) {
-//						System.out.print(st.toString());
+					for (StackTraceElement st : e.getStackTrace()) {
+						// System.out.print(st.toString());
 						lq.logSevere(st.toString());
 					}
-//					e.printStackTrace();
+					// e.printStackTrace();
 				}
 
 				if (validConfig) {
@@ -594,14 +703,14 @@ public class Classes {
 				}
 
 				if (sub != null) {
-					if (c.mainClassOnly && sub==true) {
+					if (c.mainClassOnly && sub == true) {
 						continue;
 					}
-					if (c.subClassOnly && sub==false) {
+					if (c.subClassOnly && sub == false) {
 						continue;
 					}
 				}
-				
+
 				result.add(c.name.toLowerCase());
 			}
 			return result;
@@ -613,8 +722,8 @@ public class Classes {
 	public Map<String, ClassType> getClassTypes() {
 		return classTypes;
 	}
-	
-	public String getRandomClass(){
+
+	public String getRandomClass() {
 		return wpmClasses.nextElt();
 	}
 

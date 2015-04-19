@@ -6,6 +6,7 @@ import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.effects.EffectProcess;
 import me.sablednah.legendquest.effects.Effects;
 import me.sablednah.legendquest.effects.OwnerType;
+import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.races.Race;
 import org.apache.commons.lang.math.NumberUtils;
@@ -167,6 +168,40 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 				PC targetPC = lq.players.getPC(targetPlayer);
 				targetPC.giveXP(realxp);
 				sender.sendMessage(lq.configLang.xpChangeAdmin + targetPlayer.getDisplayName() + " / " + xp);
+				return true;
+
+			}
+		} else if (args[0].equalsIgnoreCase("level") || args[0].equalsIgnoreCase("lvl")) {
+			if (args.length < 3) {
+				sender.sendMessage(lq.configLang.invalidArgumentsCommand);
+				return true;
+			} else {
+				// look for xp+name
+				int level = 0;
+				String playername;
+				if (NumberUtils.isNumber(args[1])) {
+					level = Integer.parseInt(args[1]);
+					playername = args[2];
+				} else {
+					if (!NumberUtils.isNumber(args[2])) {
+						sender.sendMessage(lq.configLang.invalidArgumentsCommand + ": " + args[1] + " " + args[2]);
+						return true;
+					}
+					level = Integer.parseInt(args[2]);
+					playername = args[1];
+				}
+
+				Player targetPlayer = lq.getServer().getPlayer(playername);
+
+				if (targetPlayer == null || !targetPlayer.isOnline()) {
+					sender.sendMessage(lq.configLang.invalidArgumentsCommand + ": " + args[1] + " / " + args[2]);
+					return true;
+				}
+								
+				PC targetPC = lq.players.getPC(targetPlayer);
+				SetExp.setTotalExperience(targetPlayer, SetExp.getExpToLevel(level));
+				targetPC.scheduleXPSave();
+				sender.sendMessage(lq.configLang.xpChangeAdmin + targetPlayer.getDisplayName() + " / " + SetExp.getExpToLevel(level) + " (level: "+level+")");
 				return true;
 
 			}

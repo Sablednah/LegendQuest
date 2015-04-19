@@ -5,18 +5,21 @@ import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.playercharacters.PC;
 
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class AbilityControlEvents implements Listener {
 
@@ -26,6 +29,7 @@ public class AbilityControlEvents implements Listener {
 		this.lq = p;
 	}
 
+/*
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onCraft(CraftItemEvent event) {
 		if (!(event.getWhoClicked() instanceof Player)) {
@@ -39,8 +43,6 @@ public class AbilityControlEvents implements Listener {
 
 		PC pc = lq.players.getPC(p);
 		Result r = event.getResult();
-		// next line IF we do PER item blocking..
-		// int id = event.getRecipe().getResult().getTypeId();
 		if (r != null) {
 			if (!pc.canCraft()) {
 				event.setResult(Result.DENY);
@@ -48,7 +50,9 @@ public class AbilityControlEvents implements Listener {
 			}
 		}
 	}
-
+*/
+	
+/*
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void Control(PlayerInteractEvent event) {
 		Player p = event.getPlayer();
@@ -87,7 +91,8 @@ public class AbilityControlEvents implements Listener {
 			}
 		}
 	}
-
+*/
+	
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void furnaceXP(FurnaceExtractEvent event) {
 		Player p = event.getPlayer();
@@ -135,12 +140,213 @@ public class AbilityControlEvents implements Listener {
 		if (Main.debugMode) {
 			System.out.print("Tame attempt - tame event - " + p.getName());
 		}
-		if (!pc.canTame()) {
-			p.sendMessage(lq.configLang.cantTame);
-			event.setCancelled(true);
-			return;
+		EntityType et = event.getEntityType();
+		if (et != null) {
+			if (!pc.canTame(et)) {
+				p.sendMessage(lq.configLang.cantTame + " (" + et.name() + ")");
+				event.setCancelled(true);
+				return;
+			}
+		} else {
+			if (!pc.canTame()) {
+				p.sendMessage(lq.configLang.cantTame);
+				event.setCancelled(true);
+				return;
+			}			
 		}
-
 	}
 
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onCraftItem(final CraftItemEvent e) {
+		// ItemStack item = e.getCurrentItem();
+		HumanEntity he = e.getWhoClicked();
+		if (he instanceof Player) {
+			Player p = (Player) he;
+			if (!lq.validWorld(p.getWorld().getName())) {
+				return;
+			}
+
+			PC pc = lq.players.getPC(p);
+			ItemStack r = e.getRecipe().getResult();
+
+			if (r != null) {
+				final Material itemUsed = r.getType();
+				if (!pc.canCraft(itemUsed)) {
+					p.sendMessage(lq.configLang.cantCraft + " (" + itemUsed.name() + ")");
+					e.setCancelled(true);
+					return;
+				}
+			} else {
+				if (!pc.canCraft()) {
+					p.sendMessage(lq.configLang.cantCraft);
+					e.setCancelled(true);
+					return;
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onBrew(InventoryClickEvent e) {
+		Inventory inv = e.getInventory();
+		if (inv.getType() != InventoryType.BREWING) {
+			return;
+		}
+		if (!(e.getWhoClicked() instanceof Player)) {
+			return; // not a player somehow
+		}
+		Player p = (Player) e.getWhoClicked();
+		ItemStack cursor = e.getCursor();
+
+		PC pc = lq.players.getPC(p);
+		
+		int slot = e.getRawSlot();
+
+//		System.out.print("IMC: can brew - " + cursor.getType().toString() + " (Slot:" + e.getSlot() + ":"+slot+")");
+//		System.out.print("IMC: can brew - " + e.getSlotType().toString()+")");
+		
+		Material clickedItem = null;
+		
+		if (e.getSlotType()==SlotType.FUEL && slot == 3) {
+			clickedItem = cursor.getType();
+	//		System.out.print("IMC: Slot 0 Click - " + clickedItem.toString());
+		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
+			clickedItem = e.getCurrentItem().getType();
+	//		System.out.print("IMC: shift Click - " + clickedItem.toString());
+		}
+
+		if (clickedItem != null) {
+			if (!pc.canBrew(clickedItem)) {
+				p.sendMessage(lq.configLang.cantBrew + " (" + clickedItem.name() + ")");
+				e.setCancelled(true);
+				return;
+			}
+		} else {
+			if (!pc.canBrew()) {
+				p.sendMessage(lq.configLang.cantBrew);
+				e.setCancelled(true);
+				return;
+			}
+		}
+	}
+
+	
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onSmelt(InventoryClickEvent e) {
+		Inventory inv = e.getInventory();
+		if (inv.getType() != InventoryType.FURNACE) {
+			return;
+		}
+		if (!(e.getWhoClicked() instanceof Player)) {
+			return; // not a player somehow
+		}
+		Player p = (Player) e.getWhoClicked();
+		ItemStack cursor = e.getCursor();
+
+		PC pc = lq.players.getPC(p);
+		
+		int slot = e.getRawSlot();
+//		System.out.print("IMC: can smelt - " + cursor.getType().toString() + " (Slot: " + e.getSlot() + " | rawslot: "+slot+")");
+//		System.out.print("IMC: can smelt - slot type: " + e.getSlotType().toString() );
+
+		Material clickedItem = null;
+		if (e.getSlotType()==SlotType.CRAFTING && slot == 0) {
+			clickedItem = cursor.getType();
+		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
+			clickedItem = e.getCurrentItem().getType();
+		}
+		if (clickedItem != null) {
+			if (!pc.canSmelt(clickedItem)) {
+				p.sendMessage(lq.configLang.cantSmelt + " (" + clickedItem.name() + ")");
+				e.setCancelled(true);
+				return;
+			}
+		} else {
+			if (!pc.canSmelt()) {
+				p.sendMessage(lq.configLang.cantSmelt);
+				e.setCancelled(true);
+				return;
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onRepair(InventoryClickEvent e) {
+		Inventory inv = e.getInventory();
+		if (inv.getType() != InventoryType.ANVIL) {
+			return;
+		}
+		if (!(e.getWhoClicked() instanceof Player)) {
+			return; // not a player somehow
+		}
+		Player p = (Player) e.getWhoClicked();
+		ItemStack cursor = e.getCursor();
+
+		PC pc = lq.players.getPC(p);
+		
+//		int slot = e.getRawSlot();
+//		System.out.print("IMC: can Repair - " + cursor.getType().toString() + " (Slot: " + e.getSlot() + " | rawslot: "+slot+")");
+//		System.out.print("IMC: can Repair - slot type: " + e.getSlotType().toString() );
+
+		Material clickedItem = null;
+		if (e.getSlotType()==SlotType.CRAFTING) {
+			clickedItem = cursor.getType();
+		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
+			clickedItem = e.getCurrentItem().getType();
+		}
+		if (clickedItem != null) {
+			if (!pc.canRepair(clickedItem)) {
+				p.sendMessage(lq.configLang.cantRepair + " (" + clickedItem.name() + ")");
+				e.setCancelled(true);
+				return;
+			}
+		} else {
+			if (!pc.canRepair()) {
+				p.sendMessage(lq.configLang.cantRepair);
+				e.setCancelled(true);
+				return;
+			}
+		}
+	}
+	
+	
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onEnchant(InventoryClickEvent e) {
+		Inventory inv = e.getInventory();
+		if (inv.getType() != InventoryType.ENCHANTING) {
+			return;
+		}
+		if (!(e.getWhoClicked() instanceof Player)) {
+			return; // not a player somehow
+		}
+		Player p = (Player) e.getWhoClicked();
+		ItemStack cursor = e.getCursor();
+
+		PC pc = lq.players.getPC(p);
+		
+//		int slot = e.getRawSlot();
+//		System.out.print("IMC: can Enchant - " + cursor.getType().toString() + " (Slot: " + e.getSlot() + " | rawslot: "+slot+")");
+//		System.out.print("IMC: can Enchant - slot type: " + e.getSlotType().toString() );
+
+		Material clickedItem = null;
+		if (e.getSlotType()==SlotType.CRAFTING) {
+			clickedItem = cursor.getType();
+		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
+			clickedItem = e.getCurrentItem().getType();
+		}
+		if (clickedItem != null) {
+			if (!pc.canEnchant(clickedItem)) {
+				p.sendMessage(lq.configLang.cantEnchant + " (" + clickedItem.name() + ")");
+				e.setCancelled(true);
+				return;
+			}
+		} else {
+			if (!pc.canEnchant()) {
+				p.sendMessage(lq.configLang.cantEnchant);
+				e.setCancelled(true);
+				return;
+			}
+		}
+	}
+	
 }

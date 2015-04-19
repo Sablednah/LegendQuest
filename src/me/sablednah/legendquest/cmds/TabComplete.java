@@ -129,6 +129,7 @@ public class TabComplete implements TabCompleter {
 		} else if (cmdName.equals("admin")) {
 			if (newArglist.length==1) {
 				outputList.add("xp");
+				outputList.add("level");
 				outputList.add("race");
 				outputList.add("class");
 				outputList.add("karma");

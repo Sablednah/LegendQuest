@@ -4,6 +4,7 @@ import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.playercharacters.PC;
 
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -22,6 +23,11 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemControlEvents implements Listener {
 
@@ -51,10 +57,9 @@ public class ItemControlEvents implements Listener {
 		final Material itemUsed = p.getItemInHand().getType();
 
 		if (itemUsed != null) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || 
-					lq.configData.dataSets.get("tools").contains(itemUsed) || 
-					lq.configData.dataSets.get("utility").contains(itemUsed)) {
-				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
+			if (lq.configData.dataSets.get("weapons").contains(itemUsed)) { 
+				// || lq.configData.dataSets.get("tools").contains(itemUsed) || lq.configData.dataSets.get("utility").contains(itemUsed) 
+				if (!pc.allowedWeapon(itemUsed)) { //  && !pc.allowedTool(itemUsed)
 					p.sendMessage(lq.configLang.cantUseWeapon);
 					event.setCancelled(true);
 				}
@@ -71,13 +76,15 @@ public class ItemControlEvents implements Listener {
 			return;
 		}
 
+//		System.out.print("breaking blocks!: " + p.toString());
+
 		final PC pc = lq.players.getPC(p);
 		final Material itemUsed = p.getItemInHand().getType();
 		if (itemUsed != null) {
-			if (lq.configData.dataSets.get("weapons").contains(itemUsed) || 
-					lq.configData.dataSets.get("tools").contains(itemUsed) || 
-					lq.configData.dataSets.get("utility").contains(itemUsed)) {
-				if (!pc.allowedWeapon(itemUsed) && !pc.allowedTool(itemUsed)) {
+			if (lq.configData.dataSets.get("tools").contains(itemUsed)) { 
+				// || lq.configData.dataSets.get("weapons").contains(itemUsed) || lq.configData.dataSets.get("utility").contains(itemUsed)
+//				System.out.print("testing item: " + itemUsed.toString());
+				if (!pc.allowedTool(itemUsed)) { // && !pc.allowedWeapon(itemUsed)
 					p.sendMessage(lq.configLang.cantUseTool);
 					event.setCancelled(true);
 				}
@@ -353,4 +360,78 @@ public class ItemControlEvents implements Listener {
 				break;
 		}
 	}
+
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event) {
+		if (event.isCancelled())
+			return;
+
+		HumanEntity ent = event.getWhoClicked();
+		if (!(ent instanceof Player))
+			return;
+
+		Inventory inv = event.getInventory();
+		if (!(inv instanceof AnvilInventory))
+			return;
+
+		InventoryView view = event.getView();
+		int rawSlot = event.getRawSlot();
+
+		if (rawSlot == view.convertSlot(rawSlot)) { // top inv
+
+			if (rawSlot == 2) { // get the result slot
+				ItemStack item = event.getCurrentItem();
+
+				// check if there is an item in the result slot
+				if (item != null) {
+					Player p = (Player) ent;
+					ItemMeta meta = item.getItemMeta();
+
+					if (meta != null) {
+						if (meta.hasDisplayName()) { // item has a name
+							String displayName = meta.getDisplayName();
+							String oldName = "";
+							ItemStack oldItem = inv.getItem(0);
+							if (oldItem != null) { // prolly not needed but you never know with bloody npe's
+								ItemMeta oldMeta = oldItem.getItemMeta();
+								if (oldMeta != null) { // def needed - old item prolly didn't have a custom name
+									oldName = oldMeta.getDisplayName();
+								}
+							}
+							if (!displayName.equals(oldName)) { // name has changed!
+								boolean stopname = false;
+								if (blackListed(displayName.trim())) {
+									stopname = true;
+								}
+								if (stopname) {
+									event.setCancelled(true);
+									if (lq.configMain.broadcastRename) {
+										lq.getServer().broadcastMessage(lq.configLang.renameWarning+p.getDisplayName() + lq.configLang.renameWarning2 + displayName.trim());
+									}
+									System.out.print(p.getDisplayName() + " @ " + p.getLocation().toString() + " tried to rename item as '" + displayName.trim()+"'.");
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public boolean blackListed(String checkme) {
+		boolean valid = true;
+		if (lq.configMain.nameBlacklist!=null) {
+			for (String s : lq.configMain.nameBlacklist) {
+				if (checkme.equalsIgnoreCase(s)) {valid = false; }
+			}
+		}
+		if (lq.configMain.nameBlacklistParts!=null) {
+			for (String s : lq.configMain.nameBlacklistParts) {
+				if (checkme.toLowerCase().contains(s.toLowerCase())) {valid = false; }
+			}
+		}
+		return !valid;
+	}
+
 }

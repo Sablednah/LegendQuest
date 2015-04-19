@@ -14,6 +14,7 @@ import java.util.UUID;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.db.HealthStore;
+import me.sablednah.legendquest.events.CoreSkillCheckEvent;
 import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.races.Race;
@@ -31,6 +32,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerExpChangeEvent;
@@ -148,7 +150,7 @@ public class PC {
 		this.subClass = null;
 		this.maxHP = 20;
 		this.health = 20;
-		this.mana = getMaxMana();
+		this.mana = getMaxMana(true);
 		this.currentXP = 0;
 		if (!lq.configMain.randomStats) {
 			statStr = statDex = statInt = statWis = statCon = statChr = 12;
@@ -180,68 +182,129 @@ public class PC {
 		if (id == null) {
 			valid = true;
 			lq.debug.fine("Naked is valid armour");
-		}
-		if (id == Material.AIR) {
-			valid = true;
-			lq.debug.fine("'Air' is always valid armour");
-		}
-		if (mainClass.allowedArmour.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid armour for class: " + mainClass.name);
-		}
-		if (race.allowedArmour.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid armour for race: " + race.name);
-		}
-		if (subClass != null && subClass.allowedArmour.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid armour for sub-class: " + subClass.name);
-		}
-		if (mainClass.dissallowedArmour.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid armour for class: " + mainClass.name);
-		}
-		if (race.dissallowedArmour.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid armour for race: " + race.name);
-		}
-		if (subClass != null && subClass.dissallowedArmour.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid armour for sub-class: " + subClass.name);
+		} else {
+			if (id == Material.AIR) {
+				valid = true;
+				lq.debug.fine("'Air' is always valid armour");
+			} else {
+
+				if (lq.configMain.itemsAllMeansAll) {
+					if (mainClass.allowedArmour.contains(Material.PISTON_MOVING_PIECE)) {
+						lq.debug.fine("ALL armour set for class: " + mainClass.name);
+						valid = true;
+					}
+					if (race.allowedArmour.contains(Material.PISTON_MOVING_PIECE)) {
+						lq.debug.fine("ALL armour set for race: " + race.name);
+						valid = true;
+					}
+					if (subClass != null && subClass.allowedArmour.contains(Material.PISTON_MOVING_PIECE)) {
+						lq.debug.fine("ALL armour set for subClass: " + subClass.name);
+						valid = true;
+					}
+					if (mainClass.dissallowedArmour.contains(Material.PISTON_MOVING_PIECE)) {
+						lq.debug.fine("ALL armour disallowed for class: " + mainClass.name);
+						valid = false;
+					}
+					if (race.dissallowedArmour.contains(Material.PISTON_MOVING_PIECE)) {
+						lq.debug.fine("ALL armour disallowed for race: " + race.name);
+						valid = false;
+					}
+					if (subClass != null && subClass.dissallowedArmour.contains(Material.PISTON_MOVING_PIECE)) {
+						lq.debug.fine("ALL armour disallowed for subClass: " + subClass.name);
+						valid = false;
+					}
+				}
+				if (mainClass.allowedArmour.contains(id)) {
+					valid = true;
+					lq.debug.fine(id.toString() + " is valid armour for class: " + mainClass.name);
+				}
+				if (race.allowedArmour.contains(id)) {
+					valid = true;
+					lq.debug.fine(id.toString() + " is valid armour for race: " + race.name);
+				}
+				if (subClass != null && subClass.allowedArmour.contains(id)) {
+					valid = true;
+					lq.debug.fine(id.toString() + " is valid armour for sub-class: " + subClass.name);
+				}
+				if (mainClass.dissallowedArmour.contains(id)) {
+					valid = false;
+					lq.debug.fine(id.toString() + " is Invalid armour for class: " + mainClass.name);
+				}
+				if (race.dissallowedArmour.contains(id)) {
+					valid = false;
+					lq.debug.fine(id.toString() + " is Invalid armour for race: " + race.name);
+				}
+				if (subClass != null && subClass.dissallowedArmour.contains(id)) {
+					valid = false;
+					lq.debug.fine(id.toString() + " is Invalid armour for sub-class: " + subClass.name);
+				}
+				CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.ARMOUR, valid, id);
+				Bukkit.getServer().getPluginManager().callEvent(e);
+				valid = e.isValid();
+			}
 		}
 		return valid;
 	}
 
 	public boolean allowedTool(Material id) {
 		Boolean valid = false;
-
 		if (id == null) {
 			valid = true;
-			lq.debug.fine("Air/fist is valid tool");
-		}
-		if (mainClass.allowedTools.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid tool for class: " + mainClass.name);
-		}
-		if (race.allowedTools.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid tool for race: " + race.name);
-		}
-		if (subClass != null && subClass.allowedTools.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid tool for sub-class: " + subClass.name);
-		}
-		if (mainClass.dissallowedTools.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid tool for class: " + mainClass.name);
-		}
-		if (race.dissallowedTools.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid tool for race: " + race.name);
-		}
-		if (subClass != null && subClass.dissallowedTools.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid tool for sub-class: " + subClass.name);
+			// System.out.print("Air/fist is valid tool");
+		} else {
+			if (lq.configMain.itemsAllMeansAll) {
+				if (mainClass.allowedTools.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL tools set for class: " + mainClass.name);
+					valid = true;
+				}
+				if (race.allowedTools.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL tools set for race: " + race.name);
+					valid = true;
+				}
+				if (subClass != null && subClass.allowedTools.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL tools set for subClass: " + subClass.name);
+					valid = true;
+				}
+				if (mainClass.dissallowedTools.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL tools disallowed for class: " + mainClass.name);
+					valid = false;
+				}
+				if (race.dissallowedTools.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL tools disallowed for race: " + race.name);
+					valid = false;
+				}
+				if (subClass != null && subClass.dissallowedTools.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL tools disallowed for subClass: " + subClass.name);
+					valid = false;
+				}
+			}
+			if (mainClass.allowedTools.contains(id)) {
+				valid = true;
+				lq.debug.fine(id.toString() + " is valid tool for class: " + mainClass.name);
+			}
+			if (race.allowedTools.contains(id)) {
+				valid = true;
+				lq.debug.fine(id.toString() + " is valid tool for race: " + race.name);
+			}
+			if (subClass != null && subClass.allowedTools.contains(id)) {
+				valid = true;
+				lq.debug.fine(id.toString() + " is valid tool for sub-class: " + subClass.name);
+			}
+			if (mainClass.dissallowedTools.contains(id)) {
+				valid = false;
+				lq.debug.fine(id.toString() + " is Invalid tool for class: " + mainClass.name);
+			}
+			if (race.dissallowedTools.contains(id)) {
+				valid = false;
+				lq.debug.fine(id.toString() + " is Invalid tool for race: " + race.name);
+			}
+			if (subClass != null && subClass.dissallowedTools.contains(id)) {
+				valid = false;
+				lq.debug.fine(id.toString() + " is Invalid tool for sub-class: " + subClass.name);
+			}
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.TOOL, valid, id);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			valid = e.isValid();
 		}
 		return valid;
 	}
@@ -251,31 +314,61 @@ public class PC {
 
 		if (id == null) {
 			valid = true;
-			lq.debug.fine("Air/Fist is valid weapon");
-		}
-		if (mainClass.allowedWeapons.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid weapon for class: " + mainClass.name);
-		}
-		if (race.allowedWeapons.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid weapon for race: " + race.name);
-		}
-		if (subClass != null && subClass.allowedWeapons.contains(id)) {
-			valid = true;
-			lq.debug.fine(id.toString() + " is valid weapon for sub-class: " + subClass.name);
-		}
-		if (mainClass.dissallowedWeapons.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid weapon for class: " + mainClass.name);
-		}
-		if (race.dissallowedWeapons.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid weapon for race: " + race.name);
-		}
-		if (subClass != null && subClass.dissallowedWeapons.contains(id)) {
-			valid = false;
-			lq.debug.fine(id.toString() + " is Invalid weapon for sub-class: " + subClass.name);
+			// lq.debug.fine("Air/Fist is valid weapon");
+		} else {
+			if (lq.configMain.itemsAllMeansAll) {
+				if (mainClass.allowedWeapons.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL weapons set for class: " + mainClass.name);
+					valid = true;
+				}
+				if (race.allowedWeapons.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL weapons set for race: " + race.name);
+					valid = true;
+				}
+				if (subClass != null && subClass.allowedWeapons.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL weapons set for subClass: " + subClass.name);
+					valid = true;
+				}
+				if (mainClass.dissallowedWeapons.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL weapons disallowed for class: " + mainClass.name);
+					valid = false;
+				}
+				if (race.dissallowedWeapons.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL weapons disallowed for race: " + race.name);
+					valid = false;
+				}
+				if (subClass != null && subClass.dissallowedWeapons.contains(Material.PISTON_MOVING_PIECE)) {
+					lq.debug.fine("ALL weapons disallowed for subClass: " + subClass.name);
+					valid = false;
+				}
+			}
+			if (mainClass.allowedWeapons.contains(id)) {
+				valid = true;
+				lq.debug.fine(id.toString() + " is valid weapon for class: " + mainClass.name);
+			}
+			if (race.allowedWeapons.contains(id)) {
+				valid = true;
+				lq.debug.fine(id.toString() + " is valid weapon for race: " + race.name);
+			}
+			if (subClass != null && subClass.allowedWeapons.contains(id)) {
+				valid = true;
+				lq.debug.fine(id.toString() + " is valid weapon for sub-class: " + subClass.name);
+			}
+			if (mainClass.dissallowedWeapons.contains(id)) {
+				valid = false;
+				lq.debug.fine(id.toString() + " is Invalid weapon for class: " + mainClass.name);
+			}
+			if (race.dissallowedWeapons.contains(id)) {
+				valid = false;
+				lq.debug.fine(id.toString() + " is Invalid weapon for race: " + race.name);
+			}
+			if (subClass != null && subClass.dissallowedWeapons.contains(id)) {
+				valid = false;
+				lq.debug.fine(id.toString() + " is Invalid weapon for sub-class: " + subClass.name);
+			}
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.WEAPON, valid, id);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			valid = e.isValid();
 		}
 		return valid;
 	}
@@ -337,6 +430,7 @@ public class PC {
 			hp = 1;
 		}
 		level = SetExp.getLevelOfXpAmount(currentXP);
+		if (level > lq.configMain.max_level) { level = lq.configMain.max_level; }
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
 			bonus = Math.max(mainClass.healthMod, subClass.healthMod);
@@ -360,13 +454,20 @@ public class PC {
 	}
 
 	public int getMaxMana() {
+		return getMaxMana(false);
+	}
+
+	public int getMaxMana(boolean skipMods) {
 		double result = 0;
 		int mana, level, bonus, wis;
 		double perlevel;
-		wis = getAttributeModifier(Attribute.WIS);
+		wis = getAttributeModifier(Attribute.WIS, skipMods);
+
 		mana = race.baseMana;
 
 		level = SetExp.getLevelOfXpAmount(currentXP);
+		if (level > lq.configMain.max_level) { level = lq.configMain.max_level; }
+
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.manaPerLevel, subClass.manaPerLevel);
 			bonus = Math.max(mainClass.manaBonus, subClass.manaBonus);
@@ -392,6 +493,8 @@ public class PC {
 		sp = race.skillPoints;
 		sp += mainClass.skillPoints;
 		level = SetExp.getExpAtLevel(currentXP);
+		if (level > lq.configMain.max_level) { level = lq.configMain.max_level; }
+
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.skillPointsPerLevel, subClass.skillPointsPerLevel);
 		} else {
@@ -887,8 +990,10 @@ public class PC {
 					p.setMaxHealth(this.maxHP);
 					// p.setHealth(this.health);
 					double scale = this.maxHP;
-					if (scale > 40.0D) {
-						scale = 40.0D;
+
+					double scaleLimit = (lq.configMain.healthScale + 0.0D);
+					if (scale > scaleLimit) {
+						scale = scaleLimit;
 					}
 					p.setHealthScale(scale);
 					p.setHealthScaled(true);
@@ -972,12 +1077,14 @@ public class PC {
 	}
 
 	public void saveXP() {
-		currentXP = SetExp.getTotalExperience(getPlayer());
-		xpEarnt.put(mainClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
-		if (subClass != null) {
-			xpEarnt.put(subClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
+		Player p = getPlayer();
+		if (p != null) {
+			currentXP = SetExp.getTotalExperience(p);
+			xpEarnt.put(mainClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
+			if (subClass != null) {
+				xpEarnt.put(subClass.name.toLowerCase(), SetExp.getTotalExperience(getPlayer()));
+			}
 		}
-
 	}
 
 	public void giveXP(int XPGain) {
@@ -988,63 +1095,256 @@ public class PC {
 	}
 
 	public boolean canCraft() {
+		return canCraft(true);
+	}
+
+	public boolean canCraft(boolean eventfull) {
+		boolean cando = false;
 		if (race.allowCrafting || mainClass.allowCrafting) {
-			return true;
+			cando = true;
 		}
 		if (subClass != null && subClass.allowCrafting) {
-			return true;
+			cando = true;
 		}
-		return false;
+		if (eventfull) {
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.CRAFT, cando);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			cando = e.isValid();
+		}
+		return cando;
+	}
+
+	public boolean canCraft(Material m) {
+		boolean cando = canCraft(false);
+		if (cando) {
+			if (race.disallowedCrafting != null && race.disallowedCrafting.contains(m)) {
+				cando = false;
+			}
+			if (mainClass.disallowedCrafting != null && mainClass.disallowedCrafting.contains(m)) {
+				cando = false;
+			}
+			if (subClass != null) {
+				if (subClass.disallowedCrafting != null && subClass.disallowedCrafting.contains(m)) {
+					cando = false;
+				}
+			}
+		}
+
+		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.CRAFT, cando, m);
+		Bukkit.getServer().getPluginManager().callEvent(e);
+		cando = e.isValid();
+
+		return cando;
 	}
 
 	public boolean canSmelt() {
+		return canSmelt(true);
+	}
+
+	public boolean canSmelt(boolean eventfull) {
+		boolean cando = false;
 		if (race.allowSmelting || mainClass.allowSmelting) {
-			return true;
+			cando = true;
 		}
 		if (subClass != null && subClass.allowSmelting) {
-			return true;
+			cando = true;
 		}
-		return false;
+		if (eventfull) {
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.SMELT, cando);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			cando = e.isValid();
+		}
+		return cando;
+	}
+
+	public boolean canSmelt(Material m) {
+		boolean cando = canSmelt(false);
+		if (cando) {
+			if (race.disallowedSmelting != null && race.disallowedSmelting.contains(m)) {
+				cando = false;
+			}
+			if (mainClass.disallowedSmelting != null && mainClass.disallowedSmelting.contains(m)) {
+				cando = false;
+			}
+			if (subClass != null) {
+				if (subClass.disallowedSmelting != null && subClass.disallowedSmelting.contains(m)) {
+					cando = false;
+				}
+			}
+		}
+		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.SMELT, cando, m);
+		Bukkit.getServer().getPluginManager().callEvent(e);
+		cando = e.isValid();
+
+		return cando;
 	}
 
 	public boolean canBrew() {
+		return canBrew(true);
+	}
+
+	public boolean canBrew(boolean eventfull) {
+		boolean cando = false;
 		if (race.allowBrewing || mainClass.allowBrewing) {
-			return true;
+			cando = true;
 		}
 		if (subClass != null && subClass.allowBrewing) {
-			return true;
+			cando = true;
 		}
-		return false;
+		if (eventfull) {
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.BREW, cando);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			cando = e.isValid();
+		}
+		return cando;
+	}
+
+	public boolean canBrew(Material m) {
+		boolean cando = canBrew(false);
+		if (cando) {
+			if (race.disallowedBrewing != null && race.disallowedBrewing.contains(m)) {
+				cando = false;
+			}
+			if (mainClass.disallowedBrewing != null && mainClass.disallowedBrewing.contains(m)) {
+				cando = false;
+			}
+			if (subClass != null) {
+				if (subClass.disallowedBrewing != null && subClass.disallowedBrewing.contains(m)) {
+					cando = false;
+				}
+			}
+		}
+		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.BREW, cando, m);
+		Bukkit.getServer().getPluginManager().callEvent(e);
+		cando = e.isValid();
+
+		return cando;
 	}
 
 	public boolean canEnchant() {
+		return canEnchant(true);
+	}
+
+	public boolean canEnchant(boolean eventfull) {
+		boolean cando = false;
 		if (race.allowEnchating || mainClass.allowEnchating) {
-			return true;
+			cando = true;
 		}
 		if (subClass != null && subClass.allowEnchating) {
-			return true;
+			cando = true;
 		}
-		return false;
+		if (eventfull) {
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.ENCHANT, cando);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			cando = e.isValid();
+		}
+		return cando;
+	}
+
+	public boolean canEnchant(Material m) {
+		boolean cando = canEnchant(false);
+		if (cando) {
+			if (race.disallowedEnchanting != null && race.disallowedEnchanting.contains(m)) {
+				return false;
+			}
+			if (mainClass.disallowedEnchanting != null && mainClass.disallowedEnchanting.contains(m)) {
+				return false;
+			}
+			if (subClass != null) {
+				if (subClass.disallowedEnchanting != null && subClass.disallowedEnchanting.contains(m)) {
+					return false;
+				}
+			}
+		}
+		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.ENCHANT, cando, m);
+		Bukkit.getServer().getPluginManager().callEvent(e);
+		cando = e.isValid();
+
+		return cando;
 	}
 
 	public boolean canRepair() {
+		return canRepair(true);
+	}
+
+	public boolean canRepair(boolean eventfull) {
+		boolean cando = false;
 		if (race.allowRepairing || mainClass.allowRepairing) {
-			return true;
+			cando = true;
 		}
 		if (subClass != null && subClass.allowRepairing) {
-			return true;
+			cando = true;
 		}
-		return false;
+		if (eventfull) {
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.REPAIR, cando);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			cando = e.isValid();
+		}
+		return cando;
+	}
+
+	public boolean canRepair(Material m) {
+		boolean cando = canRepair(false);
+		if (cando) {
+			if (race.disallowedRepairing != null && race.disallowedRepairing.contains(m)) {
+				return false;
+			}
+			if (mainClass.disallowedRepairing != null && mainClass.disallowedRepairing.contains(m)) {
+				return false;
+			}
+			if (subClass != null) {
+				if (subClass.disallowedRepairing != null && subClass.disallowedRepairing.contains(m)) {
+					return false;
+				}
+			}
+		}
+		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.REPAIR, cando, m);
+		Bukkit.getServer().getPluginManager().callEvent(e);
+		cando = e.isValid();
+
+		return cando;
 	}
 
 	public boolean canTame() {
+		return canTame(true);
+	}
+
+	public boolean canTame(boolean eventfull) {
+		boolean cando = false;
 		if (race.allowTaming || mainClass.allowTaming) {
-			return true;
+			cando = true;
 		}
 		if (subClass != null && subClass.allowTaming) {
-			return true;
+			cando = true;
 		}
-		return false;
+		if (eventfull) {
+			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.TAME, cando);
+			Bukkit.getServer().getPluginManager().callEvent(e);
+			cando = e.isValid();
+		}
+		return cando;
+	}
+
+	public boolean canTame(EntityType m) {
+		boolean cando = canTame(false);
+		if (cando) {
+			if (race.disallowedTaming != null && race.disallowedTaming.contains(m)) {
+				cando = false;
+			}
+			if (mainClass.disallowedTaming != null && mainClass.disallowedTaming.contains(m)) {
+				cando = false;
+			}
+			if (subClass != null) {
+				if (subClass.disallowedTaming != null && subClass.disallowedTaming.contains(m)) {
+					cando = false;
+				}
+			}
+		}
+		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.TAME, cando, m);
+		Bukkit.getServer().getPluginManager().callEvent(e);
+		cando = e.isValid();
+
+		return cando;
 	}
 
 	public boolean validSkill(String name) {
@@ -1146,7 +1446,11 @@ public class PC {
 	}
 
 	public int getAttributeModifier(Attribute attr) {
-		return Mechanics.getPlayersAttributeModifier(this, attr);
+		return getAttributeModifier(attr, false);
+	}
+
+	public int getAttributeModifier(Attribute attr, boolean skipMods) {
+		return Mechanics.getPlayersAttributeModifier(this, attr, skipMods);
 	}
 
 	public int skillTest(int dif, Attribute attr) {
@@ -1204,6 +1508,18 @@ public class PC {
 		} else {
 			mana = mana - cost;
 			return true;
+		}
+	}
+	
+	public boolean canPay(int pay) {
+		if (lq.hasVault) {
+			Player p = getPlayer();
+			if (p == null) {
+				return false;
+			}
+			return PluginUtils.canPay(pay, p);
+		} else {
+			return true; // economy disabled
 		}
 	}
 
@@ -1556,13 +1872,19 @@ public class PC {
 	}
 
 	public List<Loadout> getLoadouts() {
-		if (Main.debugMode) { System.out.print("getting loadouts"); }
+		if (Main.debugMode) {
+			System.out.print("getting loadouts");
+		}
 
 		List<Loadout> list = new ArrayList<Loadout>();
 		if (mainClass.classLoadouts != null) {
-			if (Main.debugMode) { System.out.print("adding loadouts"); }
+			if (Main.debugMode) {
+				System.out.print("adding loadouts");
+			}
 			for (Loadout l : mainClass.classLoadouts) {
-				if (Main.debugMode) { System.out.print("adding loadout: "+ l.name); }
+				if (Main.debugMode) {
+					System.out.print("adding loadout: " + l.name);
+				}
 				try {
 					list.add((Loadout) l.clone());
 				} catch (CloneNotSupportedException e) {
@@ -1571,7 +1893,9 @@ public class PC {
 				}
 			}
 		} else {
-			if (Main.debugMode) { System.out.print("no class loadouts :( "); }
+			if (Main.debugMode) {
+				System.out.print("no class loadouts :( ");
+			}
 		}
 		if (subClass != null) {
 			if (subClass.classLoadouts != null) {
@@ -1596,7 +1920,6 @@ public class PC {
 		return getLoadout(null, matchActivator);
 	}
 
-	
 	public Loadout getLoadout(ItemStack hold, boolean matchActivator) {
 		if (hold == null) {
 			Player p = getPlayer();
@@ -1608,7 +1931,9 @@ public class PC {
 		}
 
 		for (Loadout l : loadouts) {
-			if (Main.debugMode) { System.out.print("checking load:" + l.name); }
+			if (Main.debugMode) {
+				System.out.print("checking load:" + l.name);
+			}
 
 			ItemStack match = null;
 			if (matchActivator) {
@@ -1616,15 +1941,21 @@ public class PC {
 			} else {
 				match = l.repository;
 			}
-			if (Main.debugMode) { System.out.print("hold type:" + hold.getType().toString()); }
-			if (Main.debugMode) { System.out.print("match type:" + match.getType().toString()); }
-			
+			if (Main.debugMode) {
+				System.out.print("hold type:" + hold.getType().toString());
+			}
+			if (Main.debugMode) {
+				System.out.print("match type:" + match.getType().toString());
+			}
+
 			if (match.getType().equals(hold.getType())) {
-				if (Main.debugMode) { System.out.print("match types"); }
-				
+				if (Main.debugMode) {
+					System.out.print("match types");
+				}
+
 				ItemMeta mdata = match.getItemMeta();
 				ItemMeta hdata = hold.getItemMeta();
-				
+
 				boolean namematch = false;
 				if (mdata.getDisplayName() == null && hdata.getDisplayName() == null) {
 					namematch = true;
@@ -1632,60 +1963,87 @@ public class PC {
 				if (mdata.getDisplayName() != null && hdata.getDisplayName() != null) {
 					if ((mdata.getDisplayName().equals(hdata.getDisplayName()))) {
 						namematch = true;
-					}					
+					}
 				}
-				if (Main.debugMode) { System.out.print("customname match: " + namematch); }
-				
+				if (Main.debugMode) {
+					System.out.print("customname match: " + namematch);
+				}
+
 				boolean lorematch = false;
-				if (Main.debugMode) { System.out.print("checking lore: --------------------------"); }
+				if (Main.debugMode) {
+					System.out.print("checking lore: --------------------------");
+				}
 				if ((mdata.getLore() == null || mdata.getLore().isEmpty()) && (hdata.getLore() == null || hdata.getLore().isEmpty())) {
 					lorematch = true;
-					if (Main.debugMode) { System.out.print("lores are both null/empty"); }
+					if (Main.debugMode) {
+						System.out.print("lores are both null/empty");
+					}
 				}
-				if (Main.debugMode) { System.out.print("mlore: " + mdata.getLore()); }
-				if (Main.debugMode) { System.out.print("hlore: " + hdata.getLore()); }
+				if (Main.debugMode) {
+					System.out.print("mlore: " + mdata.getLore());
+				}
+				if (Main.debugMode) {
+					System.out.print("hlore: " + hdata.getLore());
+				}
 				if (mdata.getLore() != null && hdata.getLore() != null) {
 					List<String> mlore = mdata.getLore();
 					List<String> hlore = hdata.getLore();
 					if (mlore.size() == hlore.size()) {
-						if (Main.debugMode) { System.out.print("lores are same size"); }
+						if (Main.debugMode) {
+							System.out.print("lores are same size");
+						}
 						lorematch = true;
-						for (int i=0;i<mlore.size();i++) {
+						for (int i = 0; i < mlore.size(); i++) {
 							if (!mlore.get(i).equals(hlore.get(i))) {
-								if (Main.debugMode) { System.out.print("lores are diff text: "+mlore.get(i)+" - "+hlore.get(i)); }
+								if (Main.debugMode) {
+									System.out.print("lores are diff text: " + mlore.get(i) + " - " + hlore.get(i));
+								}
 								lorematch = false;
 							}
 						}
 					} else {
-						if (Main.debugMode) { System.out.print("lores are diff sizes"); }
+						if (Main.debugMode) {
+							System.out.print("lores are diff sizes");
+						}
 					}
 				} else {
-					if (Main.debugMode) { System.out.print("lores are diff nullstates"); }
+					if (Main.debugMode) {
+						System.out.print("lores are diff nullstates");
+					}
 				}
-				if (Main.debugMode) { System.out.print("lore match: " + lorematch); }
+				if (Main.debugMode) {
+					System.out.print("lore match: " + lorematch);
+				}
 
-				if (Main.debugMode) { System.out.print("lore: ----------------------------------"); }
-				
-				
+				if (Main.debugMode) {
+					System.out.print("lore: ----------------------------------");
+				}
+
 				if (lorematch && namematch) {
-					if (Main.debugMode) { System.out.print("returning load type - " + l.name); }
+					if (Main.debugMode) {
+						System.out.print("returning load type - " + l.name);
+					}
 					// item is a match = return this load out.
 					return l;
 				} else {
-					if (Main.debugMode) { System.out.print("item match fail"); }
+					if (Main.debugMode) {
+						System.out.print("item match fail");
+					}
 				}
 			} else {
-				if (Main.debugMode) { System.out.print("match types failed :( "); }
+				if (Main.debugMode) {
+					System.out.print("match types failed :( ");
+				}
 
 			}
 		}
 		return null;
 	}
-	
+
 	public void setLoadouts() {
-		if (loadouts==null || loadouts.size()<1) {
+		if (loadouts == null || loadouts.size() < 1) {
 			loadouts = getLoadouts();
 		}
 	}
-	
+
 }

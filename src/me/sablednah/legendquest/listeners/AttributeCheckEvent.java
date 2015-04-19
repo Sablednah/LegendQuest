@@ -48,7 +48,6 @@ public class AttributeCheckEvent implements Listener {
                 event = e.getEvent();
                 charismaMod = e.getCharismaMod();
 
-                // TODO use modifier in some way!
             }
         }
     }

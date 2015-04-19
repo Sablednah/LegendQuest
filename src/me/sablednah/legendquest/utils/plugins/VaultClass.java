@@ -48,4 +48,18 @@ public class VaultClass {
 		return null;
 	}
 
+
+	public static boolean canPay(int pay, Player p) {
+		if (setupEconomy()) {
+            double balance = econ.getBalance(p.getName());
+            if (balance >= pay) {
+                return true;
+            } else {
+                return false;
+            }
+		} else {
+			return true; // no ecconomy
+		}
+	}
+
 }

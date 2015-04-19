@@ -99,26 +99,46 @@ public class DataSync {
 	}
 
 	public synchronized void addWrite(final PC pc) {
-		pendingWrites.add(pc);
+		if (pendingWrites.contains(pc)) {
+			pendingWrites.remove(pc);
+		} else {
+			pendingWrites.add(pc);
+		}
 	}
 
 	public synchronized void addHPWrite(final HealthStore hp) {
-		pendingHPWrites.add(hp);
+		if (pendingHPWrites.contains(hp)) {
+			pendingHPWrites.remove(hp);
+		} else {
+			pendingHPWrites.add(hp);
+		}
 	}
 
 	public synchronized void addHPWrite(final Player p) {
 		HealthStore hp = new HealthStore(p.getUniqueId(), p.getHealth(), p.getMaxHealth());
-		pendingHPWrites.add(hp);
+		addHPWrite(hp);
 	}
 
 	public void flushdb() {
+		lq.log("Flushing database...");
 		PC pc;
 		while (!pendingWrites.isEmpty()) {
 			pc = pendingWrites.poll();
 			if (pc != null) {
+				lq.log("Saving Character: " + pc.player);				
 				writeData(pc);
 			}
 		}
+		
+		while (!pendingHPWrites.isEmpty()) {
+			HealthStore hp;
+			hp = pendingHPWrites.poll();
+			if (hp != null) {
+				lq.log("Saving Health: " + hp.getUuid());				
+				writeHealthData(hp);
+			}
+		}
+		lq.log("Saving Party info......");
 		saveParties(lq.partyManager.partyList);
 	}
 
@@ -395,6 +415,7 @@ public class DataSync {
 		aSyncTaskKeeper.cancel();
 		flushdb();
 		dbconn.close();
+		lq.log("Database Closed");
 	}
 
 	private void tableCheck() {

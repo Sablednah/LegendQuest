@@ -15,8 +15,15 @@ public class CmdPlurals implements CommandExecutor {
     
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         CommandExecutor newcmd = null;
-        String[] newArglist = new String[1];
+        String[] newArglist = new String[1+args.length];
         newArglist[0]="list";
+        if (args.length>0) {
+        	int i = 0;
+        	for (String s : args) {
+        		i++;
+        		newArglist[i] = s;
+        	}
+        }
         if (label.equalsIgnoreCase("skills")) {
             newcmd = new CmdSkill(lq);
             return newcmd.onCommand(sender, command, label, newArglist);
