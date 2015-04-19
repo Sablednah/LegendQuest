@@ -5,7 +5,7 @@ LegendQuest
 
 LegendQuest is a RPG plugin for MineCraft servers using the Bukkit API.
 
-Created to power ImagiCraft's MMORPG server, with it players are able to become heroes and shape their character with a wide range of races, classes and skills.
+Created to power LegendQuests MMORPG servers, with it players are able to become heroes and shape their character with a wide range of races, classes and skills.
 
 LegendQuest is designed from the beginning to be completely configurable, highly flexible, and totally adaptable to your needs. Consisting of a system of configurable races, classes and skills. LegendQuest is at the core of your servers RPG setup, and powers all your RPG elements.
 
@@ -22,6 +22,7 @@ More importantly, each class and race can have limits placed on allowed, weapons
 
 ****************
 
-Full information, details and project help can be found on the BukkitDev project page.
+Full information, details and project help can be found on the BukkitDev and Spigot project pages.
 
 [http://dev.bukkit.org/bukkit-plugins/legendquest/](http://dev.bukkit.org/bukkit-plugins/legendquest/)
+[http://www.spigotmc.org/resources/legendquest-rpg.2120/](http://www.spigotmc.org/resources/legendquest-rpg.2120/)

@@ -207,7 +207,13 @@ public class SkillDataStore {
 						mat = null;
 					}
 					if (mat != null) {
-						this.consumes = new ItemStack(mat);
+						int qty = 1;
+						if (conf.contains("consumesqty")) {
+							if (conf.getInt("consumesqty",1) > 0) {
+								qty = conf.getInt("consumesqty",1);
+							}
+						}
+						this.consumes = new ItemStack(mat,qty);
 					} else {
 						this.consumes = null;
 					}

@@ -25,6 +25,10 @@ public class MainConfig extends Config {
 	public ArrayList<String>	worlds						= new ArrayList<String>();
 	public boolean				randomStats					= true;
 
+	public ArrayList<String>	nameBlacklist				= new ArrayList<String>();
+	public ArrayList<String>	nameBlacklistParts			= new ArrayList<String>();
+	public boolean				broadcastRename				= true;
+
 	public boolean				useScoreBoard				= true;
 	public boolean				usePlayerSlot				= true;
 	public boolean				showPlayerHealth			= true;
@@ -35,14 +39,19 @@ public class MainConfig extends Config {
 	public double				percentXpKeepClassChange	= 10.00D;
 	public double				percentXpLossRespawn		= 10.00D;
 	public int					max_level					= 150;
+	public boolean				hardLevelCap				= false;
+	public int					mastery_level				= 0;
+	
 	public int					max_xp						= 58245;
 	public boolean				XPnotify					= true;
 	public double				scaleXP						= 100.00D;
 
 	public boolean				useSkillTestForCombat		= true;
 	public boolean				verboseCombat				= true;
+	public boolean				hideHitMessage				= false;
 	public boolean				useSizeForCombat			= true;
 	public int					rangedHitBonus				= 10;
+	public int					healthScale					= 40;
 
 	public int					karmaDamagePlayer			= -10;
 	public int					karmaDamageVillager			= -5;
@@ -71,6 +80,7 @@ public class MainConfig extends Config {
 	public boolean				attributesModifyBaseStats	= false;
 	public boolean				disableStats				= false;
 	public boolean				verboseStats				= true;
+	public boolean				itemsAllMeansAll			= false;
 
 	public int					ecoRaceSwap					= 100000;
 	public int					ecoClassSwap				= 10000;
@@ -81,6 +91,8 @@ public class MainConfig extends Config {
 
 	public int					heightBonus					= 2;
 
+	
+	
 	public String				hitchance					= "AVERAGE";
 	public String				dodgechance					= "AVERAGE";
 	public String				blockchance					= "TOUGH";
@@ -108,6 +120,10 @@ public class MainConfig extends Config {
 
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
 
+		this.nameBlacklist = (ArrayList<String>) this.getConfigItem("nameBlacklist", this.nameBlacklist);
+		this.nameBlacklistParts = (ArrayList<String>) this.getConfigItem("nameBlacklistParts", this.nameBlacklistParts);
+		this.broadcastRename = this.getConfigItem("broadcastRename", this.broadcastRename);
+
 		this.useScoreBoard = this.getConfigItem("useScoreBoard", this.useScoreBoard);
 		this.usePlayerSlot = this.getConfigItem("usePlayerSlot", this.usePlayerSlot);
 		this.showPlayerHealth = this.getConfigItem("showPlayerHealth", this.showPlayerHealth);
@@ -115,9 +131,20 @@ public class MainConfig extends Config {
 
 		this.randomStats = this.getConfigItem("randomStats", this.randomStats);
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
+		this.percentXpKeepRaceChange = this.getConfigItem("percentXpKeepRaceChange", this.percentXpKeepRaceChange);
+		
 		this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);
 		this.max_level = this.getConfigItem("max_level", this.max_level);
-		this.max_xp = SetExp.getExpToLevel(this.max_level);
+		this.hardLevelCap = this.getConfigItem("hardLevelCap", this.hardLevelCap);
+		this.mastery_level = this.getConfigItem("mastery_level", this.mastery_level);
+
+		if (this.mastery_level>0) {
+			this.max_xp = SetExp.getExpToLevel(this.mastery_level);
+		} else if (max_level>0) {
+			this.max_xp = SetExp.getExpToLevel(this.max_level);
+		} else {
+			this.max_xp = Integer.MAX_VALUE; // never master!
+		}
 		this.XPnotify = this.getConfigItem("XPnotify", this.XPnotify);
 		this.scaleXP = this.getConfigItem("scaleXP", this.scaleXP);
 
@@ -126,11 +153,14 @@ public class MainConfig extends Config {
 		this.useSkillTestForCombat = this.getConfigItem("useSkillTestForCombat", this.useSkillTestForCombat);
 		this.useSizeForCombat = this.getConfigItem("useSizeForCombat", this.useSizeForCombat);
 		this.verboseCombat = this.getConfigItem("verboseCombat", this.verboseCombat);
+		this.hideHitMessage = this.getConfigItem("hideHitMessage", this.hideHitMessage);
+
 		this.rangedHitBonus = this.getConfigItem("rangedHitBonus", this.rangedHitBonus);
 		this.heightBonus = this.getConfigItem("heightBonus", this.heightBonus);
 		this.hitchance = this.getConfigItem("hitchance", this.hitchance);
 		this.dodgechance = this.getConfigItem("dodgechance", this.dodgechance);
 		this.blockchance = this.getConfigItem("blockchance", this.blockchance);
+		this.healthScale = this.getConfigItem("healthScale", this.healthScale);
 
 		this.hitchanceenum = Difficulty.valueOf(hitchance);
 		this.dodgechanceenum = Difficulty.valueOf(dodgechance);
@@ -166,6 +196,7 @@ public class MainConfig extends Config {
 		this.attributesModifyBaseStats = this.getConfigItem("attributesModifyBaseStats", this.attributesModifyBaseStats);
 		this.disableStats = this.getConfigItem("disableStats", this.disableStats);
 		this.verboseStats = this.getConfigItem("verboseStats", this.verboseStats);
+		this.itemsAllMeansAll = this.getConfigItem("itemsAllMeansAll", this.itemsAllMeansAll);
 
 		this.ecoClassSwap = this.getConfigItem("ecoClassSwap", this.ecoClassSwap);
 		this.ecoRaceSwap = this.getConfigItem("ecoRaceSwap", this.ecoRaceSwap);

@@ -29,6 +29,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+	  <groupId>org.spigotmc</groupId>
+	  <artifactId>spigot-api</artifactId>
+	  <version>1.8.3-R0.1-SNAPSHOT</version>
+	</dependency>
+		<dependency>
 			<groupId>lib.PatPeter.SQLibrary</groupId>
 			<artifactId>SQLibrary</artifactId>
 			<version>7.1</version>
@@ -146,5 +151,5 @@
 		<system>jenkins</system>
 		<url>http://sabletopia.co.uk:8080/jenkins/</url>
 	</ciManagement>
-	<version>1.6.2</version>
+	<version>1.6.4</version>
 </project>

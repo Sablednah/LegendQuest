@@ -63,6 +63,7 @@ scaleXP: 100.0
 ## Combat
 # useSkillTestForCombat: True to do opposing dexterity checks in combat.  Results in average opponents missing 50% of "hits", but lets skilled combatants hit more often compared to unskilled. and a greater RPG feel.
 # verboseCombat: Report all hits/misses in combat
+# hideHitMessage: Hide hit messages in combat
 # useSizeForCombat: adjust skill test difficulties based on sizes making large targets easier and small harder.
 # rangedHitBonus: bonus to ranged attacks to offset time spent drawing.
 # heightBonus: melee bonus if attacker is over 1 block higher than defender.
@@ -75,6 +76,7 @@ scaleXP: 100.0
 
 useSkillTestForCombat: true
 verboseCombat: true
+hideHitMessage: false
 useSizeForCombat: true
 rangedHitBonus: 10
 heightBonus: 2
@@ -141,14 +143,27 @@ showListLevels: true
 # verboseStats: whether to show stats in one line (false), or on separate lines (true). 
 # disableStats: bypass the stats/attribute system.
 # attributesModifyBaseStats: allow attributes to modify the base stats for mana/health/skill points as well as per level
+# healthScale: maximum hears to display (1 = half heart)
+# nameBlacklist
 
 verboseStats: true
 disableStats: false
 attributesModifyBaseStats: false
-
+healthScale: 40
+nameBlacklist:
+  - gemerald
+  - sablednah
+  - dinnerbone
+  - grumm
+nameBlacklistParts:
+  - fuck
+  - faggot
+  - sablednah
+broadcastRename: true
+  
 #--------------------
 
-## Mechanics
+## Ecconomy
 # ecoClassSwap: amount to pay to switch class
 # ecoRaceSwap: amount to pay to switch race
 

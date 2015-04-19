@@ -148,8 +148,9 @@ public class MChatClass {
         public String getValue(UUID uuid) {
         	Main lq = (Main)Bukkit.getPluginManager().getPlugin("LegendQuest");        	
         	Player player = Bukkit.getPlayer(uuid);
+        	PC pc = lq.getPlayers().getPC(uuid);
             if (player != null) {
-            	return (player.getLevel() > lq.configMain.max_level) ? LocaleType.MESSAGE_HEROES_TRUE.getVal() : LocaleType.MESSAGE_HEROES_FALSE.getVal();
+            	return (pc.hasMastered(pc.mainClass.name)) ? LocaleType.MESSAGE_HEROES_TRUE.getVal() : LocaleType.MESSAGE_HEROES_FALSE.getVal();
             }
             return "";
         }

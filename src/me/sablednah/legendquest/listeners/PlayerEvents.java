@@ -32,7 +32,7 @@ public class PlayerEvents implements Listener {
 
 	public class delayedSpawn implements Runnable {
 
-		public int		xp;
+		public int	xp;
 		public UUID	player;
 
 		public delayedSpawn(int xp, UUID player) {
@@ -45,6 +45,7 @@ public class PlayerEvents implements Listener {
 			pc.setXP(xp);
 			lq.players.savePlayer(pc);
 			pc.scheduleHealthCheck();
+			pc.scheduleXPSave();
 		}
 	}
 
@@ -104,7 +105,6 @@ public class PlayerEvents implements Listener {
 			p.setWalkSpeed(pc.race.baseSpeed);
 		}
 
-
 		if (Main.debugMode) {
 			Location l = p.getLocation();
 			Chunk c = l.getChunk();
@@ -126,7 +126,7 @@ public class PlayerEvents implements Listener {
 		}
 	}
 
-	// set to monitor - we're not gonna change the port, only load our data
+	// set to monitor - we're not gonna change the teleport, only load our data
 	// this loads PC data if players swich to/from a non LQ world
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPort(PlayerTeleportEvent event) {
@@ -221,7 +221,7 @@ public class PlayerEvents implements Listener {
 		}
 
 		PC pc = lq.players.getPC(p);
-		lq.effectManager.removeAllProcess(OwnerType.PLAYER,p.getUniqueId());
+		lq.effectManager.removeAllProcess(OwnerType.PLAYER, p.getUniqueId());
 		lq.logWarn("currentXP: " + pc.currentXP);
 		int currentXP = SetExp.getTotalExperience(p);
 		lq.logWarn("totxp: " + currentXP);
@@ -229,7 +229,7 @@ public class PlayerEvents implements Listener {
 		lq.logWarn("xpLoss: " + xpLoss);
 		int newXp = currentXP - xpLoss;
 		pc.setXP(newXp);
-//		lq.players.savePlayer(pc);
+		// lq.players.savePlayer(pc);
 		lq.getServer().getScheduler().runTaskLaterAsynchronously(lq, new delayedSpawn(newXp, pc.uuid), 5);
 		p.setWalkSpeed(pc.race.baseSpeed);
 	}
@@ -246,69 +246,98 @@ public class PlayerEvents implements Listener {
 		if (Main.debugMode) {
 			System.out.print("xpAmount: " + xpAmount);
 		}
+
 		UUID uuid = p.getUniqueId();
 		PC pc = lq.players.getPC(uuid);
-
-		// ScaleXP
-		xpAmount = (int) (xpAmount * (lq.configMain.scaleXP / 100.0D));
+		
 
 		if (Main.debugMode) {
-			System.out.print("ScaleXP (" + lq.configMain.scaleXP + ") xpAmount: " + xpAmount);
+			System.out.print("xpAmount (" + xpAmount + ") p.getExpToLevel(): " + p.getExpToLevel());
 		}
 
-		// half xp gain for dual class
-		if (pc.subClass != null) {
-			xpAmount = xpAmount / 2.0D;
-		}
-		if (Main.debugMode) {
-			System.out.print("subclassed xpAmount: " + xpAmount);
-		}
-
-		// useParties
-		if (lq.configMain.useParties) {
-			List<Player> party = lq.partyManager.getPartyMembers(p);
-			if (party != null) { // has party
-				if (party.size() > 1) { // party has at least 2 people!
-					xpAmount = (xpAmount * (1 + (lq.configMain.partyBonus / 100.0D))); // bonus party XP
+		if (xpAmount >= SetExp.getExpUntilNextLevel(p)) {
+			// will level up
+			if (Main.debugMode) {
+				System.out.print("Leveling up: lq.configMain.hardLevelCap = "+lq.configMain.hardLevelCap + " - lq.configMain.max_level > "+lq.configMain.max_level);
+			}
+			if (lq.configMain.hardLevelCap && lq.configMain.max_level > 0) {
+				if (Main.debugMode) {
+					System.out.print("Leveling up: p.getLevel() = " + p.getLevel() + " - lq.configMain.max_level > "+lq.configMain.max_level);
+				}
+				if (p.getLevel() >= lq.configMain.max_level) {
 					if (Main.debugMode) {
-						System.out.print("partyBonus (" + lq.configMain.partyBonus + ") xpAmount: " + xpAmount);
+						System.out.print("zeroing XP");
 					}
-					xpAmount = xpAmount / party.size();
-					if (Main.debugMode) {
-						System.out.print("partyBonus perperson xpAmount: " + xpAmount);
-					}
-					if (Main.debugMode) {
-						System.out.print("party xpAmount: " + xpAmount);
-					}
-					for (Player pp : party) {
-						if (!(pp.getUniqueId().equals(p.getUniqueId()))) {
-							/*
-							pp.giveExp((int) Math.round(xpAmount));
-							if (lq.configMain.XPnotify) {
-								pp.sendMessage(lq.configLang.partyXpChange + xpAmount);
-							}
-							*/
-							Random rnd = new Random();
-							long rndNum = rnd.nextInt(8)+1;
-							Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(lq, new DelayedXP(p.getUniqueId(),xpAmount), rndNum);
-
-						}
-					}
+					event.setAmount(0);
+					xpAmount = 0;
 				}
 			}
 		}
 
-		pc.scheduleXPSave();
+		if (xpAmount > 0) {
 
-//		lq.players.addPlayer(uuid, pc);
-		lq.players.savePlayer(pc);
-		event.setAmount((int) Math.round(xpAmount));
+			// ScaleXP
+			xpAmount = (int) (xpAmount * (lq.configMain.scaleXP / 100.0D));
 
-		if (xpAmount >= p.getExpToLevel()) {
-			pc.scheduleHealthCheck();
-			pc.skillSet = pc.getUniqueSkills(true);
-			final LevelUpEvent e = new LevelUpEvent(p, p.getLevel() + 1, pc);
-			Bukkit.getServer().getPluginManager().callEvent(e);
+			if (Main.debugMode) {
+				System.out.print("ScaleXP (" + lq.configMain.scaleXP + ") xpAmount: " + xpAmount);
+			}
+
+			// half xp gain for dual class
+			if (pc.subClass != null) {
+				xpAmount = xpAmount / 2.0D;
+			}
+			if (Main.debugMode) {
+				System.out.print("subclassed xpAmount: " + xpAmount);
+			}
+
+			// useParties
+			if (lq.configMain.useParties) {
+				List<Player> party = lq.partyManager.getPartyMembers(p);
+				if (party != null) { // has party
+					if (party.size() > 1) { // party has at least 2 people!
+						xpAmount = (xpAmount * (1 + (lq.configMain.partyBonus / 100.0D))); // bonus party XP
+						if (Main.debugMode) {
+							System.out.print("partyBonus (" + lq.configMain.partyBonus + ") xpAmount: " + xpAmount);
+						}
+						xpAmount = xpAmount / party.size();
+						if (Main.debugMode) {
+							System.out.print("partyBonus perperson xpAmount: " + xpAmount);
+						}
+						if (Main.debugMode) {
+							System.out.print("party xpAmount: " + xpAmount);
+						}
+						for (Player pp : party) {
+							if (!(pp.getUniqueId().equals(p.getUniqueId()))) {
+								/*
+								 * pp.giveExp((int) Math.round(xpAmount)); if (lq.configMain.XPnotify) {
+								 * pp.sendMessage(lq.configLang.partyXpChange + xpAmount); }
+								 */
+								Random rnd = new Random();
+								long rndNum = rnd.nextInt(8) + 1;
+								Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(lq, new DelayedXP(p.getUniqueId(), xpAmount), rndNum);
+							}
+						}
+					}
+				}
+			}
+
+			pc.scheduleXPSave();
+
+			// lq.players.addPlayer(uuid, pc);
+			lq.players.scheduleUpdate(uuid);
+			
+			event.setAmount((int) Math.round(xpAmount));
+
+			if (xpAmount >= SetExp.getExpUntilNextLevel(p)) {
+				pc.scheduleHealthCheck();
+				pc.skillSet = pc.getUniqueSkills(true);
+				final LevelUpEvent e = new LevelUpEvent(p, p.getLevel() + 1, pc);
+				Bukkit.getServer().getPluginManager().callEvent(e);
+				if (Main.debugMode) {
+					System.out.print("Level UP++");
+				}
+			}
 		}
 	}
 
@@ -319,29 +348,33 @@ public class PlayerEvents implements Listener {
 			event.getPlayer().sendMessage(lq.configLang.xpChange + event.getAmount());
 		}
 	}
-	
-	public class DelayedXP  implements Runnable {
-		UUID id = null;
-		double amount = 0.0D;
+
+	public class DelayedXP implements Runnable {
+		UUID	id		= null;
+		double	amount	= 0.0D;
+
 		public DelayedXP(UUID id, double amount) {
-			this.id=id;
+			this.id = id;
 			this.amount = amount;
 		}
+
 		public void run() {
-			Bukkit.getServer().getScheduler().runTaskLater(lq, new GiveXP(id,amount), 1L);
+			Bukkit.getServer().getScheduler().runTaskLater(lq, new GiveXP(id, amount), 1L);
 		}
 	}
-	
-	public class GiveXP  implements Runnable {
-		UUID id = null;
-		double amount = 0.0D;
+
+	public class GiveXP implements Runnable {
+		UUID	id		= null;
+		double	amount	= 0.0D;
+
 		public GiveXP(UUID id, double amount) {
-			this.id=id;
+			this.id = id;
 			this.amount = amount;
 		}
+
 		public void run() {
 			Player pp = lq.getServer().getPlayer(id);
-			if (pp!=null) {
+			if (pp != null) {
 				pp.giveExp((int) Math.round(amount));
 				if (lq.configMain.XPnotify) {
 					pp.sendMessage(lq.configLang.partyXpChange + amount);

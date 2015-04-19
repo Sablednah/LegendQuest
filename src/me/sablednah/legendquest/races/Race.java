@@ -3,6 +3,7 @@ package me.sablednah.legendquest.races;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 
 import me.sablednah.legendquest.skills.SkillDataStore;
 
@@ -45,6 +46,13 @@ public class Race {
 	public boolean				allowEnchating;
 	public boolean				allowRepairing;
 	public boolean				allowTaming;
+
+	public List<Material>		disallowedCrafting;
+	public List<Material>		disallowedSmelting;
+	public List<Material>		disallowedBrewing;
+	public List<Material>		disallowedEnchanting;
+	public List<Material>		disallowedRepairing;
+	public List<EntityType>		disallowedTaming;
 
 	// frequency used for NPC chance.
 	public int					frequency;

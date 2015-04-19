@@ -32,7 +32,13 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 
 		// send console the list list
 		if (!(sender instanceof Player)) {
-			sendClassList(sender, null);
+			boolean full = false;
+			if (args.length > 0) {
+				if (args[0].equalsIgnoreCase("full")) {
+					full = true;
+				}
+			}
+			sendClassList(sender, null, full);
 			return true;
 		}
 
@@ -57,7 +63,13 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 		} else {
 			String className = args[0].toLowerCase();
 			if (className.equalsIgnoreCase("list")) {
-				sendClassList(sender, pc);
+				boolean full = false;
+				if (args.length > 1) {
+					if (args[1].equalsIgnoreCase("full")) {
+						full = true;
+					}
+				}
+				sendClassList(sender, pc, full);
 				return true;
 			} else if (className.equalsIgnoreCase("info")) {
 				if (args.length < 2) {
@@ -160,7 +172,7 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 		}
 	}
 
-	private void sendClassList(final CommandSender sender, final PC pc) {
+	private void sendClassList(final CommandSender sender, final PC pc, boolean full) {
 		sender.sendMessage(lq.configLang.classList);
 		String strout;
 
@@ -189,6 +201,9 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 					strout += " 1x" + cls.requiresOne.toString();
 				}
 				sender.sendMessage(strout);
+				if (full) {
+					sender.sendMessage("  "+cls.description);
+				}
 			}
 		} else {
 			// get classes allowed for this race
@@ -258,6 +273,9 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 						strout += "]";
 					}
 					sender.sendMessage(strout);
+					if (full) {
+						sender.sendMessage("  "+clsfile.description);
+					}
 				}
 			}
 		}

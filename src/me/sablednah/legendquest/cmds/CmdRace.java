@@ -27,7 +27,13 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 
 		// send console the list list
 		if (!(sender instanceof Player)) {
-			sendRaceList(sender, null);
+			boolean full = false;
+			if (args.length > 0) {
+				if (args[0].equalsIgnoreCase("full")) {
+					full = true;
+				}
+			}
+			sendRaceList(sender, null, full);
 			return true;
 		}
 
@@ -47,7 +53,13 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 		} else {
 			String raceName = args[0].toLowerCase();
 			if (raceName.equalsIgnoreCase("list")) {
-				sendRaceList(sender, pc);
+				boolean full = false;
+				if (args.length > 1) {
+					if (args[1].equalsIgnoreCase("full")) {
+						full = true;
+					}
+				}
+				sendRaceList(sender, pc,full);
 				return true;
 			} else if (raceName.equalsIgnoreCase("info")) {
 				if (args.length < 2) {
@@ -106,7 +118,7 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 		}
 	}
 
-	private void sendRaceList(final CommandSender sender, final PC pc) {
+	private void sendRaceList(final CommandSender sender, final PC pc, boolean full) {
 		sender.sendMessage(lq.configLang.raceList);
 		String strout;
 		for (final Race rc : lq.races.getRaces().values()) {
@@ -123,7 +135,9 @@ public class CmdRace extends CommandTemplate implements CommandExecutor {
 				strout += " <";
 			}
 			sender.sendMessage(strout);
+			if (full) {
+				sender.sendMessage("   " + rc.description);
+			}
 		}
-
 	}
 }
