@@ -5,14 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import me.clip.deluxechat.placeholders.DeluxePlaceholderHook;
-import me.clip.deluxechat.placeholders.PlaceholderHandler;
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderHook;
 import me.sablednah.legendquest.Main;
 
-public class DeluxeChatClass implements Listener {
+public class PlaceholderAPIClass implements Listener {
 	public Main	lq;
 
-	public DeluxeChatClass(final Main lq) {
+	public PlaceholderAPIClass(final Main lq) {
 		this.lq = lq;
 
 		/**
@@ -27,7 +27,7 @@ public class DeluxeChatClass implements Listener {
 		 * When the onPlaceholderRequest is called for your plugin, you can simply return the value specific to the
 		 * placeholder identifier requiring a value for the player.
 		 */
-		boolean registered = PlaceholderHandler.registerPlaceholderHook((Plugin) lq, new DeluxePlaceholderHook() {
+		boolean registered = PlaceholderAPI.registerPlaceholderHook((Plugin) lq, new PlaceholderHook() {
 			@Override
 			public String onPlaceholderRequest(Player player, String id) {
 				return PlaceholderString.getSting(player,id, lq);
@@ -35,7 +35,7 @@ public class DeluxeChatClass implements Listener {
 		});
 
 		if (registered) {
-			lq.log("DeluxeChat placeholder handler registered!");
+			lq.log("PlaceholderAPI handler registered!");
 		}
 
 	}

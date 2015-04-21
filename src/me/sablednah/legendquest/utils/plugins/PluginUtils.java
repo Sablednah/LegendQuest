@@ -9,6 +9,15 @@ import org.bukkit.entity.Player;
 public class PluginUtils {
 
     public static Boolean canBuild(Location l, Player p) {
+        Boolean hasWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard");
+        if (hasWorldGuard) {
+            if (Bukkit.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion().startsWith("5")) {
+            	return WorldGuardClass5.canBuild(l, p);
+            } else {
+            	return WorldGuardClass6.canBuild(l, p);
+            }
+        }
+
         Boolean hasFactions = Bukkit.getServer().getPluginManager().isPluginEnabled("Factions");
         if (hasFactions) {
         	return FactionsSkills.canBuildFactions(l, p);
@@ -25,6 +34,14 @@ public class PluginUtils {
     }
 
     public static Boolean canBuild(Block b, Player p) {
+        Boolean hasWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard");
+        if (hasWorldGuard) {
+            if (Bukkit.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion().startsWith("5")) {
+            	return WorldGuardClass5.canBuild(b.getLocation(), p);
+            } else {
+            	return WorldGuardClass6.canBuild(b.getLocation(), p);
+            }
+        }
         Boolean hasFactions = Bukkit.getServer().getPluginManager().isPluginEnabled("Factions");
         if (hasFactions) {
         	return FactionsSkills.canBuildFactions(b, p);
@@ -47,6 +64,14 @@ public class PluginUtils {
     }
     
     public static Boolean canHurt(Player p, Player t) {
+        Boolean hasWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard");
+        if (hasWorldGuard) {
+            if (Bukkit.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion().startsWith("5")) {
+            	return WorldGuardClass5.canHurt(p, t);
+            } else {
+            	return WorldGuardClass6.canHurt(p, t);
+            }
+        }
         Boolean hasFactions = Bukkit.getServer().getPluginManager().isPluginEnabled("Factions");
         if (hasFactions) {
         	return FactionsSkills.canHurt(p, t);

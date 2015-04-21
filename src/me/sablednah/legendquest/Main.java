@@ -1,18 +1,5 @@
 package me.sablednah.legendquest;
 
-/*
-*    >>\.
-*   /_  )`.
-*  /  _)`^)`.   _.---. _
-* (_,' \  `^-)""      `.\
-*       |              | \
-*       \              / |
-*      / \  /.___.'\  (\ (_
-*     < ,"||     \ |`. \`-'
-*      \\ ()      )|  )/
-*      |_>|>     /_] //
-*        /_]        /_]
-*/
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -31,6 +18,7 @@ import me.sablednah.legendquest.skills.SkillPool;
 import me.sablednah.legendquest.utils.DebugLog;
 import me.sablednah.legendquest.utils.ManaTicker;
 import me.sablednah.legendquest.utils.plugins.DeluxeChatClass;
+import me.sablednah.legendquest.utils.plugins.PlaceholderAPIClass;
 import me.sablednah.legendquest.utils.plugins.MChatClass;
 
 import org.bukkit.entity.Player;
@@ -61,12 +49,15 @@ public class Main extends JavaPlugin {
 	public boolean				hasVault;
 	public boolean				hasMChat;
 	public boolean				hasDeluxeChat;
-	
+	public boolean				hasPlaceholderAPI;
+	public boolean				hasWorldGuard;
+	public boolean				hasWorldGuard5;
+
 	// TODO switch test flag for live
 	public static final Boolean	debugMode	= false;
 
 	public void log(final String msg) {
-		this.getServer().getConsoleSender().sendMessage("[LegendQuest] "+msg);
+		this.getServer().getConsoleSender().sendMessage("[LegendQuest] " + msg);
 		debug.info("[serverlog] " + msg);
 	}
 
@@ -86,9 +77,9 @@ public class Main extends JavaPlugin {
 			UUID uuid = player.getUniqueId();
 			players.removePlayer(uuid);
 		}
-		//disable skills
+		// disable skills
 		skills.shutdown();
-		
+
 		debug.closeLog();
 		datasync.shutdown();
 
@@ -107,7 +98,7 @@ public class Main extends JavaPlugin {
 		configMain = new MainConfig(this);
 
 		debug.log.setLevel(Level.parse(configMain.logLevel));
-		
+
 		if (configMain.debugMode) {
 			debug.setDebugMode();
 			debug.log.setLevel(Level.ALL);
@@ -122,23 +113,35 @@ public class Main extends JavaPlugin {
 		// Notify loading has begun...
 		log(configLang.startup);
 
-		//look for vault
+		// look for vault
 		hasVault = this.getServer().getPluginManager().isPluginEnabled("Vault");
-        if (hasVault) {
-            logger.info("Vault detected.");
-        }
-		
-		//look for mchat
+		if (hasVault) {
+			logger.info("Vault detected.");
+		}
+
+		// look for mchat
 		hasMChat = this.getServer().getPluginManager().isPluginEnabled("MChat");
-        if (hasMChat) {
-            logger.info("mChat detected.");
-            MChatClass.addVars();
-        }
+		if (hasMChat) {
+			logger.info("mChat detected.");
+			MChatClass.addVars();
+		}
 
-		//look for deluxechat
+		// look for worldguard
+		hasWorldGuard = this.getServer().getPluginManager().isPluginEnabled("WorldGuard");
+		if (hasWorldGuard) {
+			logger.info("WorldGuard detected. " + this.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion());
+			if (this.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion().startsWith("5")) {
+				hasWorldGuard5 = true;
+			} else {
+				hasWorldGuard5 = false;
+			}
+		}
+
+		// look for deluxechat and PlaceholderAPI
 		hasDeluxeChat = this.getServer().getPluginManager().isPluginEnabled("DeluxeChat");
+		hasPlaceholderAPI = this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
 
-        // load skills
+		// load skills
 		configSkills = new SkillConfig(this);
 		skills = new SkillPool(this);
 		skills.initSkills();
@@ -152,20 +155,17 @@ public class Main extends JavaPlugin {
 
 		// Start scoreboard
 		/*
-		if (configMain.useScoreBoard) {
-			scoreboard = this.getServer().getScoreboardManager();
-			board = scoreboard.getMainScoreboard();
-			objClass = board.registerNewObjective("LQ", "dummy");
-			objClass.setDisplaySlot(DisplaySlot.BELOW_NAME);
-		}
-		*/
+		 * if (configMain.useScoreBoard) { scoreboard = this.getServer().getScoreboardManager(); board =
+		 * scoreboard.getMainScoreboard()-; objClass = board.registerNewObjective("LQ", "dummy");
+		 * objClass.setDisplaySlot(DisplaySlot.BELOW_NAME); }
+		 */
 
 		// now load players
 		players = new PCs(this);
 
 		// start effect manager
 		effectManager = new EffectManager(this);
-		
+
 		// start party manager
 		partyManager = new PartyManager(this);
 
@@ -180,11 +180,14 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new SkillLinkEvents(this), this);
 		pm.registerEvents(new ChatEvents(this), this);
 
-        if (hasDeluxeChat) {
-            logger.info("DeluxeChat detected.");
-    		pm.registerEvents(new DeluxeChatClass(this), this);
-        }
-
+		if (hasDeluxeChat) {
+			logger.info("DeluxeChat detected.");
+			pm.registerEvents(new DeluxeChatClass(this), this);
+		}
+		if (hasPlaceholderAPI) {
+			logger.info("PlaceholderAPI detected.");
+			pm.registerEvents(new PlaceholderAPIClass(this), this);
+		}
 		
 		// setup commands
 		getCommand("lq").setExecutor(new RootCommand(this));
@@ -206,7 +209,7 @@ public class Main extends JavaPlugin {
 		getCommand("race").setTabCompleter(new TabComplete(this));
 		getCommand("class").setTabCompleter(new TabComplete(this));
 		getCommand("skill").setTabCompleter(new TabComplete(this));
-		
+
 		// getCommand("skills").setExecutor(new CmdPlurals(this));
 		// getCommand("classes").setExecutor(new CmdPlurals(this));
 		// getCommand("races").setExecutor(new CmdPlurals(this));

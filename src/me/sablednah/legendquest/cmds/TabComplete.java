@@ -29,6 +29,8 @@ public class TabComplete implements TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
 		String cmdName = "";
 		String[] newArglist;
+		List<String> outputList = new ArrayList<String>();
+
 		if (cmd.getName().equalsIgnoreCase("lq")) {
 			if ((args.length > 0)) {
 				if (args.length > 1) {
@@ -38,8 +40,7 @@ public class TabComplete implements TabCompleter {
 				}
 				cmdName = args[0].toLowerCase();
 			} else {
-				// / not valid length/command
-				return null;
+				newArglist = args;
 			}
 
 		} else {
@@ -52,7 +53,6 @@ public class TabComplete implements TabCompleter {
 		if (isPlayer) {
 			pc = lq.players.getPC(((Player) sender).getUniqueId());
 		}
-		List<String> outputList = new ArrayList<String>();
 
 		if (cmdName.equals("class")) {
 			if (isPlayer) {
@@ -140,8 +140,16 @@ public class TabComplete implements TabCompleter {
 					outputList.add(pl.getName());
 				}
 			}
+		} else {
+			outputList.add("class");
+			outputList.add("race");
+			outputList.add("skill");
+			outputList.add("admin");
 		}
-		String lastarg = newArglist[newArglist.length - 1];
+		String lastarg = "";
+		if (newArglist.length>0) {
+			lastarg = newArglist[newArglist.length - 1];
+		}
 		if (!lastarg.isEmpty()) {
 			return StringUtil.copyPartialMatches(lastarg, outputList, new ArrayList<String>());
 		} else {
