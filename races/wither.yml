@@ -1,0 +1,37 @@
+name: Wither
+plural: Wither
+size: 2.0
+frequency: 10
+default: false
+perm: legendquest.race.wither
+basehealth: 30
+
+baseMana: 10
+manaPerSecond: 1
+
+statmods:
+  str: 1
+  dex: 0
+  int: -1
+  wis: 0
+  con: 2
+  chr: -2
+
+allowCrafting: false
+allowSmelting: false
+allowBrewing: false
+allowEnchating: true
+allowRepairing: false
+
+groups:
+  - Humanoid
+  - Wither
+
+skillPoints: 10
+skillPointsPerLevel: 0.1
+
+skills:
+    fireproof:
+        level: 0
+        cost: 0
+        type: PASSIVE
