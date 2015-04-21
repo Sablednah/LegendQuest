@@ -171,7 +171,7 @@ public abstract class Skill implements EventListener, Listener {
 		}
 		return skillData;
 	}
-
+	
 	public SkillDataStore getPlayerSkillData(PC pc) {
 		SkillDataStore skillData = null;
 		if (pc != null) {

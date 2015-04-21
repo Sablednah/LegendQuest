@@ -783,6 +783,12 @@ public class PC {
 			if ((skillsPurchased.containsKey(mainClass.name + "|" + s.name) || skillsPurchased.containsKey(race.name + "|" + s.name) || (subClass != null && skillsPurchased.containsKey(subClass.name + "|" + s.name))) && (s.levelRequired <= level)) {
 				valid = true;
 			}
+			if (s.needPerm!=null && !s.needPerm.isEmpty()) {
+// System.out.print("needPerm: " + s.needPerm + " = " + getPlayer().hasPermission(s.needPerm));
+				if (!getPlayer().hasPermission(s.needPerm)) {
+					valid = false;
+				}
+			}
 			if (!valid) {
 				return false;
 			}

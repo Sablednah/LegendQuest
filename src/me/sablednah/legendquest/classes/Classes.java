@@ -486,7 +486,7 @@ public class Classes {
 						for (String key : permSkills.getKeys(false)) {
 							ConfigurationSection skillInfo = permSkills.getConfigurationSection(key);
 							lq.debug.info("Loading permskill: " + key);
-							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null, 0, 0, 0);
+							SkillInfo si = new SkillInfo("BukkitPlugin", "sablednah", "Bukkit Skill", null, 1, 0, 0, 0, 0, 0, 0, 0, "", 0, 0, null, null, null, null, null, null, 0, 0, 0, "");
 							si.setName(key);
 							si.readConfigBasicInfo(skillInfo);
 							SkillDataStore skilldata = new SkillDataStore(si);

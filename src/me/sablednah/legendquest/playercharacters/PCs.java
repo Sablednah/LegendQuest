@@ -101,7 +101,7 @@ public class PCs {
 		pc = lq.datasync.getData(uuid);
 		if (pc == null) {
 			pc = new PC(lq, uuid);
-		}else {
+		} else {
 			pc.setLoadouts();
 		}
 		return pc;
@@ -202,7 +202,7 @@ public class PCs {
 					level.setDisplaySlot(DisplaySlot.PLAYER_LIST);
 					level.setDisplayName("Lvl");
 				}
-				if (activePlayer.getData("hidesidebar")==null || !(activePlayer.getData("hidesidebar").equalsIgnoreCase("true"))) {
+				if (activePlayer.getData("hidesidebar") == null || !(activePlayer.getData("hidesidebar").equalsIgnoreCase("true"))) {
 					skillo = board.registerNewObjective("skills", "dummy");
 					skillo.setDisplaySlot(DisplaySlot.SIDEBAR);
 					skillo.setDisplayName("Skills");
@@ -211,22 +211,30 @@ public class PCs {
 					int sknum = 0;
 					for (SkillDataStore skill : activePlayer.skillSet.values()) {
 						if (skill.type == SkillType.ACTIVE) {
-							str = "";
-							if (skill.levelRequired < 100) {
-								str += " ";
+							boolean hasperm = true;
+							if (skill.needPerm != null && !skill.needPerm.isEmpty()) {
+								if (!p.hasPermission(skill.needPerm)) {
+									hasperm = false;
+								}
 							}
-							if (skill.levelRequired < 10) {
-								str += " ";
-							}
-							str += skill.levelRequired + " " + ChatColor.GREEN.toString() + skill.name;
+							if (hasperm) {
+								str = "";
+								if (skill.levelRequired < 100) {
+									str += " ";
+								}
+								if (skill.levelRequired < 10) {
+									str += " ";
+								}
+								str += skill.levelRequired + " " + ChatColor.GREEN.toString() + skill.name;
 
-							if (str.length() > 16) {
-								str = str.substring(0, 16);
+								if (str.length() > 16) {
+									str = str.substring(0, 16);
+								}
+								// System.out.print(str + "<");
+								scores[sknum] = skillo.getScore(str);
+								scores[sknum].setScore(-1);
+								sknum++;
 							}
-							// System.out.print(str + "<");
-							scores[sknum] = skillo.getScore(str);
-							scores[sknum].setScore(-1);
-							sknum++;
 						}
 					}
 				}
@@ -236,16 +244,16 @@ public class PCs {
 				if (lq.configMain.usePlayerSlot) {
 					statistics = board.getObjective("stats");
 				}
-				if (activePlayer.getData("hidesidebar")==null || !(activePlayer.getData("hidesidebar").equalsIgnoreCase("true"))) {
+				if (activePlayer.getData("hidesidebar") == null || !(activePlayer.getData("hidesidebar").equalsIgnoreCase("true"))) {
 					skillo = board.getObjective("skills");
-					if (skillo==null) {
+					if (skillo == null) {
 						skillo = board.registerNewObjective("skills", "dummy");
 						skillo.setDisplaySlot(DisplaySlot.SIDEBAR);
 						skillo.setDisplayName("Skills");
 					}
 				} else {
 					skillo = board.getObjective("skills");
-					if (skillo!=null) {
+					if (skillo != null) {
 						skillo.unregister();
 					}
 				}
@@ -292,7 +300,7 @@ public class PCs {
 			// Score cash = statistics.getScore("Cash: ");
 			// cash.setScore((int) (Math.floor(balance))); // Integer only!
 			// }
-			if (activePlayer.getData("hidesidebar")==null || !(activePlayer.getData("hidesidebar").equalsIgnoreCase("true"))) {
+			if (activePlayer.getData("hidesidebar") == null || !(activePlayer.getData("hidesidebar").equalsIgnoreCase("true"))) {
 
 				Score scores[] = new Score[activePlayer.skillSet.size()];
 				int sknum = 0;
@@ -306,72 +314,82 @@ public class PCs {
 					String lvl = "";
 					int time = 0;
 					if (skill.type == SkillType.ACTIVE) {
-						str = "";
-						if (skill.levelRequired < 100) {
-							lvl += " ";
+						boolean hasperm = true;
+
+						if (skill.needPerm != null && !skill.needPerm.isEmpty()) {
+							if (!p.hasPermission(skill.needPerm)) {
+								hasperm = false;
+							}
 						}
-						if (skill.levelRequired < 10) {
-							lvl += " ";
+						if (hasperm) {
+
+							str = "";
+							if (skill.levelRequired < 100) {
+								lvl += " ";
+							}
+							if (skill.levelRequired < 10) {
+								lvl += " ";
+							}
+							lvl += skill.levelRequired + " ";
+							str = skill.name;
+							// System.out.print(str);
+							if (str.length() > 10) {
+								str = str.substring(0, 10);
+							}
+							switch (skill.getPhase()) {
+								case READY:
+									if (selected != null && selected.containsKey(skill.name)) {
+										color = ChatColor.DARK_GREEN.toString();
+										board.resetScores(lvl + ChatColor.STRIKETHROUGH.toString() + str);
+									} else {
+										color = ChatColor.STRIKETHROUGH.toString();
+									}
+									board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.GREEN.toString() + str);
+									board.resetScores(lvl + ChatColor.RED.toString() + str);
+									break;
+								case BUILDING:
+									color = ChatColor.DARK_PURPLE.toString();
+									board.resetScores(lvl + ChatColor.GREEN.toString() + str);
+									board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
+									board.resetScores(lvl + ChatColor.RED.toString() + str);
+									break;
+								case DELAYED:
+									color = ChatColor.LIGHT_PURPLE.toString();
+									board.resetScores(lvl + ChatColor.GREEN.toString() + str);
+									board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
+									board.resetScores(lvl + ChatColor.RED.toString() + str);
+									break;
+								case ACTIVE:
+									color = ChatColor.GREEN.toString();
+									board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
+									board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.RED.toString() + str);
+									break;
+								case COOLDOWN:
+									color = ChatColor.RED.toString();
+									board.resetScores(lvl + ChatColor.GREEN.toString() + str);
+									board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
+									board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
+									break;
+							}
+							time = (int) skill.getTimeLeft();
+							str = lvl + color + str;
+							// System.out.print(str + " : " + time);
+							if (skill.getPhase() == SkillPhase.READY && time == 0) {
+								scores[sknum] = skillo.getScore(str);
+								scores[sknum].setScore(-1);
+							} else {
+								scores[sknum] = skillo.getScore(str);
+								scores[sknum].setScore(time);
+							}
+							sknum++;
 						}
-						lvl += skill.levelRequired + " ";
-						str = skill.name;
-						// System.out.print(str);
-						if (str.length() > 10) {
-							str = str.substring(0, 10);
-						}
-						switch (skill.getPhase()) {
-							case READY:
-								if (selected != null && selected.containsKey(skill.name)) {
-									color = ChatColor.DARK_GREEN.toString();
-									board.resetScores(lvl + ChatColor.STRIKETHROUGH.toString() + str);
-								} else {
-									color = ChatColor.STRIKETHROUGH.toString();
-								}
-								board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.GREEN.toString() + str);
-								board.resetScores(lvl + ChatColor.RED.toString() + str);
-								break;
-							case BUILDING:
-								color = ChatColor.DARK_PURPLE.toString();
-								board.resetScores(lvl + ChatColor.GREEN.toString() + str);
-								board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
-								board.resetScores(lvl + ChatColor.RED.toString() + str);
-								break;
-							case DELAYED:
-								color = ChatColor.LIGHT_PURPLE.toString();
-								board.resetScores(lvl + ChatColor.GREEN.toString() + str);
-								board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
-								board.resetScores(lvl + ChatColor.RED.toString() + str);
-								break;
-							case ACTIVE:
-								color = ChatColor.GREEN.toString();
-								board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
-								board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.RED.toString() + str);
-								break;
-							case COOLDOWN:
-								color = ChatColor.RED.toString();
-								board.resetScores(lvl + ChatColor.GREEN.toString() + str);
-								board.resetScores(lvl + ChatColor.DARK_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.LIGHT_PURPLE.toString() + str);
-								board.resetScores(lvl + ChatColor.DARK_GREEN.toString() + str);
-								break;
-						}
-						time = (int) skill.getTimeLeft();
-						str = lvl + color + str;
-						// System.out.print(str + " : " + time);
-						if (skill.getPhase() == SkillPhase.READY && time == 0) {
-							scores[sknum] = skillo.getScore(str);
-							scores[sknum].setScore(-1);
-						} else {
-							scores[sknum] = skillo.getScore(str);
-							scores[sknum].setScore(time);
-						}
-						sknum++;
 					}
 				}
 			}
@@ -554,10 +572,10 @@ public class PCs {
 								}
 							}
 							if (skill.permission != null && (!skill.permission.isEmpty())) {
-								 PermissionAttachment tmpperm = permissions.get(p.getUniqueId().toString() + skill.permission);
-								 if (tmpperm!=null) {
-									 tmpperm.remove();
-								 }
+								PermissionAttachment tmpperm = permissions.get(p.getUniqueId().toString() + skill.permission);
+								if (tmpperm != null) {
+									tmpperm.remove();
+								}
 								permissions.remove(p.getUniqueId().toString() + skill.permission);
 								// if (permissions.containsKey(p.getUniqueId().toString() + skill.permission)) {
 								// p.removeAttachment(permissions.get(p.getUniqueId().toString() + skill.permission));
@@ -567,9 +585,9 @@ public class PCs {
 							if (skill.permissions != null && (!skill.permissions.isEmpty())) {
 								for (String perm : skill.permissions) {
 									PermissionAttachment tmpperm = permissions.get(p.getUniqueId().toString() + perm);
-									if (tmpperm!=null) {
-										 tmpperm.remove();
-									 } 
+									if (tmpperm != null) {
+										tmpperm.remove();
+									}
 									permissions.remove(p.getUniqueId().toString() + perm);
 									// if (permissions.containsKey(p.getUniqueId().toString() + perm)) {
 									// p.removeAttachment(permissions.get(p.getUniqueId().toString() + perm));

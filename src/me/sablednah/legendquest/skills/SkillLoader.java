@@ -121,7 +121,8 @@ public class SkillLoader {
 						manifest.strvarvalues(),
 						manifest.karmaCost(),
 						manifest.karmaReward(),
-						manifest.karmaRequired()
+						manifest.karmaRequired(),
+						manifest.needPerm()
 						)
 				);
 			} catch (BadSkillFormat e) {

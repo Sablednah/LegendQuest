@@ -52,4 +52,6 @@ public @interface SkillManifest {
 	public abstract String[] dblvarnames() default {};
 
 	public abstract double[] dblvarvalues() default {};
+
+	public abstract String needPerm() default "";
 }

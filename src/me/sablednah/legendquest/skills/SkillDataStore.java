@@ -61,6 +61,8 @@ public class SkillDataStore {
 
 	private SkillPhase				phase			= SkillPhase.READY;
 	public String					aliasedname		= null;
+	
+	public String 					needPerm 		= "";
 
 	public SkillDataStore(ConfigurationSection conf) {
 		readConfigInfo(conf);
@@ -88,6 +90,7 @@ public class SkillDataStore {
 		for (Entry<String, Object> var : defaults.getVars().entrySet()) {
 			this.vars.put(var.getKey(), var.getValue());
 		}
+		this.needPerm = defaults.getNeedPerm();
 	}
 
 	public SkillDataStore(SkillDataStore as) {
@@ -123,6 +126,7 @@ public class SkillDataStore {
 		this.type=as.type;
 		this.vars=as.vars;
 		this.version=as.version;		
+		this.needPerm = as.needPerm;
 	}
 	
 	//skillname, lastUse, lastUseLoc, phase, ,lastArgs
@@ -182,7 +186,6 @@ public class SkillDataStore {
 			if (conf.contains("xp")) {
 				this.xp = conf.getInt("xp");
 			}
-			
 			if (conf.contains("karmaCost")) {
 				this.karmaCost = conf.getInt("karmaCost");
 			}
@@ -192,8 +195,9 @@ public class SkillDataStore {
 			if (conf.contains("karmaRequired")) {
 				this.karmaRequired = conf.getInt("karmaRequired");
 			}
-
-			
+			if (conf.contains("needPerm")) {
+				this.needPerm = conf.getString("needPerm");
+			}
 			if (conf.contains("manaCost")) {
 				this.manaCost = conf.getInt("manaCost");
 			}
@@ -374,6 +378,19 @@ public class SkillDataStore {
 
 	public boolean start(Main lq, PC activePlayer) {
 		Player p = activePlayer.getPlayer();
+		// 
+		if (needPerm!=null && !needPerm.isEmpty() ) {
+			if (!p.hasPermission(needPerm)) {
+				p.sendMessage(lq.configLang.skillLackOfPerm);
+				isCanceled = true;
+				lastUse = 0;
+				lastArgs = null;
+				activePlayer.skillSet.put(name, this);
+				return false;
+			}
+		}
+		
+		
 		// pay the price...
 		if (manaCost > 0) {
 			if (!activePlayer.payMana(manaCost)) {

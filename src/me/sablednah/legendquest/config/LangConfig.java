@@ -136,6 +136,7 @@ public class LangConfig extends Config {
 	public String					skillLackOfPay			= "Sorry you can't use that skill, you need to pay:";
 	public String					skillLackOfKarma		= "Sorry you can't use that skill, you need karma over:";
 	public String					skillLackOfKarmaEvil	= "Sorry you can't use that skill, you need karma below:";
+	public String					skillLackOfPerm			= "Sorry you are not permitted to use that skill.";
 
 	public String					skillCooldown			= "Skill cooling down.";
 	public String					skillDelayed			= "Skill Delayed.";
@@ -286,6 +287,7 @@ public class LangConfig extends Config {
 		this.skillLackOfPay = this.getConfigItem("skillLackOfPay", this.skillLackOfPay);
 		this.skillLackOfMana = this.getConfigItem("skillLackOfMana", this.skillLackOfMana);
 		this.skillLackOfItem = this.getConfigItem("skillLackOfItem", this.skillLackOfItem);
+		this.skillLackOfPerm = this.getConfigItem("skillLackOfPerm", this.skillLackOfPerm);
 		this.skillLinkEmptyHand = this.getConfigItem("skillLinkEmptyHand", this.skillLinkEmptyHand);
 		this.skillLinked = this.getConfigItem("skillLinked", this.skillLinked);
 		this.skillUnlinked = this.getConfigItem("skillUnlinked", this.skillUnlinked);

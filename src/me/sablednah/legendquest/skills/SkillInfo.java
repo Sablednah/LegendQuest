@@ -32,7 +32,7 @@ public class SkillInfo {
 	public int						karmaCost		= 0;
 	public int						karmaReward		= 0;
 	public int						karmaRequired	= 0;
-	
+	public String					needPerm 		= "";
 
 	public HashMap<String, Object>	vars			= new HashMap<String, Object>();
 
@@ -48,7 +48,7 @@ public class SkillInfo {
 		this.description = description;		
 	}
 	
-	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, ItemStack consumes, int levelRequired, int skillPoints, HashMap<String, Object> vars, int karmaCost, int karmaReward, int karmaRequired) {
+	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, ItemStack consumes, int levelRequired, int skillPoints, HashMap<String, Object> vars, int karmaCost, int karmaReward, int karmaRequired,String needPerm) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
@@ -64,16 +64,17 @@ public class SkillInfo {
 		this.karmaCost = karmaCost;
 		this.karmaReward = karmaReward;
 		this.karmaRequired = karmaRequired;
-		this.levelRequired = levelRequired;
+		this.levelRequired = levelRequired;		
 		this.skillPoints = skillPoints;
 		if (consumes != null) {
 			this.consumes = consumes;
 		}
 		this.vars = vars;
+		this.needPerm = needPerm;
 	}
 
 	public SkillInfo(String author, String name, String description, SkillType type, double version, int buildup, int delay, int duration, int cooldown, int pay, int xp, int manaCost, String consumes, int levelRequired, int skillPoints, String[] dblnames,
-			double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues, int karmaCost, int karmaReward, int karmaRequired) throws BadSkillFormat {
+			double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues, int karmaCost, int karmaReward, int karmaRequired, String needPerm) throws BadSkillFormat {
 		if (Main.debugMode) {
 			System.out.print("Skillinfo: "+name);
 		}
@@ -102,6 +103,7 @@ public class SkillInfo {
 		} catch (BadSkillFormat e) {
 			System.out.print(e.getMessage());
 		}
+		this.needPerm = needPerm;
 	}
 
 	private void readVars(String[] dblnames, double[] dblvalues, String[] intnames, int[] intvalues, String[] strnames, String[] strvalues) throws BadSkillFormat {
@@ -207,7 +209,9 @@ public class SkillInfo {
 					}
 					vars.put(entry.getKey(), data);
 				}
-
+			}
+			if (conf.contains("needPerm")) {
+				this.needPerm = conf.getString("needPerm");
 			}
 		}
 		if (Main.debugMode) {
@@ -367,6 +371,14 @@ public class SkillInfo {
 
 	public void setKarmaRequired(int karmaRequired) {
 		this.karmaRequired = karmaRequired;
+	}
+
+	public String getNeedPerm() {
+		return needPerm;
+	}
+
+	public void setNeedPerm(String needPerm) {
+		this.needPerm = needPerm;
 	}
 	
 }
