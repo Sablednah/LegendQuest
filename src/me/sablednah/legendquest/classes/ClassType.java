@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
+import me.sablednah.legendquest.LevelItems;
 import me.sablednah.legendquest.loadout.Loadout;
 import me.sablednah.legendquest.skills.SkillDataStore;
 
@@ -55,9 +56,12 @@ public class ClassType {
 	public boolean						allowCrafting;
 	public boolean						allowSmelting;
 	public boolean						allowBrewing;
-	public boolean						allowEnchating;
+	public boolean						allowEnchanting;
 	public boolean						allowRepairing;
 	public boolean						allowTaming;
+
+	@Deprecated
+	public boolean						allowEnchating;
 
 	public List<Material>				disallowedCrafting;
 	public List<Material>				disallowedSmelting;
@@ -65,7 +69,7 @@ public class ClassType {
 	public List<Material>				disallowedEnchanting;
 	public List<Material>				disallowedRepairing;
 	public List<EntityType>				disallowedTaming;
-	
+
 	public int							skillPoints;
 	public double						skillPointsPerLevel;
 	public ArrayList<SkillDataStore>	availableSkills;
@@ -77,5 +81,7 @@ public class ClassType {
 	public int							healthMod		= 0;
 
 	public List<Loadout>				classLoadouts	= new ArrayList<Loadout>();
+
+	public LevelItems					levelUp			= new LevelItems();
 
 }

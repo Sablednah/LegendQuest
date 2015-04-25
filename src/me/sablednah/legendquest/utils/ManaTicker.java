@@ -41,6 +41,7 @@ public class ManaTicker implements Runnable {
 							}
 						}
 					}
+					
 					ManaTick e = new ManaTick(pc, pc.mana, maxMana, showMe, noticeIntervalCounter);
 					Bukkit.getServer().getPluginManager().callEvent(e);
 

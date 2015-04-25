@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
+import me.sablednah.legendquest.LevelItems;
 import me.sablednah.legendquest.skills.SkillDataStore;
 
 public class Race {
@@ -69,5 +70,7 @@ public class Race {
 	public double				xpAdjustKill	= 0.0D;
 	public double				xpAdjustSmelt	= 0.0D;
 	public double				xpAdjustMine	= 0.0D;
+
+	public LevelItems			levelUp			= new LevelItems();
 
 }

@@ -119,6 +119,7 @@ public class MainConfig extends Config {
 		this.sqlKeepAliveInterval = this.getConfigItem("sqlKeepAliveInterval", this.sqlKeepAliveInterval);
 
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
+		this.manageHealthNonLqWorlds = this.getConfigItem("manageHealthNonLqWorlds", this.manageHealthNonLqWorlds);
 
 		this.nameBlacklist = (ArrayList<String>) this.getConfigItem("nameBlacklist", this.nameBlacklist);
 		this.nameBlacklistParts = (ArrayList<String>) this.getConfigItem("nameBlacklistParts", this.nameBlacklistParts);

@@ -70,6 +70,10 @@ public class PCs {
 
 	public PC getPC(Player p) {
 		if (p != null) {
+			if (p.hasMetadata("NPC")) {
+				// store npc
+				return null;
+			}
 			return getPC(p.getUniqueId());
 		}
 		return null;

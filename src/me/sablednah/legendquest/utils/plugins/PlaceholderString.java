@@ -222,32 +222,32 @@ public class PlaceholderString {
 			return outputline;
 		} else if (id.equalsIgnoreCase("str")) {
 			if (pc != null) {
-				return lq.configLang.statSTR;
+				return String.valueOf(pc.getStatStr());
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("dex")) {
 			if (pc != null) {
-				return lq.configLang.statDEX;
+				return String.valueOf(pc.getStatDex());
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("con")) {
 			if (pc != null) {
-				return lq.configLang.statCON;
+				return String.valueOf(pc.getStatCon());
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("int")) {
 			if (pc != null) {
-				return lq.configLang.statINT;
+				return String.valueOf(pc.getStatInt());
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("wis")) {
 			if (pc != null) {
-				return lq.configLang.statWIS;
+				return String.valueOf(pc.getStatWis());
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("chr")) {
 			if (pc != null) {
-				return lq.configLang.statCHR;
+				return String.valueOf(pc.getStatChr());
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("strmod")) {

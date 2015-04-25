@@ -15,6 +15,7 @@ import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.db.HealthStore;
 import me.sablednah.legendquest.events.CoreSkillCheckEvent;
+import me.sablednah.legendquest.events.HealthCheck;
 import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.races.Race;
@@ -85,6 +86,9 @@ public class PC {
 	public int								statCon;
 	public int								statChr;
 
+	public int								statPoints;
+	public int								statPointsSpent;
+
 	public HashMap<String, SkillDataStore>	skillSet		= null;
 	public Map<String, Boolean>				skillsSelected;
 	public HashMap<String, Integer>			skillsPurchased	= new HashMap<String, Integer>();
@@ -115,27 +119,35 @@ public class PC {
 		OfflinePlayer op = plugin.getServer().getOfflinePlayer(uuid);
 		pName = op.getName();
 
-		// System.out.print("e: "+e.toString());
-		// System.out.print("eType: "+e.getType());
+		// System.out.print("pName: "+pName);
+
+		// System.out.print("e: "+op.toString());
+		// System.out.print("eType: "+op.getType());
 		// System.out.print("e.id: "+e.getEntityId());
 
 		if (pName == null) {
 			if (op.isOnline()) {
 				pName = op.getPlayer().getName();
+				// System.out.print("isonline: " + pName);
 			} else {
+				// System.out.print("isoffline getting from uuid: " + uuid);
 				Entity e = getEntityFromUUID(uuid);
 				if (e != null) {
 					if (e instanceof Player) {
 						pName = ((Player) e).getName();
+						// System.out.print("isoffline e is player : " + pName);
 					} else {
 						if (e instanceof LivingEntity) {
 							pName = ((LivingEntity) e).getCustomName();
 						} else {
 							pName = "Herobrine";
 						}
+						// System.out.print("isoffline e is NOT player : " + pName);
+
 					}
 				} else {
 					pName = "Unkn0wn";
+					// System.out.print("Unkn0wn!!");
 				}
 			}
 		}
@@ -238,6 +250,27 @@ public class PC {
 					valid = false;
 					lq.debug.fine(id.toString() + " is Invalid armour for sub-class: " + subClass.name);
 				}
+
+				int level = SetExp.getLevelOfXpAmount(currentXP);
+
+				List<Object> perlevelallow = race.levelUp.getList("allowarmour", level);
+				perlevelallow.addAll(mainClass.levelUp.getList("allowarmour", level));
+				if (subClass != null) {
+					perlevelallow.addAll(subClass.levelUp.getList("allowarmour", level));
+				}
+				if (perlevelallow.contains(id.toString())) {
+					valid = true;
+				}
+
+				List<Object> perleveldisallow = race.levelUp.getList("disallowarmour", level);
+				perleveldisallow.addAll(mainClass.levelUp.getList("disallowarmour", level));
+				if (subClass != null) {
+					perleveldisallow.addAll(subClass.levelUp.getList("disallowarmour", level));
+				}
+				if (perleveldisallow.contains(id.toString())) {
+					valid = false;
+				}
+
 				CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.ARMOUR, valid, id);
 				Bukkit.getServer().getPluginManager().callEvent(e);
 				valid = e.isValid();
@@ -302,6 +335,27 @@ public class PC {
 				valid = false;
 				lq.debug.fine(id.toString() + " is Invalid tool for sub-class: " + subClass.name);
 			}
+
+			int level = SetExp.getLevelOfXpAmount(currentXP);
+
+			List<Object> perlevelallow = race.levelUp.getList("allowtool", level);
+			perlevelallow.addAll(mainClass.levelUp.getList("allowtool", level));
+			if (subClass != null) {
+				perlevelallow.addAll(subClass.levelUp.getList("allowtool", level));
+			}
+			if (perlevelallow.contains(id.toString())) {
+				valid = true;
+			}
+
+			List<Object> perleveldisallow = race.levelUp.getList("disallowtool", level);
+			perleveldisallow.addAll(mainClass.levelUp.getList("disallowtool", level));
+			if (subClass != null) {
+				perleveldisallow.addAll(subClass.levelUp.getList("disallowtool", level));
+			}
+			if (perleveldisallow.contains(id.toString())) {
+				valid = false;
+			}
+
 			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.TOOL, valid, id);
 			Bukkit.getServer().getPluginManager().callEvent(e);
 			valid = e.isValid();
@@ -366,6 +420,27 @@ public class PC {
 				valid = false;
 				lq.debug.fine(id.toString() + " is Invalid weapon for sub-class: " + subClass.name);
 			}
+
+			int level = SetExp.getLevelOfXpAmount(currentXP);
+
+			List<Object> perlevelallow = race.levelUp.getList("allowweapon", level);
+			perlevelallow.addAll(mainClass.levelUp.getList("allowweapon", level));
+			if (subClass != null) {
+				perlevelallow.addAll(subClass.levelUp.getList("allowweapon", level));
+			}
+			if (perlevelallow.contains(id.toString())) {
+				valid = true;
+			}
+
+			List<Object> perleveldisallow = race.levelUp.getList("disallowweapon", level);
+			perleveldisallow.addAll(mainClass.levelUp.getList("disallowweapon", level));
+			if (subClass != null) {
+				perleveldisallow.addAll(subClass.levelUp.getList("disallowweapon", level));
+			}
+			if (perleveldisallow.contains(id.toString())) {
+				valid = false;
+			}
+
 			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.WEAPON, valid, id);
 			Bukkit.getServer().getPluginManager().callEvent(e);
 			valid = e.isValid();
@@ -430,22 +505,31 @@ public class PC {
 			hp = 1;
 		}
 		level = SetExp.getLevelOfXpAmount(currentXP);
-		if (level > lq.configMain.max_level) { level = lq.configMain.max_level; }
+		if (level > lq.configMain.max_level) {
+			level = lq.configMain.max_level;
+		}
+
+		double levelbonuses = race.levelUp.getTotal("hp", level);
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.healthPerLevel, subClass.healthPerLevel);
 			bonus = Math.max(mainClass.healthMod, subClass.healthMod);
+			levelbonuses += Math.max(mainClass.levelUp.getTotal("hp", level), subClass.levelUp.getTotal("hp", level));
 		} else {
 			perlevel = mainClass.healthPerLevel;
 			bonus = mainClass.healthMod;
+			levelbonuses += mainClass.levelUp.getTotal("hp", level);
 		}
+		// System.out.print("levelbonuses: "+levelbonuses + " ("+level+")");
 		double conBonus = ((con * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= conBonus;
+		levelbonuses *= conBonus;
+		// System.out.print("levelbonuses:"+levelbonuses);
 		double base = hp + bonus;
+
 		if (lq.configMain.attributesModifyBaseStats) {
 			base *= conBonus;
 		}
-		result = (base + (level * perlevel));
-
+		result = (base + (level * perlevel) + levelbonuses);
 		result = (Math.round(result * 10.0) / 10.0);
 
 		this.maxHP = result;
@@ -466,22 +550,29 @@ public class PC {
 		mana = race.baseMana;
 
 		level = SetExp.getLevelOfXpAmount(currentXP);
-		if (level > lq.configMain.max_level) { level = lq.configMain.max_level; }
+		if (level > lq.configMain.max_level) {
+			level = lq.configMain.max_level;
+		}
 
+		double levelbonuses = race.levelUp.getTotal("mana", level);
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.manaPerLevel, subClass.manaPerLevel);
 			bonus = Math.max(mainClass.manaBonus, subClass.manaBonus);
+			levelbonuses += Math.max(mainClass.levelUp.getTotal("mana", level), subClass.levelUp.getTotal("mana", level));
 		} else {
 			perlevel = mainClass.manaPerLevel;
 			bonus = mainClass.manaBonus;
+			levelbonuses += mainClass.levelUp.getTotal("mana", level);
 		}
 		double wisBonus = ((wis * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= wisBonus;
+		levelbonuses *= wisBonus;
+
 		double base = mana + bonus;
 		if (lq.configMain.attributesModifyBaseStats) {
 			base *= wisBonus;
 		}
-		result = (base + (level * perlevel));
+		result = (base + (level * perlevel) + levelbonuses);
 
 		return (int) result;
 	}
@@ -492,23 +583,28 @@ public class PC {
 		intel = getAttributeModifier(Attribute.INT);
 		sp = race.skillPoints;
 		sp += mainClass.skillPoints;
-		level = SetExp.getExpAtLevel(currentXP);
-		if (level > lq.configMain.max_level) { level = lq.configMain.max_level; }
+		level = SetExp.getLevelOfXpAmount(currentXP);
+		if (level > lq.configMain.max_level) {
+			level = lq.configMain.max_level;
+		}
 
+		double levelbonuses = race.levelUp.getTotal("sp", level);
 		if (subClass != null) {
 			perlevel = Math.max(mainClass.skillPointsPerLevel, subClass.skillPointsPerLevel);
+			levelbonuses += Math.max(mainClass.levelUp.getTotal("sp", level), subClass.levelUp.getTotal("sp", level));
 		} else {
 			perlevel = mainClass.skillPointsPerLevel;
+			levelbonuses += mainClass.levelUp.getTotal("sp", level);
 		}
 		perlevel += race.skillPointsPerLevel;
 		double intBonus = ((intel * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= intBonus;
-
+		levelbonuses *= intBonus;
 		double base = sp;
 		if (lq.configMain.attributesModifyBaseStats) {
 			base *= intBonus;
 		}
-		result = (base + (level * (perlevel)));
+		result = (base + (level * (perlevel)) + levelbonuses);
 
 		return (int) result;
 	}
@@ -577,10 +673,13 @@ public class PC {
 		}
 		int stat;
 		stat = statChr;
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		if (race != null) {
+			stat += (int) race.levelUp.getTotal("chr", level);
 			stat += race.statChr;
 		}
 		if (mainClass != null) {
+			stat += (int) mainClass.levelUp.getTotal("chr", level);
 			if (subClass != null) {
 				int classboost = 0;
 				if (mainClass.statChr > -1 && subClass.statChr > -1) {
@@ -594,6 +693,7 @@ public class PC {
 				}
 				stat += classboost;
 			} else {
+				stat += (int) subClass.levelUp.getTotal("chr", level);
 				stat += mainClass.statChr;
 			}
 		}
@@ -609,11 +709,16 @@ public class PC {
 		}
 		int stat;
 		stat = statCon;
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		if (race != null) {
+			stat += (int) race.levelUp.getTotal("con", level);
 			stat += race.statCon;
 		}
 		if (mainClass != null) {
+			stat += (int) mainClass.levelUp.getTotal("con", level);
 			if (subClass != null) {
+				stat += (int) subClass.levelUp.getTotal("con", level);
 				int classboost = 0;
 				if (mainClass.statCon > -1 && subClass.statCon > -1) {
 					// both positive (ok 0+)
@@ -641,11 +746,17 @@ public class PC {
 		}
 		int stat;
 		stat = statDex;
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		if (race != null) {
+			stat += (int) race.levelUp.getTotal("dex", level);
 			stat += race.statDex;
 		}
 		if (mainClass != null) {
+			stat += (int) mainClass.levelUp.getTotal("dex", level);
+			// System.out.print("dexbonuses: "+mainClass.levelUp.getTotal("dex", level) + " ("+level+")");
 			if (subClass != null) {
+				stat += (int) subClass.levelUp.getTotal("dex", level);
 				int classboost = 0;
 				if (mainClass.statDex > -1 && subClass.statDex > -1) {
 					// both positive (ok 0+)
@@ -673,11 +784,16 @@ public class PC {
 		}
 		int stat;
 		stat = statInt;
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		if (race != null) {
+			stat += (int) race.levelUp.getTotal("int", level);
 			stat += race.statInt;
 		}
 		if (mainClass != null) {
+			stat += (int) mainClass.levelUp.getTotal("int", level);
 			if (subClass != null) {
+				stat += (int) subClass.levelUp.getTotal("int", level);
 				int classboost = 0;
 				if (mainClass.statInt > -1 && subClass.statInt > -1) {
 					// both positive (ok 0+)
@@ -705,11 +821,17 @@ public class PC {
 		}
 		int stat;
 		stat = statStr;
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		if (race != null) {
+			stat += (int) race.levelUp.getTotal("str", level);
 			stat += race.statStr;
 		}
 		if (mainClass != null) {
+			stat += (int) mainClass.levelUp.getTotal("str", level);
+			// System.out.print("strbonuses: "+mainClass.levelUp.getTotal("str", level) + " ("+level+")");
 			if (subClass != null) {
+				stat += (int) subClass.levelUp.getTotal("str", level);
 				int classboost = 0;
 				if (mainClass.statStr > -1 && subClass.statStr > -1) {
 					// both positive (ok 0+)
@@ -737,11 +859,16 @@ public class PC {
 		}
 		int stat;
 		stat = statWis;
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		if (race != null) {
+			stat += (int) race.levelUp.getTotal("wis", level);
 			stat += race.statWis;
 		}
 		if (mainClass != null) {
+			stat += (int) mainClass.levelUp.getTotal("wis", level);
 			if (subClass != null) {
+				stat += (int) subClass.levelUp.getTotal("wis", level);
 				int classboost = 0;
 				if (mainClass.statWis > -1 && subClass.statWis > -1) {
 					// both positive (ok 0+)
@@ -783,8 +910,8 @@ public class PC {
 			if ((skillsPurchased.containsKey(mainClass.name + "|" + s.name) || skillsPurchased.containsKey(race.name + "|" + s.name) || (subClass != null && skillsPurchased.containsKey(subClass.name + "|" + s.name))) && (s.levelRequired <= level)) {
 				valid = true;
 			}
-			if (s.needPerm!=null && !s.needPerm.isEmpty()) {
-// System.out.print("needPerm: " + s.needPerm + " = " + getPlayer().hasPermission(s.needPerm));
+			if (s.needPerm != null && !s.needPerm.isEmpty()) {
+				// System.out.print("needPerm: " + s.needPerm + " = " + getPlayer().hasPermission(s.needPerm));
 				if (!getPlayer().hasPermission(s.needPerm)) {
 					valid = false;
 				}
@@ -991,6 +1118,17 @@ public class PC {
 					if (this.health > this.maxHP) {
 						this.health = this.maxHP;
 					}
+					
+					HealthCheck e = new HealthCheck(this, this.health, this.maxHP);
+					Bukkit.getServer().getPluginManager().callEvent(e);
+					
+					double hp = e.getHealth();
+					double mhp = e.getMaxHealth();
+					if (hp>mhp) { hp=mhp; } 
+					
+					this.health = hp;
+					this.maxHP = mhp;
+					
 					p.setHealth(Math.min(this.health, p.getMaxHealth()));
 
 					p.setMaxHealth(this.maxHP);
@@ -1019,10 +1157,13 @@ public class PC {
 	public boolean manaGain() {
 		double gain;
 		gain = race.manaPerSecond;
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		if (subClass != null) {
 			gain += (Math.max(mainClass.manaPerSecond, subClass.manaPerSecond));
+			gain += (int) (Math.max(race.levelUp.getTotal("manaregen", level), race.levelUp.getTotal("manaregen", level)));
 		} else {
 			gain += mainClass.manaPerSecond;
+			gain += (int) race.levelUp.getTotal("manaregen", level);
 		}
 
 		int wis = getAttributeModifier(Attribute.WIS);
@@ -1112,6 +1253,7 @@ public class PC {
 		if (subClass != null && subClass.allowCrafting) {
 			cando = true;
 		}
+
 		if (eventfull) {
 			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.CRAFT, cando);
 			Bukkit.getServer().getPluginManager().callEvent(e);
@@ -1136,6 +1278,26 @@ public class PC {
 			}
 		}
 
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		List<Object> perlevelallow = race.levelUp.getList("allowcraft", level);
+		perlevelallow.addAll(mainClass.levelUp.getList("allowcraft", level));
+		if (subClass != null) {
+			perlevelallow.addAll(subClass.levelUp.getList("allowcraft", level));
+		}
+		if (perlevelallow.contains(m.toString())) {
+			cando = true;
+		}
+
+		List<Object> perleveldisallow = race.levelUp.getList("disallowcraft", level);
+		perleveldisallow.addAll(mainClass.levelUp.getList("disallowcraft", level));
+		if (subClass != null) {
+			perleveldisallow.addAll(subClass.levelUp.getList("disallowcraft", level));
+		}
+		if (perleveldisallow.contains(m.toString())) {
+			cando = false;
+		}
+
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.CRAFT, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1155,6 +1317,7 @@ public class PC {
 		if (subClass != null && subClass.allowSmelting) {
 			cando = true;
 		}
+
 		if (eventfull) {
 			CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.SMELT, cando);
 			Bukkit.getServer().getPluginManager().callEvent(e);
@@ -1178,6 +1341,27 @@ public class PC {
 				}
 			}
 		}
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		List<Object> perlevelallow = race.levelUp.getList("allowsmelt", level);
+		perlevelallow.addAll(mainClass.levelUp.getList("allowsmelt", level));
+		if (subClass != null) {
+			perlevelallow.addAll(subClass.levelUp.getList("allowsmelt", level));
+		}
+		if (perlevelallow.contains(m.toString())) {
+			cando = true;
+		}
+
+		List<Object> perleveldisallow = race.levelUp.getList("disallowsmelt", level);
+		perleveldisallow.addAll(mainClass.levelUp.getList("disallowsmelt", level));
+		if (subClass != null) {
+			perleveldisallow.addAll(subClass.levelUp.getList("disallowsmelt", level));
+		}
+		if (perleveldisallow.contains(m.toString())) {
+			cando = false;
+		}
+
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.SMELT, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1220,6 +1404,27 @@ public class PC {
 				}
 			}
 		}
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		List<Object> perlevelallow = race.levelUp.getList("allowbrew", level);
+		perlevelallow.addAll(mainClass.levelUp.getList("allowbrew", level));
+		if (subClass != null) {
+			perlevelallow.addAll(subClass.levelUp.getList("allowbrew", level));
+		}
+		if (perlevelallow.contains(m.toString())) {
+			cando = true;
+		}
+
+		List<Object> perleveldisallow = race.levelUp.getList("disallowbrew", level);
+		perleveldisallow.addAll(mainClass.levelUp.getList("disallowbrew", level));
+		if (subClass != null) {
+			perleveldisallow.addAll(subClass.levelUp.getList("disallowbrew", level));
+		}
+		if (perleveldisallow.contains(m.toString())) {
+			cando = false;
+		}
+
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.BREW, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1233,10 +1438,10 @@ public class PC {
 
 	public boolean canEnchant(boolean eventfull) {
 		boolean cando = false;
-		if (race.allowEnchating || mainClass.allowEnchating) {
+		if (race.allowEnchating || mainClass.allowEnchanting) {
 			cando = true;
 		}
-		if (subClass != null && subClass.allowEnchating) {
+		if (subClass != null && subClass.allowEnchanting) {
 			cando = true;
 		}
 		if (eventfull) {
@@ -1262,6 +1467,26 @@ public class PC {
 				}
 			}
 		}
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		List<Object> perlevelallow = race.levelUp.getList("allowenchant", level);
+		perlevelallow.addAll(mainClass.levelUp.getList("allowenchant", level));
+		if (subClass != null) {
+			perlevelallow.addAll(subClass.levelUp.getList("allowenchant", level));
+		}
+		if (perlevelallow.contains(m.toString())) {
+			cando = true;
+		}
+
+		List<Object> perleveldisallow = race.levelUp.getList("disallowenchant", level);
+		perleveldisallow.addAll(mainClass.levelUp.getList("disallowenchant", level));
+		if (subClass != null) {
+			perleveldisallow.addAll(subClass.levelUp.getList("disallowenchant", level));
+		}
+		if (perleveldisallow.contains(m.toString())) {
+			cando = false;
+		}
+
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.ENCHANT, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1304,6 +1529,27 @@ public class PC {
 				}
 			}
 		}
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		List<Object> perlevelallow = race.levelUp.getList("allowrepair", level);
+		perlevelallow.addAll(mainClass.levelUp.getList("allowrepair", level));
+		if (subClass != null) {
+			perlevelallow.addAll(subClass.levelUp.getList("allowrepair", level));
+		}
+		if (perlevelallow.contains(m.toString())) {
+			cando = true;
+		}
+
+		List<Object> perleveldisallow = race.levelUp.getList("disallowrepair", level);
+		perleveldisallow.addAll(mainClass.levelUp.getList("disallowrepair", level));
+		if (subClass != null) {
+			perleveldisallow.addAll(subClass.levelUp.getList("disallowrepair", level));
+		}
+		if (perleveldisallow.contains(m.toString())) {
+			cando = false;
+		}
+
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.REPAIR, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1346,6 +1592,27 @@ public class PC {
 				}
 			}
 		}
+
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		List<Object> perlevelallow = race.levelUp.getList("allowtame", level);
+		perlevelallow.addAll(mainClass.levelUp.getList("allowtame", level));
+		if (subClass != null) {
+			perlevelallow.addAll(subClass.levelUp.getList("allowtame", level));
+		}
+		if (perlevelallow.contains(m.toString())) {
+			cando = true;
+		}
+
+		List<Object> perleveldisallow = race.levelUp.getList("disallowtame", level);
+		perleveldisallow.addAll(mainClass.levelUp.getList("disallowtame", level));
+		if (subClass != null) {
+			perleveldisallow.addAll(subClass.levelUp.getList("disallowtame", level));
+		}
+		if (perleveldisallow.contains(m.toString())) {
+			cando = false;
+		}
+
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.TAME, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1516,7 +1783,7 @@ public class PC {
 			return true;
 		}
 	}
-	
+
 	public boolean canPay(int pay) {
 		if (lq.hasVault) {
 			Player p = getPlayer();
@@ -1727,7 +1994,7 @@ public class PC {
 
 		if (raceChanged) {
 			if (lq.hasVault && lq.configMain.ecoRaceSwap > 0) {
-				boolean payCheck = this.payCash(lq.configMain.ecoClassSwap);
+				boolean payCheck = this.payCash(lq.configMain.ecoRaceSwap);
 				if (!payCheck) {
 					return false;
 				}
@@ -2050,6 +2317,32 @@ public class PC {
 		if (loadouts == null || loadouts.size() < 1) {
 			loadouts = getLoadouts();
 		}
+	}
+
+	public String getCharname() {
+		return charname;
+	}
+	public void setCharname(String charname) {
+		this.charname = charname;
+	}
+
+	public int getStatPoints() {
+		return statPoints;
+	}
+	public void setStatPoints(int statPoints) {
+		this.statPoints = statPoints;
+	}
+
+
+	public int getStatPointsSpent() {
+		return statPointsSpent;
+	}
+	public void setStatPointsSpent(int statPointsSpent) {
+		this.statPointsSpent = statPointsSpent;
+	}
+
+	public int getStatPointsLeft() {
+		return statPoints-statPointsSpent;
 	}
 
 }

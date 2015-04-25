@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import me.sablednah.legendquest.LevelItems;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.loadout.Loadout;
 import me.sablednah.legendquest.playercharacters.PC;
@@ -150,7 +151,9 @@ public class Classes {
 					c.allowCrafting = thisConfig.getBoolean("allowCrafting");
 					c.allowSmelting = thisConfig.getBoolean("allowSmelting");
 					c.allowBrewing = thisConfig.getBoolean("allowBrewing");
-					c.allowEnchating = thisConfig.getBoolean("allowEnchating");
+					c.allowEnchanting = thisConfig.getBoolean("allowEnchanting");
+					if (thisConfig.getBoolean("allowEnchating")) {c.allowEnchanting = true; }
+					c.allowEnchating = c.allowEnchanting; 
 					c.allowRepairing = thisConfig.getBoolean("allowRepairing");
 					c.allowTaming = thisConfig.getBoolean("allowTaming");
 
@@ -547,6 +550,35 @@ public class Classes {
 						}
 					}
 
+					// read per level items
+					LevelItems li = new LevelItems();
+					final ConfigurationSection levelsection = thisConfig.getConfigurationSection("levels");
+					if (loadouts != null) {
+						for (String key : levelsection.getKeys(false)) {
+							try {
+								int levelnumber = Integer.parseInt(key);
+								ConfigurationSection levelinfo = levelsection.getConfigurationSection(key);
+								lq.debug.info("Loading level: " + key);
+								for (String recussionkey : levelinfo.getKeys(false)) {
+									if (recussionkey.equalsIgnoreCase("sp") || recussionkey.equalsIgnoreCase("hp") || recussionkey.equalsIgnoreCase("mana") || 
+											recussionkey.equalsIgnoreCase("str") || recussionkey.equalsIgnoreCase("dex") || recussionkey.equalsIgnoreCase("con") || 
+											recussionkey.equalsIgnoreCase("int") || recussionkey.equalsIgnoreCase("wis") || recussionkey.equalsIgnoreCase("chr") ) {
+										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getInt(recussionkey));
+									} else if (recussionkey.equalsIgnoreCase("manaregen")) {
+										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getDouble(recussionkey));
+									} else {
+										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getString(recussionkey));										
+									}
+									lq.debug.fine("Adding level item: " + levelnumber+" | "+ recussionkey.toLowerCase() + "="+ levelinfo.getString(recussionkey));
+								}
+							} catch (NumberFormatException e) {
+								lq.logSevere("'" +key + "' is not a valid level number in " + c.name + " config."); 
+							}
+						}
+					}
+					c.levelUp = li;
+					
+					
 					// check race or group exists.
 					final boolean hasRace = checkRaceList(allowedRaces);
 					final boolean hasGroup = checkGroupList(allowedGroups);

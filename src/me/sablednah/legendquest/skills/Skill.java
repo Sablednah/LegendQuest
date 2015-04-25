@@ -146,7 +146,8 @@ public abstract class Skill implements EventListener, Listener {
 	public boolean validSkillUser(Player p) {
 		if (p == null) { return false; }
 		// System.out.print("doing valid skillcheck for "+getName());
-		return getPC(p).validSkill(getName().toLowerCase());
+		PC pc = getPC(p);
+		return validSkillUser(pc);
 	}
 
 	public boolean validSkillUser(PC pc) {
@@ -164,12 +165,11 @@ public abstract class Skill implements EventListener, Listener {
 	}
 
 	public SkillDataStore getPlayerSkillData(Player p) {
-		SkillDataStore skillData = null;
 		if (p != null) {
-			// skillData = getPC(p).skillSet.get(getName());
-			skillData = getPC(p).getSkillData(getName().toLowerCase());
+			PC pc = getPC(p);
+			return getPlayerSkillData(pc);
 		}
-		return skillData;
+		return null;
 	}
 	
 	public SkillDataStore getPlayerSkillData(PC pc) {
@@ -183,7 +183,10 @@ public abstract class Skill implements EventListener, Listener {
 
 	public void setPlayerSkillData(SkillDataStore skillData, Player p) {
 		if (p != null) {
-			skillData = getPC(p).skillSet.put(getName().toLowerCase(), skillData);
+			PC pc = getPC(p);
+			if (pc!=null) {
+				skillData = pc.skillSet.put(getName().toLowerCase(), skillData);
+			}
 		}
 	}
 

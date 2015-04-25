@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import me.sablednah.legendquest.LevelItems;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillInfo;
@@ -423,7 +424,35 @@ public class Races {
 							r.outsourcedSkills.add(skilldata);
 						}
 					}
-
+					
+					// read per level items
+					LevelItems li = new LevelItems();
+					final ConfigurationSection levelsection = thisConfig.getConfigurationSection("levels");
+					if (levelsection != null) {
+						for (String key : levelsection.getKeys(false)) {
+							try {
+								int levelnumber = Integer.parseInt(key);
+								ConfigurationSection levelinfo = levelsection.getConfigurationSection(key);
+								lq.debug.info("Loading level: " + key);
+								for (String recussionkey : levelinfo.getKeys(false)) {
+									if (recussionkey.equalsIgnoreCase("sp") || recussionkey.equalsIgnoreCase("hp") || recussionkey.equalsIgnoreCase("mana") || 
+											recussionkey.equalsIgnoreCase("str") || recussionkey.equalsIgnoreCase("dex") || recussionkey.equalsIgnoreCase("con") || 
+											recussionkey.equalsIgnoreCase("int") || recussionkey.equalsIgnoreCase("wis") || recussionkey.equalsIgnoreCase("chr") ) {
+										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getInt(recussionkey));
+									} else if (recussionkey.equalsIgnoreCase("manaregen")) {
+										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getDouble(recussionkey));
+									} else {
+										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getString(recussionkey));										
+									}
+									lq.debug.fine("Adding level item: " + levelnumber+" | "+ recussionkey.toLowerCase() + "="+ levelinfo.getString(recussionkey));
+								}
+							} catch (NumberFormatException e) {
+								lq.logSevere("'" +key + "' is not a valid level number in " + r.name + " config."); 
+							}
+						}
+					}
+					r.levelUp = li;
+					
 				} catch (final Exception e) {
 					validConfig = false;
 					lq.log(lq.configLang.raceScanInvalid + race.getName());

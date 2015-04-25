@@ -171,6 +171,13 @@ public class PlayerEvents implements Listener {
 			}
 		}
 	}
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPort2(PlayerTeleportEvent event) {
+		PC pc = lq.players.getPC(event.getPlayer());
+		if (pc !=null) {
+			pc.scheduleHealthCheck();
+		}
+	}
 
 	// set to monitor - we can't change the quit - just want to clean our data up.
 	@EventHandler(priority = EventPriority.MONITOR)

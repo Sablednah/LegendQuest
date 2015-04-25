@@ -25,11 +25,11 @@ public class SetExp {
 			}
 			return (9 * lvl) - 158;
 		} else {
-			if (lvl > 15) {
-				return 17 + (lvl - 15) * 3;
-			}
 			if (lvl > 29) {
 				return 62 + (lvl - 30) * 7;
+			}
+			if (lvl > 15) {
+				return 17 + (lvl - 15) * 3;
 			}
 			return 17;
 		}
@@ -64,7 +64,7 @@ public class SetExp {
 		while (amount > 0) {
 			int expToLevel = getExpAtLevel(lvl);
 			amount -= expToLevel;
-			if (amount > 0) {
+			if (amount >= 0) {
 				lvl++;
 			}
 		}

@@ -209,7 +209,9 @@ public class DamageEvents implements Listener {
 
 		if (victim instanceof Player) {
 			pc = lq.players.getPC((Player) victim);
-			dodge = pc.getAttributeModifier(Attribute.DEX);
+			if (pc!=null) {
+				dodge = pc.getAttributeModifier(Attribute.DEX);
+			}
 		}
 		
 		if (Main.debugMode) {
