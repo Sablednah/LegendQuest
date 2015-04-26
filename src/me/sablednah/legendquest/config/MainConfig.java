@@ -84,14 +84,15 @@ public class MainConfig extends Config {
 
 	public int					ecoRaceSwap					= 100000;
 	public int					ecoClassSwap				= 10000;
+	public int					ecoPartyTeleport			= 100;
 
 	public int					partyRange					= 32;
 	public boolean				useParties					= true;
 	public int					partyBonus					= 50;
-
-	public int					heightBonus					= 2;
-
+	public boolean				blockPartyPvP				= true;	
+	public boolean				allowPartyTeleport			= true;	
 	
+	public int					heightBonus					= 2;	
 	
 	public String				hitchance					= "AVERAGE";
 	public String				dodgechance					= "AVERAGE";
@@ -170,6 +171,7 @@ public class MainConfig extends Config {
 		this.partyRange = this.getConfigItem("partyRange", this.partyRange);
 		this.useParties = this.getConfigItem("useParties", this.useParties);
 		this.partyBonus = this.getConfigItem("partyBonus", this.partyBonus);
+		this.blockPartyPvP = this.getConfigItem("blockPartyPvP", this.blockPartyPvP);
 
 		this.karmaDamagePlayer = this.getConfigItem("karmaDamagePlayer", this.karmaDamagePlayer);
 		this.karmaDamageVillager = this.getConfigItem("karmaDamageVillager", this.karmaDamageVillager);

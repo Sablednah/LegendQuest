@@ -23,6 +23,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -260,6 +261,16 @@ public class ItemControlEvents implements Listener {
 		}
 	}
 
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
+		Player p = event.getPlayer();
+		if (p!=null) {
+			PC pc = lq.players.getPC(p);
+			pc.scheduleHealthCheck();
+		}
+	}
+	
 	// check for armour validity when inventory is closed
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onInvClose(InventoryCloseEvent event) {
@@ -297,6 +308,7 @@ public class ItemControlEvents implements Listener {
 			System.out.print("doing check inventory on close");
 		}
 		pc.checkInv();
+		pc.scheduleHealthCheck();
 	}
 
 	/*

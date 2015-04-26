@@ -126,7 +126,7 @@ public class TabComplete implements TabCompleter {
 					}
 				}
 			}
-		} else if (cmdName.equals("admin")) {
+		} else if (cmdName.equals("admin") || cmdName.equals("lqadmin")) {
 			if (newArglist.length==1) {
 				outputList.add("xp");
 				outputList.add("level");

@@ -1,5 +1,9 @@
 package me.sablednah.legendquest.utils.plugins;
 
+import java.util.List;
+
+import me.sablednah.legendquest.Main;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -64,6 +68,21 @@ public class PluginUtils {
     }
     
     public static Boolean canHurt(Player p, Player t) {
+    	Main lq = (Main) Bukkit.getPluginManager().getPlugin("LegendQuest");
+    	if (lq.configMain.useParties && lq.configMain.blockPartyPvP) {
+			List<Player> party = lq.partyManager.getPartyMembers(p);
+			if (party != null) { // has party
+				if (party.size() > 1) { // party has at least 2 people!
+					if (party.contains(t)) {
+						return false;
+					}
+//					for (Player pp : party) {
+//						if (!(pp.getUniqueId().equals(p.getUniqueId()))) {							
+//						}
+//					}
+				}
+			}
+    	}
         Boolean hasWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard");
         if (hasWorldGuard) {
             if (Bukkit.getServer().getPluginManager().getPlugin("WorldGuard").getDescription().getVersion().startsWith("5")) {

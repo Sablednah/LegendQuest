@@ -63,6 +63,7 @@ public class LangConfig extends Config {
 	public String					youAreCurrently			= "You are currently ";
 	public String					raceChanged				= "Your race has been changed to ";
 	public String					raceChangedAdmin		= "GM has changed your race to ";
+	public String					raceChangedByAdmin		= "Target race has been changed to ";
 	public String					raceChangeNotAllowed	= "Sorry you have already selected a race. ";
 	public String					raceList				= "-------- Races --------";
 	public String					raceNotAllowed			= "Sorry, you can't select that race.";
@@ -72,6 +73,7 @@ public class LangConfig extends Config {
 	public String					classSelectRaceFirst	= "Please Select Race before class.";
 	public String					classChanged			= "You have changed your class to: ";
 	public String					classChangedAdmin		= "GM has changed your class to: ";
+	public String					classChangedByAdmin		= "Target class has been changed to: ";
 	public String					classList				= "------- Classes -------";
 	public String					classChangeWarnXpLoss	= "Warning: Changing class will lose your accumulated XP";
 	public String					classConfirm			= "Repeat with confirm appended  e.g. /class mage confirm";
@@ -158,7 +160,7 @@ public class LangConfig extends Config {
 	public String					skillLinkUse			= "Using Linked skill: ";
 	public String					skillInvalid			= "Sorry you can't use: ";
 	public String					skillInvalidTarget		= "Sorry, you need to look at a target...";
-	
+
 	public String					skillInvalidPassive		= " is a passive or triggered skill, not usable via a command";
 	public String					skillStunned			= "Sorry you're stuned, you can't use: ";
 
@@ -169,7 +171,23 @@ public class LangConfig extends Config {
 	public String					ecoDeclined				= "Card Declined: Insufficient funds.";
 
 	public String					partyXpChange			= "Your party gained Exp: ";
+	public String					partyTeleportNotAllowed = "Sorry Party Teleporting is disabled";
 
+	public String					notSafeTeleport			= "Could not find safe teleport location";
+	
+	public String					partyNoParty			= "You are not in a party";
+	public String					partyAlreadyExists		= "already exists.  Select a different name.";
+	public String					partyCreated			= ": party created.";
+	public String					partyDoesNotExisit		= ": party does not exist.";
+	public String					partyOwnParty			= "You can't join your own party!";
+	public String					partyAlreadyMember		= "You're already in: ";
+	public String					partyApproved			= " has approved your request to join your party: ";
+	public String					partyApprovedOwner		= " party request approved";
+	public String					partyNotRequested		= " has not requested to join your party.";
+	public String					partyNotLeader			= "You do not lead a party, you can't approve.";
+	public String					partyRequest			= " has requested to join your party: ";
+	public String					partyRequestSent		= "Party request sent.";
+	
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
 
@@ -198,7 +216,7 @@ public class LangConfig extends Config {
 		this.raceScanEnd = this.getConfigItem("raceScanEnd", this.raceScanEnd);
 		this.raceScanInvalid = this.getConfigItem("raceScanInvalid", this.raceScanInvalid);
 		this.raceNotAllowed = this.getConfigItem("raceNotAllowed", this.raceNotAllowed);
-		
+
 		this.renameWarning = this.getConfigItem("renameWarning", this.renameWarning);
 		this.renameWarning2 = this.getConfigItem("renameWarning2", this.renameWarning2);
 
@@ -220,6 +238,11 @@ public class LangConfig extends Config {
 		this.raceChangeWarnXpLoss = this.getConfigItem("raceChangeWarnXpLoss", this.raceChangeWarnXpLoss);
 		this.raceConfirm = this.getConfigItem("raceConfirm", this.raceConfirm);
 
+		this.classChangedAdmin = this.getConfigItem("classChangedAdmin", this.classChangedAdmin);
+		this.classChangedByAdmin = this.getConfigItem("classChangedByAdmin", this.classChangedByAdmin);
+		this.raceChangedAdmin = this.getConfigItem("raceChangedAdmin", this.raceChangedAdmin);
+		this.raceChangedByAdmin = this.getConfigItem("raceChangedByAdmin", this.raceChangedByAdmin);
+		
 		this.classSelectRaceFirst = this.getConfigItem("classSelectRaceFirst", this.classSelectRaceFirst);
 		this.classChanged = this.getConfigItem("classChanged", this.classChanged);
 		this.classList = this.getConfigItem("classList", this.classList);
@@ -310,8 +333,21 @@ public class LangConfig extends Config {
 
 		this.ecoPaid = this.getConfigItem("ecoPaid", this.ecoPaid);
 		this.ecoDeclined = this.getConfigItem("ecoDeclined", this.ecoDeclined);
+		
+		this.notSafeTeleport = this.getConfigItem("notSafeTeleport", this.notSafeTeleport);
 
+		this.partyTeleportNotAllowed = this.getConfigItem("partyTeleportNotAllowed", this.partyTeleportNotAllowed);
 		this.partyXpChange = this.getConfigItem("partyXpChange", this.partyXpChange);
+		this.partyNoParty = this.getConfigItem("partyNoParty", this.partyNoParty);
+		this.partyAlreadyExists = this.getConfigItem("partyAlreadyExists", this.partyAlreadyExists);
+		this.partyCreated = this.getConfigItem("partyCreated", this.partyCreated);
+		this.partyDoesNotExisit = this.getConfigItem("partyDoesNotExisit", this.partyDoesNotExisit);
+		this.partyOwnParty = this.getConfigItem("partyOwnParty", this.partyOwnParty);
+		this.partyAlreadyMember = this.getConfigItem("partyAlreadyMember", this.partyAlreadyMember);
+		this.partyApproved = this.getConfigItem("partyApproved", this.partyApproved);
+		this.partyApprovedOwner = this.getConfigItem("partyApprovedOwner", this.partyApprovedOwner);
+		this.partyNotRequested = this.getConfigItem("partyNotRequested", this.partyNotRequested);
+		this.partyNotLeader = this.getConfigItem("partyNotLeader", this.partyNotLeader);
 
 	}
 }

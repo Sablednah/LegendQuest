@@ -157,3 +157,21 @@ xpChangeAdmin: "You gave Exp: "
 ecoPaid: " paid."
 ecoDeclined: "Card Declined: Insufficient funds."
 
+notSafeTeleport: "Could not find safe teleport location"
+
+partyTeleportNotAllowed: "Sorry Party Teleporting is disabled"
+partyXpChange: "Your party gained Exp: "
+partyNoParty: "You are not in a party"
+partyAlreadyExists: "already exists.  Select a different name."
+partyCreated: ": party created."
+partyDoesNotExisit: ": party does not exist."
+partyOwnParty: "You can't join your own party!"
+partyAlreadyMember: "You're already in: "
+partyApproved: " has approved your request to join your party: "
+partyApprovedOwner: " party request approved"
+partyNotRequested: " has not requested to join your party."
+partyNotLeader: "You do not lead a party, you can't approve."
+partyRequest: " has requested to join your party: "
+partyRequestSent: "Party request sent."
+
+

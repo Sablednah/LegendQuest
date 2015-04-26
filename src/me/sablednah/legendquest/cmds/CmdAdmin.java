@@ -130,7 +130,7 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 				}
 				PC targetPC = lq.players.getPC(targetPlayer);
 
-				targetPC.changeClass(cl, !main);
+				targetPC.changeClass(cl, !main, true);
 
 				sender.sendMessage(lq.configLang.classChanged + ": " + cl.name);
 				targetPlayer.sendMessage(lq.configLang.classChangedAdmin + ": " + cl.name);

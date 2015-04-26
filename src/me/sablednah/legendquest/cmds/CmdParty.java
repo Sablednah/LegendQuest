@@ -4,6 +4,9 @@ import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.party.Party;
+import me.sablednah.legendquest.playercharacters.PC;
+
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -70,29 +73,29 @@ public class CmdParty extends CommandTemplate implements CommandExecutor {
 				if (action.equalsIgnoreCase("create")) {
 					Party pty = lq.partyManager.getPartyByName(target);
 					if (pty != null) {
-						p.sendMessage(target + " already exists.  Select a different name.");
+						p.sendMessage(target + lq.configLang.partyAlreadyExists);
 						return true;
 					} else {
 						pty = new Party(target, p.getUniqueId(), true, true);
 						lq.partyManager.addParty(p.getUniqueId(), pty);
-						p.sendMessage(target + ": party created.");
+						p.sendMessage(target + lq.configLang.partyCreated);
 						lq.datasync.dirtyPartyData = true;
 						return true;
 					}
 				} else if (action.equalsIgnoreCase("join") || action.equalsIgnoreCase("request")) {
 					Party tpat = lq.partyManager.getPartyByName(target);
 					if (tpat==null) {
-						p.sendMessage(target + ": party does not exist.");
+						p.sendMessage(target + lq.configLang.partyDoesNotExisit);
 						return true;						
 					} else {
 						if (tpat.player.equals(p.getUniqueId())) {
-							p.sendMessage("you can't join your own party!");
+							p.sendMessage(lq.configLang.partyOwnParty);
 							return true;							
 						}
 					}
 					Party pty = lq.partyManager.getParty(p.getUniqueId());
 					if (pty!=null && pty.approved && pty.partyName.equalsIgnoreCase(target)) {
-						p.sendMessage("You're already in: "+target);
+						p.sendMessage(lq.configLang.partyAlreadyMember+target);
 						return true;
 					}
 					if (pty != null) {
@@ -103,9 +106,9 @@ public class CmdParty extends CommandTemplate implements CommandExecutor {
 					UUID owner = lq.partyManager.getPartyOwner(target);
 					Player tp = lq.getServer().getPlayer(owner);
 					if (tp!=null) {
-						tp.sendMessage(p.getDisplayName() + " has requested to join your party: " + target);
+						tp.sendMessage(p.getDisplayName() + lq.configLang.partyRequest + target);
 					}
-					p.sendMessage("Party request sent.");
+					p.sendMessage(lq.configLang.partyRequestSent);
 					lq.datasync.dirtyPartyData = true;
 					return true;
 				} else if (action.equalsIgnoreCase("approve") || action.equalsIgnoreCase("accept") || action.equalsIgnoreCase("allow")) {
@@ -117,15 +120,42 @@ public class CmdParty extends CommandTemplate implements CommandExecutor {
 						if (pty.partyName.equalsIgnoreCase(pty2.partyName)) {
 							pty2.approved = true;
 							lq.partyManager.addParty(pty2.player, pty2);
-							tp.sendMessage(p.getDisplayName() + " has approved your request to join your party: " + target);
-							p.sendMessage(p.getDisplayName() + " party request approved");
+							tp.sendMessage(p.getDisplayName() + lq.configLang.partyApproved + target);
+							p.sendMessage(p.getDisplayName() + lq.configLang.partyApprovedOwner);
 							lq.datasync.dirtyPartyData = true;
 						} else {
-							p.sendMessage(target + " has not requested to join your party.");
+							p.sendMessage(target + lq.configLang.partyNotRequested);
 						}
 						return true;
 					} else {
-						p.sendMessage("You do not lead your party, you can't approve.");
+						p.sendMessage(lq.configLang.partyNotLeader);
+						return true;
+					}
+				} else if (action.equalsIgnoreCase("teleport") || action.equalsIgnoreCase("tp")) {
+					if (!lq.configMain.allowPartyTeleport) { 
+						p.sendMessage(lq.configLang.partyTeleportNotAllowed);
+						return true;
+					}
+					Party pty = lq.partyManager.getParty(p.getUniqueId());
+					if (pty!=null && pty.approved) {
+						if (lq.configMain.ecoPartyTeleport >0) {
+							PC pc = lq.getPlayers().getPC(p);
+							if (pc!=null) {
+								if (!pc.payCash(lq.configMain.ecoPartyTeleport)){
+									p.sendMessage(lq.configLang.ecoDeclined);
+									return true;
+								}
+							}							
+						}
+						Location l = lq.partyManager.getPartyLocation(pty.partyName,p);
+						if (l!=null) {
+							p.teleport(l);							
+						} else {
+							p.sendMessage(lq.configLang.notSafeTeleport);
+						}
+						return true;						
+					} else {
+						p.sendMessage(lq.configLang.partyNoParty);
 						return true;
 					}
 				} else {

@@ -681,6 +681,7 @@ public class PC {
 		if (mainClass != null) {
 			stat += (int) mainClass.levelUp.getTotal("chr", level);
 			if (subClass != null) {
+				stat += (int) subClass.levelUp.getTotal("chr", level);
 				int classboost = 0;
 				if (mainClass.statChr > -1 && subClass.statChr > -1) {
 					// both positive (ok 0+)statChr
@@ -693,7 +694,6 @@ public class PC {
 				}
 				stat += classboost;
 			} else {
-				stat += (int) subClass.levelUp.getTotal("chr", level);
 				stat += mainClass.statChr;
 			}
 		}
@@ -1905,12 +1905,15 @@ public class PC {
 	}
 
 	public boolean changeClass(ClassType cl, Boolean sub) {
+		return changeClass(cl,sub,false);		
+	}
+	public boolean changeClass(ClassType cl, Boolean sub, boolean admin) {
 		if (cl == null) {
 			lq.debug.fine(lq.configLang.classInvalid);
 			return false;
 		}
 
-		if (lq.hasVault && lq.configMain.ecoClassSwap > 0) {
+		if (lq.hasVault && lq.configMain.ecoClassSwap > 0 && !admin) {
 			if ((!sub && this.mainClass != lq.classes.defaultClass) || (sub && this.subClass == null)) {
 				boolean payCheck = this.payCash(lq.configMain.ecoClassSwap);
 				if (!payCheck) {
@@ -1987,13 +1990,16 @@ public class PC {
 	}
 
 	public boolean changeRace(Race r) {
+		return changeRace(r,false);		
+	}
+	public boolean changeRace(Race r, boolean admin) {
 		if (r == null) {
 			lq.debug.fine(lq.configLang.raceInvalid);
 			return false;
 		}
 
 		if (raceChanged) {
-			if (lq.hasVault && lq.configMain.ecoRaceSwap > 0) {
+			if (lq.hasVault && lq.configMain.ecoRaceSwap > 0 && !admin) {
 				boolean payCheck = this.payCash(lq.configMain.ecoRaceSwap);
 				if (!payCheck) {
 					return false;

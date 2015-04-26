@@ -19,8 +19,8 @@ public class HealthCheck extends Event {
     
     public HealthCheck(PC pc, double health, double maxHP) {
         this.pc = pc;
-        this.health = maxHP;
-        this.maxHealth = health;
+        this.health = health;
+        this.maxHealth = maxHP;
     }
 
     @Override
