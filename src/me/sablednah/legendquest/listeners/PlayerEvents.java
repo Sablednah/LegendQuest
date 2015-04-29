@@ -344,6 +344,7 @@ public class PlayerEvents implements Listener {
 				if (Main.debugMode) {
 					System.out.print("Level UP++");
 				}
+				lq.players.setLqPerms(pc);
 			}
 		}
 	}

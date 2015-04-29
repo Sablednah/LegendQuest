@@ -41,7 +41,7 @@ public class MainConfig extends Config {
 	public int					max_level					= 150;
 	public boolean				hardLevelCap				= false;
 	public int					mastery_level				= 0;
-	
+
 	public int					max_xp						= 58245;
 	public boolean				XPnotify					= true;
 	public double				scaleXP						= 100.00D;
@@ -89,11 +89,11 @@ public class MainConfig extends Config {
 	public int					partyRange					= 32;
 	public boolean				useParties					= true;
 	public int					partyBonus					= 50;
-	public boolean				blockPartyPvP				= true;	
-	public boolean				allowPartyTeleport			= true;	
-	
-	public int					heightBonus					= 2;	
-	
+	public boolean				blockPartyPvP				= true;
+	public boolean				allowPartyTeleport			= true;
+
+	public int					heightBonus					= 2;
+
 	public String				hitchance					= "AVERAGE";
 	public String				dodgechance					= "AVERAGE";
 	public String				blockchance					= "TOUGH";
@@ -101,6 +101,8 @@ public class MainConfig extends Config {
 	public Difficulty			hitchanceenum				= Difficulty.AVERAGE;
 	public Difficulty			dodgechanceenum				= Difficulty.AVERAGE;
 	public Difficulty			blockchanceenum				= Difficulty.TOUGH;
+
+	public boolean				givePermForLevels			= true;
 
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
@@ -134,15 +136,15 @@ public class MainConfig extends Config {
 		this.randomStats = this.getConfigItem("randomStats", this.randomStats);
 		this.percentXpKeepClassChange = this.getConfigItem("percentXpKeepClassChange", this.percentXpKeepClassChange);
 		this.percentXpKeepRaceChange = this.getConfigItem("percentXpKeepRaceChange", this.percentXpKeepRaceChange);
-		
+
 		this.percentXpLossRespawn = this.getConfigItem("percentXpLossRespawn", this.percentXpLossRespawn);
 		this.max_level = this.getConfigItem("max_level", this.max_level);
 		this.hardLevelCap = this.getConfigItem("hardLevelCap", this.hardLevelCap);
 		this.mastery_level = this.getConfigItem("mastery_level", this.mastery_level);
 
-		if (this.mastery_level>0) {
+		if (this.mastery_level > 0) {
 			this.max_xp = SetExp.getExpToLevel(this.mastery_level);
-		} else if (max_level>0) {
+		} else if (max_level > 0) {
 			this.max_xp = SetExp.getExpToLevel(this.max_level);
 		} else {
 			this.max_xp = Integer.MAX_VALUE; // never master!
@@ -204,5 +206,6 @@ public class MainConfig extends Config {
 		this.ecoClassSwap = this.getConfigItem("ecoClassSwap", this.ecoClassSwap);
 		this.ecoRaceSwap = this.getConfigItem("ecoRaceSwap", this.ecoRaceSwap);
 
+		this.givePermForLevels = this.getConfigItem("givePermForLevels", this.givePermForLevels);
 	}
 }

@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -24,6 +25,7 @@ import me.sablednah.legendquest.utils.Pair;
 import me.sablednah.legendquest.utils.Utils;
 import me.sablednah.legendquest.utils.WeightedProbMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -152,102 +154,141 @@ public class Classes {
 					c.allowSmelting = thisConfig.getBoolean("allowSmelting");
 					c.allowBrewing = thisConfig.getBoolean("allowBrewing");
 					c.allowEnchanting = thisConfig.getBoolean("allowEnchanting");
-					if (thisConfig.getBoolean("allowEnchating")) {c.allowEnchanting = true; }
-					c.allowEnchating = c.allowEnchanting; 
+					if (thisConfig.getBoolean("allowEnchating")) {
+						c.allowEnchanting = true;
+					}
+					c.allowEnchating = c.allowEnchanting;
 					c.allowRepairing = thisConfig.getBoolean("allowRepairing");
 					c.allowTaming = thisConfig.getBoolean("allowTaming");
 
 					List<String> disallowedCrafting = (List<String>) thisConfig.getList("disallowedCrafting");
-					if (disallowedCrafting== null || disallowedCrafting.size() == 0) {disallowedCrafting = (List<String>) thisConfig.getList("dissallowedCrafting");}
+					if (disallowedCrafting == null || disallowedCrafting.size() == 0) {
+						disallowedCrafting = (List<String>) thisConfig.getList("dissallowedCrafting");
+					}
 					final List<Material> disallowedCraftingMat = new ArrayList<Material>();
-					if (disallowedCrafting!=null){
-					for (int i = 0; i < disallowedCrafting.size(); i++) {
-						Material m = null;
-						m = Material.matchMaterial(disallowedCrafting.get(i));
-						if (m!=null) {
-							disallowedCraftingMat.add(m);
-						} else {
-							System.out.print(disallowedCrafting.get(i)+" material not found for no crafting class " + c.name);
+					if (disallowedCrafting != null) {
+						for (int i = 0; i < disallowedCrafting.size(); i++) {
+							if (lq.configData.dataSets.containsKey(disallowedCrafting.get(i).toLowerCase())) {
+								disallowedCraftingMat.addAll(lq.configData.dataSets.get(disallowedCrafting.get(i).toLowerCase()));
+							} else {
+								Material m = null;
+								m = Material.matchMaterial(disallowedCrafting.get(i));
+								if (m != null) {
+									disallowedCraftingMat.add(m);
+								} else {
+									System.out.print(disallowedCrafting.get(i) + " material not found for no crafting class " + c.name);
+								}
+							}
 						}
-					}}
+					}
 					c.disallowedCrafting = disallowedCraftingMat;
 
 					List<String> disallowedSmelting = (List<String>) thisConfig.getList("disallowedSmelting");
-					if (disallowedSmelting == null || disallowedSmelting.size() == 0) {disallowedSmelting = (List<String>) thisConfig.getList("dissallowedSmelting");}
+					if (disallowedSmelting == null || disallowedSmelting.size() == 0) {
+						disallowedSmelting = (List<String>) thisConfig.getList("dissallowedSmelting");
+					}
 					final List<Material> disallowedSmeltingMat = new ArrayList<Material>();
-					if (disallowedSmelting!=null){
-					for (int i = 0; i < disallowedSmelting.size(); i++) {
-						Material m = null;
-						m = Material.matchMaterial(disallowedSmelting.get(i));
-						if (m!=null) {
-							disallowedSmeltingMat.add(m);
-						} else {
-							System.out.print(disallowedSmelting.get(i)+" material not found for no smelting class " + c.name);
+					if (disallowedSmelting != null) {
+						for (int i = 0; i < disallowedSmelting.size(); i++) {
+							if (lq.configData.dataSets.containsKey(disallowedSmelting.get(i).toLowerCase())) {
+								disallowedSmeltingMat.addAll(lq.configData.dataSets.get(disallowedSmelting.get(i).toLowerCase()));
+							} else {
+								Material m = null;
+								m = Material.matchMaterial(disallowedSmelting.get(i));
+								if (m != null) {
+									disallowedSmeltingMat.add(m);
+								} else {
+									System.out.print(disallowedSmelting.get(i) + " material not found for no smelting class " + c.name);
+								}
+							}
 						}
-					}}
+					}
 					c.disallowedSmelting = disallowedSmeltingMat;
 
 					List<String> disallowedBrewing = (List<String>) thisConfig.getList("disallowedBrewing");
-					if (disallowedBrewing== null || disallowedBrewing.size() == 0) {disallowedBrewing = (List<String>) thisConfig.getList("dissallowedBrewing");}
+					if (disallowedBrewing == null || disallowedBrewing.size() == 0) {
+						disallowedBrewing = (List<String>) thisConfig.getList("dissallowedBrewing");
+					}
 					final List<Material> disallowedBrewingMat = new ArrayList<Material>();
-					if (disallowedBrewing!=null){
-					for (int i = 0; i < disallowedBrewing.size(); i++) {
-						Material m = null;
-						m = Material.matchMaterial(disallowedBrewing.get(i));
-						if (m!=null) {
-							disallowedBrewingMat.add(m);
-						} else {
-							System.out.print(disallowedBrewing.get(i)+" material not found for class " + c.name);
+					if (disallowedBrewing != null) {
+						for (int i = 0; i < disallowedBrewing.size(); i++) {
+							if (lq.configData.dataSets.containsKey(disallowedBrewing.get(i).toLowerCase())) {
+								disallowedBrewingMat.addAll(lq.configData.dataSets.get(disallowedBrewing.get(i).toLowerCase()));
+							} else {
+								Material m = null;
+								m = Material.matchMaterial(disallowedBrewing.get(i));
+								if (m != null) {
+									disallowedBrewingMat.add(m);
+								} else {
+									System.out.print(disallowedBrewing.get(i) + " material not found for class " + c.name);
+								}
+							}
 						}
-					}}
+					}
 					c.disallowedBrewing = disallowedBrewingMat;
 
 					List<String> disallowedEnchanting = (List<String>) thisConfig.getList("disallowedEnchanting");
-					if (disallowedEnchanting== null || disallowedEnchanting.size() == 0) {disallowedEnchanting = (List<String>) thisConfig.getList("dissallowedEnchanting");}
+					if (disallowedEnchanting == null || disallowedEnchanting.size() == 0) {
+						disallowedEnchanting = (List<String>) thisConfig.getList("dissallowedEnchanting");
+					}
 					final List<Material> disallowedEnchantingMat = new ArrayList<Material>();
-					if (disallowedEnchanting!=null){
-					for (int i = 0; i < disallowedEnchanting.size(); i++) {
-						Material m = null;
-						m = Material.matchMaterial(disallowedEnchanting.get(i));
-						if (m!=null) {
-							disallowedEnchantingMat.add(m);
-						} else {
-							System.out.print(disallowedEnchanting.get(i)+" material not found for class " + c.name);
+					if (disallowedEnchanting != null) {
+						for (int i = 0; i < disallowedEnchanting.size(); i++) {
+							Material m = null;
+							if (lq.configData.dataSets.containsKey(disallowedEnchanting.get(i).toLowerCase())) {
+								disallowedEnchantingMat.addAll(lq.configData.dataSets.get(disallowedEnchanting.get(i).toLowerCase()));
+							} else {
+								m = Material.matchMaterial(disallowedEnchanting.get(i));
+								if (m != null) {
+									disallowedEnchantingMat.add(m);
+								} else {
+									System.out.print(disallowedEnchanting.get(i) + " material not found for class " + c.name);
+								}
+							}
 						}
-					}}
+					}
 					c.disallowedEnchanting = disallowedEnchantingMat;
 
 					List<String> disallowedRepairing = (List<String>) thisConfig.getList("disallowedRepairing");
-					if (disallowedRepairing== null || disallowedRepairing.size() == 0) {disallowedRepairing = (List<String>) thisConfig.getList("dissallowedRepairing");}
+					if (disallowedRepairing == null || disallowedRepairing.size() == 0) {
+						disallowedRepairing = (List<String>) thisConfig.getList("dissallowedRepairing");
+					}
 					final List<Material> disallowedRepairingMat = new ArrayList<Material>();
-					if (disallowedRepairing!=null){
-					for (int i = 0; i < disallowedRepairing.size(); i++) {
-						Material m = null;
-						m = Material.matchMaterial(disallowedRepairing.get(i));
-						if (m!=null) {
-							disallowedRepairingMat.add(m);
-						} else {
-							System.out.print(disallowedRepairing.get(i)+" material not found for class " + c.name);
+					if (disallowedRepairing != null) {
+						for (int i = 0; i < disallowedRepairing.size(); i++) {
+							if (lq.configData.dataSets.containsKey(disallowedRepairing.get(i).toLowerCase())) {
+								disallowedRepairingMat.addAll(lq.configData.dataSets.get(disallowedRepairing.get(i).toLowerCase()));
+							} else {
+								Material m = null;
+								m = Material.matchMaterial(disallowedRepairing.get(i));
+								if (m != null) {
+									disallowedRepairingMat.add(m);
+								} else {
+									System.out.print(disallowedRepairing.get(i) + " material not found for class " + c.name);
+								}
+							}
 						}
-					}}
+					}
 					c.disallowedRepairing = disallowedRepairingMat;
 
 					List<String> disallowedTaming = (List<String>) thisConfig.getList("disallowedTaming");
-					if (disallowedTaming== null || disallowedTaming.size() == 0) {disallowedTaming = (List<String>) thisConfig.getList("dissallowedTaming");}
+					if (disallowedTaming == null || disallowedTaming.size() == 0) {
+						disallowedTaming = (List<String>) thisConfig.getList("dissallowedTaming");
+					}
 					final List<EntityType> disallowedTamingMat = new ArrayList<EntityType>();
-					if (disallowedTaming!=null){
-					for (int i = 0; i < disallowedTaming.size(); i++) {
-						EntityType m = null;
-						m = EntityType.valueOf(disallowedTaming.get(i));
-						if (m!=null) {
-							disallowedTamingMat.add(m);
-						} else {
-							System.out.print(disallowedTaming.get(i)+" entitytype not found for class " + c.name);
+					if (disallowedTaming != null) {
+						for (int i = 0; i < disallowedTaming.size(); i++) {
+							EntityType m = null;
+							m = EntityType.valueOf(disallowedTaming.get(i));
+							if (m != null) {
+								disallowedTamingMat.add(m);
+							} else {
+								System.out.print(disallowedTaming.get(i) + " entitytype not found for class " + c.name);
+							}
 						}
-					}}
+					}
 					c.disallowedTaming = disallowedTamingMat;
 
-					
 					c.manaPerLevel = thisConfig.getDouble("manaPerLevel");
 					c.manaBonus = thisConfig.getInt("manaBonus");
 					c.manaPerSecond = thisConfig.getDouble("manaPerSecond");
@@ -553,32 +594,48 @@ public class Classes {
 					// read per level items
 					LevelItems li = new LevelItems();
 					final ConfigurationSection levelsection = thisConfig.getConfigurationSection("levels");
-					if (loadouts != null) {
-						for (String key : levelsection.getKeys(false)) {
-							try {
-								int levelnumber = Integer.parseInt(key);
-								ConfigurationSection levelinfo = levelsection.getConfigurationSection(key);
-								lq.debug.info("Loading level: " + key);
-								for (String recussionkey : levelinfo.getKeys(false)) {
-									if (recussionkey.equalsIgnoreCase("sp") || recussionkey.equalsIgnoreCase("hp") || recussionkey.equalsIgnoreCase("mana") || 
-											recussionkey.equalsIgnoreCase("str") || recussionkey.equalsIgnoreCase("dex") || recussionkey.equalsIgnoreCase("con") || 
-											recussionkey.equalsIgnoreCase("int") || recussionkey.equalsIgnoreCase("wis") || recussionkey.equalsIgnoreCase("chr") ) {
-										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getInt(recussionkey));
-									} else if (recussionkey.equalsIgnoreCase("manaregen")) {
-										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getDouble(recussionkey));
-									} else {
-										li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getString(recussionkey));										
+					if (levelsection != null) {
+						Set<String> levelkeys = levelsection.getKeys(false);
+						if (levelkeys != null) {
+							for (String key : levelkeys) {
+								try {
+									int levelnumber = Integer.parseInt(key);
+									ConfigurationSection levelinfo = levelsection.getConfigurationSection(key);
+									lq.debug.info("Loading level: " + key);
+									for (String recussionkey : levelinfo.getKeys(false)) {
+										if (recussionkey.equalsIgnoreCase("sp") || recussionkey.equalsIgnoreCase("hp") || recussionkey.equalsIgnoreCase("mana") || recussionkey.equalsIgnoreCase("str") || recussionkey.equalsIgnoreCase("dex")
+												|| recussionkey.equalsIgnoreCase("con") || recussionkey.equalsIgnoreCase("int") || recussionkey.equalsIgnoreCase("wis") || recussionkey.equalsIgnoreCase("chr")) {
+											li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getInt(recussionkey));
+										} else if (recussionkey.equalsIgnoreCase("manaregen")) {
+											li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getDouble(recussionkey));
+										} else {
+											String perms = levelinfo.getString(recussionkey);
+											List<String> permslist = new ArrayList<String>();
+											String[] list = perms.split("\\s*,\\s*");
+											for (String prm : list) {
+												if (lq.configData.dataSets.containsKey(prm.toLowerCase())) {
+													List<Material> lists = lq.configData.dataSets.get(prm.toLowerCase());
+													for (Material m : lists) {
+														permslist.add(m.toString());
+													}
+												} else {
+													permslist.add(prm);
+												}
+											}
+											// perms = StringUtils.join(permslist,",");
+											li.addEntry(levelnumber, recussionkey.toLowerCase(), permslist);
+											lq.debug.fine("Adding level itemlist: " + levelnumber + " | " + recussionkey.toLowerCase() + "=" + StringUtils.join(permslist, ","));
+										}
+										lq.debug.fine("Adding level item: " + levelnumber + " | " + recussionkey.toLowerCase() + "=" + levelinfo.getString(recussionkey));
 									}
-									lq.debug.fine("Adding level item: " + levelnumber+" | "+ recussionkey.toLowerCase() + "="+ levelinfo.getString(recussionkey));
+								} catch (NumberFormatException e) {
+									lq.logSevere("'" + key + "' is not a valid level number in " + c.name + " config.");
 								}
-							} catch (NumberFormatException e) {
-								lq.logSevere("'" +key + "' is not a valid level number in " + c.name + " config."); 
 							}
 						}
 					}
 					c.levelUp = li;
-					
-					
+
 					// check race or group exists.
 					final boolean hasRace = checkRaceList(allowedRaces);
 					final boolean hasGroup = checkGroupList(allowedGroups);

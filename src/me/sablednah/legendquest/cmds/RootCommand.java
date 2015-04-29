@@ -6,6 +6,9 @@ import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.Classes;
+import me.sablednah.legendquest.config.LangConfig;
+import me.sablednah.legendquest.config.MainConfig;
+import me.sablednah.legendquest.config.SkillConfig;
 import me.sablednah.legendquest.db.DataSync;
 import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
@@ -99,9 +102,9 @@ public class RootCommand implements CommandExecutor {
             		}
             		lq.datasync.shutdown();
                     
-            		lq.configMain.reloadConfig();
-                    lq.configLang.reloadConfig();
-                    lq.configSkills.reloadConfig();
+            		lq.configMain = new MainConfig(lq);
+                    lq.configLang = new LangConfig(lq);
+                    lq.configSkills = new SkillConfig(lq);
                     
                     lq.players = null;
                     lq.datasync = null;
@@ -111,10 +114,6 @@ public class RootCommand implements CommandExecutor {
                     lq.races = new Races(lq);
                     lq.classes = new Classes(lq);
             		lq.datasync = new DataSync(lq);
-                    lq.players = new PCs(lq);
-
-                    lq.races = new Races(lq);
-                    lq.classes = new Classes(lq);
                     lq.players = new PCs(lq);
                 	
                     sender.sendMessage(lq.configLang.commandReloaded);

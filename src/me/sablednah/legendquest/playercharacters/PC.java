@@ -28,6 +28,7 @@ import me.sablednah.legendquest.mechanics.Difficulty;
 import me.sablednah.legendquest.mechanics.Mechanics;
 import me.sablednah.legendquest.mechanics.Attribute;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -258,7 +259,7 @@ public class PC {
 				if (subClass != null) {
 					perlevelallow.addAll(subClass.levelUp.getList("allowarmour", level));
 				}
-				if (perlevelallow.contains(id.toString())) {
+				if (StringUtils.join(perlevelallow, ",").toLowerCase().contains(id.toString().toLowerCase())) {
 					valid = true;
 				}
 
@@ -267,7 +268,7 @@ public class PC {
 				if (subClass != null) {
 					perleveldisallow.addAll(subClass.levelUp.getList("disallowarmour", level));
 				}
-				if (perleveldisallow.contains(id.toString())) {
+				if (StringUtils.join(perleveldisallow, ",").toLowerCase().contains(id.toString().toLowerCase())) {
 					valid = false;
 				}
 
@@ -343,7 +344,7 @@ public class PC {
 			if (subClass != null) {
 				perlevelallow.addAll(subClass.levelUp.getList("allowtool", level));
 			}
-			if (perlevelallow.contains(id.toString())) {
+			if (StringUtils.join(perlevelallow, ",").toLowerCase().contains(id.toString().toLowerCase())) {
 				valid = true;
 			}
 
@@ -352,7 +353,7 @@ public class PC {
 			if (subClass != null) {
 				perleveldisallow.addAll(subClass.levelUp.getList("disallowtool", level));
 			}
-			if (perleveldisallow.contains(id.toString())) {
+			if (StringUtils.join(perleveldisallow, ",").toLowerCase().contains(id.toString().toLowerCase())) {
 				valid = false;
 			}
 
@@ -428,7 +429,8 @@ public class PC {
 			if (subClass != null) {
 				perlevelallow.addAll(subClass.levelUp.getList("allowweapon", level));
 			}
-			if (perlevelallow.contains(id.toString())) {
+			
+			if (StringUtils.join(perlevelallow, ",").toLowerCase().contains(id.toString().toLowerCase())) {
 				valid = true;
 			}
 
@@ -437,7 +439,7 @@ public class PC {
 			if (subClass != null) {
 				perleveldisallow.addAll(subClass.levelUp.getList("disallowweapon", level));
 			}
-			if (perleveldisallow.contains(id.toString())) {
+			if (StringUtils.join(perleveldisallow, ",").toLowerCase().contains(id.toString().toLowerCase())) {
 				valid = false;
 			}
 
@@ -1277,26 +1279,9 @@ public class PC {
 				}
 			}
 		}
-
-		int level = SetExp.getLevelOfXpAmount(currentXP);
-
-		List<Object> perlevelallow = race.levelUp.getList("allowcraft", level);
-		perlevelallow.addAll(mainClass.levelUp.getList("allowcraft", level));
-		if (subClass != null) {
-			perlevelallow.addAll(subClass.levelUp.getList("allowcraft", level));
-		}
-		if (perlevelallow.contains(m.toString())) {
-			cando = true;
-		}
-
-		List<Object> perleveldisallow = race.levelUp.getList("disallowcraft", level);
-		perleveldisallow.addAll(mainClass.levelUp.getList("disallowcraft", level));
-		if (subClass != null) {
-			perleveldisallow.addAll(subClass.levelUp.getList("disallowcraft", level));
-		}
-		if (perleveldisallow.contains(m.toString())) {
-			cando = false;
-		}
+		
+		Boolean corecheck = checkCoreability("craft",m.toString());
+		if (corecheck!=null) { cando = corecheck; }
 
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.CRAFT, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
@@ -1342,25 +1327,8 @@ public class PC {
 			}
 		}
 
-		int level = SetExp.getLevelOfXpAmount(currentXP);
-
-		List<Object> perlevelallow = race.levelUp.getList("allowsmelt", level);
-		perlevelallow.addAll(mainClass.levelUp.getList("allowsmelt", level));
-		if (subClass != null) {
-			perlevelallow.addAll(subClass.levelUp.getList("allowsmelt", level));
-		}
-		if (perlevelallow.contains(m.toString())) {
-			cando = true;
-		}
-
-		List<Object> perleveldisallow = race.levelUp.getList("disallowsmelt", level);
-		perleveldisallow.addAll(mainClass.levelUp.getList("disallowsmelt", level));
-		if (subClass != null) {
-			perleveldisallow.addAll(subClass.levelUp.getList("disallowsmelt", level));
-		}
-		if (perleveldisallow.contains(m.toString())) {
-			cando = false;
-		}
+		Boolean corecheck = checkCoreability("smelt",m.toString());
+		if (corecheck!=null) { cando = corecheck; }
 
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.SMELT, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
@@ -1405,26 +1373,9 @@ public class PC {
 			}
 		}
 
-		int level = SetExp.getLevelOfXpAmount(currentXP);
-
-		List<Object> perlevelallow = race.levelUp.getList("allowbrew", level);
-		perlevelallow.addAll(mainClass.levelUp.getList("allowbrew", level));
-		if (subClass != null) {
-			perlevelallow.addAll(subClass.levelUp.getList("allowbrew", level));
-		}
-		if (perlevelallow.contains(m.toString())) {
-			cando = true;
-		}
-
-		List<Object> perleveldisallow = race.levelUp.getList("disallowbrew", level);
-		perleveldisallow.addAll(mainClass.levelUp.getList("disallowbrew", level));
-		if (subClass != null) {
-			perleveldisallow.addAll(subClass.levelUp.getList("disallowbrew", level));
-		}
-		if (perleveldisallow.contains(m.toString())) {
-			cando = false;
-		}
-
+		Boolean corecheck = checkCoreability("brew",m.toString());
+		if (corecheck!=null) { cando = corecheck; }
+		
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.BREW, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1456,36 +1407,20 @@ public class PC {
 		boolean cando = canEnchant(false);
 		if (cando) {
 			if (race.disallowedEnchanting != null && race.disallowedEnchanting.contains(m)) {
-				return false;
+				cando = false;
 			}
 			if (mainClass.disallowedEnchanting != null && mainClass.disallowedEnchanting.contains(m)) {
-				return false;
+				cando = false;
 			}
 			if (subClass != null) {
 				if (subClass.disallowedEnchanting != null && subClass.disallowedEnchanting.contains(m)) {
-					return false;
+					cando = false;
 				}
 			}
 		}
-		int level = SetExp.getLevelOfXpAmount(currentXP);
-
-		List<Object> perlevelallow = race.levelUp.getList("allowenchant", level);
-		perlevelallow.addAll(mainClass.levelUp.getList("allowenchant", level));
-		if (subClass != null) {
-			perlevelallow.addAll(subClass.levelUp.getList("allowenchant", level));
-		}
-		if (perlevelallow.contains(m.toString())) {
-			cando = true;
-		}
-
-		List<Object> perleveldisallow = race.levelUp.getList("disallowenchant", level);
-		perleveldisallow.addAll(mainClass.levelUp.getList("disallowenchant", level));
-		if (subClass != null) {
-			perleveldisallow.addAll(subClass.levelUp.getList("disallowenchant", level));
-		}
-		if (perleveldisallow.contains(m.toString())) {
-			cando = false;
-		}
+		
+		Boolean corecheck = checkCoreability("enchant",m.toString());
+		if (corecheck!=null) { cando = corecheck; }
 
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.ENCHANT, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
@@ -1518,38 +1453,21 @@ public class PC {
 		boolean cando = canRepair(false);
 		if (cando) {
 			if (race.disallowedRepairing != null && race.disallowedRepairing.contains(m)) {
-				return false;
+				cando = false;
 			}
 			if (mainClass.disallowedRepairing != null && mainClass.disallowedRepairing.contains(m)) {
-				return false;
+				cando = false;
 			}
 			if (subClass != null) {
 				if (subClass.disallowedRepairing != null && subClass.disallowedRepairing.contains(m)) {
-					return false;
+					cando = false;
 				}
 			}
 		}
 
-		int level = SetExp.getLevelOfXpAmount(currentXP);
-
-		List<Object> perlevelallow = race.levelUp.getList("allowrepair", level);
-		perlevelallow.addAll(mainClass.levelUp.getList("allowrepair", level));
-		if (subClass != null) {
-			perlevelallow.addAll(subClass.levelUp.getList("allowrepair", level));
-		}
-		if (perlevelallow.contains(m.toString())) {
-			cando = true;
-		}
-
-		List<Object> perleveldisallow = race.levelUp.getList("disallowrepair", level);
-		perleveldisallow.addAll(mainClass.levelUp.getList("disallowrepair", level));
-		if (subClass != null) {
-			perleveldisallow.addAll(subClass.levelUp.getList("disallowrepair", level));
-		}
-		if (perleveldisallow.contains(m.toString())) {
-			cando = false;
-		}
-
+		Boolean corecheck = checkCoreability("repair",m.toString());
+		if (corecheck!=null) { cando = corecheck; }
+		
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.REPAIR, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
@@ -1593,25 +1511,9 @@ public class PC {
 			}
 		}
 
-		int level = SetExp.getLevelOfXpAmount(currentXP);
-
-		List<Object> perlevelallow = race.levelUp.getList("allowtame", level);
-		perlevelallow.addAll(mainClass.levelUp.getList("allowtame", level));
-		if (subClass != null) {
-			perlevelallow.addAll(subClass.levelUp.getList("allowtame", level));
-		}
-		if (perlevelallow.contains(m.toString())) {
-			cando = true;
-		}
-
-		List<Object> perleveldisallow = race.levelUp.getList("disallowtame", level);
-		perleveldisallow.addAll(mainClass.levelUp.getList("disallowtame", level));
-		if (subClass != null) {
-			perleveldisallow.addAll(subClass.levelUp.getList("disallowtame", level));
-		}
-		if (perleveldisallow.contains(m.toString())) {
-			cando = false;
-		}
+		
+		Boolean corecheck = checkCoreability("tame",m.toString());
+		if (corecheck!=null) { cando = corecheck; }		
 
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.TAME, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
@@ -1986,6 +1888,7 @@ public class PC {
 		lq.players.scoreboards.put(this.uuid, null);
 
 		this.loadouts = getLoadouts();
+		lq.players.setLqPerms(this);
 		return true;
 	}
 
@@ -2021,6 +1924,8 @@ public class PC {
 		lq.players.scoreboards.put(this.uuid, null);
 
 		this.loadouts = getLoadouts();
+		
+		lq.players.setLqPerms(this);
 
 		return true;
 	}
@@ -2351,4 +2256,53 @@ public class PC {
 		return statPoints-statPointsSpent;
 	}
 
+	
+	
+	@SuppressWarnings("unchecked")
+	public Boolean checkCoreability(String abilityname, String target) {
+		Boolean cando = null;
+//System.out.print("Core Skill Levels Check: " + abilityname+" | "+ target );		
+		int level = SetExp.getLevelOfXpAmount(currentXP);
+
+		List<String> potentials = null;
+		List<Object> pl = null;
+
+		potentials = new ArrayList<String>();
+		pl = race.levelUp.getList("allow"+abilityname, level);
+		pl.addAll(mainClass.levelUp.getList("allow"+abilityname, level));
+		if (subClass != null) {
+			pl.addAll(subClass.levelUp.getList("allow"+abilityname, level));
+		}
+		for (Object obj : pl) {
+			for (String item : (List<String>)obj) {
+				potentials.add(item.toLowerCase());
+//System.out.print("Core Skill Levels Check item: " +item.toLowerCase());
+			}
+		}		
+		if (potentials.contains(target.toLowerCase()) || potentials.contains("any") || potentials.contains("all")) {
+//System.out.print("Core Skill Levels Check: " + abilityname+" | "+ target + "= true - (hasany?:"+potentials.contains("any")+")" );
+			cando = true;
+		}
+
+		potentials = new ArrayList<String>();
+		pl = race.levelUp.getList("disallow"+abilityname, level);
+		pl.addAll(mainClass.levelUp.getList("disallow"+abilityname, level));
+		if (subClass != null) {
+			pl.addAll(subClass.levelUp.getList("disallow"+abilityname, level));
+		}
+		for (Object obj : pl) {
+			for (String item : (List<String>)obj) {
+//System.out.print("Core Skill Levels Check dis-item: " +item.toLowerCase());
+				potentials.add(item.toLowerCase());
+			}
+		}
+		if (potentials.contains(target.toLowerCase()) || potentials.contains("any") || potentials.contains("all")) {
+//System.out.print("Core Skill Levels Check: " + abilityname+" | "+ target + "= false - (hasany?:"+potentials.contains("any")+")" );
+			cando = false;
+		}
+		
+		//return null if not affected.
+		return cando;
+	}
+	
 }

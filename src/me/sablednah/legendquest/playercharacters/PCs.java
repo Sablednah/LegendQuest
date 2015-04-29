@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.events.SkillTick;
+import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillPhase;
 import me.sablednah.legendquest.skills.SkillType;
@@ -755,6 +756,7 @@ public class PCs {
 		lqperms.remove(uid);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setLqPerms(PC pc) {
 		removeLQPerms(pc.uuid);
 		List<PermissionAttachment> permsList = new ArrayList<PermissionAttachment>();
@@ -766,6 +768,32 @@ public class PCs {
 		if (pc.subClass != null) {
 			PermissionAttachment s = p.addAttachment(lq, "legendquest.hasclass." + pc.subClass.name, true);
 			permsList.add(s);
+		}
+		int lvl = SetExp.getLevelOfXpAmount(pc.currentXP);
+		if (lq.configMain.givePermForLevels) {
+			if (SetExp.getLevelOfXpAmount(pc.currentXP) > 0) {
+				for (int i = 1; i<=lvl; i++) {
+					PermissionAttachment l = p.addAttachment(lq, "legendquest.haslevel." + i, true);
+					permsList.add(l);
+				}
+			}
+		}
+		List<Object> perlevelperms = pc.race.levelUp.getList("permissions", lvl);
+		perlevelperms.addAll(pc.mainClass.levelUp.getList("permissions", lvl));
+		if (pc.subClass != null) {
+			perlevelperms.addAll(pc.subClass.levelUp.getList("permissions", lvl));
+		}
+		if (Main.debugMode) {
+			System.out.print("setting level perms:"+perlevelperms);
+		}
+		if (perlevelperms!=null && !perlevelperms.isEmpty()) {
+			for (Object perm : perlevelperms) {
+				// String[] list = ((String) perm).split("\\s*,\\s*");
+				for (String prm : (ArrayList<String>)perm) {
+					PermissionAttachment lp = p.addAttachment(lq, prm, true);
+					permsList.add(lp);
+				}
+			}
 		}
 		lqperms.put(pc.uuid, permsList);
 	}
