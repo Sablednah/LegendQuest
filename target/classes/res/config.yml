@@ -28,6 +28,7 @@ randomStats: true
 
 logSQL: true
 logLevel: ALL
+useServerLogOnly: false
 
 #-------------------
 
@@ -160,6 +161,10 @@ nameBlacklistParts:
   - faggot
   - sablednah
 broadcastRename: true
+
+scaleFallDamagePlayers: 100.00
+scaleFallDamageMobs: 100.00
+  
   
 #--------------------
 

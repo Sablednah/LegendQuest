@@ -68,14 +68,24 @@ public class PCs {
 		}
 		return null;
 	}
-
+	
 	public PC getPC(Player p) {
+		return getPC((Entity)p);
+	}
+	
+	public PC getPC(Entity p) {
 		if (p != null) {
+/*
 			if (p.hasMetadata("NPC")) {
 				// store npc
 				return null;
 			}
-			return getPC(p.getUniqueId());
+*/
+			if (p instanceof Player && (!(p.hasMetadata("NPC")))) {
+				return getPC(p.getUniqueId());
+			} else {
+				return getEntityPC(p);
+			}
 		}
 		return null;
 	}
@@ -99,6 +109,12 @@ public class PCs {
 		}
 		return pc;
 	}
+	
+	public PC getEntityPC(Entity p) {
+		// TODO add custom event to get PC.  So storytellers can return a statline.
+		return null;
+	}
+	
 
 	private PC loadPlayer(UUID uuid) {
 		// Load player from disk. if not found make new blank
@@ -605,6 +621,13 @@ public class PCs {
 					}
 					SkillTick e = new SkillTick(p);
 					lq.getServer().getPluginManager().callEvent(e);
+				}
+//System.out.print("Speed: ");
+				float speed = activePlayer.getSpeed();
+//System.out.print("Speed: " + speed );
+				if (speed != p.getWalkSpeed()) {
+//System.out.print("setting speed: " + speed );
+					p.setWalkSpeed(speed);
 				}
 			}
 		}

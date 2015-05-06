@@ -188,6 +188,8 @@ public class LangConfig extends Config {
 	public String					partyRequest			= " has requested to join your party: ";
 	public String					partyRequestSent		= "Party request sent.";
 	
+	public String					statsSelfOnly			= "You can only view your own stats.";
+	
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
 
@@ -349,5 +351,7 @@ public class LangConfig extends Config {
 		this.partyNotRequested = this.getConfigItem("partyNotRequested", this.partyNotRequested);
 		this.partyNotLeader = this.getConfigItem("partyNotLeader", this.partyNotLeader);
 
+		this.statsSelfOnly = this.getConfigItem("statsSelfOnly", this.statsSelfOnly);
+		
 	}
 }

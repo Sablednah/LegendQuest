@@ -66,7 +66,7 @@ public class SkillPool {
 
 	public void initSkill(SkillDefinition def, String name) {
 
-		lq.debug.info("Pooling skill: " + name + " | " + def.getSkillInfo().getName().toLowerCase());
+		lq.debug.fine("Pooling skill: " + name + " | " + def.getSkillInfo().getName().toLowerCase());
 		SkillDefinition def2 = null;
 		if (!name.equalsIgnoreCase(def.getSkillInfo().getName())) {
 			SkillInfo si2 = new SkillInfo(def.getSkillInfo().getAuthor(), name, def.getSkillInfo().getDescription(), def.getSkillInfo().getType(), def.getSkillInfo().getVersion(),
@@ -83,8 +83,7 @@ public class SkillPool {
 	}
 
 	public Skill instantiateSkill(SkillDefinition def) {
-		String str = "[LegendQuest] Enabling Skill: " + def.getSkillInfo().getName() + " v" + def.getSkillInfo().version + " by " + def.getSkillInfo().author;
-
+		String str = "Enabling Skill: "+def.getSkillClass().getSimpleName()+" as " + def.getSkillInfo().getName() + " v" + def.getSkillInfo().version + " by " + def.getSkillInfo().author;
 		if (lq.configMain.debugMode) { System.out.println(str); }
 		lq.debug.info(str);
 

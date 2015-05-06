@@ -1,5 +1,7 @@
 package me.sablednah.legendquest.listeners;
 
+import java.util.List;
+
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.db.HealthStore;
 import me.sablednah.legendquest.events.CombatHitCheck;
@@ -23,6 +25,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.metadata.MetadataValue;
 
 public class DamageEvents implements Listener {
 
@@ -122,6 +126,39 @@ public class DamageEvents implements Listener {
 		}
 		if (Main.debugMode) { System.out.print("hit: "+hitchance + "  dodge: "+dodgechance + "(post-size)"); }
 
+		
+		if (victim.hasMetadata("cursetimeout")) {
+			long cursetime = victim.getMetadata("cursetimeout").get(0).asLong();
+			if (System.currentTimeMillis() > cursetime) {
+				victim.removeMetadata("cursetimeout", lq);
+			} else {
+				List<MetadataValue> mods = null;
+				mods = victim.getMetadata("dodge");
+				for (MetadataValue metamod : mods) {
+					Integer mod = metamod.asInt();
+					lq.debug.info("Curse: dodge - " + mod);
+					dodgechance -= mod;
+				}
+			}
+		}
+
+		if (event.getDamager().hasMetadata("cursetimeout")) {
+			long cursetime = event.getDamager().getMetadata("cursetimeout").get(0).asLong();
+			if (System.currentTimeMillis() > cursetime) {
+				event.getDamager().removeMetadata("cursetimeout", lq);
+			} else {
+				List<MetadataValue> mods = null;
+				mods = event.getDamager().getMetadata("hit");
+				for (MetadataValue metamod : mods) {
+					Integer mod = metamod.asInt();
+					lq.debug.info("Curse: hit - " + mod);
+					hitchance -= mod;
+				}
+			}
+		}
+
+		if (Main.debugMode) { System.out.print("hit: "+hitchance + "  dodge: "+dodgechance + "(post-curse)"); }
+		
 		boolean ranged = (event.getDamager() instanceof Projectile);
 
 		CombatHitCheck e = new CombatHitCheck(hitchance, dodgechance, this.getTwistedInstigatorPlayer(event.getDamager()), victim, ranged);
@@ -219,6 +256,38 @@ public class DamageEvents implements Listener {
 			System.out.print("dodge before: " + dodge);
 		}
 
+		
+				if (victim.hasMetadata("cursetimeout")) {
+					long cursetime = victim.getMetadata("cursetimeout").get(0).asLong();
+					if (System.currentTimeMillis() > cursetime) {
+						victim.removeMetadata("cursetimeout", lq);
+					} else {
+						List<MetadataValue> mods = null;
+						mods = victim.getMetadata("soak");
+						for (MetadataValue metamod : mods) {
+							Integer mod = metamod.asInt();
+							lq.debug.info("Curse: soak - " + mod);
+							dodge += mod;
+						}
+					}
+				}
+		
+				if (damager.hasMetadata("cursetimeout")) {
+					long cursetime = damager.getMetadata("cursetimeout").get(0).asLong();
+					if (System.currentTimeMillis() > cursetime) {
+						damager.removeMetadata("cursetimeout", lq);
+					} else {
+						List<MetadataValue> mods = null;
+						mods = damager.getMetadata("power");
+						for (MetadataValue metamod : mods) {
+							Integer mod = metamod.asInt();
+							lq.debug.info("Curse: power - " + mod);
+							power += mod;
+						}
+					}
+				}
+
+				
 		CombatModifiers e = new CombatModifiers(power, dodge, damager, victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
 		power = e.getPower();
@@ -283,6 +352,22 @@ public class DamageEvents implements Listener {
 		}
 	}
 	
+	@EventHandler(priority=EventPriority.LOWEST)
+	public void scaleFalling(EntityDamageEvent event) {
+		if (event.getCause() != DamageCause.FALL) { return; }
+		double dmg = event.getDamage();
+		if ((event.getEntity() instanceof Player)) {			
+			if (lq.configMain.scaleFallDamagePlayers > 100.0D || lq.configMain.scaleFallDamagePlayers < 100.0D) {
+				dmg = dmg * (lq.configMain.scaleFallDamagePlayers / 100.0D);
+			}
+		} else {
+			if (lq.configMain.scaleFallDamageMobs > 100.0D || lq.configMain.scaleFallDamageMobs < 100.0D) {
+				dmg = dmg * (lq.configMain.scaleFallDamageMobs / 100.0D);
+			}
+		}
+		event.setDamage(dmg);
+	}
+	
 /*
  	  @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	  public void OnBowFire(EntityShootBowEvent event) {
@@ -330,6 +415,8 @@ public class DamageEvents implements Listener {
 				return null;
 			}
 		}
+		
+		
 		return atacker;
 	}
 
@@ -365,16 +452,19 @@ public class DamageEvents implements Listener {
 			Player killer = e.getKiller();
 			if (killer != null) {
 				PC pc = lq.players.getPC(killer);
-				double mod = pc.getXPMod(ExperienceSource.KILL);
-				if (mod <= -100.0D) {
-					// no experience
-					event.setDroppedExp(0);
-				} else {
-					int xp = event.getDroppedExp();
-					xp = (int) (xp * ((100.0D + mod) / 100.0D));
-					event.setDroppedExp(xp);
+				if (pc != null) {
+					double mod = pc.getXPMod(ExperienceSource.KILL);
+					if (mod <= -100.0D) {
+						// no experience
+						event.setDroppedExp(0);
+					} else {
+						int xp = event.getDroppedExp();
+						xp = (int) (xp * ((100.0D + mod) / 100.0D));
+						event.setDroppedExp(xp);
+					}
 				}
 			}
 		}
 	}
+
 }

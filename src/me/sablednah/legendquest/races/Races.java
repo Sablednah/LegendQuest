@@ -95,7 +95,9 @@ public class Races {
 					thisConfig = YamlConfiguration.loadConfiguration(race);
 
 					r.filename = race.getName();
-					r.name = thisConfig.getString("name");
+					String nme = thisConfig.getString("name");
+					r.name = nme;
+					r.chatTag = thisConfig.getString("chattag", nme);
 					r.description = thisConfig.getString("description", "");
 					r.longdescription = thisConfig.getString("longdescription", "");
 

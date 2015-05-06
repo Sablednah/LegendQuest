@@ -130,6 +130,9 @@ permissions:
     legendquest.command.stats:
         description: Allows user to use legendquest stats command.
         default: true
+    legendquest.command.stats.others:
+        description: Allows user to use legendquest stats command to view others stats.
+        default: op
     legendquest.command.roll:
         description: Allows user to use legendquest roll command.
         default: true

@@ -92,6 +92,12 @@ public class CmdClass extends CommandTemplate implements CommandExecutor {
 					}
 				}
 
+				if (className.equals("remove") && sub) {
+					pc.subClass = null;
+					sender.sendMessage(lq.configLang.classChanged + ": subclass removed");
+					return true;
+				}
+				
 				final boolean confirm = (args[args.length - 1].equalsIgnoreCase("confirm"));
 
 				// check classname is valid

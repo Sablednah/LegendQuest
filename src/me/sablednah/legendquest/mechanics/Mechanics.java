@@ -41,7 +41,7 @@ public class Mechanics {
 		}
 		int result = (int) (stat / 2) - 5;
 		if (pc != null) {
-			Player p = pc.getPlayer();
+			Entity p = pc.getEntity();
 			if (p != null) {
 				if (p.hasMetadata("cursetimeout")) {
 					long cursetime = p.getMetadata("cursetimeout").get(0).asLong();
@@ -53,7 +53,7 @@ public class Mechanics {
 						List<MetadataValue> mods = p.getMetadata(att);
 						for (MetadataValue metamod : mods) {
 							Integer mod = metamod.asInt();
-							System.out.print("Curse: " + att + " - " + mod);
+							pc.lq.debug.fine("Curse: " + att + " - " + mod);
 							result += mod;
 						}
 					}

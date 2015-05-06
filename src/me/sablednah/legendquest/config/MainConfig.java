@@ -21,6 +21,7 @@ public class MainConfig extends Config {
 
 	public boolean				logSQL						= true;
 	public String				logLevel					= "ALL";
+	public boolean				useServerLogOnly			= false;
 
 	public ArrayList<String>	worlds						= new ArrayList<String>();
 	public boolean				randomStats					= true;
@@ -70,6 +71,9 @@ public class MainConfig extends Config {
 
 	public double				skillBuildupMoveAllowed		= 2.0D;
 	public long					skillTickInterval			= 10L;
+	
+	public double				scaleFallDamagePlayers		= 100.0D;
+	public double				scaleFallDamageMobs			= 100.0D;
 
 	public boolean				manageHealthNonLqWorlds		= true;
 
@@ -118,11 +122,15 @@ public class MainConfig extends Config {
 		this.sqlDatabase = this.getConfigItem("sqlDatabase", this.sqlDatabase);
 		this.logSQL = this.getConfigItem("logSQL", this.logSQL);
 		this.logLevel = this.getConfigItem("logLevel", this.logLevel);
+		this.useServerLogOnly = this.getConfigItem("useServerLogOnly", this.useServerLogOnly);
 		this.sqlPrefix = this.getConfigItem("sqlPrefix", this.sqlPrefix);
 		this.sqlKeepAliveInterval = this.getConfigItem("sqlKeepAliveInterval", this.sqlKeepAliveInterval);
 
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
 		this.manageHealthNonLqWorlds = this.getConfigItem("manageHealthNonLqWorlds", this.manageHealthNonLqWorlds);
+
+		this.scaleFallDamagePlayers = this.getConfigItem("scaleFallDamagePlayers", this.scaleFallDamagePlayers);
+		this.scaleFallDamageMobs = this.getConfigItem("scaleFallDamageMobs", this.scaleFallDamageMobs);
 
 		this.nameBlacklist = (ArrayList<String>) this.getConfigItem("nameBlacklist", this.nameBlacklist);
 		this.nameBlacklistParts = (ArrayList<String>) this.getConfigItem("nameBlacklistParts", this.nameBlacklistParts);

@@ -12,6 +12,8 @@ public class Race {
 
 	public String				filename;
 	public String				name;
+	public String				chatTag;
+
 	public String				description;
 	public String				longdescription;
 

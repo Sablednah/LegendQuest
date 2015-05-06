@@ -17,10 +17,9 @@ public class CombatModifiers extends Event implements Cancellable {
 
     private int power;
     private int dodge;
-	private Entity	damager;
-	private Entity	victim;
+	private Entity damager;
+	private Entity victim;
 	private boolean ranged;
-
     
     public CombatModifiers( int power, int dodge, Entity damager, Entity victim, boolean ranged) {
         this.power = power;

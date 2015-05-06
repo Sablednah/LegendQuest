@@ -102,7 +102,11 @@ public class Classes {
 					thisConfig = YamlConfiguration.loadConfiguration(classfile);
 
 					c.filename = classfile.getName();
-					c.name = thisConfig.getString("name");
+					String nme = thisConfig.getString("name");
+
+					c.name = nme;
+					c.chatTag = thisConfig.getString("chattag", nme);
+
 					c.description = thisConfig.getString("description", "");
 					c.longdescription = thisConfig.getString("longdescription", "");
 
@@ -507,7 +511,7 @@ public class Classes {
 								lq.skills.initSkill(realSkill, skillName);
 							}
 							if (lq.skills.skillList.containsKey(skillName)) {
-								lq.debug.info("Loading skillName: " + skillName + " as skill " + realSkill);
+								lq.debug.fine("Loading skillName: " + skillName + " as skill " + realSkill);
 								SkillInfo si = lq.skills.skillDefs.get(realSkill).getSkillInfoClone();
 								SkillDataStore skilldata = new SkillDataStore(si);
 								skilldata.name = skillName;
@@ -519,7 +523,7 @@ public class Classes {
 					}
 
 					for (SkillDataStore s : c.availableSkills) {
-						lq.debug.info("Vars [" + s.name + "] : " + s.vars.toString());
+						lq.debug.fine("Vars [" + s.name + "] : " + s.vars.toString());
 					}
 
 					// outsourced skills - skills without skill class - using command/on/off and perm nodes to achieve

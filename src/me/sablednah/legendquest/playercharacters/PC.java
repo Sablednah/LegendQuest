@@ -16,6 +16,7 @@ import me.sablednah.legendquest.classes.ClassType;
 import me.sablednah.legendquest.db.HealthStore;
 import me.sablednah.legendquest.events.CoreSkillCheckEvent;
 import me.sablednah.legendquest.events.HealthCheck;
+import me.sablednah.legendquest.events.SpeedCheckEvent;
 import me.sablednah.legendquest.experience.ExperienceSource;
 import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.races.Race;
@@ -41,6 +42,7 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.MetadataValue;
 
 public class PC {
 
@@ -613,8 +615,43 @@ public class PC {
 
 	public float getSpeed() {
 		float sp;
+		int level = SetExp.getLevelOfXpAmount(currentXP);
 		sp = race.baseSpeed;
 		sp += mainClass.speedMod;
+		sp += mainClass.levelUp.getTotal("speed", level);
+				
+		float before = sp;
+		Entity e = getEntity();
+		if (e != null && e.hasMetadata("cursetimeout")) {
+			long cursetime = e.getMetadata("cursetimeout").get(0).asLong();
+			if (System.currentTimeMillis() > cursetime) {
+				e.removeMetadata("cursetimeout", lq);
+			} else {
+				List<MetadataValue> mods = null;
+				mods = e.getMetadata("speed");
+				for (MetadataValue metamod : mods) {
+					Float mod = metamod.asFloat();
+					lq.debug.fine("Curse: speed - " + mod);
+					sp += mod;
+				}
+			}
+		}
+		
+// System.out.print("SpeedCheckEvent: " + sp );
+
+		SpeedCheckEvent ev = new SpeedCheckEvent(this, sp);
+		Bukkit.getServer().getPluginManager().callEvent(ev);
+		
+// System.out.print("SpeedCheckEvent: " + ev.getSpeed() );
+
+		if (ev.isCancelled()) {
+			sp = before;
+		} else {
+			sp = (float) ev.getSpeed();
+		}
+		
+// System.out.print("SpeedCheckEvent: " + sp );
+		
 		if (sp > 1.0f) {
 			sp = 1.0f;
 		}
@@ -914,7 +951,11 @@ public class PC {
 			}
 			if (s.needPerm != null && !s.needPerm.isEmpty()) {
 				// System.out.print("needPerm: " + s.needPerm + " = " + getPlayer().hasPermission(s.needPerm));
-				if (!getPlayer().hasPermission(s.needPerm)) {
+				if (getPlayer()!=null) {
+					if (!getPlayer().hasPermission(s.needPerm)) {
+						valid = false;
+					}
+				} else {
 					valid = false;
 				}
 			}
@@ -1251,9 +1292,12 @@ public class PC {
 		boolean cando = false;
 		if (race.allowCrafting || mainClass.allowCrafting) {
 			cando = true;
+			System.out.print("race " + race.name + " or main " + mainClass.name +" can craft ");
+
 		}
 		if (subClass != null && subClass.allowCrafting) {
 			cando = true;
+			System.out.print("subclass " + subClass.name +" can craft ");
 		}
 
 		if (eventfull) {
@@ -1266,16 +1310,20 @@ public class PC {
 
 	public boolean canCraft(Material m) {
 		boolean cando = canCraft(false);
+System.out.print("craft cando:  " + cando);
 		if (cando) {
 			if (race.disallowedCrafting != null && race.disallowedCrafting.contains(m)) {
 				cando = false;
+System.out.print("race " + race.name + " cant craft " + m.toString());
 			}
 			if (mainClass.disallowedCrafting != null && mainClass.disallowedCrafting.contains(m)) {
 				cando = false;
+System.out.print("mainClass " + mainClass.name + " cant craft " + m.toString());
 			}
 			if (subClass != null) {
 				if (subClass.disallowedCrafting != null && subClass.disallowedCrafting.contains(m)) {
 					cando = false;
+System.out.print("subClass " + subClass.name + " cant craft " + m.toString());
 				}
 			}
 		}
@@ -1283,9 +1331,13 @@ public class PC {
 		Boolean corecheck = checkCoreability("craft",m.toString());
 		if (corecheck!=null) { cando = corecheck; }
 
+System.out.print("craft corecheck cando:  " + cando);
+		
 		CoreSkillCheckEvent e = new CoreSkillCheckEvent(this, CoreSkillCheckEvent.CoreSkill.CRAFT, cando, m);
 		Bukkit.getServer().getPluginManager().callEvent(e);
 		cando = e.isValid();
+
+System.out.print("craft event cando:  " + cando);
 
 		return cando;
 	}
@@ -1675,6 +1727,17 @@ public class PC {
 
 	public Player getPlayer() {
 		return lq.getServer().getPlayer(uuid);
+	}
+
+	public Entity getEntity() {
+		for (World w : lq.getServer().getWorlds()) {
+			for (Entity e : w.getEntities()) { 
+				if (e.getUniqueId().equals(uuid)) {
+					return e;
+				}
+			}
+		}
+		return null;
 	}
 
 	public boolean payMana(int cost) {
@@ -2276,11 +2339,12 @@ public class PC {
 		for (Object obj : pl) {
 			for (String item : (List<String>)obj) {
 				potentials.add(item.toLowerCase());
-//System.out.print("Core Skill Levels Check item: " +item.toLowerCase());
+
+System.out.print("Core Skill Levels Check item: " +item.toLowerCase());
 			}
 		}		
 		if (potentials.contains(target.toLowerCase()) || potentials.contains("any") || potentials.contains("all")) {
-//System.out.print("Core Skill Levels Check: " + abilityname+" | "+ target + "= true - (hasany?:"+potentials.contains("any")+")" );
+System.out.print("Core Skill Levels Check: " + abilityname+" | "+ target + "= true - (hasany?:"+potentials.contains("any")+")" );
 			cando = true;
 		}
 
@@ -2292,12 +2356,12 @@ public class PC {
 		}
 		for (Object obj : pl) {
 			for (String item : (List<String>)obj) {
-//System.out.print("Core Skill Levels Check dis-item: " +item.toLowerCase());
+System.out.print("Core Skill Levels Check dis-item: " +item.toLowerCase());
 				potentials.add(item.toLowerCase());
 			}
 		}
 		if (potentials.contains(target.toLowerCase()) || potentials.contains("any") || potentials.contains("all")) {
-//System.out.print("Core Skill Levels Check: " + abilityname+" | "+ target + "= false - (hasany?:"+potentials.contains("any")+")" );
+System.out.print("Core Skill Levels Check: " + abilityname+" | "+ target + "= false - (hasany?:"+potentials.contains("any")+")" );
 			cando = false;
 		}
 		

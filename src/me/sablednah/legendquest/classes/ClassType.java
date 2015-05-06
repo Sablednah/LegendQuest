@@ -13,6 +13,7 @@ import me.sablednah.legendquest.skills.SkillDataStore;
 public class ClassType {
 
 	public String						name;
+	public String						chatTag;
 	public String						filename;
 	public String						description;
 	public String						longdescription;

@@ -20,6 +20,11 @@ public class PlaceholderString {
 				return pc.race.name;
 			}
 			return "";
+		} else if (id.equalsIgnoreCase("racetag")) {
+			if (pc != null) {
+				return pc.race.chatTag;
+			}
+			return "";
 		} else if (id.equalsIgnoreCase("karma")) {
 			if (pc != null) {
 				return pc.karmaName();
@@ -28,6 +33,11 @@ public class PlaceholderString {
 		} else if (id.equalsIgnoreCase("class")) {
 			if (pc != null) {
 				return pc.mainClass.name;
+			}
+			return "";
+		} else if (id.equalsIgnoreCase("classTag")) {
+			if (pc != null) {
+				return pc.mainClass.chatTag;
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("exp")) {
@@ -85,6 +95,12 @@ public class PlaceholderString {
 			if (pc != null) {
 				if (pc.subClass != null)
 					return pc.subClass.name;
+			}
+			return "";
+		} else if (id.equalsIgnoreCase("subClassTag")) {
+			if (pc != null) {
+				if (pc.subClass != null)
+					return pc.subClass.chatTag;
 			}
 			return "";
 		} else if (id.equalsIgnoreCase("statline")) {

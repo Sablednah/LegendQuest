@@ -147,13 +147,13 @@ public class AbilityControlEvents implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-		} else {
+		} /* else {
 			if (!pc.canTame()) {
 				p.sendMessage(lq.configLang.cantTame);
 				event.setCancelled(true);
 				return;
 			}			
-		}
+		} */
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -171,18 +171,21 @@ public class AbilityControlEvents implements Listener {
 
 			if (r != null) {
 				final Material itemUsed = r.getType();
-				if (!pc.canCraft(itemUsed)) {
-					p.sendMessage(lq.configLang.cantCraft + " (" + itemUsed.name() + ")");
-					e.setCancelled(true);
-					return;
+				if( itemUsed != Material.AIR) {
+System.out.print("cheking craft for "+itemUsed.name());
+					if (!pc.canCraft(itemUsed)) {
+						p.sendMessage(lq.configLang.cantCraft + " (" + itemUsed.name() + ")");
+						e.setCancelled(true);
+						return;
+					}
 				}
-			} else {
+			} /*  else {
 				if (!pc.canCraft()) {
 					p.sendMessage(lq.configLang.cantCraft);
 					e.setCancelled(true);
 					return;
 				}
-			}
+			} */
 		}
 	}
 
@@ -215,19 +218,19 @@ public class AbilityControlEvents implements Listener {
 	//		System.out.print("IMC: shift Click - " + clickedItem.toString());
 		}
 
-		if (clickedItem != null) {
+		if (clickedItem != null && clickedItem != Material.AIR) {
 			if (!pc.canBrew(clickedItem)) {
 				p.sendMessage(lq.configLang.cantBrew + " (" + clickedItem.name() + ")");
 				e.setCancelled(true);
 				return;
 			}
-		} else {
+		} /*  else {
 			if (!pc.canBrew()) {
 				p.sendMessage(lq.configLang.cantBrew);
 				e.setCancelled(true);
 				return;
 			}
-		}
+		} */
 	}
 
 	
@@ -246,28 +249,29 @@ public class AbilityControlEvents implements Listener {
 		PC pc = lq.players.getPC(p);
 		
 		int slot = e.getRawSlot();
-//		System.out.print("IMC: can smelt - " + cursor.getType().toString() + " (Slot: " + e.getSlot() + " | rawslot: "+slot+")");
-//		System.out.print("IMC: can smelt - slot type: " + e.getSlotType().toString() );
-
+if(Main.debugMode) {
+		System.out.print("IMC: can smelt - " + cursor.getType().toString() + " (Slot: " + e.getSlot() + " | rawslot: "+slot+")");
+		System.out.print("IMC: can smelt - slot type: " + e.getSlotType().toString() );
+}
 		Material clickedItem = null;
 		if (e.getSlotType()==SlotType.CRAFTING && slot == 0) {
 			clickedItem = cursor.getType();
 		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
 			clickedItem = e.getCurrentItem().getType();
 		}
-		if (clickedItem != null) {
+		if (clickedItem != null && clickedItem != Material.AIR) {
 			if (!pc.canSmelt(clickedItem)) {
 				p.sendMessage(lq.configLang.cantSmelt + " (" + clickedItem.name() + ")");
 				e.setCancelled(true);
 				return;
 			}
-		} else {
+		}/* else {
 			if (!pc.canSmelt()) {
 				p.sendMessage(lq.configLang.cantSmelt);
 				e.setCancelled(true);
 				return;
 			}
-		}
+		} */
 	}
 	
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -294,19 +298,19 @@ public class AbilityControlEvents implements Listener {
 		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
 			clickedItem = e.getCurrentItem().getType();
 		}
-		if (clickedItem != null) {
+		if (clickedItem != null && clickedItem != Material.AIR) {
 			if (!pc.canRepair(clickedItem)) {
 				p.sendMessage(lq.configLang.cantRepair + " (" + clickedItem.name() + ")");
 				e.setCancelled(true);
 				return;
 			}
-		} else {
+		}/* else {
 			if (!pc.canRepair()) {
 				p.sendMessage(lq.configLang.cantRepair);
 				e.setCancelled(true);
 				return;
 			}
-		}
+		}*/
 	}
 	
 	
@@ -334,19 +338,19 @@ public class AbilityControlEvents implements Listener {
 		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
 			clickedItem = e.getCurrentItem().getType();
 		}
-		if (clickedItem != null) {
+		if (clickedItem != null && clickedItem != Material.AIR) {
 			if (!pc.canEnchant(clickedItem)) {
 				p.sendMessage(lq.configLang.cantEnchant + " (" + clickedItem.name() + ")");
 				e.setCancelled(true);
 				return;
 			}
-		} else {
+		}/* else {
 			if (!pc.canEnchant()) {
 				p.sendMessage(lq.configLang.cantEnchant);
 				e.setCancelled(true);
 				return;
 			}
-		}
+		} */
 	}
 	
 }

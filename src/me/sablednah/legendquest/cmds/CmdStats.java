@@ -74,6 +74,16 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 
 		PC pc = null;
 		if (targetName != null) {
+			if (!targetName.equalsIgnoreCase(sender.getName())) {
+				//looking at not self!
+				if (isPlayer) {
+					if (!sender.hasPermission("legendquest.command.stats.others")) {
+						sender.sendMessage(lq.configLang.statsSelfOnly);						
+						return true;
+					}
+				}
+			}
+			
 			pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
 		}
 

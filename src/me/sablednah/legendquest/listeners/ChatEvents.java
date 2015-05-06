@@ -51,6 +51,8 @@ public class ChatEvents implements Listener {
 		if (lq.configMain.chatProcessPrefix) {
 //			System.out.print(format);
 
+			String racetag = "";
+			String classtag = "";
 			String racename = "";
 			String classname = "";
 			String lvl = "";
@@ -58,14 +60,20 @@ public class ChatEvents implements Listener {
 			PC pc = lq.players.getPC(event.getPlayer());
 			racename = pc.race.name;
 			classname = pc.mainClass.name;
+			racetag = pc.race.chatTag;
+			classtag = pc.mainClass.chatTag;
 			lvl = String.valueOf(event.getPlayer().getLevel());
 			
-			format = format.replace("{race}", racename);
-			format = format.replace("{class}", classname);
+			format = format.replace("{racename}", racename);
+			format = format.replace("{classname}", classname);
+			format = format.replace("{race}", racetag);
+			format = format.replace("{class}", classtag);
 			format = format.replace("{lvl}", lvl);
 			
-			format = format.replace("[race]", racename);
-			format = format.replace("[class]", classname);
+			format = format.replace("[racename]", racename);
+			format = format.replace("[classname]", classname);
+			format = format.replace("[race]", racetag);
+			format = format.replace("[class]", classtag);
 			format = format.replace("[lvl]", lvl);
 
 			format = ChatColor.translateAlternateColorCodes('§', format);

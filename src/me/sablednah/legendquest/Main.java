@@ -98,11 +98,17 @@ public class Main extends JavaPlugin {
 		configMain = new MainConfig(this);
 
 		debug.log.setLevel(Level.parse(configMain.logLevel));
+		debug.level = Level.parse(configMain.logLevel);
 
 		if (configMain.debugMode) {
 			debug.setDebugMode();
 			debug.log.setLevel(Level.ALL);
 		}
+		
+    	if (configMain.useServerLogOnly) {
+    		debug.log = logger;
+    	}
+
 
 		// Get localised text from config
 		configLang = new LangConfig(this);
