@@ -156,6 +156,8 @@ public class LangConfig extends Config {
 	public String					skillInfoNoSkill		= "Please specify a skill to get info";
 	public String					skillRequiresOne		= "Skill requires one of these skill: ";
 	public String					skillRequires			= "Skill requires all these skills: ";
+	public String					skillRequiresLevel		= "Skill requires level: ";
+
 	public String					skillCommandLineUse		= "Using skill: ";
 	public String					skillLinkUse			= "Using Linked skill: ";
 	public String					skillInvalid			= "Sorry you can't use: ";
@@ -189,6 +191,12 @@ public class LangConfig extends Config {
 	public String					partyRequestSent		= "Party request sent.";
 	
 	public String					statsSelfOnly			= "You can only view your own stats.";
+	public String					statsJournalForbid		= "Sorry, you don't have permission to do that.";
+	
+	public String					repairNoMana			= "Sorry, you need more mana to repair that item: ";
+	public String					repairNoEco				= "Sorry, you need more money to repair that item: ";
+	public String					repairNoItem			= "Sorry, you need more resources to repair that item: ";
+
 	
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
@@ -324,6 +332,7 @@ public class LangConfig extends Config {
 		this.skillInfoNoSkill = this.getConfigItem("skillInfoNoSkill", this.skillInfoNoSkill);
 		this.skillRequiresOne = this.getConfigItem("skillRequiresOne", this.skillRequiresOne);
 		this.skillRequires = this.getConfigItem("skillRequires", this.skillRequires);
+		this.skillRequiresLevel = this.getConfigItem("skillRequiresLevel", this.skillRequiresLevel);
 
 		this.skillCommandLineUse = this.getConfigItem("skillCommandLineUse", this.skillCommandLineUse);
 		this.skillLinkUse = this.getConfigItem("skillLinkUse", this.skillLinkUse);

@@ -52,6 +52,9 @@ manageHealthNonLqWorlds: true
 # scaleXP: amount of XP received to apply.
 
 max_level: 150
+mastery_level: 0
+hardLevelCap: false
+
 XPnotify: true
 percentXpKeepClassChange: 10.00
 allowRaceSwap: false
@@ -144,13 +147,27 @@ showListLevels: true
 # verboseStats: whether to show stats in one line (false), or on separate lines (true). 
 # disableStats: bypass the stats/attribute system.
 # attributesModifyBaseStats: allow attributes to modify the base stats for mana/health/skill points as well as per level
-# healthScale: maximum hears to display (1 = half heart)
-# nameBlacklist
+# healthScale: maximum hearts to display in client (1 = half heart)
 
 verboseStats: true
 disableStats: false
 attributesModifyBaseStats: false
 healthScale: 40
+
+itemsAllMeansAll: false
+
+scaleFallDamagePlayers: 100.00
+scaleFallDamageMobs: 100.00
+
+givePermForLevels: true
+givePermForAttributes: false
+givePermForKarma: false
+
+#--------------------
+
+## Rename blacklist
+# nameBlacklist
+
 nameBlacklist:
   - gemerald
   - sablednah
@@ -161,9 +178,6 @@ nameBlacklistParts:
   - faggot
   - sablednah
 broadcastRename: true
-
-scaleFallDamagePlayers: 100.00
-scaleFallDamageMobs: 100.00
   
   
 #--------------------
@@ -175,5 +189,30 @@ scaleFallDamageMobs: 100.00
 ecoClassSwap: 1000
 ecoRaceSwap: 10000
 
+#--------------------
+
+## Repairing
+
+
+blockRepairXPloss: true
+adjustRepairXP: 50.0D
+useAlternateRepairExpCost: false
+
+manaCostPerRepairLevel: 10
+ecoCostPerRepairLevel: 1000
+materialRepairCost: "LAPIS_BLOCK"
+materialRepairQtyPerLevel: 1
+
+
+#-------------------
+
+## Parties
+
+partyRange: 32
+useParties: true;
+partyBonus: 50
+blockPartyPvP: true
+allowPartyTeleport: true
+ecoPartyTeleport: 100
 
 

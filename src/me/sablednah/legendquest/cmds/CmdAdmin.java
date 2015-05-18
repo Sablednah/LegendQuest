@@ -73,6 +73,7 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 					return true;
 				}
 				PC targetPC = lq.players.getPC(targetPlayer);
+				/*
 				targetPC.race = r;
 				targetPC.raceChanged = true;
 				lq.players.addPlayer(targetPlayer.getUniqueId(), targetPC);
@@ -81,7 +82,15 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 				targetPC.scheduleHealthCheck();
 				targetPC.checkInv();
 				targetPC.skillSet = targetPC.getUniqueSkills(true);
-
+				*/
+				boolean nopay = true;
+				if (args.length > 2) {
+					if (args[3].equalsIgnoreCase("charge") || args[3].equalsIgnoreCase("pay")) {
+						nopay = false;
+					}
+				}
+				targetPC.changeRace(r, nopay);
+				
 				sender.sendMessage(lq.configLang.raceChanged + ": " + r.name);
 				targetPlayer.sendMessage(lq.configLang.raceChangedAdmin + ": " + r.name);
 				return true;
@@ -122,6 +131,21 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 					}
 				}
 
+				boolean nopay = true;
+				if (main) {
+					if (args.length > 2) {
+						if (args[3].equalsIgnoreCase("charge") || args[3].equalsIgnoreCase("pay")) {
+							nopay = false;
+						}
+					}
+				} else {
+					if (args.length > 3) {
+						if (args[4].equalsIgnoreCase("charge") || args[4].equalsIgnoreCase("pay")) {
+							nopay = false;
+						}
+					}
+				}
+				
 				Player targetPlayer = lq.getServer().getPlayer(playername);
 
 				if (targetPlayer == null || !targetPlayer.isOnline()) {
@@ -130,7 +154,7 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 				}
 				PC targetPC = lq.players.getPC(targetPlayer);
 
-				targetPC.changeClass(cl, !main, true);
+				targetPC.changeClass(cl, !main, nopay);
 
 				sender.sendMessage(lq.configLang.classChanged + ": " + cl.name);
 				targetPlayer.sendMessage(lq.configLang.classChangedAdmin + ": " + cl.name);

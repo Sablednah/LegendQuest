@@ -54,7 +54,7 @@ public class Main extends JavaPlugin {
 	public boolean				hasWorldGuard5;
 
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= false;
+	public static final Boolean	debugMode	= true;
 
 	public void log(final String msg) {
 		this.getServer().getConsoleSender().sendMessage("[LegendQuest] " + msg);
@@ -215,6 +215,12 @@ public class Main extends JavaPlugin {
 		getCommand("race").setTabCompleter(new TabComplete(this));
 		getCommand("class").setTabCompleter(new TabComplete(this));
 		getCommand("skill").setTabCompleter(new TabComplete(this));
+		getCommand("stats").setTabCompleter(new TabComplete(this));
+		getCommand("admin").setTabCompleter(new TabComplete(this));
+		getCommand("link").setTabCompleter(new TabComplete(this));
+		getCommand("party").setTabCompleter(new TabComplete(this));
+		
+		
 
 		// getCommand("skills").setExecutor(new CmdPlurals(this));
 		// getCommand("classes").setExecutor(new CmdPlurals(this));

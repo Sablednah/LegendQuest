@@ -45,7 +45,7 @@ commands:
         description: View, choose, or change your Skills.
         usage: Use "/<command> help" for more info
         aliases: [lqskill,lquestskill,legendqskill,legendquestskill]
-        permission: legendquest.command.skills
+        permission: legendquest.command.skill
         permission-message: You don't have <permission>
     link:
         description: Link skill to item.
@@ -112,6 +112,7 @@ permissions:
             legendquest.command.karma: true
             legendquest.command.party: true
             legendquest.command.plurals: true
+            legendquest.command.stats.journal: true
     legendquest.command.admin:
         description: Allows user to use legendquest admin commands.
         default: op
@@ -133,6 +134,9 @@ permissions:
     legendquest.command.stats.others:
         description: Allows user to use legendquest stats command to view others stats.
         default: op
+    legendquest.command.stats.journal:
+        description: Allows user to use legendquest stats command to spawn journal
+        default: true
     legendquest.command.roll:
         description: Allows user to use legendquest roll command.
         default: true

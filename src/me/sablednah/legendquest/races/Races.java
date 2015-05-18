@@ -124,6 +124,7 @@ public class Races {
 
 					List<String> disallowedCrafting = (List<String>) thisConfig.getList("disallowedCrafting");
 					if (disallowedCrafting == null || disallowedCrafting.size() == 0) {
+
 						disallowedCrafting = (List<String>) thisConfig.getList("dissallowedCrafting");
 					}
 					final List<Material> disallowedCraftingMat = new ArrayList<Material>();
@@ -132,10 +133,10 @@ public class Races {
 							if (lq.configData.dataSets.containsKey(disallowedCrafting.get(i).toLowerCase())) {
 								disallowedCraftingMat.addAll(lq.configData.dataSets.get(disallowedCrafting.get(i).toLowerCase()));
 							} else {
-							Material m = null;
-							try {
-								m = Material.matchMaterial(disallowedCrafting.get(i));
-							} catch (Exception ex) {
+								Material m = null;
+								try {
+									m = Material.matchMaterial(disallowedCrafting.get(i));
+								} catch (Exception ex) {
 							}
 							if (m != null) {
 								disallowedCraftingMat.add(m);

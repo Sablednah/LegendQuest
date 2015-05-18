@@ -51,6 +51,7 @@ public class CmdHP extends CommandTemplate implements CommandExecutor {
 			pc = lq.players.getPC(Utils.getPlayerUUID(targetName));
 		}
 		if (pc != null) {
+			pc.healthCheck();
 			DecimalFormat df = new DecimalFormat("#.00");
 			sender.sendMessage(Utils.barGraph(pc.getHealth(), pc.maxHP, 20, lq.configLang.statHealth, (" " + df.format(pc.getHealth()) + " / " + df.format(pc.maxHP))));
 			sender.sendMessage(Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + df.format(pc.mana) + " / " + df.format(pc.getMaxMana()))));

@@ -1,6 +1,7 @@
 package me.sablednah.legendquest.effects;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class EffectManager {
 		Iterator<EffectProcess> pp = pendingProcess.iterator();
 		while (pp.hasNext()) {
 			EffectProcess ep = pp.next();
-			if (ep.owner!= null && ep.owner.equals(ot)) {
+			if (ep.owner != null && ep.owner.equals(ot)) {
 				if (ep.uuid.equals(uuid)) {
 					pp.remove();
 					found = true;
@@ -52,7 +53,7 @@ public class EffectManager {
 		Iterator<EffectProcess> ap = activeProcess.iterator();
 		while (ap.hasNext()) {
 			EffectProcess epa = ap.next();
-			if (epa.owner!= null && epa.owner.equals(ot)) {
+			if (epa.owner != null && epa.owner.equals(ot)) {
 				if (epa.uuid.equals(uuid)) {
 					ap.remove();
 					found = true;
@@ -67,7 +68,7 @@ public class EffectManager {
 		Iterator<EffectProcess> pp = pendingProcess.iterator();
 		while (pp.hasNext()) {
 			EffectProcess ep = pp.next();
-			if (ep.effect!= null && ep.effect.equals(effect)) {
+			if (ep.effect != null && ep.effect.equals(effect)) {
 				if (ep.owner.equals(ot)) {
 					if (ep.uuid.equals(uuid)) {
 						pp.remove();
@@ -79,7 +80,7 @@ public class EffectManager {
 		Iterator<EffectProcess> ap = activeProcess.iterator();
 		while (ap.hasNext()) {
 			EffectProcess epa = ap.next();
-			if (epa.effect!= null && epa.effect.equals(effect)) {
+			if (epa.effect != null && epa.effect.equals(effect)) {
 				if (epa.owner.equals(ot)) {
 					if (epa.uuid.equals(uuid)) {
 						ap.remove();
@@ -124,12 +125,37 @@ public class EffectManager {
 						// add potion effect.
 						if (pending.startTime <= System.currentTimeMillis()) {
 							int ticks = (int) pending.duration / 50;
-							PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false);
+							PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, pending.effect.getAmp(), false);
 							switch (pending.owner) {
 								case PLAYER:
 									Player p = lq.getServer().getPlayer(pending.uuid);
 									if (p != null) {
-										p.addPotionEffect(peffect);
+										if (p.hasPotionEffect(pending.effect.getPotioneffectType())) {
+// System.out.print("Has potion effect " + pending.effect.getPotioneffectType().toString());
+											boolean isshorter = false;
+											Collection<PotionEffect> pots = p.getActivePotionEffects();
+											for (PotionEffect pe : pots) {
+// System.out.print("checking potion effect " + pe.toString());
+												if (pe.getType().equals(pending.effect.getPotioneffectType())) {
+													if (pe.getDuration() < ticks) {
+														isshorter = true;
+// System.out.print("effect duration " + pe.getDuration() + " < " + ticks);
+													} else {
+// System.out.print("effect duration " + pe.getDuration() + " > " + ticks);
+													}
+												}
+											}
+											if (isshorter) {
+// System.out.print("removing effect");
+												p.removePotionEffect(pending.effect.getPotioneffectType());
+												//boolean add = 
+												p.addPotionEffect(peffect);
+// System.out.print("re-adding effect: " + add);
+											}
+										} else {
+// System.out.print("no potion effect " + pending.effect.getPotioneffectType().toString());
+											p.addPotionEffect(peffect);
+										}
 									}
 									break;
 								case MOB:
@@ -159,13 +185,13 @@ public class EffectManager {
 							case PLAYER:
 								Player p = lq.getServer().getPlayer(pending.uuid);
 								if (p != null) {
-									Utils.playEffect(effect, p.getLocation());
+									Utils.playEffect(effect, p.getLocation(), pending.effect.getAmp());
 								}
 								break;
 							case MOB:
 								LivingEntity ent = getEntity(pending.uuid);
 								if (ent != null) {
-									Utils.playEffect(effect, ent.getLocation());
+									Utils.playEffect(effect, ent.getLocation(), pending.effect.getAmp());
 								}
 								break;
 							case LOCATATION:
@@ -173,7 +199,7 @@ public class EffectManager {
 								for (Location l : ball) {
 									if (l.getBlock().getType() == null || l.getBlock().getType() == Material.AIR) {
 										if (Math.random() > 0.5D) {
-											Utils.playEffect(effect, l);
+											Utils.playEffect(effect, l, pending.effect.getAmp());
 										}
 									}
 								}
@@ -230,7 +256,7 @@ public class EffectManager {
 									case LOCATATION:
 										for (LivingEntity e : getNearbyEntities(pending.location, pending.radius)) {
 											if (e instanceof Player) {
-												((Player)e).setSneaking(true);												
+												((Player) e).setSneaking(true);
 											} else {
 												e.addPotionEffect(peffect);
 											}
@@ -268,7 +294,7 @@ public class EffectManager {
 									break; // already potion'ed
 								case LOCATATION:
 									int ticksleft = (int) (active.duration - (System.currentTimeMillis() - active.startTime)) / 50;
-									PotionEffect peffect2 = new PotionEffect(active.effect.getPotioneffectType(), ticksleft, 2, true);
+									PotionEffect peffect2 = new PotionEffect(active.effect.getPotioneffectType(), ticksleft, active.effect.getAmp(), true);
 
 									for (LivingEntity e : getNearbyEntities(active.location, active.radius)) {
 										if (!e.hasPotionEffect(active.effect.getPotioneffectType())) {
@@ -292,13 +318,13 @@ public class EffectManager {
 								case PLAYER:
 									Player p = lq.getServer().getPlayer(active.uuid);
 									if (p != null) {
-										Utils.playEffect(effect, p.getLocation());
+										Utils.playEffect(effect, p.getLocation(), active.effect.getAmp());
 									}
 									break;
 								case MOB:
 									LivingEntity ent = getEntity(active.uuid);
 									if (ent != null) {
-										Utils.playEffect(effect, ent.getLocation());
+										Utils.playEffect(effect, ent.getLocation(), active.effect.getAmp());
 									}
 									break;
 								case LOCATATION:
@@ -306,7 +332,7 @@ public class EffectManager {
 									for (Location l : ball) {
 										if (l.getBlock().getType() == null || l.getBlock().getType() == Material.AIR) {
 											if (Math.random() > 0.5D) {
-												Utils.playEffect(effect, l);
+												Utils.playEffect(effect, l, active.effect.getAmp());
 											}
 										}
 									}

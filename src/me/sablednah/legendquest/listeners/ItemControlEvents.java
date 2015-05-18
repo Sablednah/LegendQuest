@@ -270,6 +270,7 @@ public class ItemControlEvents implements Listener {
 			pc.scheduleHealthCheck();
 		}
 	}
+
 	
 	// check for armour validity when inventory is closed
 	@EventHandler(priority = EventPriority.LOWEST)

@@ -195,7 +195,13 @@ public class SkillInfo {
 			}
 			
 			if (conf.contains("consumes")) {
-				this.consumes = new ItemStack(Material.getMaterial(conf.getString("consumes")));
+				int qty = 1;
+				if (conf.contains("consumesqty")) {
+					if (conf.getInt("consumesqty",1) > 0) {
+						qty = conf.getInt("consumesqty",1);
+					}
+				}
+				this.consumes = new ItemStack(Material.getMaterial(conf.getString("consumes")),qty);
 			}
 			
 			if (conf.contains("vars")) {

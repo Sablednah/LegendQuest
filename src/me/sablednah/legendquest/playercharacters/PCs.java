@@ -1,5 +1,6 @@
 package me.sablednah.legendquest.playercharacters;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import me.sablednah.legendquest.skills.SkillDataStore;
 import me.sablednah.legendquest.skills.SkillPhase;
 import me.sablednah.legendquest.skills.SkillType;
 import me.sablednah.legendquest.utils.Utils;
+import me.sablednah.legendquest.mechanics.Attribute;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Slime;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -801,6 +804,39 @@ public class PCs {
 				}
 			}
 		}
+		if (lq.configMain.givePermForKarma) {
+			long number = pc.karma;
+			int x = (int) pc.logOfBase(lq.configMain.karmaScale, Math.abs(number));
+			if (number > 0) {
+				if (x > lq.configLang.karmaPositiveItems.size() - 1) {
+					x = lq.configLang.karmaPositiveItems.size() - 1;
+				}
+				for (int i=0;i<=x;i++) {
+					PermissionAttachment l = p.addAttachment(lq, "legendquest.haskarma." + lq.configLang.karmaPositiveItems.get(i), true);
+					permsList.add(l);
+				}
+			} else if (number < 0) {
+				if (x > lq.configLang.karmaNegativeItems.size() - 1) {
+					x = lq.configLang.karmaNegativeItems.size() - 1;
+				}
+				for (int i=0;i<=x;i++) {
+					PermissionAttachment l = p.addAttachment(lq, "legendquest.haskarma." + lq.configLang.karmaNegativeItems.get(x), true);
+					permsList.add(l);
+				}
+			} else {
+				PermissionAttachment l = p.addAttachment(lq, "legendquest.haskarma." + lq.configLang.karmaPositiveItems.get(0), true);
+				permsList.add(l);
+			}
+		}
+		if (lq.configMain.givePermForAttributes) {
+			for(Attribute a : Attribute.values()) {
+				int val = pc.getStat(a);
+				for (int i=1;i<=val;i++) {
+					PermissionAttachment l = p.addAttachment(lq, "legendquest."+a.toString().toLowerCase()+"." + i, true);
+					permsList.add(l);
+				}
+			}			
+		}
 		List<Object> perlevelperms = pc.race.levelUp.getList("permissions", lvl);
 		perlevelperms.addAll(pc.mainClass.levelUp.getList("permissions", lvl));
 		if (pc.subClass != null) {
@@ -821,4 +857,125 @@ public class PCs {
 		lqperms.put(pc.uuid, permsList);
 	}
 
+	public BookMeta writeJournal(BookMeta bm, Player p) {
+		String prefix ="";
+		List<String> pages = new ArrayList<String>();
+		String page1 ="";
+		if (p.getName().equalsIgnoreCase(bm.getAuthor()) || p.hasPermission("legendquest.command.stats.others")) {
+			//allowed journal.
+			 prefix ="\n";
+		} else {
+			// cant read
+			 prefix ="\n"+ChatColor.MAGIC;
+			page1 ="You find the handwriting very hard to read...\n";			
+		}
+
+			PC pc = getPC(bm.getAuthor());
+			String outputline = "";
+			
+			if (pc!=null) {
+				page1 += pc.charname ;
+			if (lq.races.getRaces().size() > 1) {
+				page1 += prefix  + pc.race.name;
+			}
+
+			outputline = pc.mainClass.name + ": " + lq.configLang.statLevelShort + " " + SetExp.getLevelOfXpAmount(pc.currentXP);
+			}
+			page1 += prefix + outputline;
+
+				String mod = "";
+				
+				outputline = lq.configLang.statSTR + ": " + pc.getStatStr();
+					if (pc.getAttributeModifier(Attribute.STR) >= 0) {
+						mod = "+" + pc.getAttributeModifier(Attribute.STR);
+					} else {
+						mod = "" + pc.getAttributeModifier(Attribute.STR);
+					}
+					outputline += " (" + mod + ")";
+				
+					page1 += prefix + outputline;
+
+				
+				outputline = lq.configLang.statDEX + ": " + pc.getStatDex();
+					if (pc.getAttributeModifier(Attribute.DEX) >= 0) {
+						mod = "+" + pc.getAttributeModifier(Attribute.DEX);
+					} else {
+						mod = "" + pc.getAttributeModifier(Attribute.DEX);
+					}
+					outputline += " (" + mod + ")";
+					page1 += prefix + outputline;
+
+				outputline = lq.configLang.statCON + ": " + pc.getStatCon();
+
+					if (pc.getAttributeModifier(Attribute.CON) >= 0) {
+						mod = "+" + pc.getAttributeModifier(Attribute.CON);
+					} else {
+						mod = "" + pc.getAttributeModifier(Attribute.CON);
+					}
+					outputline += " (" + mod + ")";
+					page1 += prefix + outputline;
+
+				outputline = lq.configLang.statINT + ": " + pc.getStatInt();
+
+					if (pc.getAttributeModifier(Attribute.INT) >= 0) {
+						mod = "+" + pc.getAttributeModifier(Attribute.INT);
+					} else {
+						mod = "" + pc.getAttributeModifier(Attribute.INT);
+					}
+					outputline += " (" + mod + ")";
+					page1 += prefix + outputline;
+
+				outputline = lq.configLang.statWIS + ": " + pc.getStatWis();
+
+					if (pc.getAttributeModifier(Attribute.WIS) >= 0) {
+						mod = "+" + pc.getAttributeModifier(Attribute.WIS);
+					} else {
+						mod = "" + pc.getAttributeModifier(Attribute.WIS);
+					}
+					outputline += " (" + mod + ")";
+					page1 += prefix + outputline;
+
+				outputline = lq.configLang.statCHR + ": " + pc.getStatChr();
+
+					if (pc.getAttributeModifier(Attribute.CHR) >= 0) {
+						mod = "+" + pc.getAttributeModifier(Attribute.CHR);
+					} else {
+						mod = "" + pc.getAttributeModifier(Attribute.CHR);
+					}
+					outputline += " (" + mod + ")";
+					page1 += prefix + outputline;
+
+
+
+			
+
+//	page1 += prefix +"--------------------";
+	page1 += prefix +lq.configLang.statKarma + ": " + pc.karmaName();
+//	page1 += prefix +"--------------------";
+
+			DecimalFormat df = new DecimalFormat("#");
+			page1 += prefix +Utils.barGraph(pc.getHealth(), pc.maxHP, 20, lq.configLang.statHealth, (" " + df.format(pc.getHealth()) + "/" + df.format(pc.maxHP)),ChatColor.BLACK);
+			if (pc.getMaxMana()>1) {
+				page1 += prefix +Utils.barGraph(pc.mana, pc.getMaxMana(), 20, lq.configLang.statMana, (" " + pc.mana + "/" + pc.getMaxMana()),ChatColor.BLACK);
+			}
+			if (pc.getMaxSkillPointsLeft()>1) {
+				page1 += prefix + ChatColor.stripColor(lq.configLang.skillPoints).trim() + " " + pc.getSkillPointsLeft();
+			}
+			String page2 = "Levels"; //prefix +lq.configLang.storedExperience;
+
+				for (final Map.Entry<String, Integer> entry : pc.xpEarnt.entrySet()) {
+					page2 += prefix +entry.getKey().toLowerCase() + ": " + lq.configLang.statLevelShort + " " + SetExp.getLevelOfXpAmount(entry.getValue());
+				}
+			
+
+
+			pages.add(page1);
+			pages.add(page2);
+			bm.setPages(pages);
+
+			return bm;
+
+	}
+
+	
 }

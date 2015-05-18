@@ -41,13 +41,19 @@ import org.bukkit.util.Vector;
 public class Utils {
 
 	public static String barGraph(final double x, final double y, final int scale, final String prefix, final String suffix) {
-		return barGraph((int) x, (int) y, scale, prefix, suffix);
+		return barGraph((int) x, (int) y, scale, prefix, suffix, ChatColor.WHITE);
+	}
+	public static String barGraph(final double x, final double y, final int scale, final String prefix, final String suffix, ChatColor color) {
+		return barGraph((int) x, (int) y, scale, prefix, suffix, color);
 	}
 
 	public static String barGraph(final int x, final int y, final int scale, final String prefix, final String suffix) {
+		return barGraph(x, y, scale, prefix, suffix, ChatColor.WHITE);
+	}
+	public static String barGraph(final int x, final int y, final int scale, final String prefix, final String suffix, ChatColor color) {
 		final int percent = (int) ((x / (float) y) * scale);
 		final StringBuilder mesage = new StringBuilder(12 + scale + prefix.length() + suffix.length());
-		mesage.append(ChatColor.WHITE);
+		mesage.append(color);
 		mesage.append(prefix).append(": [");
 		mesage.append(ChatColor.GREEN);
 		if (percent > 0) {
@@ -57,7 +63,7 @@ public class Utils {
 		if (percent < scale) {
 			mesage.append(Utils.stringRepeat("|", (scale - percent)));
 		}
-		mesage.append(ChatColor.WHITE);
+		mesage.append(color);
 		mesage.append("]").append(suffix);
 		return mesage.toString();
 	}

@@ -9,10 +9,14 @@ import me.sablednah.legendquest.mechanics.Attribute;
 import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.utils.Utils;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 public class CmdStats extends CommandTemplate implements CommandExecutor {
 
@@ -34,11 +38,21 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 		final boolean isPlayer = (sender instanceof Player);
 		String targetName = null;
 		boolean full = false;
-
+		boolean journal = false;
 		if (args.length > 0) {
+			if (isPlayer) {
+				if (args[args.length-1].equalsIgnoreCase("journal") || args[args.length-1].equalsIgnoreCase("book")) {
+					if (!sender.hasPermission("legendquest.command.stats.journal")) {
+						sender.sendMessage(lq.configLang.statsJournalForbid);						
+						return true;
+					}
+
+					journal=true;
+				}
+			}
 			if (args.length == 1) {
 				targetName = args[0];
-				if (targetName.equalsIgnoreCase("full")) {
+				if (targetName.equalsIgnoreCase("full") || targetName.equalsIgnoreCase("journal") || targetName.equalsIgnoreCase("book")) {
 					if (isPlayer) {
 						if (!lq.validWorld(((Player) sender).getWorld().getName())) {
 							((Player) sender).sendMessage(lq.configLang.invalidWorld);
@@ -71,7 +85,7 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 				return true;
 			}
 		}
-
+		
 		PC pc = null;
 		if (targetName != null) {
 			if (!targetName.equalsIgnoreCase(sender.getName())) {
@@ -88,6 +102,19 @@ public class CmdStats extends CommandTemplate implements CommandExecutor {
 		}
 
 		if (pc != null) {
+			pc.healthCheck();
+			
+			if (journal) {
+				ItemStack book = (ItemStack) new ItemStack(Material.WRITTEN_BOOK); 
+				BookMeta bookmeta = (BookMeta) book.getItemMeta();
+				bookmeta.setAuthor(targetName);
+				bookmeta.setTitle(ChatColor.RESET+"Journal");
+				bookmeta = lq.players.writeJournal(bookmeta, (Player)sender);
+				book.setItemMeta(bookmeta);
+				((Player)sender).getWorld().dropItem(((Player)sender).getLocation(), book);
+				return true;
+			}
+			
 			String outputline;
 			sender.sendMessage(lq.configLang.playerStats);
 

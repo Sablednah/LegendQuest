@@ -71,7 +71,7 @@ public class MainConfig extends Config {
 
 	public double				skillBuildupMoveAllowed		= 2.0D;
 	public long					skillTickInterval			= 10L;
-	
+
 	public double				scaleFallDamagePlayers		= 100.0D;
 	public double				scaleFallDamageMobs			= 100.0D;
 
@@ -107,6 +107,17 @@ public class MainConfig extends Config {
 	public Difficulty			blockchanceenum				= Difficulty.TOUGH;
 
 	public boolean				givePermForLevels			= true;
+	public boolean				givePermForAttributes		= false;
+	public boolean				givePermForKarma			= false;
+
+	public boolean				blockRepairXPloss			= true;
+	public double				adjustRepairXP				= 50.0D;
+	public boolean				useAlternateRepairExpCost	= false;
+
+	public int					manaCostPerRepairLevel		= 10;
+	public int					ecoCostPerRepairLevel		= 1000;
+	public String				materialRepairCost			= "LAPIS_BLOCK";
+	public int					materialRepairQtyPerLevel	= 1;
 
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
@@ -215,5 +226,17 @@ public class MainConfig extends Config {
 		this.ecoRaceSwap = this.getConfigItem("ecoRaceSwap", this.ecoRaceSwap);
 
 		this.givePermForLevels = this.getConfigItem("givePermForLevels", this.givePermForLevels);
+		this.givePermForAttributes = this.getConfigItem("givePermForAttributes", this.givePermForAttributes);
+		this.givePermForKarma = this.getConfigItem("givePermForKarma", this.givePermForKarma);
+
+		this.blockRepairXPloss = this.getConfigItem("blockRepairXPloss", this.blockRepairXPloss);
+		this.adjustRepairXP = this.getConfigItem("adjustRepairXP", this.adjustRepairXP);
+		this.useAlternateRepairExpCost = this.getConfigItem("useAlternateRepairExpCost", this.useAlternateRepairExpCost);
+
+		this.manaCostPerRepairLevel = this.getConfigItem("manaCostPerRepairLevel", this.manaCostPerRepairLevel);
+		this.ecoCostPerRepairLevel = this.getConfigItem("ecoCostPerRepairLevel", this.ecoCostPerRepairLevel);
+		this.materialRepairCost = this.getConfigItem("materialRepairCost", this.materialRepairCost);
+		this.materialRepairQtyPerLevel = this.getConfigItem("materialRepairQtyPerLevel", this.materialRepairQtyPerLevel);
+		
 	}
 }

@@ -5,13 +5,13 @@ import java.util.UUID;
 import org.bukkit.Location;
 
 public class EffectProcess {
-	Effects		effect		= null;
-	long		startTime	= 0;
-	long		duration	= 0;
-	OwnerType	owner		= null;
-	UUID		uuid		= null;
-	Location	location	= null;
-	int			radius		= 3;
+	Effects		effect			= null;
+	long		startTime		= 0;
+	long		duration		= 0;
+	OwnerType	owner			= null;
+	UUID		uuid			= null;
+	Location	location		= null;
+	int			radius			= 3;
 
 	public EffectProcess(Effects effect, long duration, OwnerType owner, UUID uuid) {
 		this(effect, System.currentTimeMillis(), duration, owner, uuid, null, 3);
@@ -106,4 +106,5 @@ public class EffectProcess {
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
+
 }

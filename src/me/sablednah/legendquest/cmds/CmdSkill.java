@@ -42,7 +42,13 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 
 		// send console the full skill list
 		if (!(sender instanceof Player)) {
-			sendSkillList(sender, null);
+			boolean full = false;
+			if (args.length > 0) {
+				if(args[0].equalsIgnoreCase("full") || args[0].equalsIgnoreCase("info") ) {
+					full = true;
+				}
+			}
+			sendSkillList(sender, null, full);
 			return true;
 		}
 
@@ -75,7 +81,13 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 		} else {
 			String actionName = args[0].toLowerCase();
 			if (actionName.equalsIgnoreCase("list")) {
-				sendSkillList(sender, pc);
+				boolean full = false;
+				if (args.length > 1) {
+					if(args[1].equalsIgnoreCase("full") || args[1].equalsIgnoreCase("info") ) {
+						full = true;
+					}
+				}
+				sendSkillList(sender, pc, full);
 				return true;
 			} else if (actionName.equalsIgnoreCase("buy")) {
 				if (args.length < 2) {
@@ -112,9 +124,20 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 	}
 
 	private void skillinfo(String skillToInfo, CommandSender sender, PC pc) {
+		String d = getDesc(skillToInfo, pc);
+		if (d != null) {
+			sender.sendMessage(skillToInfo + " : " + d);
+		} else {
+			sender.sendMessage(lq.configLang.skillInfoNoSkill);
+		}
+	}
+	
+	private String getDesc(String skillToInfo, PC pc) {
 		Skill skill = lq.skills.skillList.get(skillToInfo);
+
+		String d = null;
 		if (skill != null) {
-			String d = skill.defaultOptions.description;
+			d = skill.defaultOptions.description;
 			int[] timings = {skill.defaultOptions.buildup,skill.defaultOptions.delay,skill.defaultOptions.duration,skill.defaultOptions.cooldown};
 					
 			HashMap<String, Object> vars = null;
@@ -139,15 +162,11 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 			d = d.replaceAll("\\[delay\\]", String.valueOf(timings[1]/1000.0D));
 			d = d.replaceAll("\\[duration\\]", String.valueOf(timings[2]/1000.0D));
 			d = d.replaceAll("\\[cooldown\\]", String.valueOf(timings[3]/1000.0D));
-			
-			// System.out.print(d);
-			sender.sendMessage(skillToInfo + " : " + d);
-		} else {
-			sender.sendMessage(lq.configLang.skillInfoNoSkill);
 		}
+		return d;
 	}
 
-	private void sendSkillList(CommandSender sender, PC pc) {
+	private void sendSkillList(CommandSender sender, PC pc, boolean full) {
 		sender.sendMessage(lq.configLang.skillsList);
 
 		DecimalFormat df = new DecimalFormat("0000");
@@ -194,10 +213,10 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 			TreeMap<String, SkillDataStore> tmpassive = new TreeMap<String, SkillDataStore>(passivemap);
 
 			sender.sendMessage(lq.configLang.skillsListPasive);
-			sender.sendMessage(showList(tmpassive, pc));
+			sender.sendMessage(showList(tmpassive, pc, full));
 
 			sender.sendMessage(lq.configLang.skillsListActive);
-			sender.sendMessage(showList(tm, pc));
+			sender.sendMessage(showList(tm, pc, full));
 		} else {
 			// get skills allowed for this player
 
@@ -253,22 +272,29 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 			TreeMap<String, SkillDataStore> tmpassive = new TreeMap<String, SkillDataStore>(passivemap);
 
 			sender.sendMessage(lq.configLang.skillsListPasive);
-			sender.sendMessage(showList(tmpassive, pc));
+			sender.sendMessage(showList(tmpassive, pc, full));
 
 			sender.sendMessage(lq.configLang.skillsListActive);
-			sender.sendMessage(showList(tm, pc));
+			sender.sendMessage(showList(tm, pc, full));
 		}
 	}
 
-	public String[] showList(TreeMap<String, SkillDataStore> tm, PC pc) {
+	public String[] showList(TreeMap<String, SkillDataStore> tm, PC pc, boolean full) {
 		Map<String, Boolean> selected = null;
+		Player p = null;
 		if (pc != null) {
 			selected = pc.skillsSelected;
+			p = pc.getPlayer();
 		}
 
 		// System.out.print(tm.entrySet().size());
 
-		String[] strouts = new String[tm.entrySet().size()];
+		int size = tm.entrySet().size();
+		if (full) {
+			size = size *2;
+		}
+
+		String[] strouts = new String[size];
 		int cntr = 0;
 		for (Entry<String, SkillDataStore> entry : tm.entrySet()) {
 			String strout = "";
@@ -284,9 +310,28 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 			if (x != null) {
 				lev = x.levelRequired;
 				sp = x.skillPoints;
+				if (pc != null) {
+					x = pc.getSkillData(entry.getKey());
+					if (x != null) {
+						if (x.needPerm !=null && !x.needPerm.isEmpty() ) {
+							if (p == null || !p.isOnline() || !p.hasPermission(x.needPerm)) {
+								continue;
+							}
+						}
+					}
+				}
 			} else {
 				lev = s.levelRequired;
 				sp = s.skillPoints;
+				if (pc != null) {
+					if (s != null) {
+						if (s.needPerm !=null && !s.needPerm.isEmpty() ) {
+							if (p == null || !p.isOnline() || !p.hasPermission(s.needPerm)) {
+								continue;
+							}
+						}
+					}
+				}
 			}
 
 			strout += lq.configLang.statLevelShort + " ";
@@ -320,6 +365,17 @@ public class CmdSkill extends CommandTemplate implements CommandExecutor {
 			}
 			strouts[cntr] = strout;
 			cntr++;
+			if (full) {
+				strout="";
+				strout = getDesc(s.name, pc);
+				if (strout==null) {
+					strout="        : ";
+				}else {
+					strout="        : " + strout;
+				}
+				strouts[cntr] = strout;
+				cntr++;
+			}
 		}
 		return strouts;
 	}
