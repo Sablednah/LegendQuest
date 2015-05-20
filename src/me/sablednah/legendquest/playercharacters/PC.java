@@ -524,6 +524,7 @@ public class PC {
 			bonus = mainClass.healthMod;
 			levelbonuses += mainClass.levelUp.getTotal("hp", level);
 		}
+
 		// System.out.print("levelbonuses: "+levelbonuses + " ("+level+")");
 		double conBonus = ((con * 10) + 100) / 100.00D; // percent per level bonus of +/-50%
 		perlevel *= conBonus;
@@ -1224,7 +1225,6 @@ public class PC {
 					p.setHealthScaled(true);
 					if (lq.configMain.debugMode) {
 						lq.debug.fine("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
-						System.out.print("SHC - HP: " + p.getHealth() + " | pHP: " + this.health + " | p.max: " + p.getMaxHealth() + " | pc.max: " + this.maxHP);
 					}
 				}
 			} catch (IllegalArgumentException e) {
@@ -1920,6 +1920,10 @@ public class PC {
 			return false;
 		}
 
+		if (Main.debugMode) {
+			System.out.print("Admin/nopay: " + admin);
+			System.out.print("lq.configMain.ecoClassSwap: " + lq.configMain.ecoClassSwap);
+		}
 		if (lq.hasVault && lq.configMain.ecoClassSwap > 0 && !admin) {
 			if ((!sub && this.mainClass != lq.classes.defaultClass) || (sub && this.subClass == null)) {
 				boolean payCheck = this.payCash(lq.configMain.ecoClassSwap);

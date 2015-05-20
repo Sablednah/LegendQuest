@@ -84,7 +84,7 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 				targetPC.skillSet = targetPC.getUniqueSkills(true);
 				*/
 				boolean nopay = true;
-				if (args.length > 2) {
+				if (args.length > 3) {
 					if (args[3].equalsIgnoreCase("charge") || args[3].equalsIgnoreCase("pay")) {
 						nopay = false;
 					}
@@ -131,15 +131,23 @@ public class CmdAdmin extends CommandTemplate implements CommandExecutor {
 					}
 				}
 
+				
+				if (Main.debugMode) {
+					System.out.print("Args.length: " + args.length);
+					for (int zz=0; zz<args.length; zz++) {
+						System.out.print("Args: " + zz + " | " + args[zz] + " | ");						
+					}
+				}
+				
 				boolean nopay = true;
 				if (main) {
-					if (args.length > 2) {
+					if (args.length > 3) {
 						if (args[3].equalsIgnoreCase("charge") || args[3].equalsIgnoreCase("pay")) {
 							nopay = false;
 						}
 					}
 				} else {
-					if (args.length > 3) {
+					if (args.length > 4) {
 						if (args[4].equalsIgnoreCase("charge") || args[4].equalsIgnoreCase("pay")) {
 							nopay = false;
 						}

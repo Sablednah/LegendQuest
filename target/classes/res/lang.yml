@@ -175,9 +175,9 @@ partyRequest: " has requested to join your party: "
 partyRequestSent: "Party request sent."
 
 
-statsSelfOnly: "You can only view your own stats.";
-statsJournalForbid: "Sorry, you don't have permission to do that.";
-	
+statsSelfOnly: "You can only view your own stats."
+statsJournalForbid: "Sorry, you don't have permission to do that."
+
 repairNoMana: "Sorry, you need more mana to repair that item: "
 repairNoEco: "Sorry, you need more money to repair that item: "
 repairNoItem: "Sorry, you need more resources to repair that item: "

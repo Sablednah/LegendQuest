@@ -522,11 +522,14 @@ public class Races {
 
 					// read per level items
 					LevelItems li = new LevelItems();
+//System.out.print("Processing race levels for " + r.name);
 					final ConfigurationSection levelsection = thisConfig.getConfigurationSection("levels");
 					if (levelsection != null) {
+//System.out.print("got level section: " + levelsection.toString());
 						Set<String> levelkeys = levelsection.getKeys(false);
 						if (levelkeys != null) {
 							for (String key : levelkeys) {
+//System.out.print("Loading level: " + key);
 								try {
 									int levelnumber = Integer.parseInt(key);
 									ConfigurationSection levelinfo = levelsection.getConfigurationSection(key);
@@ -534,6 +537,7 @@ public class Races {
 									for (String recussionkey : levelinfo.getKeys(false)) {
 										if (recussionkey.equalsIgnoreCase("sp") || recussionkey.equalsIgnoreCase("hp") || recussionkey.equalsIgnoreCase("mana") || recussionkey.equalsIgnoreCase("str") || recussionkey.equalsIgnoreCase("dex")
 												|| recussionkey.equalsIgnoreCase("con") || recussionkey.equalsIgnoreCase("int") || recussionkey.equalsIgnoreCase("wis") || recussionkey.equalsIgnoreCase("chr")) {
+											li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getInt(recussionkey));
 										} else if (recussionkey.equalsIgnoreCase("manaregen")) {
 											li.addEntry(levelnumber, recussionkey.toLowerCase(), levelinfo.getDouble(recussionkey));
 										} else {

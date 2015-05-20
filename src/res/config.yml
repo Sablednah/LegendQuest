@@ -195,7 +195,7 @@ ecoRaceSwap: 10000
 
 
 blockRepairXPloss: true
-adjustRepairXP: 50.0D
+adjustRepairXP: 50.0
 useAlternateRepairExpCost: false
 
 manaCostPerRepairLevel: 10
@@ -209,7 +209,7 @@ materialRepairQtyPerLevel: 1
 ## Parties
 
 partyRange: 32
-useParties: true;
+useParties: true
 partyBonus: 50
 blockPartyPvP: true
 allowPartyTeleport: true

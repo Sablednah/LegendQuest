@@ -1,15 +1,20 @@
 package me.sablednah.legendquest.cmds;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import me.sablednah.legendquest.LevelItems;
+import me.sablednah.legendquest.LevelItems.LevelBonus;
 import me.sablednah.legendquest.Main;
 import me.sablednah.legendquest.classes.Classes;
 import me.sablednah.legendquest.config.LangConfig;
 import me.sablednah.legendquest.config.MainConfig;
 import me.sablednah.legendquest.config.SkillConfig;
 import me.sablednah.legendquest.db.DataSync;
+import me.sablednah.legendquest.playercharacters.PC;
 import me.sablednah.legendquest.playercharacters.PCs;
 import me.sablednah.legendquest.races.Races;
 import me.sablednah.legendquest.utils.Utils;
@@ -45,6 +50,26 @@ public class RootCommand implements CommandExecutor {
                     int ExpOrbs = (int) Exp;
                     World world = ((Player)sender).getWorld();
                     ((ExperienceOrb)world.spawn(((Player)sender).getTargetBlock((HashSet<Byte>) null, 200).getLocation(), ExperienceOrb.class)).setExperience( ExpOrbs );
+            		return true;
+            	} else if (args[1].equalsIgnoreCase("levels")) {
+            		PC pc = lq.players.getPC((Player)sender);
+            		LevelItems rLvl = pc.race.levelUp;
+            		System.out.print("rLvl:" + rLvl.toString());
+            		HashMap<String, LevelBonus> keys = rLvl.levelUp;
+            		Set<String> x = keys.keySet();
+            		for (String s : x) {
+            			System.out.print("Key: " + s);
+            		}
+
+            		LevelItems cLvl = pc.mainClass.levelUp;
+            		System.out.print("cLvl:" + cLvl.toString());
+            		HashMap<String, LevelBonus> keys2 = cLvl.levelUp;
+            		Set<String> x2 = keys2.keySet();
+            		for (String s : x2) {
+            			System.out.print("Key: " + s);
+            		}
+
+            		
             		return true;
             	} else {
             	sender.sendMessage("effect test");

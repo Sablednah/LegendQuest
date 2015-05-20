@@ -54,7 +54,7 @@ public class Main extends JavaPlugin {
 	public boolean				hasWorldGuard5;
 
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= true;
+	public static final Boolean	debugMode	= false;
 
 	public void log(final String msg) {
 		this.getServer().getConsoleSender().sendMessage("[LegendQuest] " + msg);
@@ -106,6 +106,7 @@ public class Main extends JavaPlugin {
 		}
 		
     	if (configMain.useServerLogOnly) {
+    		System.out.print("LQ logging to main log...");
     		debug.log = logger;
     	}
 

@@ -26,11 +26,9 @@ public class LevelItems {
 
 	public double getTotal(String key, int level) {
 		LevelBonus keydata = levelUp.get(key);
-//		System.out.print("getting total for : "+ key + " ("+level+")");
 
 		double total = 0.0D;
 		if (keydata!=null) {
-//			System.out.print("found key data");
 			total = keydata.getUptoLevel(level);
 		}
 		return total;
@@ -68,21 +66,22 @@ public class LevelItems {
 		 */
 		public double getUptoLevel(int level) {
 			double total=0.0D;
-//			System.out.print("adding up: "+level);
+//System.out.print("adding up: "+level);
 
 			for (Entry<Integer, Object> ent : bonusList.entrySet()) {
-//				System.out.print("checking: "+ ent.getKey() + " < "+level+" ?");
+//System.out.print("checking: "+ ent.getKey() + " < "+level+" ?");
 				if (ent.getKey()<=level) {
-//					System.out.print("adding: "+ ent.getValue().toString() + " to "+total+" ?");
+//System.out.print("adding: "+ ent.getValue().toString() + " to "+total+" ?");
 					if (ent.getValue() instanceof Double) {
 						total += (Double)ent.getValue();
-//						System.out.print("newtotal (d): = "+total+" ?");
+//System.out.print("newtotal (d): = "+total+" ?");
 					} else {
 						total += (Integer)ent.getValue();
-//						System.out.print("newtotal (i): = "+total+" ?");
+//System.out.print("newtotal (i): = "+total+" ?");
 					}
 				}
 			}
+System.out.print("returns: "+total);
 			return total;
 		}
 		/**

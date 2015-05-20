@@ -97,19 +97,19 @@ public class DebugLog {
 	}
 
 	public void fine(final String msg) {
-		if (this.level.intValue() >= Level.FINE.intValue()) {
+		if (this.level.intValue() <= Level.FINE.intValue()) {  //500
 			this.log.fine(msg);
 		}
 	}
 
 	public void info(final String msg) {
-		if (this.level.intValue() >= Level.INFO.intValue()) {
+		if (this.level.intValue() <= Level.INFO.intValue()) {  //800
 			this.log.info(msg);
 		}
 	}
 
 	public void log(final Level level, final String msg) {
-		if (this.level.intValue() >= level.intValue()) {
+		if (this.level.intValue() <= level.intValue()) {
 			this.log.log(level, msg);
 		}
 	}
@@ -119,7 +119,7 @@ public class DebugLog {
 	}
 
 	public void severe(final String msg) {
-		if (this.level.intValue() >= Level.SEVERE.intValue()) {
+		if (this.level.intValue() <= Level.SEVERE.intValue()) { // 1000
 			this.log.severe(msg);
 		}
 	}
@@ -129,7 +129,7 @@ public class DebugLog {
 	}
 
 	public void warning(final String msg) {
-		if (this.level.intValue() >= Level.WARNING.intValue()) {
+		if (this.level.intValue() <= Level.WARNING.intValue()) { // 900
 			this.log.warning(msg);
 		}
 	}
