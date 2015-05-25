@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.sablednah.legendquest.Main;
+import me.sablednah.legendquest.events.SizeCheck;
 import me.sablednah.legendquest.events.SkillTick;
 import me.sablednah.legendquest.experience.SetExp;
 import me.sablednah.legendquest.skills.SkillDataStore;
@@ -768,6 +769,11 @@ public class PCs {
 			default:
 				size = 1.875D;
 		}
+		
+		SizeCheck e = new SizeCheck(entity, size);
+		lq.getServer().getPluginManager().callEvent(e);
+		size = e.getSize();
+		
 		return size;
 	}
 

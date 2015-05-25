@@ -413,10 +413,10 @@ public class PlayerEvents implements Listener {
 							// I do not know if this is necessary
 							if (item1 != null && item2 != null) {
 								Material id1 = item1.getType();
-								Material id2 = item2.getType();
+//								Material id2 = item2.getType();
 
 								// if the player is repairing something the ids will be the same
-								if (id1 != Material.AIR && id1 == id2) {
+								if (id1 != Material.AIR) { // && id1 == id2) {
 									// item in the result slot
 									ItemStack item3 = e.getCurrentItem();
 
@@ -448,11 +448,11 @@ public class PlayerEvents implements Listener {
 													}
 													repairable.setRepairCost(newcost);
 												}
+												PC pc = lq.getPlayers().getPC(player);
 												if (lq.configMain.useAlternateRepairExpCost) {
 													if (Main.debugMode) {
 														System.out.print("using repair alt cost...");
 													}
-													PC pc = lq.getPlayers().getPC(player);
 													int manaCost = 0;
 													int ecoCost = 0;
 													boolean canPay = true;
@@ -464,8 +464,12 @@ public class PlayerEvents implements Listener {
 																player.sendMessage(lq.configLang.repairNoMana + manaCost);
 															}
 														}
-														if (Main.debugMode) { System.out.print("manaCost = " + manaCost); }
-														if (Main.debugMode) { System.out.print("canPay = " + canPay); }
+														if (Main.debugMode) {
+															System.out.print("manaCost = " + manaCost);
+														}
+														if (Main.debugMode) {
+															System.out.print("canPay = " + canPay);
+														}
 														if (lq.configMain.ecoCostPerRepairLevel != 0) {
 															ecoCost = cost * lq.configMain.ecoCostPerRepairLevel;
 															if (!pc.canPay(ecoCost)) {
@@ -473,68 +477,76 @@ public class PlayerEvents implements Listener {
 																player.sendMessage(lq.configLang.repairNoEco + ecoCost);
 															}
 														}
-														if (Main.debugMode) { System.out.print("ecoCost = " + ecoCost); }
-														if (Main.debugMode) { System.out.print("canPay = " + canPay); }
+														if (Main.debugMode) {
+															System.out.print("ecoCost = " + ecoCost);
+														}
+														if (Main.debugMode) {
+															System.out.print("canPay = " + canPay);
+														}
 														if (canPay) {
 															if (lq.configMain.materialRepairQtyPerLevel > 0 && !lq.configMain.materialRepairCost.isEmpty()) {
 																// can aford other costs - try to take the materials noe
 																ItemStack itemCost = new ItemStack(Material.matchMaterial(lq.configMain.materialRepairCost), (lq.configMain.materialRepairQtyPerLevel * cost));
-																if (Main.debugMode) { System.out.print("itemCost = " + itemCost.toString()); }
+																if (Main.debugMode) {
+																	System.out.print("itemCost = " + itemCost.toString());
+																}
 																if (pc.payItem(itemCost)) {
 																	if (manaCost != 0) {
 																		pc.payMana(manaCost);
-																	}							
+																	}
 																	if (ecoCost != 0) {
 																		pc.payCash(ecoCost);
 																	}
 
-																	if (Main.debugMode) {
-																		System.out.print("level Cost is : " + repairable.getRepairCost());
-																	}
-
-																	int exp = SetExp.getTotalExperience(player);
-																	if (Main.debugMode) {
-																		System.out.print("exp is : " + exp);
-																	}
-																	
-																	if (newcost>0) {
-																		if (Main.debugMode) {
-																			System.out.print("player.getLevel() is : " + player.getLevel());
-																		}
-																		int bigExp = SetExp.getExpToLevel(player.getLevel());
-																		int littleExp = SetExp.getExpToLevel(player.getLevel()-newcost);
-
-																		if (Main.debugMode) {
-																			System.out.print("bigExp is : " + bigExp);
-																		}
-																		if (Main.debugMode) {
-																			System.out.print("littleExp is : " + littleExp);
-																		}
-
-																		
-																		int difference = bigExp - littleExp;
-																		if (Main.debugMode) {
-																			System.out.print("difference is : " + difference);
-																		}
-																		exp = exp - difference;
-																		if (Main.debugMode) {
-																			System.out.print("exp is : " + exp);
-																		}
-																	}
-																	Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(lq, new DelayedFixXp(exp, pc), 2L);
-
 																} else {
 																	canPay = false;
-																	player.sendMessage(lq.configLang.repairNoItem + lq.configMain.materialRepairCost+" x " + (lq.configMain.materialRepairQtyPerLevel * cost));
+																	player.sendMessage(lq.configLang.repairNoItem + lq.configMain.materialRepairCost + " x " + (lq.configMain.materialRepairQtyPerLevel * cost));
 																}
 															}
 														}
-														if (Main.debugMode) { System.out.print("canPay = " + canPay); }
+														if (Main.debugMode) {
+															System.out.print("canPay = " + canPay);
+														}
 														if (!canPay) {
 															e.setCancelled(true);
+															return;
 														}
 													}
-												}											
+												}
+												if (Main.debugMode) {
+													System.out.print("level Cost is : " + repairable.getRepairCost());
+												}
+
+												int exp = SetExp.getTotalExperience(player);
+												if (Main.debugMode) {
+													System.out.print("exp is : " + exp);
+												}
+
+												if (newcost < cost) {
+													if (Main.debugMode) {
+														System.out.print("player.getLevel() is : " + player.getLevel());
+													}
+													int bigExp = SetExp.getExpToLevel(player.getLevel());
+													int littleExp = SetExp.getExpToLevel(player.getLevel() - newcost);
+
+													if (Main.debugMode) {
+														System.out.print("bigExp is : " + bigExp);
+													}
+													if (Main.debugMode) {
+														System.out.print("littleExp is : " + littleExp);
+													}
+
+													int difference = bigExp - littleExp;
+													if (Main.debugMode) {
+														System.out.print("difference is : " + difference);
+													}
+													exp = exp - difference;
+													if (Main.debugMode) {
+														System.out.print("exp is : " + exp);
+													}
+												}
+												Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(lq, new DelayedFixXp(exp, pc), 2L);
+
 											}
 										}
 									}
@@ -580,17 +592,19 @@ public class PlayerEvents implements Listener {
 			}
 		}
 	}
-	
+
 	public class DelayedFixXp implements Runnable {
-		int xp = 0;
-		PC pc;
+		int	xp	= 0;
+		PC	pc;
+
 		public DelayedFixXp(int exp, PC pc) {
 			this.xp = exp;
 			this.pc = pc;
 		}
+
 		public void run() {
-			if (pc.getPlayer()!=null && !pc.getPlayer().isDead()) {
-				//still alive!
+			if (pc.getPlayer() != null && !pc.getPlayer().isDead()) {
+				// still alive!
 				if (Main.debugMode) {
 					System.out.print("postrepair: setting xp to : " + xp);
 				}

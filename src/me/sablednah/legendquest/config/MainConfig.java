@@ -119,6 +119,11 @@ public class MainConfig extends Config {
 	public String				materialRepairCost			= "LAPIS_BLOCK";
 	public int					materialRepairQtyPerLevel	= 1;
 
+	public boolean				manaTickEvent				= true;
+	public boolean				manaRegen					= true;
+	public int					noticeInterval				= 5;
+	public int					manaTickInterval			= 20;
+	
 	@SuppressWarnings("unchecked")
 	public MainConfig(final Main p) {
 		super(p, "config.yml");
@@ -237,6 +242,12 @@ public class MainConfig extends Config {
 		this.ecoCostPerRepairLevel = this.getConfigItem("ecoCostPerRepairLevel", this.ecoCostPerRepairLevel);
 		this.materialRepairCost = this.getConfigItem("materialRepairCost", this.materialRepairCost);
 		this.materialRepairQtyPerLevel = this.getConfigItem("materialRepairQtyPerLevel", this.materialRepairQtyPerLevel);
+
+		this.manaRegen = this.getConfigItem("manaRegen", this.manaRegen);
+		this.manaTickEvent = this.getConfigItem("manaTickEvent", this.manaTickEvent);
+		this.noticeInterval = this.getConfigItem("noticeInterval", this.noticeInterval);
+		this.manaTickInterval = this.getConfigItem("manaTickInterval", this.manaTickInterval);
+
 		
 	}
 }

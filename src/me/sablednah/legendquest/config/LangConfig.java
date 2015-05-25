@@ -189,6 +189,7 @@ public class LangConfig extends Config {
 	public String					partyNotLeader			= "You do not lead a party, you can't approve.";
 	public String					partyRequest			= " has requested to join your party: ";
 	public String					partyRequestSent		= "Party request sent.";
+	public String					partyRequestLeave 		= "You have left the party.";
 	
 	public String					statsSelfOnly			= "You can only view your own stats.";
 	public String					statsJournalForbid		= "Sorry, you don't have permission to do that.";
@@ -359,8 +360,15 @@ public class LangConfig extends Config {
 		this.partyApprovedOwner = this.getConfigItem("partyApprovedOwner", this.partyApprovedOwner);
 		this.partyNotRequested = this.getConfigItem("partyNotRequested", this.partyNotRequested);
 		this.partyNotLeader = this.getConfigItem("partyNotLeader", this.partyNotLeader);
+		this.partyRequestLeave = this.getConfigItem("partyRequestLeave", this.partyRequestLeave);
+		
 
 		this.statsSelfOnly = this.getConfigItem("statsSelfOnly", this.statsSelfOnly);
+		this.statsJournalForbid = this.getConfigItem("statsJournalForbid", this.statsJournalForbid);
+		
+		this.repairNoMana = this.getConfigItem("repairNoMana", this.repairNoMana);
+		this.repairNoEco = this.getConfigItem("repairNoEco", this.repairNoEco);
+		this.repairNoItem = this.getConfigItem("repairNoItem", this.repairNoItem);
 		
 	}
 }

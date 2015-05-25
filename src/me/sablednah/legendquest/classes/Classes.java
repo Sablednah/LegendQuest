@@ -556,7 +556,7 @@ public class Classes {
 							String aMaterial = activator.getString("material");
 							String aCustomName = activator.getString("customname");
 							String[] aLore = null;
-							if (activator.getString("lore") != null) {
+							if (activator.getString("lore") != null && !activator.getString("lore").isEmpty()) {
 								aLore = activator.getString("lore").split("\\|");
 							}
 							ItemStack active = new ItemStack(Material.matchMaterial(aMaterial));
@@ -574,7 +574,7 @@ public class Classes {
 							String rMaterial = repository.getString("material");
 							String rCustomName = repository.getString("customname");
 							String[] rLore = null;
-							if (repository.getString("lore") != null) {
+							if (repository.getString("lore") != null && !repository.getString("lore").isEmpty()) {
 								rLore = repository.getString("lore").split("\\|");
 							}
 							ItemStack repo = new ItemStack(Material.matchMaterial(rMaterial));
@@ -584,7 +584,7 @@ public class Classes {
 							}
 							if (rLore != null && rLore.length > 0) {
 								List<String> rlorelist = Arrays.asList(rLore);
-								ameta.setLore(rlorelist);
+								rmeta.setLore(rlorelist);
 							}
 							repo.setItemMeta(rmeta);
 

@@ -81,7 +81,7 @@ public class LevelItems {
 					}
 				}
 			}
-System.out.print("returns: "+total);
+// System.out.print("returns: "+total);
 			return total;
 		}
 		/**

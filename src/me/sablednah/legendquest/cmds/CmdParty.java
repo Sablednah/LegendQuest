@@ -65,6 +65,18 @@ public class CmdParty extends CommandTemplate implements CommandExecutor {
 			}
 		} else {
 			if (args.length < 2) { // why am i worried about negative argument length ? le-sigh
+				if (args.length == 1) {
+					String action = args[0].toLowerCase();
+					if (action.equalsIgnoreCase("leave") || action.equalsIgnoreCase("exit")) {
+						Party pty = lq.partyManager.getParty(p.getUniqueId());
+						if (pty != null) {
+							lq.partyManager.removeParty(p.getUniqueId());
+						}
+						p.sendMessage(lq.configLang.partyRequestLeave);
+						lq.datasync.dirtyPartyData = true;
+						return true;
+					}
+				}
 				p.sendMessage(lq.configLang.invalidArgumentsCommand);
 				return true;
 			} else {
@@ -84,18 +96,18 @@ public class CmdParty extends CommandTemplate implements CommandExecutor {
 					}
 				} else if (action.equalsIgnoreCase("join") || action.equalsIgnoreCase("request")) {
 					Party tpat = lq.partyManager.getPartyByName(target);
-					if (tpat==null) {
+					if (tpat == null) {
 						p.sendMessage(target + lq.configLang.partyDoesNotExisit);
-						return true;						
+						return true;
 					} else {
 						if (tpat.player.equals(p.getUniqueId())) {
 							p.sendMessage(lq.configLang.partyOwnParty);
-							return true;							
+							return true;
 						}
 					}
 					Party pty = lq.partyManager.getParty(p.getUniqueId());
-					if (pty!=null && pty.approved && pty.partyName.equalsIgnoreCase(target)) {
-						p.sendMessage(lq.configLang.partyAlreadyMember+target);
+					if (pty != null && pty.approved && pty.partyName.equalsIgnoreCase(target)) {
+						p.sendMessage(lq.configLang.partyAlreadyMember + target);
 						return true;
 					}
 					if (pty != null) {
@@ -105,7 +117,7 @@ public class CmdParty extends CommandTemplate implements CommandExecutor {
 					lq.partyManager.addParty(pty.player, pty);
 					UUID owner = lq.partyManager.getPartyOwner(target);
 					Player tp = lq.getServer().getPlayer(owner);
-					if (tp!=null) {
+					if (tp != null) {
 						tp.sendMessage(p.getDisplayName() + lq.configLang.partyRequest + target);
 					}
 					p.sendMessage(lq.configLang.partyRequestSent);
@@ -132,28 +144,28 @@ public class CmdParty extends CommandTemplate implements CommandExecutor {
 						return true;
 					}
 				} else if (action.equalsIgnoreCase("teleport") || action.equalsIgnoreCase("tp")) {
-					if (!lq.configMain.allowPartyTeleport) { 
+					if (!lq.configMain.allowPartyTeleport) {
 						p.sendMessage(lq.configLang.partyTeleportNotAllowed);
 						return true;
 					}
 					Party pty = lq.partyManager.getParty(p.getUniqueId());
-					if (pty!=null && pty.approved) {
-						if (lq.configMain.ecoPartyTeleport >0) {
+					if (pty != null && pty.approved) {
+						if (lq.configMain.ecoPartyTeleport > 0) {
 							PC pc = lq.getPlayers().getPC(p);
-							if (pc!=null) {
-								if (!pc.payCash(lq.configMain.ecoPartyTeleport)){
+							if (pc != null) {
+								if (!pc.payCash(lq.configMain.ecoPartyTeleport)) {
 									p.sendMessage(lq.configLang.ecoDeclined);
 									return true;
 								}
-							}							
+							}
 						}
-						Location l = lq.partyManager.getPartyLocation(pty.partyName,p);
-						if (l!=null) {
-							p.teleport(l);							
+						Location l = lq.partyManager.getPartyLocation(pty.partyName, p);
+						if (l != null) {
+							p.teleport(l);
 						} else {
 							p.sendMessage(lq.configLang.notSafeTeleport);
 						}
-						return true;						
+						return true;
 					} else {
 						p.sendMessage(lq.configLang.partyNoParty);
 						return true;

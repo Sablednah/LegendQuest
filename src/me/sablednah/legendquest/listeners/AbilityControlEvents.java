@@ -338,7 +338,7 @@ if(Main.debugMode) {
 		} else if ((e.getSlotType() == SlotType.QUICKBAR || e.getSlotType() == SlotType.CONTAINER) && e.isShiftClick()) {
 			clickedItem = e.getCurrentItem().getType();
 		}
-		if (clickedItem != null && clickedItem != Material.AIR) {
+		if (clickedItem != null && clickedItem != Material.AIR && clickedItem != Material.INK_SACK) {
 			if (!pc.canEnchant(clickedItem)) {
 				p.sendMessage(lq.configLang.cantEnchant + " (" + clickedItem.name() + ")");
 				e.setCancelled(true);

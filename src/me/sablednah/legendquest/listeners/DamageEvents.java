@@ -106,6 +106,7 @@ public class DamageEvents implements Listener {
 		
 		PC attackerPC = getTwistedInstigator(event.getDamager());
 
+		
 		if (lq.configMain.useSizeForCombat) {
 			double atackerSize = lq.players.getSize(this.getTwistedInstigatorEntity(event.getDamager()));
 			double defenderSize = lq.players.getSize(victim);

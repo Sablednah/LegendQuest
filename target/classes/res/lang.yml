@@ -173,7 +173,7 @@ partyNotRequested: " has not requested to join your party."
 partyNotLeader: "You do not lead a party, you can't approve."
 partyRequest: " has requested to join your party: "
 partyRequestSent: "Party request sent."
-
+partyRequestLeave: "You have left the party."
 
 statsSelfOnly: "You can only view your own stats."
 statsJournalForbid: "Sorry, you don't have permission to do that."

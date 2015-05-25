@@ -54,7 +54,7 @@ public class Main extends JavaPlugin {
 	public boolean				hasWorldGuard5;
 
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= false;
+	public static final Boolean	debugMode	= true;
 
 	public void log(final String msg) {
 		this.getServer().getConsoleSender().sendMessage("[LegendQuest] " + msg);
@@ -230,7 +230,9 @@ public class Main extends JavaPlugin {
 		// getCommand("binds").setExecutor(new CmdPlurals(this));
 
 		// Mana ticker
-		getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), 20, 20);
+		if (configMain.manaRegen) {
+			getServer().getScheduler().runTaskTimer(this, new ManaTicker(this), (long)configMain.manaTickInterval, (long)configMain.manaTickInterval);			
+		}
 
 	}
 
