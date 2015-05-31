@@ -18,7 +18,7 @@ public class CmdFlag extends CommandTemplate implements CommandExecutor {
 	@SuppressWarnings("deprecation")
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
 		// get the enum for this command
-		final Cmds cmd = Cmds.valueOf("FLAG");
+		final Cmds cmd = Cmds.FLAG;
 
 		if (!validateCmd(lq, cmd, sender, args)) {
 			return true;

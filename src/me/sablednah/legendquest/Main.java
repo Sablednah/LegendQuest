@@ -1,5 +1,11 @@
 package me.sablednah.legendquest;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -54,7 +60,7 @@ public class Main extends JavaPlugin {
 	public boolean				hasWorldGuard5;
 
 	// TODO switch test flag for live
-	public static final Boolean	debugMode	= true;
+	public static final Boolean	debugMode	= false;
 
 	public void log(final String msg) {
 		this.getServer().getConsoleSender().sendMessage("[LegendQuest] " + msg);
@@ -83,6 +89,8 @@ public class Main extends JavaPlugin {
 		debug.closeLog();
 		datasync.shutdown();
 
+		doBackupLogs();
+		
 		log(configLang.shutdown);
 	}
 
@@ -110,6 +118,7 @@ public class Main extends JavaPlugin {
     		debug.log = logger;
     	}
 
+    	doBackUpDB();
 
 		// Get localised text from config
 		configLang = new LangConfig(this);
@@ -198,6 +207,7 @@ public class Main extends JavaPlugin {
 		
 		// setup commands
 		getCommand("lq").setExecutor(new RootCommand(this));
+		getCommand("flag").setExecutor(new CmdFlag(this));
 		getCommand("race").setExecutor(new CmdRace(this));
 		getCommand("class").setExecutor(new CmdClass(this));
 		getCommand("stats").setExecutor(new CmdStats(this));
@@ -309,5 +319,94 @@ public class Main extends JavaPlugin {
 			return true;
 		}
 		return worldList.contains(worldName);
+	}
+	
+	private void doBackUpDB() {
+		if (!configMain.useMySQL) {
+			if (configMain.backupSQlite) {
+				int count = configMain.SQLiteSaves;
+				for (int x = count-1;x>=0;x--) {
+//					System.out.print("X="+x);
+					if (x>0) {
+						File filefrom = new File(getDataFolder(), "LegendQuest_"+( x )+".db");
+						File fileto   = new File(getDataFolder(), "LegendQuest_"+(x+1)+".db");
+//						System.out.print("filefrom:"+filefrom.toString());
+//						System.out.print("fileto:"+fileto.toString());
+
+						if (filefrom.exists()) {
+							try {
+								copyFileUsingStream(filefrom,fileto);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+				    } else {
+				    	File filefrom = new File(getDataFolder(), "LegendQuest.db");
+						File fileto   = new File(getDataFolder(), "LegendQuest_1.db");
+//						System.out.print("filefrom:"+filefrom.toString());
+//						System.out.print("fileto:"+fileto.toString());
+						if (filefrom.exists()) {
+							try {
+								copyFileUsingStream(filefrom,fileto);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+				    }
+				}
+			}
+		}
+	}
+	
+	private void doBackupLogs() {
+		if (configMain.backupLQlog) {
+			int count = configMain.LQLogSaves;
+			for (int x = count-1;x>=0;x--) {
+				if (x>0) {
+					File filefrom = new File(getDataFolder(), "LegendQuest_"+( x )+".log");
+					File fileto   = new File(getDataFolder(), "LegendQuest_"+(x+1)+".log");
+					if (filefrom.exists()) {
+						try {
+							copyFileUsingStream(filefrom,fileto);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+			    } else {
+			    	File filefrom = new File(getDataFolder(), "LegendQuest.log");
+					File fileto   = new File(getDataFolder(), "LegendQuest_1.log");
+					if (filefrom.exists()) {
+						try {
+							copyFileUsingStream(filefrom,fileto);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+			    }
+			}
+	    	File filefrom = new File(getDataFolder(), "LegendQuest.log");
+	    	filefrom.delete();
+		}
+	}
+
+	public static void copyFileUsingStream(File source, File dest) throws IOException {
+	    InputStream is = null;
+	    OutputStream os = null;
+	    try {
+	        is = new FileInputStream(source);
+	        os = new FileOutputStream(dest);
+	        byte[] buffer = new byte[1024];
+	        int length;
+	        while ((length = is.read(buffer)) > 0) {
+	            os.write(buffer, 0, length);
+	        }
+	    } finally {
+	        is.close();
+	        os.close();
+	    }
 	}
 }

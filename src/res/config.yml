@@ -14,6 +14,11 @@ sqlDatabase: legendquest
 sqlPrefix: "lq_"
 sqlKeepAliveInterval: 60
 
+backupSQlite: true
+SQLiteSaves: 3
+backupLQlog: true
+LQLogSaves: 5
+
 #-------------------
 
 # if true - each player name will have a random internal stat .

@@ -77,6 +77,12 @@ commands:
         aliases: [lqhp,lquesthp,legendqhp,legendquesthp]
         permission: legendquest.command.hp
         permission-message: You don't have <permission>
+    flag:
+        description: Set player plags
+        usage: Use "/<command> help" for more info
+        aliases: [lqflag,lquestflag,legendqflag,legendquestflag]
+        permission: legendquest.command.flag
+        permission-message: You don't have <permission>
     plurals:
         description: Plural list commands
         usage: Use "/<command> help" for more info
@@ -113,6 +119,7 @@ permissions:
             legendquest.command.party: true
             legendquest.command.plurals: true
             legendquest.command.stats.journal: true
+            legendquest.command.flag: true
     legendquest.command.admin:
         description: Allows user to use legendquest admin commands.
         default: op
@@ -154,6 +161,9 @@ permissions:
         default: true
     legendquest.command.unlink:
         description: Allows user to use legendquest unlink command.
+        default: true
+    legendquest.command.flag:
+        description: Allows user to use legendquest flag command.
         default: true
     legendquest.command.plurals:
         description: Allows user to use legendquest command plurals.

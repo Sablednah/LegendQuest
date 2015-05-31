@@ -18,6 +18,11 @@ public class MainConfig extends Config {
 	public String				sqlDatabase					= "legendquest";
 	public String				sqlPrefix					= "lq_";
 	public int					sqlKeepAliveInterval		= 60;
+	
+	public boolean				backupSQlite				= true;
+	public int					SQLiteSaves					= 3;
+	public boolean				backupLQlog					= true;
+	public int					LQLogSaves					= 5;
 
 	public boolean				logSQL						= true;
 	public String				logLevel					= "ALL";
@@ -142,6 +147,11 @@ public class MainConfig extends Config {
 		this.sqlPrefix = this.getConfigItem("sqlPrefix", this.sqlPrefix);
 		this.sqlKeepAliveInterval = this.getConfigItem("sqlKeepAliveInterval", this.sqlKeepAliveInterval);
 
+		this.backupSQlite = this.getConfigItem("backupSQlite", this.backupSQlite);
+		this.SQLiteSaves = this.getConfigItem("SQLiteSaves", this.SQLiteSaves);
+		this.backupLQlog = this.getConfigItem("backupLQlog", this.backupLQlog);
+		this.LQLogSaves = this.getConfigItem("LQLogSaves", this.LQLogSaves);
+		
 		this.worlds = (ArrayList<String>) this.getConfigItem("worlds", this.worlds);
 		this.manageHealthNonLqWorlds = this.getConfigItem("manageHealthNonLqWorlds", this.manageHealthNonLqWorlds);
 

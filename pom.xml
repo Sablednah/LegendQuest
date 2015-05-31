@@ -151,5 +151,5 @@
 		<system>jenkins</system>
 		<url>http://sabletopia.co.uk:8080/jenkins/</url>
 	</ciManagement>
-	<version>1.9.3</version>
+	<version>1.9.4</version>
 </project>

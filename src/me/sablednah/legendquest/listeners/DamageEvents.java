@@ -162,7 +162,7 @@ public class DamageEvents implements Listener {
 		
 		boolean ranged = (event.getDamager() instanceof Projectile);
 
-		CombatHitCheck e = new CombatHitCheck(hitchance, dodgechance, this.getTwistedInstigatorPlayer(event.getDamager()), victim, ranged);
+		CombatHitCheck e = new CombatHitCheck(hitchance, dodgechance, this.getTwistedInstigatorEntity(event.getDamager()), victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
 		hitchance = e.getHitChance();
 		dodgechance = e.getDodgeChance();

@@ -2,11 +2,14 @@ package me.sablednah.legendquest.utils.plugins;
 
 //import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import me.clip.deluxechat.placeholders.DeluxePlaceholderHook;
 import me.clip.deluxechat.placeholders.PlaceholderHandler;
+import me.clip.deluxechat.events.PlaceholderHookUnloadEvent;
+
 import me.sablednah.legendquest.Main;
 
 public class DeluxeChatClass implements Listener {
@@ -14,7 +17,7 @@ public class DeluxeChatClass implements Listener {
 
 	public DeluxeChatClass(final Main lq) {
 		this.lq = lq;
-
+		
 		/**
 		 * When a placeholder hook is registered, DeluxeChat will request a value based on the placeholder identifier
 		 * for the specific plugin
@@ -39,5 +42,13 @@ public class DeluxeChatClass implements Listener {
 		}
 
 	}
+	
+	@EventHandler
+    public void onPlaceholderUnload(PlaceholderHookUnloadEvent e) {
+      
+        if (e.getPluginName().equalsIgnoreCase("the plugin name you register your placeholder with")) {
+            e.setCancelled(true);
+        }
+    }
 
 }
