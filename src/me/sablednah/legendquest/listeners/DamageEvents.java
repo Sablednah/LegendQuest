@@ -27,6 +27,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.metadata.Metadatable;
 
 public class DamageEvents implements Listener {
 
@@ -257,7 +258,7 @@ public class DamageEvents implements Listener {
 			System.out.print("dodge before: " + dodge);
 		}
 
-		
+			if (victim instanceof Metadatable) {
 				if (victim.hasMetadata("cursetimeout")) {
 					long cursetime = victim.getMetadata("cursetimeout").get(0).asLong();
 					if (System.currentTimeMillis() > cursetime) {
@@ -272,7 +273,9 @@ public class DamageEvents implements Listener {
 						}
 					}
 				}
-		
+			}
+			
+			if (damager instanceof Metadatable) {
 				if (damager.hasMetadata("cursetimeout")) {
 					long cursetime = damager.getMetadata("cursetimeout").get(0).asLong();
 					if (System.currentTimeMillis() > cursetime) {
@@ -287,7 +290,7 @@ public class DamageEvents implements Listener {
 						}
 					}
 				}
-
+			}
 				
 		CombatModifiers e = new CombatModifiers(power, dodge, damager, victim, ranged);
 		lq.getServer().getPluginManager().callEvent(e);
