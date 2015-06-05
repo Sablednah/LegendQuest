@@ -1811,6 +1811,18 @@ public class PC {
 		}
 	}
 
+	public boolean gainCash(int gain) {
+		if (lq.hasVault) {
+			Player p = getPlayer();
+			if (p == null) {
+				return false;
+			}
+			return PluginUtils.gainCash(gain, p);
+		} else {
+			return true; // economy disabled
+		}
+	}
+
 	public Double getBalance() {
 		if (lq.hasVault) {
 			Player p = getPlayer();

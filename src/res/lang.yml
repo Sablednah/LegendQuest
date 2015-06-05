@@ -156,6 +156,9 @@ xpChangeAdmin: "You gave Exp: "
 
 ecoPaid: " paid."
 ecoDeclined: "Card Declined: Insufficient funds."
+ecoNegativeGain: "Cannot gain negative payment."
+ecoGain: " gained."
+
 
 notSafeTeleport: "Could not find safe teleport location"
 

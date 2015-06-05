@@ -125,7 +125,12 @@ public class EffectManager {
 						// add potion effect.
 						if (pending.startTime <= System.currentTimeMillis()) {
 							int ticks = (int) pending.duration / 50;
-							PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, pending.effect.getAmp(), false);
+							PotionEffect peffect;
+							if(pending.effect.getAmp()>127) {
+								peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, pending.effect.getAmp()-128, false, false);
+							} else {
+								peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, pending.effect.getAmp(), false, true);
+							}
 							switch (pending.owner) {
 								case PLAYER:
 									Player p = lq.getServer().getPlayer(pending.uuid);
@@ -215,7 +220,7 @@ public class EffectManager {
 							case STUNNED:
 								if (pending.startTime <= System.currentTimeMillis()) {
 									int ticks = (int) pending.duration / 50;
-									PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false);
+									PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false, true);
 									switch (pending.owner) {
 										case PLAYER:
 											Player p = lq.getServer().getPlayer(pending.uuid);
@@ -239,7 +244,7 @@ public class EffectManager {
 								break;
 							case SNEAK:
 								int ticks = (int) pending.duration / 50;
-								PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false);
+								PotionEffect peffect = new PotionEffect(pending.effect.getPotioneffectType(), ticks, 2, false, false);
 								switch (pending.owner) {
 									case PLAYER:
 										Player p = lq.getServer().getPlayer(pending.uuid);
@@ -294,7 +299,12 @@ public class EffectManager {
 									break; // already potion'ed
 								case LOCATATION:
 									int ticksleft = (int) (active.duration - (System.currentTimeMillis() - active.startTime)) / 50;
-									PotionEffect peffect2 = new PotionEffect(active.effect.getPotioneffectType(), ticksleft, active.effect.getAmp(), true);
+									PotionEffect peffect2;// = new PotionEffect(active.effect.getPotioneffectType(), ticksleft, active.effect.getAmp(), true);
+									if(active.effect.getAmp()>127) {
+										peffect2 = new PotionEffect(active.effect.getPotioneffectType(), ticksleft, active.effect.getAmp()-128, false, false);
+									} else {
+										peffect2 = new PotionEffect(active.effect.getPotioneffectType(), ticksleft, active.effect.getAmp(), true, true);
+									}
 
 									for (LivingEntity e : getNearbyEntities(active.location, active.radius)) {
 										if (!e.hasPotionEffect(active.effect.getPotioneffectType())) {

@@ -249,13 +249,13 @@ public class DamageEvents implements Listener {
 		if (victim instanceof Player) {
 			pc = lq.players.getPC((Player) victim);
 			if (pc!=null) {
-				dodge = pc.getAttributeModifier(Attribute.DEX);
+				dodge = pc.getAttributeModifier(Attribute.CON);
 			}
 		}
 		
 		if (Main.debugMode) {
 			System.out.print("power before: " + power);
-			System.out.print("dodge before: " + dodge);
+			System.out.print("soak before: " + dodge);
 		}
 
 			if (victim instanceof Metadatable) {
@@ -305,7 +305,7 @@ public class DamageEvents implements Listener {
 
 		if (Main.debugMode) {
 			System.out.print("Power after: " + power);
-			System.out.print("Dodge after: " + dodge);
+			System.out.print("Soak after: " + dodge);
 		}
 
 		

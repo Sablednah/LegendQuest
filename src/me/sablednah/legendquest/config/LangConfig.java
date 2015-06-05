@@ -171,12 +171,14 @@ public class LangConfig extends Config {
 
 	public String					ecoPaid					= " paid.";
 	public String					ecoDeclined				= "Card Declined: Insufficient funds.";
+	public String					ecoNegativeGain			= "Cannot gain negative payment.";
+	public String					ecoGain					= " gained.";
 
 	public String					partyXpChange			= "Your party gained Exp: ";
-	public String					partyTeleportNotAllowed = "Sorry Party Teleporting is disabled";
+	public String					partyTeleportNotAllowed	= "Sorry Party Teleporting is disabled";
 
 	public String					notSafeTeleport			= "Could not find safe teleport location";
-	
+
 	public String					partyNoParty			= "You are not in a party";
 	public String					partyAlreadyExists		= "already exists.  Select a different name.";
 	public String					partyCreated			= ": party created.";
@@ -189,16 +191,15 @@ public class LangConfig extends Config {
 	public String					partyNotLeader			= "You do not lead a party, you can't approve.";
 	public String					partyRequest			= " has requested to join your party: ";
 	public String					partyRequestSent		= "Party request sent.";
-	public String					partyRequestLeave 		= "You have left the party.";
-	
+	public String					partyRequestLeave		= "You have left the party.";
+
 	public String					statsSelfOnly			= "You can only view your own stats.";
 	public String					statsJournalForbid		= "Sorry, you don't have permission to do that.";
-	
+
 	public String					repairNoMana			= "Sorry, you need more mana to repair that item: ";
 	public String					repairNoEco				= "Sorry, you need more money to repair that item: ";
 	public String					repairNoItem			= "Sorry, you need more resources to repair that item: ";
 
-	
 	public LangConfig(final Main p) {
 		super(p, "lang.yml");
 
@@ -253,7 +254,7 @@ public class LangConfig extends Config {
 		this.classChangedByAdmin = this.getConfigItem("classChangedByAdmin", this.classChangedByAdmin);
 		this.raceChangedAdmin = this.getConfigItem("raceChangedAdmin", this.raceChangedAdmin);
 		this.raceChangedByAdmin = this.getConfigItem("raceChangedByAdmin", this.raceChangedByAdmin);
-		
+
 		this.classSelectRaceFirst = this.getConfigItem("classSelectRaceFirst", this.classSelectRaceFirst);
 		this.classChanged = this.getConfigItem("classChanged", this.classChanged);
 		this.classList = this.getConfigItem("classList", this.classList);
@@ -345,7 +346,9 @@ public class LangConfig extends Config {
 
 		this.ecoPaid = this.getConfigItem("ecoPaid", this.ecoPaid);
 		this.ecoDeclined = this.getConfigItem("ecoDeclined", this.ecoDeclined);
-		
+		this.ecoNegativeGain = this.getConfigItem("ecoNegativeGain", this.ecoNegativeGain);
+		this.ecoGain = this.getConfigItem("ecoGain", this.ecoGain);
+
 		this.notSafeTeleport = this.getConfigItem("notSafeTeleport", this.notSafeTeleport);
 
 		this.partyTeleportNotAllowed = this.getConfigItem("partyTeleportNotAllowed", this.partyTeleportNotAllowed);
@@ -361,14 +364,13 @@ public class LangConfig extends Config {
 		this.partyNotRequested = this.getConfigItem("partyNotRequested", this.partyNotRequested);
 		this.partyNotLeader = this.getConfigItem("partyNotLeader", this.partyNotLeader);
 		this.partyRequestLeave = this.getConfigItem("partyRequestLeave", this.partyRequestLeave);
-		
 
 		this.statsSelfOnly = this.getConfigItem("statsSelfOnly", this.statsSelfOnly);
 		this.statsJournalForbid = this.getConfigItem("statsJournalForbid", this.statsJournalForbid);
-		
+
 		this.repairNoMana = this.getConfigItem("repairNoMana", this.repairNoMana);
 		this.repairNoEco = this.getConfigItem("repairNoEco", this.repairNoEco);
 		this.repairNoItem = this.getConfigItem("repairNoItem", this.repairNoItem);
-		
+
 	}
 }

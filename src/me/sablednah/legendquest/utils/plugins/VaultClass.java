@@ -30,6 +30,22 @@ public class VaultClass {
 		}
 	}
 	
+	public static boolean gainCash(int pay, Player p) {
+		if (setupEconomy()) {
+			Main lq = (Main) Bukkit.getServer().getPluginManager().getPlugin("LegendQuest");
+			LangConfig langf = lq.configLang;			
+            if (pay > 0) {
+            	econ.depositPlayer(p.getName(), pay);
+                p.sendMessage(pay + econ.currencyNamePlural() + langf.ecoGain);
+                return true;
+            } else {
+                p.sendMessage(langf.ecoNegativeGain);
+                return false;
+            }
+		} else {
+			return true; // no ecconomy
+		}
+	}
 	
     public static boolean setupEconomy() {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
